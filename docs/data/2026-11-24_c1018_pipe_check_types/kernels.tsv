@@ -1,0 +1,1860 @@
+arm	arch	kernel	launches
+f32-stock	flint	cutlass::Kernel2<cutlass_80_tensorop_s1688gemm_64x64_16x6_tn_align4>	308
+f32-stock	flint	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	20722
+f32-stock	flint	mul_mat_vec_f<float, float, (int)1, (int)192, (bool)0, (bool)0>	3463
+f32-stock	flint	mul_mat_vec_f<float, float, (int)1, (int)96, (bool)0, (bool)0>	1159
+f32-stock	qwen35	ampere_sgemm_32x32_sliced1x4_tn	56
+f32-stock	qwen35	cutlass::Kernel2<cutlass_80_tensorop_s1688gemm_64x64_16x6_tn_align4>	280
+f32-stock	qwen35	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	15722
+f32-stock	qwen35	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)1, (bool)0>	1134
+f32-stock	qwen35	mul_mat_vec_f<float, float, (int)1, (int)192, (bool)0, (bool)0>	2254
+f32-stock	qwen35moe	ampere_sgemm_32x32_sliced1x4_tn	126
+f32-stock	qwen35moe	cutlass::Kernel2<cutlass_80_tensorop_s1688gemm_64x64_16x6_tn_align4>	350
+f32-stock	qwen35moe	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	25162
+f32-stock	qwen35moe	mul_mat_vec_f<float, float, (int)1, (int)192, (bool)0, (bool)0>	4580
+f32-stock	qwen35moe	mul_mat_vec_f<float, float, (int)1, (int)96, (bool)0, (bool)0>	2290
+f32-stock	qwen3next	ampere_sgemm_32x32_sliced1x4_tn	98
+f32-stock	qwen3next	cutlass::Kernel2<cutlass_80_tensorop_s1688gemm_64x64_16x6_tn_align4>	350
+f32-stock	qwen3next	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	24024
+f32-stock	qwen3next	mul_mat_vec_f<float, float, (int)1, (int)192, (bool)0, (bool)0>	4580
+f32-stock	qwen3next	mul_mat_vec_f<float, float, (int)1, (int)96, (bool)0, (bool)0>	2290
+f32-stock	qwen4exp	ampere_sgemm_32x128_tn	84
+f32-stock	qwen4exp	ampere_sgemm_32x32_sliced1x4_tn	224
+f32-stock	qwen4exp	cutlass::Kernel2<cutlass_80_tensorop_s1688gemm_256x128_16x3_tn_align4>	14
+f32-stock	qwen4exp	cutlass::Kernel2<cutlass_80_tensorop_s1688gemm_64x64_16x6_tn_align4>	518
+f32-stock	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	29298
+f32-stock	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)192, (bool)0, (bool)0>	4516
+f32-stock	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)256, (bool)0, (bool)0>	10140
+f32-stock	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)32, (bool)0, (bool)0>	5638
+f32-stock	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)96, (bool)0, (bool)0>	2258
+iq4_xs-fn-c4	flint	kcol::mul_mat_kcol<iq4_nl, (int)1, (int)1>	2282
+iq4_xs-fn-c4	flint	kcol::mul_mat_kcol<iq4_nl, (int)3, (int)1>	14
+iq4_xs-fn-c4	flint	kcol::mul_mat_kcol<iq4_nl, (int)4, (int)1>	1918
+iq4_xs-fn-c4	flint	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	1148
+iq4_xs-fn-c4	flint	mul_mat_vec_q<iq4_nl, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	1148
+iq4_xs-fn-c4	flint	mul_mat_vec_q_pascal<iq4_xs, (int)1, (int)1, (bool)0, (int)0, (int)16, (bool)0>	17080
+iq4_xs-fn-c4	flint	mul_mat_vec_q_pascal_mc<iq4_xs, (int)1, (int)1, (bool)0, (int)0, (bool)0, (int)16, (bool)0>	19320
+iq4_xs-fn-c4	qwen35	kcol::mul_mat_kcol<iq4_nl, (int)1, (int)1>	2234
+iq4_xs-fn-c4	qwen35	kcol::mul_mat_kcol<iq4_nl, (int)3, (int)1>	14
+iq4_xs-fn-c4	qwen35	kcol::mul_mat_kcol<iq4_nl, (int)4, (int)1>	1918
+iq4_xs-fn-c4	qwen35	mul_mat_vec_q_pascal<iq4_xs, (int)1, (int)1, (bool)0, (int)0, (int)16, (bool)0>	15582
+iq4_xs-fn-c4	qwen35	mul_mat_vec_q_pascal<iq4_xs, (int)1, (int)1, (bool)0, (int)1, (int)16, (bool)0>	1124
+iq4_xs-fn-c4	qwen35	mul_mat_vec_q_pascal_mc<iq4_xs, (int)1, (int)1, (bool)0, (int)0, (bool)0, (int)16, (bool)0>	21252
+iq4_xs-fn-c4	qwen35moe	kcol::mul_mat_kcol<iq4_nl, (int)1, (int)1>	2250
+iq4_xs-fn-c4	qwen35moe	kcol::mul_mat_kcol<iq4_nl, (int)3, (int)1>	14
+iq4_xs-fn-c4	qwen35moe	kcol::mul_mat_kcol<iq4_nl, (int)4, (int)1>	1918
+iq4_xs-fn-c4	qwen35moe	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4500
+iq4_xs-fn-c4	qwen35moe	mul_mat_vec_f<float, float, (int)3, (int)128, (bool)0, (bool)0>	28
+iq4_xs-fn-c4	qwen35moe	mul_mat_vec_f<float, float, (int)4, (int)128, (bool)0, (bool)0>	3836
+iq4_xs-fn-c4	qwen35moe	mul_mat_vec_q<iq4_nl, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	2250
+iq4_xs-fn-c4	qwen35moe	mul_mat_vec_q_moe<iq4_nl, (int)2, (bool)0, (bool)0>	1932
+iq4_xs-fn-c4	qwen35moe	mul_mat_vec_q_pascal<iq4_xs, (int)1, (int)1, (bool)0, (int)0, (int)16, (bool)0>	17944
+iq4_xs-fn-c4	qwen35moe	mul_mat_vec_q_pascal_mc<iq4_xs, (int)1, (int)1, (bool)0, (int)0, (bool)0, (int)16, (bool)0>	23184
+iq4_xs-fn-c4	qwen3next	kcol::mul_mat_kcol<iq4_nl, (int)1, (int)1>	2250
+iq4_xs-fn-c4	qwen3next	kcol::mul_mat_kcol<iq4_nl, (int)3, (int)1>	14
+iq4_xs-fn-c4	qwen3next	kcol::mul_mat_kcol<iq4_nl, (int)4, (int)1>	1918
+iq4_xs-fn-c4	qwen3next	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4500
+iq4_xs-fn-c4	qwen3next	mul_mat_vec_f<float, float, (int)3, (int)128, (bool)0, (bool)0>	28
+iq4_xs-fn-c4	qwen3next	mul_mat_vec_f<float, float, (int)4, (int)128, (bool)0, (bool)0>	3836
+iq4_xs-fn-c4	qwen3next	mul_mat_vec_q<iq4_nl, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	2250
+iq4_xs-fn-c4	qwen3next	mul_mat_vec_q_moe<iq4_nl, (int)2, (bool)0, (bool)0>	1932
+iq4_xs-fn-c4	qwen3next	mul_mat_vec_q_pascal<iq4_xs, (int)1, (int)1, (bool)0, (int)0, (int)16, (bool)0>	16826
+iq4_xs-fn-c4	qwen3next	mul_mat_vec_q_pascal_mc<iq4_xs, (int)1, (int)1, (bool)0, (int)0, (bool)0, (int)16, (bool)0>	21252
+iq4_xs-fn-c4	qwen4exp	kcol::mul_mat_kcol<iq4_nl, (int)1, (int)1>	2242
+iq4_xs-fn-c4	qwen4exp	kcol::mul_mat_kcol<iq4_nl, (int)3, (int)1>	14
+iq4_xs-fn-c4	qwen4exp	kcol::mul_mat_kcol<iq4_nl, (int)4, (int)1>	1918
+iq4_xs-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	6712
+iq4_xs-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)256, (bool)0, (bool)0>	10068
+iq4_xs-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)32, (bool)0, (bool)0>	5598
+iq4_xs-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)3, (int)128, (bool)0, (bool)0>	56
+iq4_xs-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)3, (int)256, (bool)0, (bool)0>	84
+iq4_xs-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)3, (int)32, (bool)0, (bool)0>	42
+iq4_xs-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)4, (int)128, (bool)0, (bool)0>	7672
+iq4_xs-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)4, (int)256, (bool)0, (bool)0>	11508
+iq4_xs-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)4, (int)32, (bool)0, (bool)0>	5754
+iq4_xs-fn-c4	qwen4exp	mul_mat_vec_q<iq4_nl, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	2242
+iq4_xs-fn-c4	qwen4exp	mul_mat_vec_q_moe<iq4_nl, (int)2, (bool)0, (bool)0>	1932
+iq4_xs-fn-c4	qwen4exp	mul_mat_vec_q_pascal<iq4_xs, (int)1, (int)1, (bool)0, (int)0, (int)16, (bool)0>	20108
+iq4_xs-fn-c4	qwen4exp	mul_mat_vec_q_pascal_mc<iq4_xs, (int)1, (int)1, (bool)0, (int)0, (bool)0, (int)16, (bool)0>	27048
+iq4_xs-fn	flint	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	154
+iq4_xs-fn	flint	kcol::mul_mat_kcol<iq4_nl, (int)1, (int)1>	2282
+iq4_xs-fn	flint	mul_mat_q<iq4_nl, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	14
+iq4_xs-fn	flint	mul_mat_q<iq4_xs, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	140
+iq4_xs-fn	flint	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	1148
+iq4_xs-fn	flint	mul_mat_vec_q<iq4_nl, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	1148
+iq4_xs-fn	flint	mul_mat_vec_q_pascal<iq4_xs, (int)1, (int)1, (bool)0, (int)0, (int)16, (bool)0>	17080
+iq4_xs-fn	qwen35	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+iq4_xs-fn	qwen35	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	140
+iq4_xs-fn	qwen35	kcol::mul_mat_kcol<iq4_nl, (int)1, (int)1>	2234
+iq4_xs-fn	qwen35	mul_mat_q<iq4_nl, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	14
+iq4_xs-fn	qwen35	mul_mat_q<iq4_xs, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	126
+iq4_xs-fn	qwen35	mul_mat_q<iq4_xs, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	28
+iq4_xs-fn	qwen35	mul_mat_vec_q_pascal<iq4_xs, (int)1, (int)1, (bool)0, (int)0, (int)16, (bool)0>	15582
+iq4_xs-fn	qwen35	mul_mat_vec_q_pascal<iq4_xs, (int)1, (int)1, (bool)0, (int)1, (int)16, (bool)0>	1124
+iq4_xs-fn	qwen35moe	ampere_sgemm_32x32_sliced1x4_tn	28
+iq4_xs-fn	qwen35moe	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+iq4_xs-fn	qwen35moe	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	196
+iq4_xs-fn	qwen35moe	kcol::mul_mat_kcol<iq4_nl, (int)1, (int)1>	2250
+iq4_xs-fn	qwen35moe	mul_mat_q<iq4_nl, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	28
+iq4_xs-fn	qwen35moe	mul_mat_q<iq4_xs, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	112
+iq4_xs-fn	qwen35moe	mul_mat_q<iq4_xs, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	56
+iq4_xs-fn	qwen35moe	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4528
+iq4_xs-fn	qwen35moe	mul_mat_vec_q<iq4_nl, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	2250
+iq4_xs-fn	qwen35moe	mul_mat_vec_q_pascal<iq4_xs, (int)1, (int)1, (bool)0, (int)0, (int)16, (bool)0>	17944
+iq4_xs-fn	qwen3next	ampere_sgemm_32x32_sliced1x4_tn	28
+iq4_xs-fn	qwen3next	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	14
+iq4_xs-fn	qwen3next	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	196
+iq4_xs-fn	qwen3next	kcol::mul_mat_kcol<iq4_nl, (int)1, (int)1>	2250
+iq4_xs-fn	qwen3next	mul_mat_q<iq4_nl, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	28
+iq4_xs-fn	qwen3next	mul_mat_q<iq4_xs, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	112
+iq4_xs-fn	qwen3next	mul_mat_q<iq4_xs, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	42
+iq4_xs-fn	qwen3next	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4528
+iq4_xs-fn	qwen3next	mul_mat_vec_q<iq4_nl, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	2250
+iq4_xs-fn	qwen3next	mul_mat_vec_q_pascal<iq4_xs, (int)1, (int)1, (bool)0, (int)0, (int)16, (bool)0>	16826
+iq4_xs-fn	qwen4exp	ampere_h1688gemm_128x128_ldg8_stages_32x1_tn	14
+iq4_xs-fn	qwen4exp	ampere_sgemm_32x128_tn	84
+iq4_xs-fn	qwen4exp	ampere_sgemm_32x32_sliced1x4_tn	126
+iq4_xs-fn	qwen4exp	cutlass::Kernel2<cutlass_80_tensorop_s1688gemm_256x128_16x3_tn_align4>	14
+iq4_xs-fn	qwen4exp	cutlass::Kernel2<cutlass_80_tensorop_s1688gemm_64x64_16x6_tn_align4>	112
+iq4_xs-fn	qwen4exp	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+iq4_xs-fn	qwen4exp	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	210
+iq4_xs-fn	qwen4exp	kcol::mul_mat_kcol<iq4_nl, (int)1, (int)1>	2242
+iq4_xs-fn	qwen4exp	mul_mat_q<iq4_nl, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	28
+iq4_xs-fn	qwen4exp	mul_mat_q<iq4_xs, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	140
+iq4_xs-fn	qwen4exp	mul_mat_q<iq4_xs, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	56
+iq4_xs-fn	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	6740
+iq4_xs-fn	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)256, (bool)0, (bool)0>	10068
+iq4_xs-fn	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)32, (bool)0, (bool)0>	5598
+iq4_xs-fn	qwen4exp	mul_mat_vec_q<iq4_nl, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	2242
+iq4_xs-fn	qwen4exp	mul_mat_vec_q_pascal<iq4_xs, (int)1, (int)1, (bool)0, (int)0, (int)16, (bool)0>	20108
+iq4_xs-p106-c4	flint	kcol::mul_mat_kcol<iq4_xs, (int)3, (int)1>	140
+iq4_xs-p106-c4	flint	kcol::mul_mat_kcol<iq4_xs, (int)4, (int)1>	19180
+iq4_xs-p106-c4	flint	kcol::mul_mat_kcol<iq4_nl, (int)1, (int)1>	2282
+iq4_xs-p106-c4	flint	kcol::mul_mat_kcol<iq4_nl, (int)3, (int)1>	14
+iq4_xs-p106-c4	flint	kcol::mul_mat_kcol<iq4_nl, (int)4, (int)1>	1918
+iq4_xs-p106-c4	flint	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	1148
+iq4_xs-p106-c4	flint	mul_mat_vec_q<iq4_nl, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	1148
+iq4_xs-p106-c4	flint	mul_mat_vec_q_pascal<iq4_xs, (int)1, (int)1, (bool)0, (int)0, (int)16, (bool)0>	17080
+iq4_xs-p106-c4	qwen35	kcol::mul_mat_kcol<iq4_xs, (int)3, (int)1>	154
+iq4_xs-p106-c4	qwen35	kcol::mul_mat_kcol<iq4_xs, (int)4, (int)1>	21098
+iq4_xs-p106-c4	qwen35	kcol::mul_mat_kcol<iq4_nl, (int)1, (int)1>	2234
+iq4_xs-p106-c4	qwen35	kcol::mul_mat_kcol<iq4_nl, (int)3, (int)1>	14
+iq4_xs-p106-c4	qwen35	kcol::mul_mat_kcol<iq4_nl, (int)4, (int)1>	1918
+iq4_xs-p106-c4	qwen35	mul_mat_vec_q_pascal<iq4_xs, (int)1, (int)1, (bool)0, (int)0, (int)16, (bool)0>	15582
+iq4_xs-p106-c4	qwen35	mul_mat_vec_q_pascal<iq4_xs, (int)1, (int)1, (bool)0, (int)1, (int)16, (bool)0>	1124
+iq4_xs-p106-c4	qwen35moe	kcol::mul_mat_kcol<iq4_xs, (int)3, (int)1>	154
+iq4_xs-p106-c4	qwen35moe	kcol::mul_mat_kcol<iq4_xs, (int)4, (int)1>	21098
+iq4_xs-p106-c4	qwen35moe	kcol::mul_mat_kcol<iq4_nl, (int)1, (int)1>	2250
+iq4_xs-p106-c4	qwen35moe	kcol::mul_mat_kcol<iq4_nl, (int)3, (int)1>	14
+iq4_xs-p106-c4	qwen35moe	kcol::mul_mat_kcol<iq4_nl, (int)4, (int)1>	1918
+iq4_xs-p106-c4	qwen35moe	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4500
+iq4_xs-p106-c4	qwen35moe	mul_mat_vec_f<float, float, (int)3, (int)128, (bool)0, (bool)0>	28
+iq4_xs-p106-c4	qwen35moe	mul_mat_vec_f<float, float, (int)4, (int)128, (bool)0, (bool)0>	3836
+iq4_xs-p106-c4	qwen35moe	mul_mat_vec_q<iq4_nl, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	2250
+iq4_xs-p106-c4	qwen35moe	mul_mat_vec_q_moe<iq4_nl, (int)2, (bool)0, (bool)0>	1932
+iq4_xs-p106-c4	qwen35moe	mul_mat_vec_q_pascal<iq4_xs, (int)1, (int)1, (bool)0, (int)0, (int)16, (bool)0>	17944
+iq4_xs-p106-c4	qwen35moe	mul_mat_vec_q_pascal_mc<iq4_xs, (int)1, (int)1, (bool)0, (int)0, (bool)0, (int)16, (bool)0>	1932
+iq4_xs-p106-c4	qwen3next	kcol::mul_mat_kcol<iq4_xs, (int)3, (int)1>	140
+iq4_xs-p106-c4	qwen3next	kcol::mul_mat_kcol<iq4_xs, (int)4, (int)1>	19180
+iq4_xs-p106-c4	qwen3next	kcol::mul_mat_kcol<iq4_nl, (int)1, (int)1>	2250
+iq4_xs-p106-c4	qwen3next	kcol::mul_mat_kcol<iq4_nl, (int)3, (int)1>	14
+iq4_xs-p106-c4	qwen3next	kcol::mul_mat_kcol<iq4_nl, (int)4, (int)1>	1918
+iq4_xs-p106-c4	qwen3next	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4500
+iq4_xs-p106-c4	qwen3next	mul_mat_vec_f<float, float, (int)3, (int)128, (bool)0, (bool)0>	28
+iq4_xs-p106-c4	qwen3next	mul_mat_vec_f<float, float, (int)4, (int)128, (bool)0, (bool)0>	3836
+iq4_xs-p106-c4	qwen3next	mul_mat_vec_q<iq4_nl, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	2250
+iq4_xs-p106-c4	qwen3next	mul_mat_vec_q_moe<iq4_nl, (int)2, (bool)0, (bool)0>	1932
+iq4_xs-p106-c4	qwen3next	mul_mat_vec_q_pascal<iq4_xs, (int)1, (int)1, (bool)0, (int)0, (int)16, (bool)0>	16826
+iq4_xs-p106-c4	qwen3next	mul_mat_vec_q_pascal_mc<iq4_xs, (int)1, (int)1, (bool)0, (int)0, (bool)0, (int)16, (bool)0>	1932
+iq4_xs-p106-c4	qwen4exp	kcol::mul_mat_kcol<iq4_xs, (int)3, (int)1>	182
+iq4_xs-p106-c4	qwen4exp	kcol::mul_mat_kcol<iq4_xs, (int)4, (int)1>	24934
+iq4_xs-p106-c4	qwen4exp	kcol::mul_mat_kcol<iq4_nl, (int)1, (int)1>	2242
+iq4_xs-p106-c4	qwen4exp	kcol::mul_mat_kcol<iq4_nl, (int)3, (int)1>	14
+iq4_xs-p106-c4	qwen4exp	kcol::mul_mat_kcol<iq4_nl, (int)4, (int)1>	1918
+iq4_xs-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	6712
+iq4_xs-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)256, (bool)0, (bool)0>	10068
+iq4_xs-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)32, (bool)0, (bool)0>	5598
+iq4_xs-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)3, (int)128, (bool)0, (bool)0>	56
+iq4_xs-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)3, (int)256, (bool)0, (bool)0>	84
+iq4_xs-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)3, (int)32, (bool)0, (bool)0>	42
+iq4_xs-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)4, (int)128, (bool)0, (bool)0>	7672
+iq4_xs-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)4, (int)256, (bool)0, (bool)0>	11508
+iq4_xs-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)4, (int)32, (bool)0, (bool)0>	5754
+iq4_xs-p106-c4	qwen4exp	mul_mat_vec_q<iq4_nl, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	2242
+iq4_xs-p106-c4	qwen4exp	mul_mat_vec_q_moe<iq4_nl, (int)2, (bool)0, (bool)0>	1932
+iq4_xs-p106-c4	qwen4exp	mul_mat_vec_q_pascal<iq4_xs, (int)1, (int)1, (bool)0, (int)0, (int)16, (bool)0>	20108
+iq4_xs-p106-c4	qwen4exp	mul_mat_vec_q_pascal_mc<iq4_xs, (int)1, (int)1, (bool)0, (int)0, (bool)0, (int)16, (bool)0>	1932
+iq4_xs-p106	flint	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	154
+iq4_xs-p106	flint	kcol::mul_mat_kcol<iq4_nl, (int)1, (int)1>	2282
+iq4_xs-p106	flint	mul_mat_q<iq4_nl, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	14
+iq4_xs-p106	flint	mul_mat_q<iq4_xs, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	140
+iq4_xs-p106	flint	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	1148
+iq4_xs-p106	flint	mul_mat_vec_q<iq4_nl, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	1148
+iq4_xs-p106	flint	mul_mat_vec_q_pascal<iq4_xs, (int)1, (int)1, (bool)0, (int)0, (int)16, (bool)0>	17080
+iq4_xs-p106	qwen35	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+iq4_xs-p106	qwen35	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	140
+iq4_xs-p106	qwen35	kcol::mul_mat_kcol<iq4_nl, (int)1, (int)1>	2234
+iq4_xs-p106	qwen35	mul_mat_q<iq4_nl, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	14
+iq4_xs-p106	qwen35	mul_mat_q<iq4_xs, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	126
+iq4_xs-p106	qwen35	mul_mat_q<iq4_xs, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	28
+iq4_xs-p106	qwen35	mul_mat_vec_q_pascal<iq4_xs, (int)1, (int)1, (bool)0, (int)0, (int)16, (bool)0>	15582
+iq4_xs-p106	qwen35	mul_mat_vec_q_pascal<iq4_xs, (int)1, (int)1, (bool)0, (int)1, (int)16, (bool)0>	1124
+iq4_xs-p106	qwen35moe	ampere_sgemm_32x32_sliced1x4_tn	28
+iq4_xs-p106	qwen35moe	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+iq4_xs-p106	qwen35moe	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	196
+iq4_xs-p106	qwen35moe	kcol::mul_mat_kcol<iq4_nl, (int)1, (int)1>	2250
+iq4_xs-p106	qwen35moe	mul_mat_q<iq4_nl, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	28
+iq4_xs-p106	qwen35moe	mul_mat_q<iq4_xs, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	112
+iq4_xs-p106	qwen35moe	mul_mat_q<iq4_xs, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	56
+iq4_xs-p106	qwen35moe	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4528
+iq4_xs-p106	qwen35moe	mul_mat_vec_q<iq4_nl, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	2250
+iq4_xs-p106	qwen35moe	mul_mat_vec_q_pascal<iq4_xs, (int)1, (int)1, (bool)0, (int)0, (int)16, (bool)0>	17944
+iq4_xs-p106	qwen3next	ampere_sgemm_32x32_sliced1x4_tn	28
+iq4_xs-p106	qwen3next	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	14
+iq4_xs-p106	qwen3next	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	196
+iq4_xs-p106	qwen3next	kcol::mul_mat_kcol<iq4_nl, (int)1, (int)1>	2250
+iq4_xs-p106	qwen3next	mul_mat_q<iq4_nl, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	28
+iq4_xs-p106	qwen3next	mul_mat_q<iq4_xs, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	112
+iq4_xs-p106	qwen3next	mul_mat_q<iq4_xs, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	42
+iq4_xs-p106	qwen3next	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4528
+iq4_xs-p106	qwen3next	mul_mat_vec_q<iq4_nl, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	2250
+iq4_xs-p106	qwen3next	mul_mat_vec_q_pascal<iq4_xs, (int)1, (int)1, (bool)0, (int)0, (int)16, (bool)0>	16826
+iq4_xs-p106	qwen4exp	ampere_h1688gemm_128x128_ldg8_stages_32x1_tn	14
+iq4_xs-p106	qwen4exp	ampere_sgemm_32x128_tn	84
+iq4_xs-p106	qwen4exp	ampere_sgemm_32x32_sliced1x4_tn	126
+iq4_xs-p106	qwen4exp	cutlass::Kernel2<cutlass_80_tensorop_s1688gemm_256x128_16x3_tn_align4>	14
+iq4_xs-p106	qwen4exp	cutlass::Kernel2<cutlass_80_tensorop_s1688gemm_64x64_16x6_tn_align4>	112
+iq4_xs-p106	qwen4exp	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+iq4_xs-p106	qwen4exp	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	210
+iq4_xs-p106	qwen4exp	kcol::mul_mat_kcol<iq4_nl, (int)1, (int)1>	2242
+iq4_xs-p106	qwen4exp	mul_mat_q<iq4_nl, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	28
+iq4_xs-p106	qwen4exp	mul_mat_q<iq4_xs, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	140
+iq4_xs-p106	qwen4exp	mul_mat_q<iq4_xs, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	56
+iq4_xs-p106	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	6740
+iq4_xs-p106	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)256, (bool)0, (bool)0>	10068
+iq4_xs-p106	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)32, (bool)0, (bool)0>	5598
+iq4_xs-p106	qwen4exp	mul_mat_vec_q<iq4_nl, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	2242
+iq4_xs-p106	qwen4exp	mul_mat_vec_q_pascal<iq4_xs, (int)1, (int)1, (bool)0, (int)0, (int)16, (bool)0>	20108
+iq4_xs-stock	flint	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	154
+iq4_xs-stock	flint	mul_mat_q<iq4_nl, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	14
+iq4_xs-stock	flint	mul_mat_q<iq4_xs, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	140
+iq4_xs-stock	flint	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	1148
+iq4_xs-stock	flint	mul_mat_vec_q<iq4_nl, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	3430
+iq4_xs-stock	flint	mul_mat_vec_q<iq4_xs, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	17080
+iq4_xs-stock	qwen35	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+iq4_xs-stock	qwen35	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	140
+iq4_xs-stock	qwen35	mul_mat_q<iq4_nl, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	14
+iq4_xs-stock	qwen35	mul_mat_q<iq4_xs, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	126
+iq4_xs-stock	qwen35	mul_mat_q<iq4_xs, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	28
+iq4_xs-stock	qwen35	mul_mat_vec_q<iq4_nl, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	2234
+iq4_xs-stock	qwen35	mul_mat_vec_q<iq4_xs, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	15582
+iq4_xs-stock	qwen35	mul_mat_vec_q<iq4_xs, (int)1, (bool)1, (bool)1, (bool)0, (bool)0>	1124
+iq4_xs-stock	qwen35moe	ampere_sgemm_32x32_sliced1x4_tn	28
+iq4_xs-stock	qwen35moe	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+iq4_xs-stock	qwen35moe	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	196
+iq4_xs-stock	qwen35moe	mul_mat_q<iq4_nl, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	28
+iq4_xs-stock	qwen35moe	mul_mat_q<iq4_xs, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	112
+iq4_xs-stock	qwen35moe	mul_mat_q<iq4_xs, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	56
+iq4_xs-stock	qwen35moe	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4528
+iq4_xs-stock	qwen35moe	mul_mat_vec_q<iq4_nl, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	4500
+iq4_xs-stock	qwen35moe	mul_mat_vec_q<iq4_xs, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	17944
+iq4_xs-stock	qwen3next	ampere_sgemm_32x32_sliced1x4_tn	28
+iq4_xs-stock	qwen3next	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	14
+iq4_xs-stock	qwen3next	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	196
+iq4_xs-stock	qwen3next	mul_mat_q<iq4_nl, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	28
+iq4_xs-stock	qwen3next	mul_mat_q<iq4_xs, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	112
+iq4_xs-stock	qwen3next	mul_mat_q<iq4_xs, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	42
+iq4_xs-stock	qwen3next	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4528
+iq4_xs-stock	qwen3next	mul_mat_vec_q<iq4_nl, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	4500
+iq4_xs-stock	qwen3next	mul_mat_vec_q<iq4_xs, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	16826
+iq4_xs-stock	qwen4exp	ampere_h1688gemm_128x128_ldg8_stages_32x1_tn	14
+iq4_xs-stock	qwen4exp	ampere_sgemm_32x128_tn	84
+iq4_xs-stock	qwen4exp	ampere_sgemm_32x32_sliced1x4_tn	126
+iq4_xs-stock	qwen4exp	cutlass::Kernel2<cutlass_80_tensorop_s1688gemm_256x128_16x3_tn_align4>	14
+iq4_xs-stock	qwen4exp	cutlass::Kernel2<cutlass_80_tensorop_s1688gemm_64x64_16x6_tn_align4>	112
+iq4_xs-stock	qwen4exp	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+iq4_xs-stock	qwen4exp	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	210
+iq4_xs-stock	qwen4exp	mul_mat_q<iq4_nl, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	28
+iq4_xs-stock	qwen4exp	mul_mat_q<iq4_xs, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	140
+iq4_xs-stock	qwen4exp	mul_mat_q<iq4_xs, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	56
+iq4_xs-stock	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	6740
+iq4_xs-stock	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)256, (bool)0, (bool)0>	10068
+iq4_xs-stock	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)32, (bool)0, (bool)0>	5598
+iq4_xs-stock	qwen4exp	mul_mat_vec_q<iq4_nl, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	4484
+iq4_xs-stock	qwen4exp	mul_mat_vec_q<iq4_xs, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	20108
+mix-fn-c4	flint	kcol::mul_mat_kcol<iq4_nl, (int)1, (int)1>	1164
+mix-fn-c4	flint	kcol::mul_mat_kcol<iq4_nl, (int)3, (int)1>	14
+mix-fn-c4	flint	kcol::mul_mat_kcol<iq4_nl, (int)4, (int)1>	1918
+mix-fn-c4	flint	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	1178
+mix-fn-c4	flint	mul_mat_vec_q5_K_pascal_mt<(int)3, (int)1, (bool)0>	112
+mix-fn-c4	flint	mul_mat_vec_q5_K_pascal_mt<(int)4, (int)1, (bool)0>	15344
+mix-fn-c4	flint	mul_mat_vec_q<q6_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	1178
+mix-fn-c4	flint	mul_mat_vec_q_pascal<q4_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	2356
+mix-fn-c4	flint	mul_mat_vec_q_pascal<q5_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	9312
+mix-fn-c4	flint	mul_mat_vec_q_pascal<iq4_xs, (int)1, (int)1, (bool)0, (int)0, (int)16, (bool)0>	2328
+mix-fn-c4	flint	mul_mat_vec_q_pascal<q2_0, (int)1, (int)2, (bool)1, (int)0, (int)16, (bool)1>	3534
+mix-fn-c4	flint	mul_mat_vec_q_pascal<q5_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	1178
+mix-fn-c4	flint	mul_mat_vec_q_pascal_mc<iq4_xs, (int)1, (int)1, (bool)0, (int)0, (bool)0, (int)16, (bool)0>	3864
+mix-fn-c4	qwen35	kcol::mul_mat_kcol<iq4_nl, (int)1, (int)1>	2226
+mix-fn-c4	qwen35	kcol::mul_mat_kcol<iq4_nl, (int)3, (int)1>	14
+mix-fn-c4	qwen35	kcol::mul_mat_kcol<iq4_nl, (int)4, (int)1>	1918
+mix-fn-c4	qwen35	mul_mat_vec_q5_K_pascal_mt<(int)3, (int)1, (bool)0>	84
+mix-fn-c4	qwen35	mul_mat_vec_q5_K_pascal_mt<(int)4, (int)1, (bool)0>	11508
+mix-fn-c4	qwen35	mul_mat_vec_q<q6_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	1120
+mix-fn-c4	qwen35	mul_mat_vec_q_pascal<q5_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	6636
+mix-fn-c4	qwen35	mul_mat_vec_q_pascal<iq4_xs, (int)1, (int)1, (bool)0, (int)0, (int)16, (bool)0>	7770
+mix-fn-c4	qwen35	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)1, (int)1, (int)16, (bool)0>	1120
+mix-fn-c4	qwen35	mul_mat_vec_q_pascal_mc<iq4_xs, (int)1, (int)1, (bool)0, (int)0, (bool)0, (int)16, (bool)0>	9660
+mix-fn-c4	qwen35moe	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4500
+mix-fn-c4	qwen35moe	mul_mat_vec_f<float, float, (int)3, (int)128, (bool)0, (bool)0>	28
+mix-fn-c4	qwen35moe	mul_mat_vec_f<float, float, (int)4, (int)128, (bool)0, (bool)0>	3836
+mix-fn-c4	qwen35moe	mul_mat_vec_q2_0_pascal_mtok<(bool)0, (int)1, (int)4>	3864
+mix-fn-c4	qwen35moe	mul_mat_vec_q5_K_pascal_mt<(int)3, (int)1, (bool)0>	84
+mix-fn-c4	qwen35moe	mul_mat_vec_q5_K_pascal_mt<(int)4, (int)1, (bool)0>	11508
+mix-fn-c4	qwen35moe	mul_mat_vec_q<q6_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	1132
+mix-fn-c4	qwen35moe	mul_mat_vec_q_pascal<q4_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	4500
+mix-fn-c4	qwen35moe	mul_mat_vec_q_pascal<q5_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	6708
+mix-fn-c4	qwen35moe	mul_mat_vec_q_pascal<iq4_xs, (int)1, (int)1, (bool)0, (int)0, (int)16, (bool)0>	3354
+mix-fn-c4	qwen35moe	mul_mat_vec_q_pascal<q2_0, (int)1, (int)2, (bool)1, (int)0, (int)16, (bool)1>	4500
+mix-fn-c4	qwen35moe	mul_mat_vec_q_pascal<q5_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	2250
+mix-fn-c4	qwen35moe	mul_mat_vec_q_pascal_dmt<q4_K, (int)3, (int)1, (bool)1>	28
+mix-fn-c4	qwen35moe	mul_mat_vec_q_pascal_dmt<q4_K, (int)4, (int)1, (bool)1>	3836
+mix-fn-c4	qwen35moe	mul_mat_vec_q_pascal_mc<iq4_xs, (int)1, (int)1, (bool)0, (int)0, (bool)0, (int)16, (bool)0>	5796
+mix-fn-c4	qwen35moe	mul_mat_vec_q_pascal_mc<q5_0, (int)2, (int)2, (bool)0, (int)0, (bool)0, (int)16, (bool)0>	1932
+mix-fn-c4	qwen3next	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4500
+mix-fn-c4	qwen3next	mul_mat_vec_f<float, float, (int)3, (int)128, (bool)0, (bool)0>	28
+mix-fn-c4	qwen3next	mul_mat_vec_f<float, float, (int)4, (int)128, (bool)0, (bool)0>	3836
+mix-fn-c4	qwen3next	mul_mat_vec_q2_0_pascal_mtok<(bool)0, (int)1, (int)4>	3864
+mix-fn-c4	qwen3next	mul_mat_vec_q5_K_pascal_mt<(int)3, (int)1, (bool)0>	84
+mix-fn-c4	qwen3next	mul_mat_vec_q5_K_pascal_mt<(int)4, (int)1, (bool)0>	11508
+mix-fn-c4	qwen3next	mul_mat_vec_q<q6_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	1132
+mix-fn-c4	qwen3next	mul_mat_vec_q_pascal<q4_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	4500
+mix-fn-c4	qwen3next	mul_mat_vec_q_pascal<q5_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	6708
+mix-fn-c4	qwen3next	mul_mat_vec_q_pascal<iq4_xs, (int)1, (int)1, (bool)0, (int)0, (int)16, (bool)0>	2236
+mix-fn-c4	qwen3next	mul_mat_vec_q_pascal<q2_0, (int)1, (int)2, (bool)1, (int)0, (int)16, (bool)1>	4500
+mix-fn-c4	qwen3next	mul_mat_vec_q_pascal<q5_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	2250
+mix-fn-c4	qwen3next	mul_mat_vec_q_pascal_dmt<q4_K, (int)3, (int)1, (bool)1>	28
+mix-fn-c4	qwen3next	mul_mat_vec_q_pascal_dmt<q4_K, (int)4, (int)1, (bool)1>	3836
+mix-fn-c4	qwen3next	mul_mat_vec_q_pascal_mc<iq4_xs, (int)1, (int)1, (bool)0, (int)0, (bool)0, (int)16, (bool)0>	3864
+mix-fn-c4	qwen3next	mul_mat_vec_q_pascal_mc<q5_0, (int)2, (int)2, (bool)0, (int)0, (bool)0, (int)16, (bool)0>	1932
+mix-fn-c4	qwen4exp	kcol::mul_mat_kcol<q8_0, (int)3, (int)1>	14
+mix-fn-c4	qwen4exp	kcol::mul_mat_kcol<q8_0, (int)3, (int)2>	14
+mix-fn-c4	qwen4exp	kcol::mul_mat_kcol<q8_0, (int)4, (int)1>	1918
+mix-fn-c4	qwen4exp	kcol::mul_mat_kcol<q8_0, (int)4, (int)2>	1918
+mix-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	6736
+mix-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)256, (bool)0, (bool)0>	10104
+mix-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)32, (bool)0, (bool)0>	5618
+mix-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)3, (int)128, (bool)0, (bool)0>	56
+mix-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)3, (int)256, (bool)0, (bool)0>	84
+mix-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)3, (int)32, (bool)0, (bool)0>	42
+mix-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)4, (int)128, (bool)0, (bool)0>	7672
+mix-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)4, (int)256, (bool)0, (bool)0>	11508
+mix-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)4, (int)32, (bool)0, (bool)0>	5754
+mix-fn-c4	qwen4exp	mul_mat_vec_q2_0_pascal_mtok<(bool)0, (int)1, (int)4>	3864
+mix-fn-c4	qwen4exp	mul_mat_vec_q5_K_pascal_mt<(int)3, (int)1, (bool)0>	84
+mix-fn-c4	qwen4exp	mul_mat_vec_q5_K_pascal_mt<(int)4, (int)1, (bool)0>	11508
+mix-fn-c4	qwen4exp	mul_mat_vec_q<q6_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	1132
+mix-fn-c4	qwen4exp	mul_mat_vec_q_pascal<q4_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	4500
+mix-fn-c4	qwen4exp	mul_mat_vec_q_pascal<q5_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	6708
+mix-fn-c4	qwen4exp	mul_mat_vec_q_pascal<iq4_xs, (int)1, (int)1, (bool)0, (int)0, (int)16, (bool)0>	3354
+mix-fn-c4	qwen4exp	mul_mat_vec_q_pascal<q2_0, (int)1, (int)2, (bool)1, (int)0, (int)16, (bool)1>	4500
+mix-fn-c4	qwen4exp	mul_mat_vec_q_pascal<q5_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	2250
+mix-fn-c4	qwen4exp	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)1, (int)0, (int)16, (bool)0>	2236
+mix-fn-c4	qwen4exp	mul_mat_vec_q_pascal_dmt<q4_K, (int)3, (int)1, (bool)1>	28
+mix-fn-c4	qwen4exp	mul_mat_vec_q_pascal_dmt<q4_K, (int)4, (int)1, (bool)1>	3836
+mix-fn-c4	qwen4exp	mul_mat_vec_q_pascal_mc<iq4_xs, (int)1, (int)1, (bool)0, (int)0, (bool)0, (int)16, (bool)0>	5796
+mix-fn-c4	qwen4exp	mul_mat_vec_q_pascal_mc<q5_0, (int)2, (int)2, (bool)0, (int)0, (bool)0, (int)16, (bool)0>	1932
+mix-fn	flint	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	154
+mix-fn	flint	kcol::mul_mat_kcol<iq4_nl, (int)1, (int)1>	1164
+mix-fn	flint	mul_mat_q<q5_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	112
+mix-fn	flint	mul_mat_q<iq4_nl, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	14
+mix-fn	flint	mul_mat_q<iq4_xs, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	28
+mix-fn	flint	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	1178
+mix-fn	flint	mul_mat_vec_q<q6_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	1178
+mix-fn	flint	mul_mat_vec_q_pascal<q4_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	2356
+mix-fn	flint	mul_mat_vec_q_pascal<q5_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	9312
+mix-fn	flint	mul_mat_vec_q_pascal<iq4_xs, (int)1, (int)1, (bool)0, (int)0, (int)16, (bool)0>	2328
+mix-fn	flint	mul_mat_vec_q_pascal<q2_0, (int)1, (int)2, (bool)1, (int)0, (int)16, (bool)1>	3534
+mix-fn	flint	mul_mat_vec_q_pascal<q5_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	1178
+mix-fn	qwen35	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+mix-fn	qwen35	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	140
+mix-fn	qwen35	kcol::mul_mat_kcol<iq4_nl, (int)1, (int)1>	2226
+mix-fn	qwen35	mul_mat_q<q5_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	84
+mix-fn	qwen35	mul_mat_q<iq4_nl, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	14
+mix-fn	qwen35	mul_mat_q<iq4_xs, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	42
+mix-fn	qwen35	mul_mat_q<iq4_xs, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	28
+mix-fn	qwen35	mul_mat_vec_q<q6_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	1120
+mix-fn	qwen35	mul_mat_vec_q_pascal<q5_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	6636
+mix-fn	qwen35	mul_mat_vec_q_pascal<iq4_xs, (int)1, (int)1, (bool)0, (int)0, (int)16, (bool)0>	7770
+mix-fn	qwen35	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)1, (int)1, (int)16, (bool)0>	1120
+mix-fn	qwen35moe	ampere_sgemm_32x32_sliced1x4_tn	28
+mix-fn	qwen35moe	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+mix-fn	qwen35moe	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	196
+mix-fn	qwen35moe	mul_mat_q<q4_K, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	28
+mix-fn	qwen35moe	mul_mat_q<q5_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	84
+mix-fn	qwen35moe	mul_mat_q<iq4_xs, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	14
+mix-fn	qwen35moe	mul_mat_q<iq4_xs, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	28
+mix-fn	qwen35moe	mul_mat_q<q2_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	28
+mix-fn	qwen35moe	mul_mat_q<q5_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	14
+mix-fn	qwen35moe	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4528
+mix-fn	qwen35moe	mul_mat_vec_q<q6_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	1132
+mix-fn	qwen35moe	mul_mat_vec_q_pascal<q4_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	4500
+mix-fn	qwen35moe	mul_mat_vec_q_pascal<q5_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	6708
+mix-fn	qwen35moe	mul_mat_vec_q_pascal<iq4_xs, (int)1, (int)1, (bool)0, (int)0, (int)16, (bool)0>	3354
+mix-fn	qwen35moe	mul_mat_vec_q_pascal<q2_0, (int)1, (int)2, (bool)1, (int)0, (int)16, (bool)1>	4500
+mix-fn	qwen35moe	mul_mat_vec_q_pascal<q5_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	2250
+mix-fn	qwen3next	ampere_sgemm_32x32_sliced1x4_tn	28
+mix-fn	qwen3next	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	14
+mix-fn	qwen3next	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	196
+mix-fn	qwen3next	mul_mat_q<q4_K, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	28
+mix-fn	qwen3next	mul_mat_q<q5_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	84
+mix-fn	qwen3next	mul_mat_q<iq4_xs, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	14
+mix-fn	qwen3next	mul_mat_q<iq4_xs, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	14
+mix-fn	qwen3next	mul_mat_q<q2_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	28
+mix-fn	qwen3next	mul_mat_q<q5_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	14
+mix-fn	qwen3next	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4528
+mix-fn	qwen3next	mul_mat_vec_q<q6_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	1132
+mix-fn	qwen3next	mul_mat_vec_q_pascal<q4_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	4500
+mix-fn	qwen3next	mul_mat_vec_q_pascal<q5_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	6708
+mix-fn	qwen3next	mul_mat_vec_q_pascal<iq4_xs, (int)1, (int)1, (bool)0, (int)0, (int)16, (bool)0>	2236
+mix-fn	qwen3next	mul_mat_vec_q_pascal<q2_0, (int)1, (int)2, (bool)1, (int)0, (int)16, (bool)1>	4500
+mix-fn	qwen3next	mul_mat_vec_q_pascal<q5_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	2250
+mix-fn	qwen4exp	ampere_h1688gemm_128x128_ldg8_stages_32x1_tn	14
+mix-fn	qwen4exp	ampere_sgemm_32x128_tn	84
+mix-fn	qwen4exp	ampere_sgemm_32x32_sliced1x4_tn	126
+mix-fn	qwen4exp	cutlass::Kernel2<cutlass_80_tensorop_s1688gemm_256x128_16x3_tn_align4>	14
+mix-fn	qwen4exp	cutlass::Kernel2<cutlass_80_tensorop_s1688gemm_64x64_16x6_tn_align4>	112
+mix-fn	qwen4exp	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+mix-fn	qwen4exp	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	210
+mix-fn	qwen4exp	mul_mat_q<q4_K, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	28
+mix-fn	qwen4exp	mul_mat_q<q5_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	84
+mix-fn	qwen4exp	mul_mat_q<iq4_xs, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	14
+mix-fn	qwen4exp	mul_mat_q<iq4_xs, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	28
+mix-fn	qwen4exp	mul_mat_q<q2_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	28
+mix-fn	qwen4exp	mul_mat_q<q5_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	14
+mix-fn	qwen4exp	mul_mat_q<q8_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	28
+mix-fn	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	6764
+mix-fn	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)256, (bool)0, (bool)0>	10104
+mix-fn	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)32, (bool)0, (bool)0>	5618
+mix-fn	qwen4exp	mul_mat_vec_q<q6_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	1132
+mix-fn	qwen4exp	mul_mat_vec_q_pascal<q4_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	4500
+mix-fn	qwen4exp	mul_mat_vec_q_pascal<q5_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	6708
+mix-fn	qwen4exp	mul_mat_vec_q_pascal<iq4_xs, (int)1, (int)1, (bool)0, (int)0, (int)16, (bool)0>	3354
+mix-fn	qwen4exp	mul_mat_vec_q_pascal<q2_0, (int)1, (int)2, (bool)1, (int)0, (int)16, (bool)1>	4500
+mix-fn	qwen4exp	mul_mat_vec_q_pascal<q5_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	2250
+mix-fn	qwen4exp	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)1, (int)0, (int)16, (bool)0>	2236
+mix-p106-c4	flint	kcol::mul_mat_kcol<q5_K, (int)4, (int)1>	15344
+mix-p106-c4	flint	kcol::mul_mat_kcol<iq4_xs, (int)3, (int)1>	28
+mix-p106-c4	flint	kcol::mul_mat_kcol<iq4_xs, (int)4, (int)1>	3836
+mix-p106-c4	flint	kcol::mul_mat_kcol<iq4_nl, (int)1, (int)1>	1164
+mix-p106-c4	flint	kcol::mul_mat_kcol<iq4_nl, (int)3, (int)1>	14
+mix-p106-c4	flint	kcol::mul_mat_kcol<iq4_nl, (int)4, (int)1>	1918
+mix-p106-c4	flint	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	1178
+mix-p106-c4	flint	mul_mat_vec_q<q6_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	1178
+mix-p106-c4	flint	mul_mat_vec_q_pascal<q4_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	2356
+mix-p106-c4	flint	mul_mat_vec_q_pascal<q5_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	9312
+mix-p106-c4	flint	mul_mat_vec_q_pascal<iq4_xs, (int)1, (int)1, (bool)0, (int)0, (int)16, (bool)0>	2328
+mix-p106-c4	flint	mul_mat_vec_q_pascal<q2_0, (int)1, (int)2, (bool)1, (int)0, (int)16, (bool)1>	3534
+mix-p106-c4	flint	mul_mat_vec_q_pascal<q5_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	1178
+mix-p106-c4	flint	mul_mat_vec_q_pascal_mc<q5_K, (int)1, (int)1, (bool)1, (int)0, (bool)0, (int)16, (bool)0>	112
+mix-p106-c4	qwen35	kcol::mul_mat_kcol<q5_K, (int)4, (int)1>	11508
+mix-p106-c4	qwen35	kcol::mul_mat_kcol<iq4_xs, (int)3, (int)1>	70
+mix-p106-c4	qwen35	kcol::mul_mat_kcol<iq4_xs, (int)4, (int)1>	9590
+mix-p106-c4	qwen35	kcol::mul_mat_kcol<iq4_nl, (int)1, (int)1>	2226
+mix-p106-c4	qwen35	kcol::mul_mat_kcol<iq4_nl, (int)3, (int)1>	14
+mix-p106-c4	qwen35	kcol::mul_mat_kcol<iq4_nl, (int)4, (int)1>	1918
+mix-p106-c4	qwen35	mul_mat_vec_q<q6_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	1120
+mix-p106-c4	qwen35	mul_mat_vec_q_pascal<q5_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	6636
+mix-p106-c4	qwen35	mul_mat_vec_q_pascal<iq4_xs, (int)1, (int)1, (bool)0, (int)0, (int)16, (bool)0>	7770
+mix-p106-c4	qwen35	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)1, (int)1, (int)16, (bool)0>	1120
+mix-p106-c4	qwen35	mul_mat_vec_q_pascal_mc<q5_K, (int)1, (int)1, (bool)1, (int)0, (bool)0, (int)16, (bool)0>	84
+mix-p106-c4	qwen35moe	kcol::mul_mat_kcol<q4_K, (int)3, (int)1>	28
+mix-p106-c4	qwen35moe	kcol::mul_mat_kcol<q4_K, (int)4, (int)1>	3836
+mix-p106-c4	qwen35moe	kcol::mul_mat_kcol<q5_K, (int)4, (int)1>	11508
+mix-p106-c4	qwen35moe	kcol::mul_mat_kcol<iq4_xs, (int)3, (int)1>	42
+mix-p106-c4	qwen35moe	kcol::mul_mat_kcol<iq4_xs, (int)4, (int)1>	5754
+mix-p106-c4	qwen35moe	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4500
+mix-p106-c4	qwen35moe	mul_mat_vec_f<float, float, (int)3, (int)128, (bool)0, (bool)0>	28
+mix-p106-c4	qwen35moe	mul_mat_vec_f<float, float, (int)4, (int)128, (bool)0, (bool)0>	3836
+mix-p106-c4	qwen35moe	mul_mat_vec_q2_0_pascal_mtok<(bool)0, (int)1, (int)4>	3864
+mix-p106-c4	qwen35moe	mul_mat_vec_q<q6_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	1132
+mix-p106-c4	qwen35moe	mul_mat_vec_q_pascal<q4_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	4500
+mix-p106-c4	qwen35moe	mul_mat_vec_q_pascal<q5_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	6708
+mix-p106-c4	qwen35moe	mul_mat_vec_q_pascal<iq4_xs, (int)1, (int)1, (bool)0, (int)0, (int)16, (bool)0>	3354
+mix-p106-c4	qwen35moe	mul_mat_vec_q_pascal<q2_0, (int)1, (int)2, (bool)1, (int)0, (int)16, (bool)1>	4500
+mix-p106-c4	qwen35moe	mul_mat_vec_q_pascal<q5_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	2250
+mix-p106-c4	qwen35moe	mul_mat_vec_q_pascal_mc<q5_K, (int)1, (int)1, (bool)1, (int)0, (bool)0, (int)16, (bool)0>	84
+mix-p106-c4	qwen35moe	mul_mat_vec_q_pascal_mc<q5_0, (int)2, (int)2, (bool)0, (int)0, (bool)0, (int)16, (bool)0>	1932
+mix-p106-c4	qwen3next	kcol::mul_mat_kcol<q4_K, (int)3, (int)1>	28
+mix-p106-c4	qwen3next	kcol::mul_mat_kcol<q4_K, (int)4, (int)1>	3836
+mix-p106-c4	qwen3next	kcol::mul_mat_kcol<q5_K, (int)4, (int)1>	11508
+mix-p106-c4	qwen3next	kcol::mul_mat_kcol<iq4_xs, (int)3, (int)1>	28
+mix-p106-c4	qwen3next	kcol::mul_mat_kcol<iq4_xs, (int)4, (int)1>	3836
+mix-p106-c4	qwen3next	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4500
+mix-p106-c4	qwen3next	mul_mat_vec_f<float, float, (int)3, (int)128, (bool)0, (bool)0>	28
+mix-p106-c4	qwen3next	mul_mat_vec_f<float, float, (int)4, (int)128, (bool)0, (bool)0>	3836
+mix-p106-c4	qwen3next	mul_mat_vec_q2_0_pascal_mtok<(bool)0, (int)1, (int)4>	3864
+mix-p106-c4	qwen3next	mul_mat_vec_q<q6_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	1132
+mix-p106-c4	qwen3next	mul_mat_vec_q_pascal<q4_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	4500
+mix-p106-c4	qwen3next	mul_mat_vec_q_pascal<q5_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	6708
+mix-p106-c4	qwen3next	mul_mat_vec_q_pascal<iq4_xs, (int)1, (int)1, (bool)0, (int)0, (int)16, (bool)0>	2236
+mix-p106-c4	qwen3next	mul_mat_vec_q_pascal<q2_0, (int)1, (int)2, (bool)1, (int)0, (int)16, (bool)1>	4500
+mix-p106-c4	qwen3next	mul_mat_vec_q_pascal<q5_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	2250
+mix-p106-c4	qwen3next	mul_mat_vec_q_pascal_mc<q5_K, (int)1, (int)1, (bool)1, (int)0, (bool)0, (int)16, (bool)0>	84
+mix-p106-c4	qwen3next	mul_mat_vec_q_pascal_mc<q5_0, (int)2, (int)2, (bool)0, (int)0, (bool)0, (int)16, (bool)0>	1932
+mix-p106-c4	qwen4exp	kcol::mul_mat_kcol<q8_0, (int)3, (int)1>	28
+mix-p106-c4	qwen4exp	kcol::mul_mat_kcol<q8_0, (int)4, (int)1>	3836
+mix-p106-c4	qwen4exp	kcol::mul_mat_kcol<q4_K, (int)3, (int)1>	28
+mix-p106-c4	qwen4exp	kcol::mul_mat_kcol<q4_K, (int)4, (int)1>	3836
+mix-p106-c4	qwen4exp	kcol::mul_mat_kcol<q5_K, (int)4, (int)1>	11508
+mix-p106-c4	qwen4exp	kcol::mul_mat_kcol<iq4_xs, (int)3, (int)1>	42
+mix-p106-c4	qwen4exp	kcol::mul_mat_kcol<iq4_xs, (int)4, (int)1>	5754
+mix-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	6736
+mix-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)256, (bool)0, (bool)0>	10104
+mix-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)32, (bool)0, (bool)0>	5618
+mix-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)3, (int)128, (bool)0, (bool)0>	56
+mix-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)3, (int)256, (bool)0, (bool)0>	84
+mix-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)3, (int)32, (bool)0, (bool)0>	42
+mix-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)4, (int)128, (bool)0, (bool)0>	7672
+mix-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)4, (int)256, (bool)0, (bool)0>	11508
+mix-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)4, (int)32, (bool)0, (bool)0>	5754
+mix-p106-c4	qwen4exp	mul_mat_vec_q2_0_pascal_mtok<(bool)0, (int)1, (int)4>	3864
+mix-p106-c4	qwen4exp	mul_mat_vec_q<q6_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	1132
+mix-p106-c4	qwen4exp	mul_mat_vec_q_pascal<q4_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	4500
+mix-p106-c4	qwen4exp	mul_mat_vec_q_pascal<q5_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	6708
+mix-p106-c4	qwen4exp	mul_mat_vec_q_pascal<iq4_xs, (int)1, (int)1, (bool)0, (int)0, (int)16, (bool)0>	3354
+mix-p106-c4	qwen4exp	mul_mat_vec_q_pascal<q2_0, (int)1, (int)2, (bool)1, (int)0, (int)16, (bool)1>	4500
+mix-p106-c4	qwen4exp	mul_mat_vec_q_pascal<q5_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	2250
+mix-p106-c4	qwen4exp	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)1, (int)0, (int)16, (bool)0>	2236
+mix-p106-c4	qwen4exp	mul_mat_vec_q_pascal_mc<q5_K, (int)1, (int)1, (bool)1, (int)0, (bool)0, (int)16, (bool)0>	84
+mix-p106-c4	qwen4exp	mul_mat_vec_q_pascal_mc<q5_0, (int)2, (int)2, (bool)0, (int)0, (bool)0, (int)16, (bool)0>	1932
+mix-p106	flint	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	154
+mix-p106	flint	kcol::mul_mat_kcol<iq4_nl, (int)1, (int)1>	1164
+mix-p106	flint	mul_mat_q<q5_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	112
+mix-p106	flint	mul_mat_q<iq4_nl, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	14
+mix-p106	flint	mul_mat_q<iq4_xs, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	28
+mix-p106	flint	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	1178
+mix-p106	flint	mul_mat_vec_q<q6_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	1178
+mix-p106	flint	mul_mat_vec_q_pascal<q4_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	2356
+mix-p106	flint	mul_mat_vec_q_pascal<q5_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	9312
+mix-p106	flint	mul_mat_vec_q_pascal<iq4_xs, (int)1, (int)1, (bool)0, (int)0, (int)16, (bool)0>	2328
+mix-p106	flint	mul_mat_vec_q_pascal<q2_0, (int)1, (int)2, (bool)1, (int)0, (int)16, (bool)1>	3534
+mix-p106	flint	mul_mat_vec_q_pascal<q5_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	1178
+mix-p106	qwen35	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+mix-p106	qwen35	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	140
+mix-p106	qwen35	kcol::mul_mat_kcol<iq4_nl, (int)1, (int)1>	2226
+mix-p106	qwen35	mul_mat_q<q5_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	84
+mix-p106	qwen35	mul_mat_q<iq4_nl, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	14
+mix-p106	qwen35	mul_mat_q<iq4_xs, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	42
+mix-p106	qwen35	mul_mat_q<iq4_xs, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	28
+mix-p106	qwen35	mul_mat_vec_q<q6_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	1120
+mix-p106	qwen35	mul_mat_vec_q_pascal<q5_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	6636
+mix-p106	qwen35	mul_mat_vec_q_pascal<iq4_xs, (int)1, (int)1, (bool)0, (int)0, (int)16, (bool)0>	7770
+mix-p106	qwen35	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)1, (int)1, (int)16, (bool)0>	1120
+mix-p106	qwen35moe	ampere_sgemm_32x32_sliced1x4_tn	28
+mix-p106	qwen35moe	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+mix-p106	qwen35moe	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	196
+mix-p106	qwen35moe	mul_mat_q<q4_K, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	28
+mix-p106	qwen35moe	mul_mat_q<q5_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	84
+mix-p106	qwen35moe	mul_mat_q<iq4_xs, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	14
+mix-p106	qwen35moe	mul_mat_q<iq4_xs, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	28
+mix-p106	qwen35moe	mul_mat_q<q2_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	28
+mix-p106	qwen35moe	mul_mat_q<q5_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	14
+mix-p106	qwen35moe	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4528
+mix-p106	qwen35moe	mul_mat_vec_q<q6_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	1132
+mix-p106	qwen35moe	mul_mat_vec_q_pascal<q4_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	4500
+mix-p106	qwen35moe	mul_mat_vec_q_pascal<q5_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	6708
+mix-p106	qwen35moe	mul_mat_vec_q_pascal<iq4_xs, (int)1, (int)1, (bool)0, (int)0, (int)16, (bool)0>	3354
+mix-p106	qwen35moe	mul_mat_vec_q_pascal<q2_0, (int)1, (int)2, (bool)1, (int)0, (int)16, (bool)1>	4500
+mix-p106	qwen35moe	mul_mat_vec_q_pascal<q5_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	2250
+mix-p106	qwen3next	ampere_sgemm_32x32_sliced1x4_tn	28
+mix-p106	qwen3next	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	14
+mix-p106	qwen3next	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	196
+mix-p106	qwen3next	mul_mat_q<q4_K, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	28
+mix-p106	qwen3next	mul_mat_q<q5_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	84
+mix-p106	qwen3next	mul_mat_q<iq4_xs, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	14
+mix-p106	qwen3next	mul_mat_q<iq4_xs, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	14
+mix-p106	qwen3next	mul_mat_q<q2_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	28
+mix-p106	qwen3next	mul_mat_q<q5_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	14
+mix-p106	qwen3next	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4528
+mix-p106	qwen3next	mul_mat_vec_q<q6_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	1132
+mix-p106	qwen3next	mul_mat_vec_q_pascal<q4_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	4500
+mix-p106	qwen3next	mul_mat_vec_q_pascal<q5_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	6708
+mix-p106	qwen3next	mul_mat_vec_q_pascal<iq4_xs, (int)1, (int)1, (bool)0, (int)0, (int)16, (bool)0>	2236
+mix-p106	qwen3next	mul_mat_vec_q_pascal<q2_0, (int)1, (int)2, (bool)1, (int)0, (int)16, (bool)1>	4500
+mix-p106	qwen3next	mul_mat_vec_q_pascal<q5_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	2250
+mix-p106	qwen4exp	ampere_h1688gemm_128x128_ldg8_stages_32x1_tn	14
+mix-p106	qwen4exp	ampere_sgemm_32x128_tn	84
+mix-p106	qwen4exp	ampere_sgemm_32x32_sliced1x4_tn	126
+mix-p106	qwen4exp	cutlass::Kernel2<cutlass_80_tensorop_s1688gemm_256x128_16x3_tn_align4>	14
+mix-p106	qwen4exp	cutlass::Kernel2<cutlass_80_tensorop_s1688gemm_64x64_16x6_tn_align4>	112
+mix-p106	qwen4exp	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+mix-p106	qwen4exp	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	210
+mix-p106	qwen4exp	mul_mat_q<q4_K, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	28
+mix-p106	qwen4exp	mul_mat_q<q5_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	84
+mix-p106	qwen4exp	mul_mat_q<iq4_xs, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	14
+mix-p106	qwen4exp	mul_mat_q<iq4_xs, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	28
+mix-p106	qwen4exp	mul_mat_q<q2_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	28
+mix-p106	qwen4exp	mul_mat_q<q5_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	14
+mix-p106	qwen4exp	mul_mat_q<q8_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	28
+mix-p106	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	6764
+mix-p106	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)256, (bool)0, (bool)0>	10104
+mix-p106	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)32, (bool)0, (bool)0>	5618
+mix-p106	qwen4exp	mul_mat_vec_q<q6_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	1132
+mix-p106	qwen4exp	mul_mat_vec_q_pascal<q4_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	4500
+mix-p106	qwen4exp	mul_mat_vec_q_pascal<q5_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	6708
+mix-p106	qwen4exp	mul_mat_vec_q_pascal<iq4_xs, (int)1, (int)1, (bool)0, (int)0, (int)16, (bool)0>	3354
+mix-p106	qwen4exp	mul_mat_vec_q_pascal<q2_0, (int)1, (int)2, (bool)1, (int)0, (int)16, (bool)1>	4500
+mix-p106	qwen4exp	mul_mat_vec_q_pascal<q5_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	2250
+mix-p106	qwen4exp	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)1, (int)0, (int)16, (bool)0>	2236
+mix-stock	flint	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	154
+mix-stock	flint	mul_mat_q<q5_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	112
+mix-stock	flint	mul_mat_q<iq4_nl, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	14
+mix-stock	flint	mul_mat_q<iq4_xs, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	28
+mix-stock	flint	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	1178
+mix-stock	flint	mul_mat_vec_q<q4_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	2356
+mix-stock	flint	mul_mat_vec_q<q5_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	9312
+mix-stock	flint	mul_mat_vec_q<q6_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	1178
+mix-stock	flint	mul_mat_vec_q<iq4_nl, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	1164
+mix-stock	flint	mul_mat_vec_q<iq4_xs, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	2328
+mix-stock	flint	mul_mat_vec_q<q2_0, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	3534
+mix-stock	flint	mul_mat_vec_q<q5_0, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	1178
+mix-stock	qwen35	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+mix-stock	qwen35	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	140
+mix-stock	qwen35	mul_mat_q<q5_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	84
+mix-stock	qwen35	mul_mat_q<iq4_nl, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	14
+mix-stock	qwen35	mul_mat_q<iq4_xs, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	42
+mix-stock	qwen35	mul_mat_q<iq4_xs, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	28
+mix-stock	qwen35	mul_mat_vec_q<q5_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	6636
+mix-stock	qwen35	mul_mat_vec_q<q6_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	1120
+mix-stock	qwen35	mul_mat_vec_q<iq4_nl, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	2226
+mix-stock	qwen35	mul_mat_vec_q<iq4_xs, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	7770
+mix-stock	qwen35	mul_mat_vec_q<q8_0, (int)1, (bool)1, (bool)1, (bool)0, (bool)0>	1120
+mix-stock	qwen35moe	ampere_sgemm_32x32_sliced1x4_tn	28
+mix-stock	qwen35moe	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+mix-stock	qwen35moe	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	196
+mix-stock	qwen35moe	mul_mat_q<q4_K, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	28
+mix-stock	qwen35moe	mul_mat_q<q5_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	84
+mix-stock	qwen35moe	mul_mat_q<iq4_xs, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	14
+mix-stock	qwen35moe	mul_mat_q<iq4_xs, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	28
+mix-stock	qwen35moe	mul_mat_q<q2_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	28
+mix-stock	qwen35moe	mul_mat_q<q5_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	14
+mix-stock	qwen35moe	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4528
+mix-stock	qwen35moe	mul_mat_vec_q<q4_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	4500
+mix-stock	qwen35moe	mul_mat_vec_q<q5_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	6708
+mix-stock	qwen35moe	mul_mat_vec_q<q6_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	1132
+mix-stock	qwen35moe	mul_mat_vec_q<iq4_xs, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	3354
+mix-stock	qwen35moe	mul_mat_vec_q<q2_0, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	4500
+mix-stock	qwen35moe	mul_mat_vec_q<q5_0, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	2250
+mix-stock	qwen3next	ampere_sgemm_32x32_sliced1x4_tn	28
+mix-stock	qwen3next	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	14
+mix-stock	qwen3next	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	196
+mix-stock	qwen3next	mul_mat_q<q4_K, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	28
+mix-stock	qwen3next	mul_mat_q<q5_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	84
+mix-stock	qwen3next	mul_mat_q<iq4_xs, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	14
+mix-stock	qwen3next	mul_mat_q<iq4_xs, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	14
+mix-stock	qwen3next	mul_mat_q<q2_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	28
+mix-stock	qwen3next	mul_mat_q<q5_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	14
+mix-stock	qwen3next	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4528
+mix-stock	qwen3next	mul_mat_vec_q<q4_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	4500
+mix-stock	qwen3next	mul_mat_vec_q<q5_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	6708
+mix-stock	qwen3next	mul_mat_vec_q<q6_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	1132
+mix-stock	qwen3next	mul_mat_vec_q<iq4_xs, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	2236
+mix-stock	qwen3next	mul_mat_vec_q<q2_0, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	4500
+mix-stock	qwen3next	mul_mat_vec_q<q5_0, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	2250
+mix-stock	qwen4exp	ampere_h1688gemm_128x128_ldg8_stages_32x1_tn	14
+mix-stock	qwen4exp	ampere_sgemm_32x128_tn	84
+mix-stock	qwen4exp	ampere_sgemm_32x32_sliced1x4_tn	126
+mix-stock	qwen4exp	cutlass::Kernel2<cutlass_80_tensorop_s1688gemm_256x128_16x3_tn_align4>	14
+mix-stock	qwen4exp	cutlass::Kernel2<cutlass_80_tensorop_s1688gemm_64x64_16x6_tn_align4>	112
+mix-stock	qwen4exp	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+mix-stock	qwen4exp	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	210
+mix-stock	qwen4exp	mul_mat_q<q4_K, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	28
+mix-stock	qwen4exp	mul_mat_q<q5_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	84
+mix-stock	qwen4exp	mul_mat_q<iq4_xs, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	14
+mix-stock	qwen4exp	mul_mat_q<iq4_xs, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	28
+mix-stock	qwen4exp	mul_mat_q<q2_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	28
+mix-stock	qwen4exp	mul_mat_q<q5_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	14
+mix-stock	qwen4exp	mul_mat_q<q8_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	28
+mix-stock	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	6764
+mix-stock	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)256, (bool)0, (bool)0>	10104
+mix-stock	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)32, (bool)0, (bool)0>	5618
+mix-stock	qwen4exp	mul_mat_vec_q<q4_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	4500
+mix-stock	qwen4exp	mul_mat_vec_q<q5_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	6708
+mix-stock	qwen4exp	mul_mat_vec_q<q6_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	1132
+mix-stock	qwen4exp	mul_mat_vec_q<iq4_xs, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	3354
+mix-stock	qwen4exp	mul_mat_vec_q<q2_0, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	4500
+mix-stock	qwen4exp	mul_mat_vec_q<q5_0, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	2250
+mix-stock	qwen4exp	mul_mat_vec_q<q8_0, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	2236
+q2_0-fn-c4	flint	kcol::mul_mat_kcol<q2_0, (int)3, (int)1>	154
+q2_0-fn-c4	flint	kcol::mul_mat_kcol<q2_0, (int)4, (int)1>	21098
+q2_0-fn-c4	flint	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	1152
+q2_0-fn-c4	flint	mul_mat_vec_q<q2_0, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	1152
+q2_0-fn-c4	flint	mul_mat_vec_q_pascal<q2_0, (int)1, (int)2, (bool)1, (int)0, (int)16, (bool)1>	19430
+q2_0-fn-c4	qwen35	kcol::mul_mat_kcol<q2_0, (int)3, (int)1>	168
+q2_0-fn-c4	qwen35	kcol::mul_mat_kcol<q2_0, (int)4, (int)1>	23016
+q2_0-fn-c4	qwen35	mul_mat_vec_q_pascal<q2_0, (int)1, (int)2, (bool)1, (int)0, (int)16, (bool)1>	18072
+q2_0-fn-c4	qwen35	mul_mat_vec_q_pascal<q2_0, (int)1, (int)2, (bool)1, (int)1, (int)16, (bool)1>	1140
+q2_0-fn-c4	qwen35moe	kcol::mul_mat_kcol<q2_0, (int)3, (int)1>	154
+q2_0-fn-c4	qwen35moe	kcol::mul_mat_kcol<q2_0, (int)4, (int)1>	21098
+q2_0-fn-c4	qwen35moe	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4532
+q2_0-fn-c4	qwen35moe	mul_mat_vec_f<float, float, (int)3, (int)128, (bool)0, (bool)0>	28
+q2_0-fn-c4	qwen35moe	mul_mat_vec_f<float, float, (int)4, (int)128, (bool)0, (bool)0>	3836
+q2_0-fn-c4	qwen35moe	mul_mat_vec_q2_0_pascal_mtok<(bool)0, (int)1, (int)4>	3864
+q2_0-fn-c4	qwen35moe	mul_mat_vec_q<q2_0, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	2266
+q2_0-fn-c4	qwen35moe	mul_mat_vec_q<q2_0, (int)3, (bool)0, (bool)0, (bool)0, (bool)0>	14
+q2_0-fn-c4	qwen35moe	mul_mat_vec_q<q2_0, (int)4, (bool)0, (bool)0, (bool)0, (bool)0>	1918
+q2_0-fn-c4	qwen35moe	mul_mat_vec_q_pascal<q2_0, (int)1, (int)2, (bool)1, (int)0, (int)16, (bool)1>	20338
+q2_0-fn-c4	qwen3next	kcol::mul_mat_kcol<q2_0, (int)3, (int)1>	140
+q2_0-fn-c4	qwen3next	kcol::mul_mat_kcol<q2_0, (int)4, (int)1>	19180
+q2_0-fn-c4	qwen3next	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4532
+q2_0-fn-c4	qwen3next	mul_mat_vec_f<float, float, (int)3, (int)128, (bool)0, (bool)0>	28
+q2_0-fn-c4	qwen3next	mul_mat_vec_f<float, float, (int)4, (int)128, (bool)0, (bool)0>	3836
+q2_0-fn-c4	qwen3next	mul_mat_vec_q2_0_pascal_mtok<(bool)0, (int)1, (int)4>	3864
+q2_0-fn-c4	qwen3next	mul_mat_vec_q<q2_0, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	2266
+q2_0-fn-c4	qwen3next	mul_mat_vec_q<q2_0, (int)3, (bool)0, (bool)0, (bool)0, (bool)0>	14
+q2_0-fn-c4	qwen3next	mul_mat_vec_q<q2_0, (int)4, (bool)0, (bool)0, (bool)0, (bool)0>	1918
+q2_0-fn-c4	qwen3next	mul_mat_vec_q_pascal<q2_0, (int)1, (int)2, (bool)1, (int)0, (int)16, (bool)1>	19212
+q2_0-fn-c4	qwen4exp	kcol::mul_mat_kcol<q2_0, (int)3, (int)1>	182
+q2_0-fn-c4	qwen4exp	kcol::mul_mat_kcol<q2_0, (int)4, (int)1>	24934
+q2_0-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	6736
+q2_0-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)256, (bool)0, (bool)0>	10104
+q2_0-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)32, (bool)0, (bool)0>	5618
+q2_0-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)3, (int)128, (bool)0, (bool)0>	56
+q2_0-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)3, (int)256, (bool)0, (bool)0>	84
+q2_0-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)3, (int)32, (bool)0, (bool)0>	42
+q2_0-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)4, (int)128, (bool)0, (bool)0>	7672
+q2_0-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)4, (int)256, (bool)0, (bool)0>	11508
+q2_0-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)4, (int)32, (bool)0, (bool)0>	5754
+q2_0-fn-c4	qwen4exp	mul_mat_vec_q2_0_pascal_mtok<(bool)0, (int)1, (int)4>	3864
+q2_0-fn-c4	qwen4exp	mul_mat_vec_q<q2_0, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	2250
+q2_0-fn-c4	qwen4exp	mul_mat_vec_q<q2_0, (int)3, (bool)0, (bool)0, (bool)0, (bool)0>	14
+q2_0-fn-c4	qwen4exp	mul_mat_vec_q<q2_0, (int)4, (bool)0, (bool)0, (bool)0, (bool)0>	1918
+q2_0-fn-c4	qwen4exp	mul_mat_vec_q_pascal<q2_0, (int)1, (int)2, (bool)1, (int)0, (int)16, (bool)1>	22430
+q2_0-fn	flint	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	154
+q2_0-fn	flint	mul_mat_q<q2_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	154
+q2_0-fn	flint	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	1152
+q2_0-fn	flint	mul_mat_vec_q<q2_0, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	1152
+q2_0-fn	flint	mul_mat_vec_q_pascal<q2_0, (int)1, (int)2, (bool)1, (int)0, (int)16, (bool)1>	19430
+q2_0-fn	qwen35	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+q2_0-fn	qwen35	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	140
+q2_0-fn	qwen35	mul_mat_q<q2_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	140
+q2_0-fn	qwen35	mul_mat_q<q2_0, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	28
+q2_0-fn	qwen35	mul_mat_vec_q_pascal<q2_0, (int)1, (int)2, (bool)1, (int)0, (int)16, (bool)1>	18072
+q2_0-fn	qwen35	mul_mat_vec_q_pascal<q2_0, (int)1, (int)2, (bool)1, (int)1, (int)16, (bool)1>	1140
+q2_0-fn	qwen35moe	ampere_sgemm_32x32_sliced1x4_tn	28
+q2_0-fn	qwen35moe	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+q2_0-fn	qwen35moe	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	196
+q2_0-fn	qwen35moe	mul_mat_q<q2_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	140
+q2_0-fn	qwen35moe	mul_mat_q<q2_0, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	56
+q2_0-fn	qwen35moe	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4560
+q2_0-fn	qwen35moe	mul_mat_vec_q<q2_0, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	2266
+q2_0-fn	qwen35moe	mul_mat_vec_q_pascal<q2_0, (int)1, (int)2, (bool)1, (int)0, (int)16, (bool)1>	20338
+q2_0-fn	qwen3next	ampere_sgemm_32x32_sliced1x4_tn	28
+q2_0-fn	qwen3next	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	14
+q2_0-fn	qwen3next	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	196
+q2_0-fn	qwen3next	mul_mat_q<q2_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	140
+q2_0-fn	qwen3next	mul_mat_q<q2_0, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	42
+q2_0-fn	qwen3next	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4560
+q2_0-fn	qwen3next	mul_mat_vec_q<q2_0, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	2266
+q2_0-fn	qwen3next	mul_mat_vec_q_pascal<q2_0, (int)1, (int)2, (bool)1, (int)0, (int)16, (bool)1>	19212
+q2_0-fn	qwen4exp	ampere_h1688gemm_128x128_ldg8_stages_32x1_tn	14
+q2_0-fn	qwen4exp	ampere_sgemm_32x128_tn	84
+q2_0-fn	qwen4exp	ampere_sgemm_32x32_sliced1x4_tn	126
+q2_0-fn	qwen4exp	cutlass::Kernel2<cutlass_80_tensorop_s1688gemm_256x128_16x3_tn_align4>	14
+q2_0-fn	qwen4exp	cutlass::Kernel2<cutlass_80_tensorop_s1688gemm_64x64_16x6_tn_align4>	112
+q2_0-fn	qwen4exp	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+q2_0-fn	qwen4exp	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	210
+q2_0-fn	qwen4exp	mul_mat_q<q2_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	168
+q2_0-fn	qwen4exp	mul_mat_q<q2_0, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	56
+q2_0-fn	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	6764
+q2_0-fn	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)256, (bool)0, (bool)0>	10104
+q2_0-fn	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)32, (bool)0, (bool)0>	5618
+q2_0-fn	qwen4exp	mul_mat_vec_q<q2_0, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	2250
+q2_0-fn	qwen4exp	mul_mat_vec_q_pascal<q2_0, (int)1, (int)2, (bool)1, (int)0, (int)16, (bool)1>	22430
+q2_0-p106-c4	flint	kcol::mul_mat_kcol<q2_0, (int)3, (int)1>	154
+q2_0-p106-c4	flint	kcol::mul_mat_kcol<q2_0, (int)4, (int)1>	21098
+q2_0-p106-c4	flint	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	1152
+q2_0-p106-c4	flint	mul_mat_vec_q<q2_0, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	1152
+q2_0-p106-c4	flint	mul_mat_vec_q_pascal<q2_0, (int)1, (int)2, (bool)1, (int)0, (int)16, (bool)1>	19430
+q2_0-p106-c4	qwen35	kcol::mul_mat_kcol<q2_0, (int)3, (int)1>	168
+q2_0-p106-c4	qwen35	kcol::mul_mat_kcol<q2_0, (int)4, (int)1>	23016
+q2_0-p106-c4	qwen35	mul_mat_vec_q_pascal<q2_0, (int)1, (int)2, (bool)1, (int)0, (int)16, (bool)1>	18072
+q2_0-p106-c4	qwen35	mul_mat_vec_q_pascal<q2_0, (int)1, (int)2, (bool)1, (int)1, (int)16, (bool)1>	1140
+q2_0-p106-c4	qwen35moe	kcol::mul_mat_kcol<q2_0, (int)3, (int)1>	154
+q2_0-p106-c4	qwen35moe	kcol::mul_mat_kcol<q2_0, (int)4, (int)1>	21098
+q2_0-p106-c4	qwen35moe	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4532
+q2_0-p106-c4	qwen35moe	mul_mat_vec_f<float, float, (int)3, (int)128, (bool)0, (bool)0>	28
+q2_0-p106-c4	qwen35moe	mul_mat_vec_f<float, float, (int)4, (int)128, (bool)0, (bool)0>	3836
+q2_0-p106-c4	qwen35moe	mul_mat_vec_q2_0_pascal_mtok<(bool)0, (int)1, (int)4>	3864
+q2_0-p106-c4	qwen35moe	mul_mat_vec_q<q2_0, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	2266
+q2_0-p106-c4	qwen35moe	mul_mat_vec_q<q2_0, (int)3, (bool)0, (bool)0, (bool)0, (bool)0>	14
+q2_0-p106-c4	qwen35moe	mul_mat_vec_q<q2_0, (int)4, (bool)0, (bool)0, (bool)0, (bool)0>	1918
+q2_0-p106-c4	qwen35moe	mul_mat_vec_q_pascal<q2_0, (int)1, (int)2, (bool)1, (int)0, (int)16, (bool)1>	20338
+q2_0-p106-c4	qwen3next	kcol::mul_mat_kcol<q2_0, (int)3, (int)1>	140
+q2_0-p106-c4	qwen3next	kcol::mul_mat_kcol<q2_0, (int)4, (int)1>	19180
+q2_0-p106-c4	qwen3next	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4532
+q2_0-p106-c4	qwen3next	mul_mat_vec_f<float, float, (int)3, (int)128, (bool)0, (bool)0>	28
+q2_0-p106-c4	qwen3next	mul_mat_vec_f<float, float, (int)4, (int)128, (bool)0, (bool)0>	3836
+q2_0-p106-c4	qwen3next	mul_mat_vec_q2_0_pascal_mtok<(bool)0, (int)1, (int)4>	3864
+q2_0-p106-c4	qwen3next	mul_mat_vec_q<q2_0, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	2266
+q2_0-p106-c4	qwen3next	mul_mat_vec_q<q2_0, (int)3, (bool)0, (bool)0, (bool)0, (bool)0>	14
+q2_0-p106-c4	qwen3next	mul_mat_vec_q<q2_0, (int)4, (bool)0, (bool)0, (bool)0, (bool)0>	1918
+q2_0-p106-c4	qwen3next	mul_mat_vec_q_pascal<q2_0, (int)1, (int)2, (bool)1, (int)0, (int)16, (bool)1>	19212
+q2_0-p106-c4	qwen4exp	kcol::mul_mat_kcol<q2_0, (int)3, (int)1>	182
+q2_0-p106-c4	qwen4exp	kcol::mul_mat_kcol<q2_0, (int)4, (int)1>	24934
+q2_0-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	6736
+q2_0-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)256, (bool)0, (bool)0>	10104
+q2_0-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)32, (bool)0, (bool)0>	5618
+q2_0-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)3, (int)128, (bool)0, (bool)0>	56
+q2_0-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)3, (int)256, (bool)0, (bool)0>	84
+q2_0-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)3, (int)32, (bool)0, (bool)0>	42
+q2_0-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)4, (int)128, (bool)0, (bool)0>	7672
+q2_0-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)4, (int)256, (bool)0, (bool)0>	11508
+q2_0-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)4, (int)32, (bool)0, (bool)0>	5754
+q2_0-p106-c4	qwen4exp	mul_mat_vec_q2_0_pascal_mtok<(bool)0, (int)1, (int)4>	3864
+q2_0-p106-c4	qwen4exp	mul_mat_vec_q<q2_0, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	2250
+q2_0-p106-c4	qwen4exp	mul_mat_vec_q<q2_0, (int)3, (bool)0, (bool)0, (bool)0, (bool)0>	14
+q2_0-p106-c4	qwen4exp	mul_mat_vec_q<q2_0, (int)4, (bool)0, (bool)0, (bool)0, (bool)0>	1918
+q2_0-p106-c4	qwen4exp	mul_mat_vec_q_pascal<q2_0, (int)1, (int)2, (bool)1, (int)0, (int)16, (bool)1>	22430
+q2_0-p106	flint	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	154
+q2_0-p106	flint	mul_mat_q<q2_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	154
+q2_0-p106	flint	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	1152
+q2_0-p106	flint	mul_mat_vec_q<q2_0, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	1152
+q2_0-p106	flint	mul_mat_vec_q_pascal<q2_0, (int)1, (int)2, (bool)1, (int)0, (int)16, (bool)1>	19430
+q2_0-p106	qwen35	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+q2_0-p106	qwen35	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	140
+q2_0-p106	qwen35	mul_mat_q<q2_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	140
+q2_0-p106	qwen35	mul_mat_q<q2_0, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	28
+q2_0-p106	qwen35	mul_mat_vec_q_pascal<q2_0, (int)1, (int)2, (bool)1, (int)0, (int)16, (bool)1>	18072
+q2_0-p106	qwen35	mul_mat_vec_q_pascal<q2_0, (int)1, (int)2, (bool)1, (int)1, (int)16, (bool)1>	1140
+q2_0-p106	qwen35moe	ampere_sgemm_32x32_sliced1x4_tn	28
+q2_0-p106	qwen35moe	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+q2_0-p106	qwen35moe	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	196
+q2_0-p106	qwen35moe	mul_mat_q<q2_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	140
+q2_0-p106	qwen35moe	mul_mat_q<q2_0, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	56
+q2_0-p106	qwen35moe	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4560
+q2_0-p106	qwen35moe	mul_mat_vec_q<q2_0, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	2266
+q2_0-p106	qwen35moe	mul_mat_vec_q_pascal<q2_0, (int)1, (int)2, (bool)1, (int)0, (int)16, (bool)1>	20338
+q2_0-p106	qwen3next	ampere_sgemm_32x32_sliced1x4_tn	28
+q2_0-p106	qwen3next	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	14
+q2_0-p106	qwen3next	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	196
+q2_0-p106	qwen3next	mul_mat_q<q2_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	140
+q2_0-p106	qwen3next	mul_mat_q<q2_0, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	42
+q2_0-p106	qwen3next	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4560
+q2_0-p106	qwen3next	mul_mat_vec_q<q2_0, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	2266
+q2_0-p106	qwen3next	mul_mat_vec_q_pascal<q2_0, (int)1, (int)2, (bool)1, (int)0, (int)16, (bool)1>	19212
+q2_0-p106	qwen4exp	ampere_h1688gemm_128x128_ldg8_stages_32x1_tn	14
+q2_0-p106	qwen4exp	ampere_sgemm_32x128_tn	84
+q2_0-p106	qwen4exp	ampere_sgemm_32x32_sliced1x4_tn	126
+q2_0-p106	qwen4exp	cutlass::Kernel2<cutlass_80_tensorop_s1688gemm_256x128_16x3_tn_align4>	14
+q2_0-p106	qwen4exp	cutlass::Kernel2<cutlass_80_tensorop_s1688gemm_64x64_16x6_tn_align4>	112
+q2_0-p106	qwen4exp	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+q2_0-p106	qwen4exp	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	210
+q2_0-p106	qwen4exp	mul_mat_q<q2_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	168
+q2_0-p106	qwen4exp	mul_mat_q<q2_0, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	56
+q2_0-p106	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	6764
+q2_0-p106	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)256, (bool)0, (bool)0>	10104
+q2_0-p106	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)32, (bool)0, (bool)0>	5618
+q2_0-p106	qwen4exp	mul_mat_vec_q<q2_0, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	2250
+q2_0-p106	qwen4exp	mul_mat_vec_q_pascal<q2_0, (int)1, (int)2, (bool)1, (int)0, (int)16, (bool)1>	22430
+q2_0-stock	flint	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	154
+q2_0-stock	flint	mul_mat_q<q2_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	154
+q2_0-stock	flint	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	1152
+q2_0-stock	flint	mul_mat_vec_q<q2_0, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	20582
+q2_0-stock	qwen35	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+q2_0-stock	qwen35	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	140
+q2_0-stock	qwen35	mul_mat_q<q2_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	140
+q2_0-stock	qwen35	mul_mat_q<q2_0, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	28
+q2_0-stock	qwen35	mul_mat_vec_q<q2_0, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	18072
+q2_0-stock	qwen35	mul_mat_vec_q<q2_0, (int)1, (bool)1, (bool)1, (bool)0, (bool)0>	1140
+q2_0-stock	qwen35moe	ampere_sgemm_32x32_sliced1x4_tn	28
+q2_0-stock	qwen35moe	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+q2_0-stock	qwen35moe	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	196
+q2_0-stock	qwen35moe	mul_mat_q<q2_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	140
+q2_0-stock	qwen35moe	mul_mat_q<q2_0, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	56
+q2_0-stock	qwen35moe	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4560
+q2_0-stock	qwen35moe	mul_mat_vec_q<q2_0, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	22604
+q2_0-stock	qwen3next	ampere_sgemm_32x32_sliced1x4_tn	28
+q2_0-stock	qwen3next	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	14
+q2_0-stock	qwen3next	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	196
+q2_0-stock	qwen3next	mul_mat_q<q2_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	140
+q2_0-stock	qwen3next	mul_mat_q<q2_0, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	42
+q2_0-stock	qwen3next	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4560
+q2_0-stock	qwen3next	mul_mat_vec_q<q2_0, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	21478
+q2_0-stock	qwen4exp	ampere_h1688gemm_128x128_ldg8_stages_32x1_tn	14
+q2_0-stock	qwen4exp	ampere_sgemm_32x128_tn	84
+q2_0-stock	qwen4exp	ampere_sgemm_32x32_sliced1x4_tn	126
+q2_0-stock	qwen4exp	cutlass::Kernel2<cutlass_80_tensorop_s1688gemm_256x128_16x3_tn_align4>	14
+q2_0-stock	qwen4exp	cutlass::Kernel2<cutlass_80_tensorop_s1688gemm_64x64_16x6_tn_align4>	112
+q2_0-stock	qwen4exp	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+q2_0-stock	qwen4exp	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	210
+q2_0-stock	qwen4exp	mul_mat_q<q2_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	168
+q2_0-stock	qwen4exp	mul_mat_q<q2_0, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	56
+q2_0-stock	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	6764
+q2_0-stock	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)256, (bool)0, (bool)0>	10104
+q2_0-stock	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)32, (bool)0, (bool)0>	5618
+q2_0-stock	qwen4exp	mul_mat_vec_q<q2_0, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	24680
+q4_k-fn-c4	flint	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	1144
+q4_k-fn-c4	flint	mul_mat_vec_q_pascal<q4_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	17020
+q4_k-fn-c4	flint	mul_mat_vec_q_pascal<q5_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	3418
+q4_k-fn-c4	flint	mul_mat_vec_q_pascal_dmt<q4_K, (int)3, (int)1, (bool)1>	140
+q4_k-fn-c4	flint	mul_mat_vec_q_pascal_dmt<q4_K, (int)4, (int)1, (bool)1>	19180
+q4_k-fn-c4	flint	mul_mat_vec_q_pascal_mc<q5_0, (int)2, (int)2, (bool)0, (int)0, (bool)0, (int)16, (bool)0>	1932
+q4_k-fn-c4	qwen35	mul_mat_vec_q_pascal<q4_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	15582
+q4_k-fn-c4	qwen35	mul_mat_vec_q_pascal<q4_K, (int)1, (int)1, (bool)1, (int)1, (int)16, (bool)0>	1124
+q4_k-fn-c4	qwen35	mul_mat_vec_q_pascal<q5_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	2234
+q4_k-fn-c4	qwen35	mul_mat_vec_q_pascal_dmt<q4_K, (int)3, (int)1, (bool)1>	154
+q4_k-fn-c4	qwen35	mul_mat_vec_q_pascal_dmt<q4_K, (int)4, (int)1, (bool)1>	21098
+q4_k-fn-c4	qwen35	mul_mat_vec_q_pascal_mc<q5_0, (int)2, (int)2, (bool)0, (int)0, (bool)0, (int)16, (bool)0>	1932
+q4_k-fn-c4	qwen35moe	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4532
+q4_k-fn-c4	qwen35moe	mul_mat_vec_f<float, float, (int)3, (int)128, (bool)0, (bool)0>	28
+q4_k-fn-c4	qwen35moe	mul_mat_vec_f<float, float, (int)4, (int)128, (bool)0, (bool)0>	3836
+q4_k-fn-c4	qwen35moe	mul_mat_vec_q_pascal<q4_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	18072
+q4_k-fn-c4	qwen35moe	mul_mat_vec_q_pascal<q5_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	4532
+q4_k-fn-c4	qwen35moe	mul_mat_vec_q_pascal_dmt<q4_K, (int)3, (int)1, (bool)1>	154
+q4_k-fn-c4	qwen35moe	mul_mat_vec_q_pascal_dmt<q4_K, (int)4, (int)1, (bool)1>	21098
+q4_k-fn-c4	qwen35moe	mul_mat_vec_q_pascal_mc<q4_K, (int)1, (int)1, (bool)1, (int)0, (bool)0, (int)16, (bool)0>	1932
+q4_k-fn-c4	qwen35moe	mul_mat_vec_q_pascal_mc<q5_0, (int)2, (int)2, (bool)0, (int)0, (bool)0, (int)16, (bool)0>	3864
+q4_k-fn-c4	qwen3next	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4532
+q4_k-fn-c4	qwen3next	mul_mat_vec_f<float, float, (int)3, (int)128, (bool)0, (bool)0>	28
+q4_k-fn-c4	qwen3next	mul_mat_vec_f<float, float, (int)4, (int)128, (bool)0, (bool)0>	3836
+q4_k-fn-c4	qwen3next	mul_mat_vec_q_pascal<q4_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	16946
+q4_k-fn-c4	qwen3next	mul_mat_vec_q_pascal<q5_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	4532
+q4_k-fn-c4	qwen3next	mul_mat_vec_q_pascal_dmt<q4_K, (int)3, (int)1, (bool)1>	140
+q4_k-fn-c4	qwen3next	mul_mat_vec_q_pascal_dmt<q4_K, (int)4, (int)1, (bool)1>	19180
+q4_k-fn-c4	qwen3next	mul_mat_vec_q_pascal_mc<q4_K, (int)1, (int)1, (bool)1, (int)0, (bool)0, (int)16, (bool)0>	1932
+q4_k-fn-c4	qwen3next	mul_mat_vec_q_pascal_mc<q5_0, (int)2, (int)2, (bool)0, (int)0, (bool)0, (int)16, (bool)0>	3864
+q4_k-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	6760
+q4_k-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)256, (bool)0, (bool)0>	10140
+q4_k-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)32, (bool)0, (bool)0>	5638
+q4_k-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)3, (int)128, (bool)0, (bool)0>	56
+q4_k-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)3, (int)256, (bool)0, (bool)0>	84
+q4_k-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)3, (int)32, (bool)0, (bool)0>	42
+q4_k-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)4, (int)128, (bool)0, (bool)0>	7672
+q4_k-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)4, (int)256, (bool)0, (bool)0>	11508
+q4_k-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)4, (int)32, (bool)0, (bool)0>	5754
+q4_k-fn-c4	qwen4exp	mul_mat_vec_q_pascal<q4_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	20252
+q4_k-fn-c4	qwen4exp	mul_mat_vec_q_pascal<q5_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	4516
+q4_k-fn-c4	qwen4exp	mul_mat_vec_q_pascal_dmt<q4_K, (int)3, (int)1, (bool)1>	182
+q4_k-fn-c4	qwen4exp	mul_mat_vec_q_pascal_dmt<q4_K, (int)4, (int)1, (bool)1>	24934
+q4_k-fn-c4	qwen4exp	mul_mat_vec_q_pascal_mc<q4_K, (int)1, (int)1, (bool)1, (int)0, (bool)0, (int)16, (bool)0>	1932
+q4_k-fn-c4	qwen4exp	mul_mat_vec_q_pascal_mc<q5_0, (int)2, (int)2, (bool)0, (int)0, (bool)0, (int)16, (bool)0>	3864
+q4_k-fn	flint	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	154
+q4_k-fn	flint	mul_mat_q<q4_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	140
+q4_k-fn	flint	mul_mat_q<q5_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	14
+q4_k-fn	flint	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	1144
+q4_k-fn	flint	mul_mat_vec_q_pascal<q4_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	17020
+q4_k-fn	flint	mul_mat_vec_q_pascal<q5_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	3418
+q4_k-fn	qwen35	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+q4_k-fn	qwen35	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	140
+q4_k-fn	qwen35	mul_mat_q<q4_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	126
+q4_k-fn	qwen35	mul_mat_q<q4_K, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	28
+q4_k-fn	qwen35	mul_mat_q<q5_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	14
+q4_k-fn	qwen35	mul_mat_vec_q_pascal<q4_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	15638
+q4_k-fn	qwen35	mul_mat_vec_q_pascal<q4_K, (int)1, (int)1, (bool)1, (int)1, (int)16, (bool)0>	1128
+q4_k-fn	qwen35	mul_mat_vec_q_pascal<q5_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	2242
+q4_k-fn	qwen35moe	ampere_sgemm_32x32_sliced1x4_tn	28
+q4_k-fn	qwen35moe	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+q4_k-fn	qwen35moe	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	196
+q4_k-fn	qwen35moe	mul_mat_q<q4_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	112
+q4_k-fn	qwen35moe	mul_mat_q<q4_K, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	56
+q4_k-fn	qwen35moe	mul_mat_q<q5_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	28
+q4_k-fn	qwen35moe	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4560
+q4_k-fn	qwen35moe	mul_mat_vec_q_pascal<q4_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	18072
+q4_k-fn	qwen35moe	mul_mat_vec_q_pascal<q5_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	4532
+q4_k-fn	qwen3next	ampere_sgemm_32x32_sliced1x4_tn	28
+q4_k-fn	qwen3next	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	14
+q4_k-fn	qwen3next	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	196
+q4_k-fn	qwen3next	mul_mat_q<q4_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	112
+q4_k-fn	qwen3next	mul_mat_q<q4_K, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	42
+q4_k-fn	qwen3next	mul_mat_q<q5_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	28
+q4_k-fn	qwen3next	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4560
+q4_k-fn	qwen3next	mul_mat_vec_q_pascal<q4_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	16946
+q4_k-fn	qwen3next	mul_mat_vec_q_pascal<q5_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	4532
+q4_k-fn	qwen4exp	ampere_h1688gemm_128x128_ldg8_stages_32x1_tn	14
+q4_k-fn	qwen4exp	ampere_sgemm_32x128_tn	84
+q4_k-fn	qwen4exp	ampere_sgemm_32x32_sliced1x4_tn	126
+q4_k-fn	qwen4exp	cutlass::Kernel2<cutlass_80_tensorop_s1688gemm_256x128_16x3_tn_align4>	14
+q4_k-fn	qwen4exp	cutlass::Kernel2<cutlass_80_tensorop_s1688gemm_64x64_16x6_tn_align4>	112
+q4_k-fn	qwen4exp	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+q4_k-fn	qwen4exp	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	210
+q4_k-fn	qwen4exp	mul_mat_q<q4_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	140
+q4_k-fn	qwen4exp	mul_mat_q<q4_K, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	56
+q4_k-fn	qwen4exp	mul_mat_q<q5_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	28
+q4_k-fn	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	6788
+q4_k-fn	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)256, (bool)0, (bool)0>	10140
+q4_k-fn	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)32, (bool)0, (bool)0>	5638
+q4_k-fn	qwen4exp	mul_mat_vec_q_pascal<q4_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	20252
+q4_k-fn	qwen4exp	mul_mat_vec_q_pascal<q5_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	4516
+q4_k-p106-c4	flint	kcol::mul_mat_kcol<q4_K, (int)3, (int)1>	140
+q4_k-p106-c4	flint	kcol::mul_mat_kcol<q4_K, (int)4, (int)1>	19180
+q4_k-p106-c4	flint	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	1144
+q4_k-p106-c4	flint	mul_mat_vec_q_pascal<q4_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	17020
+q4_k-p106-c4	flint	mul_mat_vec_q_pascal<q5_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	3418
+q4_k-p106-c4	flint	mul_mat_vec_q_pascal_mc<q5_0, (int)2, (int)2, (bool)0, (int)0, (bool)0, (int)16, (bool)0>	1932
+q4_k-p106-c4	qwen35	kcol::mul_mat_kcol<q4_K, (int)3, (int)1>	154
+q4_k-p106-c4	qwen35	kcol::mul_mat_kcol<q4_K, (int)4, (int)1>	21098
+q4_k-p106-c4	qwen35	mul_mat_vec_q_pascal<q4_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	15582
+q4_k-p106-c4	qwen35	mul_mat_vec_q_pascal<q4_K, (int)1, (int)1, (bool)1, (int)1, (int)16, (bool)0>	1124
+q4_k-p106-c4	qwen35	mul_mat_vec_q_pascal<q5_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	2234
+q4_k-p106-c4	qwen35	mul_mat_vec_q_pascal_mc<q5_0, (int)2, (int)2, (bool)0, (int)0, (bool)0, (int)16, (bool)0>	1932
+q4_k-p106-c4	qwen35moe	kcol::mul_mat_kcol<q4_K, (int)3, (int)1>	154
+q4_k-p106-c4	qwen35moe	kcol::mul_mat_kcol<q4_K, (int)4, (int)1>	21098
+q4_k-p106-c4	qwen35moe	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4532
+q4_k-p106-c4	qwen35moe	mul_mat_vec_f<float, float, (int)3, (int)128, (bool)0, (bool)0>	28
+q4_k-p106-c4	qwen35moe	mul_mat_vec_f<float, float, (int)4, (int)128, (bool)0, (bool)0>	3836
+q4_k-p106-c4	qwen35moe	mul_mat_vec_q_pascal<q4_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	18072
+q4_k-p106-c4	qwen35moe	mul_mat_vec_q_pascal<q5_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	4532
+q4_k-p106-c4	qwen35moe	mul_mat_vec_q_pascal_mc<q4_K, (int)1, (int)1, (bool)1, (int)0, (bool)0, (int)16, (bool)0>	1932
+q4_k-p106-c4	qwen35moe	mul_mat_vec_q_pascal_mc<q5_0, (int)2, (int)2, (bool)0, (int)0, (bool)0, (int)16, (bool)0>	3864
+q4_k-p106-c4	qwen3next	kcol::mul_mat_kcol<q4_K, (int)3, (int)1>	140
+q4_k-p106-c4	qwen3next	kcol::mul_mat_kcol<q4_K, (int)4, (int)1>	19180
+q4_k-p106-c4	qwen3next	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4532
+q4_k-p106-c4	qwen3next	mul_mat_vec_f<float, float, (int)3, (int)128, (bool)0, (bool)0>	28
+q4_k-p106-c4	qwen3next	mul_mat_vec_f<float, float, (int)4, (int)128, (bool)0, (bool)0>	3836
+q4_k-p106-c4	qwen3next	mul_mat_vec_q_pascal<q4_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	16946
+q4_k-p106-c4	qwen3next	mul_mat_vec_q_pascal<q5_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	4532
+q4_k-p106-c4	qwen3next	mul_mat_vec_q_pascal_mc<q4_K, (int)1, (int)1, (bool)1, (int)0, (bool)0, (int)16, (bool)0>	1932
+q4_k-p106-c4	qwen3next	mul_mat_vec_q_pascal_mc<q5_0, (int)2, (int)2, (bool)0, (int)0, (bool)0, (int)16, (bool)0>	3864
+q4_k-p106-c4	qwen4exp	kcol::mul_mat_kcol<q4_K, (int)3, (int)1>	182
+q4_k-p106-c4	qwen4exp	kcol::mul_mat_kcol<q4_K, (int)4, (int)1>	24934
+q4_k-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	6760
+q4_k-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)256, (bool)0, (bool)0>	10140
+q4_k-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)32, (bool)0, (bool)0>	5638
+q4_k-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)3, (int)128, (bool)0, (bool)0>	56
+q4_k-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)3, (int)256, (bool)0, (bool)0>	84
+q4_k-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)3, (int)32, (bool)0, (bool)0>	42
+q4_k-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)4, (int)128, (bool)0, (bool)0>	7672
+q4_k-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)4, (int)256, (bool)0, (bool)0>	11508
+q4_k-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)4, (int)32, (bool)0, (bool)0>	5754
+q4_k-p106-c4	qwen4exp	mul_mat_vec_q_pascal<q4_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	20252
+q4_k-p106-c4	qwen4exp	mul_mat_vec_q_pascal<q5_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	4516
+q4_k-p106-c4	qwen4exp	mul_mat_vec_q_pascal_mc<q4_K, (int)1, (int)1, (bool)1, (int)0, (bool)0, (int)16, (bool)0>	1932
+q4_k-p106-c4	qwen4exp	mul_mat_vec_q_pascal_mc<q5_0, (int)2, (int)2, (bool)0, (int)0, (bool)0, (int)16, (bool)0>	3864
+q4_k-p106	flint	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	154
+q4_k-p106	flint	mul_mat_q<q4_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	140
+q4_k-p106	flint	mul_mat_q<q5_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	14
+q4_k-p106	flint	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	1144
+q4_k-p106	flint	mul_mat_vec_q_pascal<q4_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	17020
+q4_k-p106	flint	mul_mat_vec_q_pascal<q5_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	3418
+q4_k-p106	qwen35	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+q4_k-p106	qwen35	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	140
+q4_k-p106	qwen35	mul_mat_q<q4_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	126
+q4_k-p106	qwen35	mul_mat_q<q4_K, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	28
+q4_k-p106	qwen35	mul_mat_q<q5_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	14
+q4_k-p106	qwen35	mul_mat_vec_q_pascal<q4_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	15638
+q4_k-p106	qwen35	mul_mat_vec_q_pascal<q4_K, (int)1, (int)1, (bool)1, (int)1, (int)16, (bool)0>	1128
+q4_k-p106	qwen35	mul_mat_vec_q_pascal<q5_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	2242
+q4_k-p106	qwen35moe	ampere_sgemm_32x32_sliced1x4_tn	28
+q4_k-p106	qwen35moe	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+q4_k-p106	qwen35moe	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	196
+q4_k-p106	qwen35moe	mul_mat_q<q4_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	112
+q4_k-p106	qwen35moe	mul_mat_q<q4_K, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	56
+q4_k-p106	qwen35moe	mul_mat_q<q5_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	28
+q4_k-p106	qwen35moe	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4560
+q4_k-p106	qwen35moe	mul_mat_vec_q_pascal<q4_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	18072
+q4_k-p106	qwen35moe	mul_mat_vec_q_pascal<q5_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	4532
+q4_k-p106	qwen3next	ampere_sgemm_32x32_sliced1x4_tn	28
+q4_k-p106	qwen3next	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	14
+q4_k-p106	qwen3next	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	196
+q4_k-p106	qwen3next	mul_mat_q<q4_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	112
+q4_k-p106	qwen3next	mul_mat_q<q4_K, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	42
+q4_k-p106	qwen3next	mul_mat_q<q5_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	28
+q4_k-p106	qwen3next	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4560
+q4_k-p106	qwen3next	mul_mat_vec_q_pascal<q4_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	16946
+q4_k-p106	qwen3next	mul_mat_vec_q_pascal<q5_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	4532
+q4_k-p106	qwen4exp	ampere_h1688gemm_128x128_ldg8_stages_32x1_tn	14
+q4_k-p106	qwen4exp	ampere_sgemm_32x128_tn	84
+q4_k-p106	qwen4exp	ampere_sgemm_32x32_sliced1x4_tn	126
+q4_k-p106	qwen4exp	cutlass::Kernel2<cutlass_80_tensorop_s1688gemm_256x128_16x3_tn_align4>	14
+q4_k-p106	qwen4exp	cutlass::Kernel2<cutlass_80_tensorop_s1688gemm_64x64_16x6_tn_align4>	112
+q4_k-p106	qwen4exp	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+q4_k-p106	qwen4exp	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	210
+q4_k-p106	qwen4exp	mul_mat_q<q4_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	140
+q4_k-p106	qwen4exp	mul_mat_q<q4_K, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	56
+q4_k-p106	qwen4exp	mul_mat_q<q5_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	28
+q4_k-p106	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	6788
+q4_k-p106	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)256, (bool)0, (bool)0>	10140
+q4_k-p106	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)32, (bool)0, (bool)0>	5638
+q4_k-p106	qwen4exp	mul_mat_vec_q_pascal<q4_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	20252
+q4_k-p106	qwen4exp	mul_mat_vec_q_pascal<q5_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	4516
+q4_k-stock	flint	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	154
+q4_k-stock	flint	mul_mat_q<q4_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	140
+q4_k-stock	flint	mul_mat_q<q5_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	14
+q4_k-stock	flint	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	1144
+q4_k-stock	flint	mul_mat_vec_q<q4_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	17020
+q4_k-stock	flint	mul_mat_vec_q<q5_0, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	3418
+q4_k-stock	qwen35	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+q4_k-stock	qwen35	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	140
+q4_k-stock	qwen35	mul_mat_q<q4_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	126
+q4_k-stock	qwen35	mul_mat_q<q4_K, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	28
+q4_k-stock	qwen35	mul_mat_q<q5_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	14
+q4_k-stock	qwen35	mul_mat_vec_q<q4_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	15638
+q4_k-stock	qwen35	mul_mat_vec_q<q4_K, (int)1, (bool)1, (bool)1, (bool)0, (bool)0>	1128
+q4_k-stock	qwen35	mul_mat_vec_q<q5_0, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	2242
+q4_k-stock	qwen35moe	ampere_sgemm_32x32_sliced1x4_tn	28
+q4_k-stock	qwen35moe	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+q4_k-stock	qwen35moe	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	196
+q4_k-stock	qwen35moe	mul_mat_q<q4_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	112
+q4_k-stock	qwen35moe	mul_mat_q<q4_K, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	56
+q4_k-stock	qwen35moe	mul_mat_q<q5_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	28
+q4_k-stock	qwen35moe	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4560
+q4_k-stock	qwen35moe	mul_mat_vec_q<q4_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	18072
+q4_k-stock	qwen35moe	mul_mat_vec_q<q5_0, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	4532
+q4_k-stock	qwen3next	ampere_sgemm_32x32_sliced1x4_tn	28
+q4_k-stock	qwen3next	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	14
+q4_k-stock	qwen3next	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	196
+q4_k-stock	qwen3next	mul_mat_q<q4_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	112
+q4_k-stock	qwen3next	mul_mat_q<q4_K, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	42
+q4_k-stock	qwen3next	mul_mat_q<q5_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	28
+q4_k-stock	qwen3next	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4560
+q4_k-stock	qwen3next	mul_mat_vec_q<q4_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	16946
+q4_k-stock	qwen3next	mul_mat_vec_q<q5_0, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	4532
+q4_k-stock	qwen4exp	ampere_h1688gemm_128x128_ldg8_stages_32x1_tn	14
+q4_k-stock	qwen4exp	ampere_sgemm_32x128_tn	84
+q4_k-stock	qwen4exp	ampere_sgemm_32x32_sliced1x4_tn	126
+q4_k-stock	qwen4exp	cutlass::Kernel2<cutlass_80_tensorop_s1688gemm_256x128_16x3_tn_align4>	14
+q4_k-stock	qwen4exp	cutlass::Kernel2<cutlass_80_tensorop_s1688gemm_64x64_16x6_tn_align4>	112
+q4_k-stock	qwen4exp	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+q4_k-stock	qwen4exp	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	210
+q4_k-stock	qwen4exp	mul_mat_q<q4_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	140
+q4_k-stock	qwen4exp	mul_mat_q<q4_K, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	56
+q4_k-stock	qwen4exp	mul_mat_q<q5_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	28
+q4_k-stock	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	6788
+q4_k-stock	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)256, (bool)0, (bool)0>	10140
+q4_k-stock	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)32, (bool)0, (bool)0>	5638
+q4_k-stock	qwen4exp	mul_mat_vec_q<q4_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	20252
+q4_k-stock	qwen4exp	mul_mat_vec_q<q5_0, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	4516
+q5_k-fn-c4	flint	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	1140
+q5_k-fn-c4	flint	mul_mat_vec_q5_K_pascal_mt<(int)3, (int)1, (bool)0>	140
+q5_k-fn-c4	flint	mul_mat_vec_q5_K_pascal_mt<(int)4, (int)1, (bool)0>	19180
+q5_k-fn-c4	flint	mul_mat_vec_q<q5_1, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	3406
+q5_k-fn-c4	flint	mul_mat_vec_q<q5_1, (int)3, (bool)0, (bool)0, (bool)0, (bool)0>	14
+q5_k-fn-c4	flint	mul_mat_vec_q<q5_1, (int)4, (bool)0, (bool)0, (bool)0, (bool)0>	1918
+q5_k-fn-c4	flint	mul_mat_vec_q_pascal<q5_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	16960
+q5_k-fn-c4	qwen35	mul_mat_vec_q5_K_pascal_mt<(int)3, (int)1, (bool)0>	154
+q5_k-fn-c4	qwen35	mul_mat_vec_q5_K_pascal_mt<(int)4, (int)1, (bool)0>	21098
+q5_k-fn-c4	qwen35	mul_mat_vec_q<q5_1, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	2278
+q5_k-fn-c4	qwen35	mul_mat_vec_q<q5_1, (int)3, (bool)0, (bool)0, (bool)0, (bool)0>	14
+q5_k-fn-c4	qwen35	mul_mat_vec_q<q5_1, (int)4, (bool)0, (bool)0, (bool)0, (bool)0>	1918
+q5_k-fn-c4	qwen35	mul_mat_vec_q_pascal<q5_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	15890
+q5_k-fn-c4	qwen35	mul_mat_vec_q_pascal<q5_K, (int)1, (int)1, (bool)1, (int)1, (int)16, (bool)0>	1146
+q5_k-fn-c4	qwen35moe	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4564
+q5_k-fn-c4	qwen35moe	mul_mat_vec_f<float, float, (int)3, (int)128, (bool)0, (bool)0>	28
+q5_k-fn-c4	qwen35moe	mul_mat_vec_f<float, float, (int)4, (int)128, (bool)0, (bool)0>	3836
+q5_k-fn-c4	qwen35moe	mul_mat_vec_q5_K_pascal_mt<(int)3, (int)1, (bool)0>	154
+q5_k-fn-c4	qwen35moe	mul_mat_vec_q5_K_pascal_mt<(int)4, (int)1, (bool)0>	21098
+q5_k-fn-c4	qwen35moe	mul_mat_vec_q<q5_1, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	4564
+q5_k-fn-c4	qwen35moe	mul_mat_vec_q<q5_1, (int)3, (bool)0, (bool)0, (bool)0, (bool)0>	14
+q5_k-fn-c4	qwen35moe	mul_mat_vec_q<q5_1, (int)4, (bool)0, (bool)0, (bool)0, (bool)0>	1918
+q5_k-fn-c4	qwen35moe	mul_mat_vec_q_moe<q5_1, (int)2, (bool)0, (bool)0>	1932
+q5_k-fn-c4	qwen35moe	mul_mat_vec_q_pascal<q5_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	18200
+q5_k-fn-c4	qwen35moe	mul_mat_vec_q_pascal_mc<q5_K, (int)1, (int)1, (bool)1, (int)0, (bool)0, (int)16, (bool)0>	1932
+q5_k-fn-c4	qwen3next	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4564
+q5_k-fn-c4	qwen3next	mul_mat_vec_f<float, float, (int)3, (int)128, (bool)0, (bool)0>	28
+q5_k-fn-c4	qwen3next	mul_mat_vec_f<float, float, (int)4, (int)128, (bool)0, (bool)0>	3836
+q5_k-fn-c4	qwen3next	mul_mat_vec_q5_K_pascal_mt<(int)3, (int)1, (bool)0>	140
+q5_k-fn-c4	qwen3next	mul_mat_vec_q5_K_pascal_mt<(int)4, (int)1, (bool)0>	19180
+q5_k-fn-c4	qwen3next	mul_mat_vec_q<q5_1, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	4564
+q5_k-fn-c4	qwen3next	mul_mat_vec_q<q5_1, (int)3, (bool)0, (bool)0, (bool)0, (bool)0>	14
+q5_k-fn-c4	qwen3next	mul_mat_vec_q<q5_1, (int)4, (bool)0, (bool)0, (bool)0, (bool)0>	1918
+q5_k-fn-c4	qwen3next	mul_mat_vec_q_moe<q5_1, (int)2, (bool)0, (bool)0>	1932
+q5_k-fn-c4	qwen3next	mul_mat_vec_q_pascal<q5_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	17066
+q5_k-fn-c4	qwen3next	mul_mat_vec_q_pascal_mc<q5_K, (int)1, (int)1, (bool)1, (int)0, (bool)0, (int)16, (bool)0>	1932
+q5_k-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	6688
+q5_k-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)256, (bool)0, (bool)0>	10032
+q5_k-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)32, (bool)0, (bool)0>	5578
+q5_k-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)3, (int)128, (bool)0, (bool)0>	56
+q5_k-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)3, (int)256, (bool)0, (bool)0>	84
+q5_k-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)3, (int)32, (bool)0, (bool)0>	42
+q5_k-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)4, (int)128, (bool)0, (bool)0>	7672
+q5_k-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)4, (int)256, (bool)0, (bool)0>	11508
+q5_k-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)4, (int)32, (bool)0, (bool)0>	5754
+q5_k-fn-c4	qwen4exp	mul_mat_vec_q5_K_pascal_mt<(int)3, (int)1, (bool)0>	182
+q5_k-fn-c4	qwen4exp	mul_mat_vec_q5_K_pascal_mt<(int)4, (int)1, (bool)0>	24934
+q5_k-fn-c4	qwen4exp	mul_mat_vec_q<q5_1, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	4468
+q5_k-fn-c4	qwen4exp	mul_mat_vec_q<q5_1, (int)3, (bool)0, (bool)0, (bool)0, (bool)0>	14
+q5_k-fn-c4	qwen4exp	mul_mat_vec_q<q5_1, (int)4, (bool)0, (bool)0, (bool)0, (bool)0>	1918
+q5_k-fn-c4	qwen4exp	mul_mat_vec_q_moe<q5_1, (int)2, (bool)0, (bool)0>	1932
+q5_k-fn-c4	qwen4exp	mul_mat_vec_q_pascal<q5_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	20036
+q5_k-fn-c4	qwen4exp	mul_mat_vec_q_pascal_mc<q5_K, (int)1, (int)1, (bool)1, (int)0, (bool)0, (int)16, (bool)0>	1932
+q5_k-fn	flint	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	154
+q5_k-fn	flint	mul_mat_q<q5_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	140
+q5_k-fn	flint	mul_mat_q<q5_1, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	14
+q5_k-fn	flint	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	1140
+q5_k-fn	flint	mul_mat_vec_q<q5_1, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	3406
+q5_k-fn	flint	mul_mat_vec_q_pascal<q5_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	16960
+q5_k-fn	qwen35	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+q5_k-fn	qwen35	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	140
+q5_k-fn	qwen35	mul_mat_q<q5_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	126
+q5_k-fn	qwen35	mul_mat_q<q5_K, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	28
+q5_k-fn	qwen35	mul_mat_q<q5_1, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	14
+q5_k-fn	qwen35	mul_mat_vec_q<q5_1, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	2278
+q5_k-fn	qwen35	mul_mat_vec_q_pascal<q5_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	15890
+q5_k-fn	qwen35	mul_mat_vec_q_pascal<q5_K, (int)1, (int)1, (bool)1, (int)1, (int)16, (bool)0>	1146
+q5_k-fn	qwen35moe	ampere_sgemm_32x32_sliced1x4_tn	28
+q5_k-fn	qwen35moe	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+q5_k-fn	qwen35moe	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	196
+q5_k-fn	qwen35moe	mul_mat_q<q5_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	112
+q5_k-fn	qwen35moe	mul_mat_q<q5_K, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	56
+q5_k-fn	qwen35moe	mul_mat_q<q5_1, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	28
+q5_k-fn	qwen35moe	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4592
+q5_k-fn	qwen35moe	mul_mat_vec_q<q5_1, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	4564
+q5_k-fn	qwen35moe	mul_mat_vec_q_pascal<q5_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	18200
+q5_k-fn	qwen3next	ampere_sgemm_32x32_sliced1x4_tn	28
+q5_k-fn	qwen3next	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	14
+q5_k-fn	qwen3next	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	196
+q5_k-fn	qwen3next	mul_mat_q<q5_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	112
+q5_k-fn	qwen3next	mul_mat_q<q5_K, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	42
+q5_k-fn	qwen3next	mul_mat_q<q5_1, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	28
+q5_k-fn	qwen3next	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4592
+q5_k-fn	qwen3next	mul_mat_vec_q<q5_1, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	4564
+q5_k-fn	qwen3next	mul_mat_vec_q_pascal<q5_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	17066
+q5_k-fn	qwen4exp	ampere_h1688gemm_128x128_ldg8_stages_32x1_tn	14
+q5_k-fn	qwen4exp	ampere_sgemm_32x128_tn	84
+q5_k-fn	qwen4exp	ampere_sgemm_32x32_sliced1x4_tn	126
+q5_k-fn	qwen4exp	cutlass::Kernel2<cutlass_80_tensorop_s1688gemm_256x128_16x3_tn_align4>	14
+q5_k-fn	qwen4exp	cutlass::Kernel2<cutlass_80_tensorop_s1688gemm_64x64_16x6_tn_align4>	112
+q5_k-fn	qwen4exp	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+q5_k-fn	qwen4exp	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	210
+q5_k-fn	qwen4exp	mul_mat_q<q5_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	140
+q5_k-fn	qwen4exp	mul_mat_q<q5_K, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	56
+q5_k-fn	qwen4exp	mul_mat_q<q5_1, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	28
+q5_k-fn	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	6716
+q5_k-fn	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)256, (bool)0, (bool)0>	10032
+q5_k-fn	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)32, (bool)0, (bool)0>	5578
+q5_k-fn	qwen4exp	mul_mat_vec_q<q5_1, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	4468
+q5_k-fn	qwen4exp	mul_mat_vec_q_pascal<q5_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	20036
+q5_k-p106-c4	flint	kcol::mul_mat_kcol<q5_K, (int)4, (int)1>	19180
+q5_k-p106-c4	flint	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	1140
+q5_k-p106-c4	flint	mul_mat_vec_q<q5_1, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	3406
+q5_k-p106-c4	flint	mul_mat_vec_q<q5_1, (int)3, (bool)0, (bool)0, (bool)0, (bool)0>	14
+q5_k-p106-c4	flint	mul_mat_vec_q<q5_1, (int)4, (bool)0, (bool)0, (bool)0, (bool)0>	1918
+q5_k-p106-c4	flint	mul_mat_vec_q_pascal<q5_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	16960
+q5_k-p106-c4	flint	mul_mat_vec_q_pascal_mc<q5_K, (int)1, (int)1, (bool)1, (int)0, (bool)0, (int)16, (bool)0>	140
+q5_k-p106-c4	qwen35	kcol::mul_mat_kcol<q5_K, (int)4, (int)1>	21098
+q5_k-p106-c4	qwen35	mul_mat_vec_q<q5_1, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	2278
+q5_k-p106-c4	qwen35	mul_mat_vec_q<q5_1, (int)3, (bool)0, (bool)0, (bool)0, (bool)0>	14
+q5_k-p106-c4	qwen35	mul_mat_vec_q<q5_1, (int)4, (bool)0, (bool)0, (bool)0, (bool)0>	1918
+q5_k-p106-c4	qwen35	mul_mat_vec_q_pascal<q5_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	15890
+q5_k-p106-c4	qwen35	mul_mat_vec_q_pascal<q5_K, (int)1, (int)1, (bool)1, (int)1, (int)16, (bool)0>	1146
+q5_k-p106-c4	qwen35	mul_mat_vec_q_pascal_mc<q5_K, (int)1, (int)1, (bool)1, (int)0, (bool)0, (int)16, (bool)0>	154
+q5_k-p106-c4	qwen35moe	kcol::mul_mat_kcol<q5_K, (int)4, (int)1>	21098
+q5_k-p106-c4	qwen35moe	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4564
+q5_k-p106-c4	qwen35moe	mul_mat_vec_f<float, float, (int)3, (int)128, (bool)0, (bool)0>	28
+q5_k-p106-c4	qwen35moe	mul_mat_vec_f<float, float, (int)4, (int)128, (bool)0, (bool)0>	3836
+q5_k-p106-c4	qwen35moe	mul_mat_vec_q<q5_1, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	4564
+q5_k-p106-c4	qwen35moe	mul_mat_vec_q<q5_1, (int)3, (bool)0, (bool)0, (bool)0, (bool)0>	14
+q5_k-p106-c4	qwen35moe	mul_mat_vec_q<q5_1, (int)4, (bool)0, (bool)0, (bool)0, (bool)0>	1918
+q5_k-p106-c4	qwen35moe	mul_mat_vec_q_moe<q5_1, (int)2, (bool)0, (bool)0>	1932
+q5_k-p106-c4	qwen35moe	mul_mat_vec_q_pascal<q5_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	18200
+q5_k-p106-c4	qwen35moe	mul_mat_vec_q_pascal_mc<q5_K, (int)1, (int)1, (bool)1, (int)0, (bool)0, (int)16, (bool)0>	2086
+q5_k-p106-c4	qwen3next	kcol::mul_mat_kcol<q5_K, (int)4, (int)1>	19180
+q5_k-p106-c4	qwen3next	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4564
+q5_k-p106-c4	qwen3next	mul_mat_vec_f<float, float, (int)3, (int)128, (bool)0, (bool)0>	28
+q5_k-p106-c4	qwen3next	mul_mat_vec_f<float, float, (int)4, (int)128, (bool)0, (bool)0>	3836
+q5_k-p106-c4	qwen3next	mul_mat_vec_q<q5_1, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	4564
+q5_k-p106-c4	qwen3next	mul_mat_vec_q<q5_1, (int)3, (bool)0, (bool)0, (bool)0, (bool)0>	14
+q5_k-p106-c4	qwen3next	mul_mat_vec_q<q5_1, (int)4, (bool)0, (bool)0, (bool)0, (bool)0>	1918
+q5_k-p106-c4	qwen3next	mul_mat_vec_q_moe<q5_1, (int)2, (bool)0, (bool)0>	1932
+q5_k-p106-c4	qwen3next	mul_mat_vec_q_pascal<q5_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	17066
+q5_k-p106-c4	qwen3next	mul_mat_vec_q_pascal_mc<q5_K, (int)1, (int)1, (bool)1, (int)0, (bool)0, (int)16, (bool)0>	2072
+q5_k-p106-c4	qwen4exp	kcol::mul_mat_kcol<q5_K, (int)4, (int)1>	24934
+q5_k-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	6688
+q5_k-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)256, (bool)0, (bool)0>	10032
+q5_k-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)32, (bool)0, (bool)0>	5578
+q5_k-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)3, (int)128, (bool)0, (bool)0>	56
+q5_k-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)3, (int)256, (bool)0, (bool)0>	84
+q5_k-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)3, (int)32, (bool)0, (bool)0>	42
+q5_k-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)4, (int)128, (bool)0, (bool)0>	7672
+q5_k-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)4, (int)256, (bool)0, (bool)0>	11508
+q5_k-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)4, (int)32, (bool)0, (bool)0>	5754
+q5_k-p106-c4	qwen4exp	mul_mat_vec_q<q5_1, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	4468
+q5_k-p106-c4	qwen4exp	mul_mat_vec_q<q5_1, (int)3, (bool)0, (bool)0, (bool)0, (bool)0>	14
+q5_k-p106-c4	qwen4exp	mul_mat_vec_q<q5_1, (int)4, (bool)0, (bool)0, (bool)0, (bool)0>	1918
+q5_k-p106-c4	qwen4exp	mul_mat_vec_q_moe<q5_1, (int)2, (bool)0, (bool)0>	1932
+q5_k-p106-c4	qwen4exp	mul_mat_vec_q_pascal<q5_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	20036
+q5_k-p106-c4	qwen4exp	mul_mat_vec_q_pascal_mc<q5_K, (int)1, (int)1, (bool)1, (int)0, (bool)0, (int)16, (bool)0>	2114
+q5_k-p106	flint	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	154
+q5_k-p106	flint	mul_mat_q<q5_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	140
+q5_k-p106	flint	mul_mat_q<q5_1, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	14
+q5_k-p106	flint	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	1140
+q5_k-p106	flint	mul_mat_vec_q<q5_1, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	3406
+q5_k-p106	flint	mul_mat_vec_q_pascal<q5_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	16960
+q5_k-p106	qwen35	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+q5_k-p106	qwen35	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	140
+q5_k-p106	qwen35	mul_mat_q<q5_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	126
+q5_k-p106	qwen35	mul_mat_q<q5_K, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	28
+q5_k-p106	qwen35	mul_mat_q<q5_1, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	14
+q5_k-p106	qwen35	mul_mat_vec_q<q5_1, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	2278
+q5_k-p106	qwen35	mul_mat_vec_q_pascal<q5_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	15890
+q5_k-p106	qwen35	mul_mat_vec_q_pascal<q5_K, (int)1, (int)1, (bool)1, (int)1, (int)16, (bool)0>	1146
+q5_k-p106	qwen35moe	ampere_sgemm_32x32_sliced1x4_tn	28
+q5_k-p106	qwen35moe	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+q5_k-p106	qwen35moe	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	196
+q5_k-p106	qwen35moe	mul_mat_q<q5_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	112
+q5_k-p106	qwen35moe	mul_mat_q<q5_K, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	56
+q5_k-p106	qwen35moe	mul_mat_q<q5_1, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	28
+q5_k-p106	qwen35moe	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4592
+q5_k-p106	qwen35moe	mul_mat_vec_q<q5_1, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	4564
+q5_k-p106	qwen35moe	mul_mat_vec_q_pascal<q5_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	18200
+q5_k-p106	qwen3next	ampere_sgemm_32x32_sliced1x4_tn	28
+q5_k-p106	qwen3next	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	14
+q5_k-p106	qwen3next	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	196
+q5_k-p106	qwen3next	mul_mat_q<q5_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	112
+q5_k-p106	qwen3next	mul_mat_q<q5_K, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	42
+q5_k-p106	qwen3next	mul_mat_q<q5_1, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	28
+q5_k-p106	qwen3next	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4592
+q5_k-p106	qwen3next	mul_mat_vec_q<q5_1, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	4564
+q5_k-p106	qwen3next	mul_mat_vec_q_pascal<q5_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	17066
+q5_k-p106	qwen4exp	ampere_h1688gemm_128x128_ldg8_stages_32x1_tn	14
+q5_k-p106	qwen4exp	ampere_sgemm_32x128_tn	84
+q5_k-p106	qwen4exp	ampere_sgemm_32x32_sliced1x4_tn	126
+q5_k-p106	qwen4exp	cutlass::Kernel2<cutlass_80_tensorop_s1688gemm_256x128_16x3_tn_align4>	14
+q5_k-p106	qwen4exp	cutlass::Kernel2<cutlass_80_tensorop_s1688gemm_64x64_16x6_tn_align4>	112
+q5_k-p106	qwen4exp	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+q5_k-p106	qwen4exp	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	210
+q5_k-p106	qwen4exp	mul_mat_q<q5_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	140
+q5_k-p106	qwen4exp	mul_mat_q<q5_K, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	56
+q5_k-p106	qwen4exp	mul_mat_q<q5_1, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	28
+q5_k-p106	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	6716
+q5_k-p106	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)256, (bool)0, (bool)0>	10032
+q5_k-p106	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)32, (bool)0, (bool)0>	5578
+q5_k-p106	qwen4exp	mul_mat_vec_q<q5_1, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	4468
+q5_k-p106	qwen4exp	mul_mat_vec_q_pascal<q5_K, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>	20036
+q5_k-stock	flint	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	154
+q5_k-stock	flint	mul_mat_q<q5_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	140
+q5_k-stock	flint	mul_mat_q<q5_1, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	14
+q5_k-stock	flint	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	1140
+q5_k-stock	flint	mul_mat_vec_q<q5_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	16960
+q5_k-stock	flint	mul_mat_vec_q<q5_1, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	3406
+q5_k-stock	qwen35	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+q5_k-stock	qwen35	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	140
+q5_k-stock	qwen35	mul_mat_q<q5_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	126
+q5_k-stock	qwen35	mul_mat_q<q5_K, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	28
+q5_k-stock	qwen35	mul_mat_q<q5_1, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	14
+q5_k-stock	qwen35	mul_mat_vec_q<q5_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	15890
+q5_k-stock	qwen35	mul_mat_vec_q<q5_K, (int)1, (bool)1, (bool)1, (bool)0, (bool)0>	1146
+q5_k-stock	qwen35	mul_mat_vec_q<q5_1, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	2278
+q5_k-stock	qwen35moe	ampere_sgemm_32x32_sliced1x4_tn	28
+q5_k-stock	qwen35moe	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+q5_k-stock	qwen35moe	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	196
+q5_k-stock	qwen35moe	mul_mat_q<q5_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	112
+q5_k-stock	qwen35moe	mul_mat_q<q5_K, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	56
+q5_k-stock	qwen35moe	mul_mat_q<q5_1, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	28
+q5_k-stock	qwen35moe	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4592
+q5_k-stock	qwen35moe	mul_mat_vec_q<q5_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	18200
+q5_k-stock	qwen35moe	mul_mat_vec_q<q5_1, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	4564
+q5_k-stock	qwen3next	ampere_sgemm_32x32_sliced1x4_tn	28
+q5_k-stock	qwen3next	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	14
+q5_k-stock	qwen3next	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	196
+q5_k-stock	qwen3next	mul_mat_q<q5_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	112
+q5_k-stock	qwen3next	mul_mat_q<q5_K, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	42
+q5_k-stock	qwen3next	mul_mat_q<q5_1, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	28
+q5_k-stock	qwen3next	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4592
+q5_k-stock	qwen3next	mul_mat_vec_q<q5_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	17066
+q5_k-stock	qwen3next	mul_mat_vec_q<q5_1, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	4564
+q5_k-stock	qwen4exp	ampere_h1688gemm_128x128_ldg8_stages_32x1_tn	14
+q5_k-stock	qwen4exp	ampere_sgemm_32x128_tn	84
+q5_k-stock	qwen4exp	ampere_sgemm_32x32_sliced1x4_tn	126
+q5_k-stock	qwen4exp	cutlass::Kernel2<cutlass_80_tensorop_s1688gemm_256x128_16x3_tn_align4>	14
+q5_k-stock	qwen4exp	cutlass::Kernel2<cutlass_80_tensorop_s1688gemm_64x64_16x6_tn_align4>	112
+q5_k-stock	qwen4exp	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+q5_k-stock	qwen4exp	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	210
+q5_k-stock	qwen4exp	mul_mat_q<q5_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	140
+q5_k-stock	qwen4exp	mul_mat_q<q5_K, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	56
+q5_k-stock	qwen4exp	mul_mat_q<q5_1, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	28
+q5_k-stock	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	6716
+q5_k-stock	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)256, (bool)0, (bool)0>	10032
+q5_k-stock	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)32, (bool)0, (bool)0>	5578
+q5_k-stock	qwen4exp	mul_mat_vec_q<q5_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	20036
+q5_k-stock	qwen4exp	mul_mat_vec_q<q5_1, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	4468
+q6_k-fn-c4	flint	kcol::mul_mat_kcol<q8_0, (int)1, (int)1>	2304
+q6_k-fn-c4	flint	kcol::mul_mat_kcol<q8_0, (int)3, (int)1>	14
+q6_k-fn-c4	flint	kcol::mul_mat_kcol<q8_0, (int)4, (int)1>	1918
+q6_k-fn-c4	flint	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	1159
+q6_k-fn-c4	flint	mul_mat_vec_q<q6_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	17245
+q6_k-fn-c4	flint	mul_mat_vec_q<q6_K, (int)3, (bool)0, (bool)0, (bool)0, (bool)0>	140
+q6_k-fn-c4	flint	mul_mat_vec_q<q6_K, (int)4, (bool)0, (bool)0, (bool)0, (bool)0>	19180
+q6_k-fn-c4	flint	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	1159
+q6_k-fn-c4	qwen35	kcol::mul_mat_kcol<q8_0, (int)1, (int)1>	2242
+q6_k-fn-c4	qwen35	kcol::mul_mat_kcol<q8_0, (int)3, (int)1>	14
+q6_k-fn-c4	qwen35	kcol::mul_mat_kcol<q8_0, (int)4, (int)1>	1918
+q6_k-fn-c4	qwen35	mul_mat_vec_q<q6_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	15638
+q6_k-fn-c4	qwen35	mul_mat_vec_q<q6_K, (int)1, (bool)1, (bool)1, (bool)0, (bool)0>	1128
+q6_k-fn-c4	qwen35	mul_mat_vec_q<q6_K, (int)3, (bool)0, (bool)0, (bool)0, (bool)0>	154
+q6_k-fn-c4	qwen35	mul_mat_vec_q<q6_K, (int)4, (bool)0, (bool)0, (bool)0, (bool)0>	21098
+q6_k-fn-c4	qwen35moe	kcol::mul_mat_kcol<q8_0, (int)1, (int)1>	2226
+q6_k-fn-c4	qwen35moe	kcol::mul_mat_kcol<q8_0, (int)3, (int)1>	14
+q6_k-fn-c4	qwen35moe	kcol::mul_mat_kcol<q8_0, (int)4, (int)1>	1918
+q6_k-fn-c4	qwen35moe	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4452
+q6_k-fn-c4	qwen35moe	mul_mat_vec_f<float, float, (int)3, (int)128, (bool)0, (bool)0>	28
+q6_k-fn-c4	qwen35moe	mul_mat_vec_f<float, float, (int)4, (int)128, (bool)0, (bool)0>	3836
+q6_k-fn-c4	qwen35moe	mul_mat_vec_q<q6_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	17752
+q6_k-fn-c4	qwen35moe	mul_mat_vec_q<q6_K, (int)3, (bool)0, (bool)0, (bool)0, (bool)0>	154
+q6_k-fn-c4	qwen35moe	mul_mat_vec_q<q6_K, (int)4, (bool)0, (bool)0, (bool)0, (bool)0>	21098
+q6_k-fn-c4	qwen35moe	mul_mat_vec_q_moe<q6_K, (int)2, (bool)0, (bool)0>	1932
+q6_k-fn-c4	qwen35moe	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	2226
+q6_k-fn-c4	qwen35moe	mul_mat_vec_q_pascal_mc<q8_0, (int)2, (int)2, (bool)0, (int)0, (bool)0, (int)16, (bool)0>	1932
+q6_k-fn-c4	qwen3next	kcol::mul_mat_kcol<q8_0, (int)1, (int)1>	2226
+q6_k-fn-c4	qwen3next	kcol::mul_mat_kcol<q8_0, (int)3, (int)1>	14
+q6_k-fn-c4	qwen3next	kcol::mul_mat_kcol<q8_0, (int)4, (int)1>	1918
+q6_k-fn-c4	qwen3next	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4452
+q6_k-fn-c4	qwen3next	mul_mat_vec_f<float, float, (int)3, (int)128, (bool)0, (bool)0>	28
+q6_k-fn-c4	qwen3next	mul_mat_vec_f<float, float, (int)4, (int)128, (bool)0, (bool)0>	3836
+q6_k-fn-c4	qwen3next	mul_mat_vec_q<q6_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	16646
+q6_k-fn-c4	qwen3next	mul_mat_vec_q<q6_K, (int)3, (bool)0, (bool)0, (bool)0, (bool)0>	140
+q6_k-fn-c4	qwen3next	mul_mat_vec_q<q6_K, (int)4, (bool)0, (bool)0, (bool)0, (bool)0>	19180
+q6_k-fn-c4	qwen3next	mul_mat_vec_q_moe<q6_K, (int)2, (bool)0, (bool)0>	1932
+q6_k-fn-c4	qwen3next	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	2226
+q6_k-fn-c4	qwen3next	mul_mat_vec_q_pascal_mc<q8_0, (int)2, (int)2, (bool)0, (int)0, (bool)0, (int)16, (bool)0>	1932
+q6_k-fn-c4	qwen4exp	kcol::mul_mat_kcol<q8_0, (int)1, (int)1>	2298
+q6_k-fn-c4	qwen4exp	kcol::mul_mat_kcol<q8_0, (int)3, (int)1>	14
+q6_k-fn-c4	qwen4exp	kcol::mul_mat_kcol<q8_0, (int)4, (int)1>	1918
+q6_k-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	6880
+q6_k-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)256, (bool)0, (bool)0>	10320
+q6_k-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)32, (bool)0, (bool)0>	5738
+q6_k-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)3, (int)128, (bool)0, (bool)0>	56
+q6_k-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)3, (int)256, (bool)0, (bool)0>	84
+q6_k-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)3, (int)32, (bool)0, (bool)0>	42
+q6_k-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)4, (int)128, (bool)0, (bool)0>	7672
+q6_k-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)4, (int)256, (bool)0, (bool)0>	11508
+q6_k-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)4, (int)32, (bool)0, (bool)0>	5754
+q6_k-fn-c4	qwen4exp	mul_mat_vec_q<q6_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	20612
+q6_k-fn-c4	qwen4exp	mul_mat_vec_q<q6_K, (int)3, (bool)0, (bool)0, (bool)0, (bool)0>	182
+q6_k-fn-c4	qwen4exp	mul_mat_vec_q<q6_K, (int)4, (bool)0, (bool)0, (bool)0, (bool)0>	24934
+q6_k-fn-c4	qwen4exp	mul_mat_vec_q_moe<q6_K, (int)2, (bool)0, (bool)0>	1932
+q6_k-fn-c4	qwen4exp	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	2298
+q6_k-fn-c4	qwen4exp	mul_mat_vec_q_pascal_mc<q8_0, (int)2, (int)2, (bool)0, (int)0, (bool)0, (int)16, (bool)0>	1932
+q6_k-fn	flint	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	154
+q6_k-fn	flint	kcol::mul_mat_kcol<q8_0, (int)1, (int)1>	2304
+q6_k-fn	flint	mul_mat_q<q6_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	140
+q6_k-fn	flint	mul_mat_q<q8_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	14
+q6_k-fn	flint	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	1159
+q6_k-fn	flint	mul_mat_vec_q<q6_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	17245
+q6_k-fn	flint	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	1159
+q6_k-fn	qwen35	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+q6_k-fn	qwen35	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	140
+q6_k-fn	qwen35	kcol::mul_mat_kcol<q8_0, (int)1, (int)1>	2242
+q6_k-fn	qwen35	mul_mat_q<q6_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	126
+q6_k-fn	qwen35	mul_mat_q<q6_K, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	28
+q6_k-fn	qwen35	mul_mat_q<q8_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	14
+q6_k-fn	qwen35	mul_mat_vec_q<q6_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	15638
+q6_k-fn	qwen35	mul_mat_vec_q<q6_K, (int)1, (bool)1, (bool)1, (bool)0, (bool)0>	1128
+q6_k-fn	qwen35moe	ampere_sgemm_32x32_sliced1x4_tn	28
+q6_k-fn	qwen35moe	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+q6_k-fn	qwen35moe	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	196
+q6_k-fn	qwen35moe	kcol::mul_mat_kcol<q8_0, (int)1, (int)1>	2226
+q6_k-fn	qwen35moe	mul_mat_q<q6_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	112
+q6_k-fn	qwen35moe	mul_mat_q<q6_K, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	56
+q6_k-fn	qwen35moe	mul_mat_q<q8_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	28
+q6_k-fn	qwen35moe	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4480
+q6_k-fn	qwen35moe	mul_mat_vec_q<q6_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	17752
+q6_k-fn	qwen35moe	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	2226
+q6_k-fn	qwen3next	ampere_sgemm_32x32_sliced1x4_tn	28
+q6_k-fn	qwen3next	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	14
+q6_k-fn	qwen3next	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	196
+q6_k-fn	qwen3next	kcol::mul_mat_kcol<q8_0, (int)1, (int)1>	2226
+q6_k-fn	qwen3next	mul_mat_q<q6_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	112
+q6_k-fn	qwen3next	mul_mat_q<q6_K, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	42
+q6_k-fn	qwen3next	mul_mat_q<q8_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	28
+q6_k-fn	qwen3next	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4480
+q6_k-fn	qwen3next	mul_mat_vec_q<q6_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	16646
+q6_k-fn	qwen3next	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	2226
+q6_k-fn	qwen4exp	ampere_h1688gemm_128x128_ldg8_stages_32x1_tn	14
+q6_k-fn	qwen4exp	ampere_sgemm_32x128_tn	84
+q6_k-fn	qwen4exp	ampere_sgemm_32x32_sliced1x4_tn	126
+q6_k-fn	qwen4exp	cutlass::Kernel2<cutlass_80_tensorop_s1688gemm_256x128_16x3_tn_align4>	14
+q6_k-fn	qwen4exp	cutlass::Kernel2<cutlass_80_tensorop_s1688gemm_64x64_16x6_tn_align4>	112
+q6_k-fn	qwen4exp	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+q6_k-fn	qwen4exp	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	210
+q6_k-fn	qwen4exp	kcol::mul_mat_kcol<q8_0, (int)1, (int)1>	2298
+q6_k-fn	qwen4exp	mul_mat_q<q6_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	140
+q6_k-fn	qwen4exp	mul_mat_q<q6_K, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	56
+q6_k-fn	qwen4exp	mul_mat_q<q8_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	28
+q6_k-fn	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	6908
+q6_k-fn	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)256, (bool)0, (bool)0>	10320
+q6_k-fn	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)32, (bool)0, (bool)0>	5738
+q6_k-fn	qwen4exp	mul_mat_vec_q<q6_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	20612
+q6_k-fn	qwen4exp	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	2298
+q6_k-p106-c4	flint	kcol::mul_mat_kcol<q8_0, (int)1, (int)1>	2304
+q6_k-p106-c4	flint	kcol::mul_mat_kcol<q8_0, (int)3, (int)1>	14
+q6_k-p106-c4	flint	kcol::mul_mat_kcol<q8_0, (int)4, (int)1>	1918
+q6_k-p106-c4	flint	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	1159
+q6_k-p106-c4	flint	mul_mat_vec_q<q6_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	17245
+q6_k-p106-c4	flint	mul_mat_vec_q<q6_K, (int)3, (bool)0, (bool)0, (bool)0, (bool)0>	140
+q6_k-p106-c4	flint	mul_mat_vec_q<q6_K, (int)4, (bool)0, (bool)0, (bool)0, (bool)0>	19180
+q6_k-p106-c4	flint	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	1159
+q6_k-p106-c4	qwen35	kcol::mul_mat_kcol<q8_0, (int)1, (int)1>	2242
+q6_k-p106-c4	qwen35	kcol::mul_mat_kcol<q8_0, (int)3, (int)1>	14
+q6_k-p106-c4	qwen35	kcol::mul_mat_kcol<q8_0, (int)4, (int)1>	1918
+q6_k-p106-c4	qwen35	mul_mat_vec_q<q6_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	15638
+q6_k-p106-c4	qwen35	mul_mat_vec_q<q6_K, (int)1, (bool)1, (bool)1, (bool)0, (bool)0>	1128
+q6_k-p106-c4	qwen35	mul_mat_vec_q<q6_K, (int)3, (bool)0, (bool)0, (bool)0, (bool)0>	154
+q6_k-p106-c4	qwen35	mul_mat_vec_q<q6_K, (int)4, (bool)0, (bool)0, (bool)0, (bool)0>	21098
+q6_k-p106-c4	qwen35moe	kcol::mul_mat_kcol<q8_0, (int)1, (int)1>	2226
+q6_k-p106-c4	qwen35moe	kcol::mul_mat_kcol<q8_0, (int)3, (int)1>	14
+q6_k-p106-c4	qwen35moe	kcol::mul_mat_kcol<q8_0, (int)4, (int)1>	1918
+q6_k-p106-c4	qwen35moe	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4452
+q6_k-p106-c4	qwen35moe	mul_mat_vec_f<float, float, (int)3, (int)128, (bool)0, (bool)0>	28
+q6_k-p106-c4	qwen35moe	mul_mat_vec_f<float, float, (int)4, (int)128, (bool)0, (bool)0>	3836
+q6_k-p106-c4	qwen35moe	mul_mat_vec_q<q6_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	17752
+q6_k-p106-c4	qwen35moe	mul_mat_vec_q<q6_K, (int)3, (bool)0, (bool)0, (bool)0, (bool)0>	154
+q6_k-p106-c4	qwen35moe	mul_mat_vec_q<q6_K, (int)4, (bool)0, (bool)0, (bool)0, (bool)0>	21098
+q6_k-p106-c4	qwen35moe	mul_mat_vec_q_moe<q6_K, (int)2, (bool)0, (bool)0>	1932
+q6_k-p106-c4	qwen35moe	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	2226
+q6_k-p106-c4	qwen35moe	mul_mat_vec_q_pascal_mc<q8_0, (int)2, (int)2, (bool)0, (int)0, (bool)0, (int)16, (bool)0>	1932
+q6_k-p106-c4	qwen3next	kcol::mul_mat_kcol<q8_0, (int)1, (int)1>	2226
+q6_k-p106-c4	qwen3next	kcol::mul_mat_kcol<q8_0, (int)3, (int)1>	14
+q6_k-p106-c4	qwen3next	kcol::mul_mat_kcol<q8_0, (int)4, (int)1>	1918
+q6_k-p106-c4	qwen3next	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4452
+q6_k-p106-c4	qwen3next	mul_mat_vec_f<float, float, (int)3, (int)128, (bool)0, (bool)0>	28
+q6_k-p106-c4	qwen3next	mul_mat_vec_f<float, float, (int)4, (int)128, (bool)0, (bool)0>	3836
+q6_k-p106-c4	qwen3next	mul_mat_vec_q<q6_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	16646
+q6_k-p106-c4	qwen3next	mul_mat_vec_q<q6_K, (int)3, (bool)0, (bool)0, (bool)0, (bool)0>	140
+q6_k-p106-c4	qwen3next	mul_mat_vec_q<q6_K, (int)4, (bool)0, (bool)0, (bool)0, (bool)0>	19180
+q6_k-p106-c4	qwen3next	mul_mat_vec_q_moe<q6_K, (int)2, (bool)0, (bool)0>	1932
+q6_k-p106-c4	qwen3next	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	2226
+q6_k-p106-c4	qwen3next	mul_mat_vec_q_pascal_mc<q8_0, (int)2, (int)2, (bool)0, (int)0, (bool)0, (int)16, (bool)0>	1932
+q6_k-p106-c4	qwen4exp	kcol::mul_mat_kcol<q8_0, (int)1, (int)1>	2298
+q6_k-p106-c4	qwen4exp	kcol::mul_mat_kcol<q8_0, (int)3, (int)1>	14
+q6_k-p106-c4	qwen4exp	kcol::mul_mat_kcol<q8_0, (int)4, (int)1>	1918
+q6_k-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	6880
+q6_k-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)256, (bool)0, (bool)0>	10320
+q6_k-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)32, (bool)0, (bool)0>	5738
+q6_k-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)3, (int)128, (bool)0, (bool)0>	56
+q6_k-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)3, (int)256, (bool)0, (bool)0>	84
+q6_k-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)3, (int)32, (bool)0, (bool)0>	42
+q6_k-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)4, (int)128, (bool)0, (bool)0>	7672
+q6_k-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)4, (int)256, (bool)0, (bool)0>	11508
+q6_k-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)4, (int)32, (bool)0, (bool)0>	5754
+q6_k-p106-c4	qwen4exp	mul_mat_vec_q<q6_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	20612
+q6_k-p106-c4	qwen4exp	mul_mat_vec_q<q6_K, (int)3, (bool)0, (bool)0, (bool)0, (bool)0>	182
+q6_k-p106-c4	qwen4exp	mul_mat_vec_q<q6_K, (int)4, (bool)0, (bool)0, (bool)0, (bool)0>	24934
+q6_k-p106-c4	qwen4exp	mul_mat_vec_q_moe<q6_K, (int)2, (bool)0, (bool)0>	1932
+q6_k-p106-c4	qwen4exp	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	2298
+q6_k-p106-c4	qwen4exp	mul_mat_vec_q_pascal_mc<q8_0, (int)2, (int)2, (bool)0, (int)0, (bool)0, (int)16, (bool)0>	1932
+q6_k-p106	flint	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	154
+q6_k-p106	flint	kcol::mul_mat_kcol<q8_0, (int)1, (int)1>	2304
+q6_k-p106	flint	mul_mat_q<q6_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	140
+q6_k-p106	flint	mul_mat_q<q8_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	14
+q6_k-p106	flint	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	1159
+q6_k-p106	flint	mul_mat_vec_q<q6_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	17245
+q6_k-p106	flint	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	1159
+q6_k-p106	qwen35	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+q6_k-p106	qwen35	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	140
+q6_k-p106	qwen35	kcol::mul_mat_kcol<q8_0, (int)1, (int)1>	2242
+q6_k-p106	qwen35	mul_mat_q<q6_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	126
+q6_k-p106	qwen35	mul_mat_q<q6_K, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	28
+q6_k-p106	qwen35	mul_mat_q<q8_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	14
+q6_k-p106	qwen35	mul_mat_vec_q<q6_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	15638
+q6_k-p106	qwen35	mul_mat_vec_q<q6_K, (int)1, (bool)1, (bool)1, (bool)0, (bool)0>	1128
+q6_k-p106	qwen35moe	ampere_sgemm_32x32_sliced1x4_tn	28
+q6_k-p106	qwen35moe	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+q6_k-p106	qwen35moe	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	196
+q6_k-p106	qwen35moe	kcol::mul_mat_kcol<q8_0, (int)1, (int)1>	2226
+q6_k-p106	qwen35moe	mul_mat_q<q6_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	112
+q6_k-p106	qwen35moe	mul_mat_q<q6_K, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	56
+q6_k-p106	qwen35moe	mul_mat_q<q8_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	28
+q6_k-p106	qwen35moe	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4480
+q6_k-p106	qwen35moe	mul_mat_vec_q<q6_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	17752
+q6_k-p106	qwen35moe	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	2226
+q6_k-p106	qwen3next	ampere_sgemm_32x32_sliced1x4_tn	28
+q6_k-p106	qwen3next	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	14
+q6_k-p106	qwen3next	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	196
+q6_k-p106	qwen3next	kcol::mul_mat_kcol<q8_0, (int)1, (int)1>	2226
+q6_k-p106	qwen3next	mul_mat_q<q6_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	112
+q6_k-p106	qwen3next	mul_mat_q<q6_K, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	42
+q6_k-p106	qwen3next	mul_mat_q<q8_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	28
+q6_k-p106	qwen3next	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4480
+q6_k-p106	qwen3next	mul_mat_vec_q<q6_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	16646
+q6_k-p106	qwen3next	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	2226
+q6_k-p106	qwen4exp	ampere_h1688gemm_128x128_ldg8_stages_32x1_tn	14
+q6_k-p106	qwen4exp	ampere_sgemm_32x128_tn	84
+q6_k-p106	qwen4exp	ampere_sgemm_32x32_sliced1x4_tn	126
+q6_k-p106	qwen4exp	cutlass::Kernel2<cutlass_80_tensorop_s1688gemm_256x128_16x3_tn_align4>	14
+q6_k-p106	qwen4exp	cutlass::Kernel2<cutlass_80_tensorop_s1688gemm_64x64_16x6_tn_align4>	112
+q6_k-p106	qwen4exp	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+q6_k-p106	qwen4exp	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	210
+q6_k-p106	qwen4exp	kcol::mul_mat_kcol<q8_0, (int)1, (int)1>	2298
+q6_k-p106	qwen4exp	mul_mat_q<q6_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	140
+q6_k-p106	qwen4exp	mul_mat_q<q6_K, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	56
+q6_k-p106	qwen4exp	mul_mat_q<q8_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	28
+q6_k-p106	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	6908
+q6_k-p106	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)256, (bool)0, (bool)0>	10320
+q6_k-p106	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)32, (bool)0, (bool)0>	5738
+q6_k-p106	qwen4exp	mul_mat_vec_q<q6_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	20612
+q6_k-p106	qwen4exp	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	2298
+q6_k-stock	flint	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	154
+q6_k-stock	flint	mul_mat_q<q6_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	140
+q6_k-stock	flint	mul_mat_q<q8_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	14
+q6_k-stock	flint	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	1159
+q6_k-stock	flint	mul_mat_vec_q<q6_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	17245
+q6_k-stock	flint	mul_mat_vec_q<q8_0, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	3463
+q6_k-stock	qwen35	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+q6_k-stock	qwen35	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	140
+q6_k-stock	qwen35	mul_mat_q<q6_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	126
+q6_k-stock	qwen35	mul_mat_q<q6_K, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	28
+q6_k-stock	qwen35	mul_mat_q<q8_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	14
+q6_k-stock	qwen35	mul_mat_vec_q<q6_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	15638
+q6_k-stock	qwen35	mul_mat_vec_q<q6_K, (int)1, (bool)1, (bool)1, (bool)0, (bool)0>	1128
+q6_k-stock	qwen35	mul_mat_vec_q<q8_0, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	2242
+q6_k-stock	qwen35moe	ampere_sgemm_32x32_sliced1x4_tn	28
+q6_k-stock	qwen35moe	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+q6_k-stock	qwen35moe	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	196
+q6_k-stock	qwen35moe	mul_mat_q<q6_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	112
+q6_k-stock	qwen35moe	mul_mat_q<q6_K, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	56
+q6_k-stock	qwen35moe	mul_mat_q<q8_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	28
+q6_k-stock	qwen35moe	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4480
+q6_k-stock	qwen35moe	mul_mat_vec_q<q6_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	17752
+q6_k-stock	qwen35moe	mul_mat_vec_q<q8_0, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	4452
+q6_k-stock	qwen3next	ampere_sgemm_32x32_sliced1x4_tn	28
+q6_k-stock	qwen3next	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	14
+q6_k-stock	qwen3next	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	196
+q6_k-stock	qwen3next	mul_mat_q<q6_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	112
+q6_k-stock	qwen3next	mul_mat_q<q6_K, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	42
+q6_k-stock	qwen3next	mul_mat_q<q8_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	28
+q6_k-stock	qwen3next	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4480
+q6_k-stock	qwen3next	mul_mat_vec_q<q6_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	16646
+q6_k-stock	qwen3next	mul_mat_vec_q<q8_0, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	4452
+q6_k-stock	qwen4exp	ampere_h1688gemm_128x128_ldg8_stages_32x1_tn	14
+q6_k-stock	qwen4exp	ampere_sgemm_32x128_tn	84
+q6_k-stock	qwen4exp	ampere_sgemm_32x32_sliced1x4_tn	126
+q6_k-stock	qwen4exp	cutlass::Kernel2<cutlass_80_tensorop_s1688gemm_256x128_16x3_tn_align4>	14
+q6_k-stock	qwen4exp	cutlass::Kernel2<cutlass_80_tensorop_s1688gemm_64x64_16x6_tn_align4>	112
+q6_k-stock	qwen4exp	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+q6_k-stock	qwen4exp	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	210
+q6_k-stock	qwen4exp	mul_mat_q<q6_K, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	140
+q6_k-stock	qwen4exp	mul_mat_q<q6_K, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	56
+q6_k-stock	qwen4exp	mul_mat_q<q8_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	28
+q6_k-stock	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	6908
+q6_k-stock	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)256, (bool)0, (bool)0>	10320
+q6_k-stock	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)32, (bool)0, (bool)0>	5738
+q6_k-stock	qwen4exp	mul_mat_vec_q<q6_K, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	20612
+q6_k-stock	qwen4exp	mul_mat_vec_q<q8_0, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	4596
+q8-fn-c4	flint	kcol::mul_mat_kcol<q8_0, (int)1, (int)1>	2298
+q8-fn-c4	flint	kcol::mul_mat_kcol<q8_0, (int)3, (int)1>	154
+q8-fn-c4	flint	kcol::mul_mat_kcol<q8_0, (int)4, (int)1>	21098
+q8-fn-c4	flint	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	1156
+q8-fn-c4	flint	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	1156
+q8-fn-c4	flint	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)1, (int)0, (int)16, (bool)0>	17200
+q8-fn-c4	qwen35	kcol::mul_mat_kcol<q8_0, (int)1, (int)1>	2226
+q8-fn-c4	qwen35	kcol::mul_mat_kcol<q8_0, (int)3, (int)1>	168
+q8-fn-c4	qwen35	kcol::mul_mat_kcol<q8_0, (int)4, (int)1>	23016
+q8-fn-c4	qwen35	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)1, (int)0, (int)16, (bool)0>	15526
+q8-fn-c4	qwen35	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)1, (int)1, (int)16, (bool)0>	1120
+q8-fn-c4	qwen35moe	kcol::mul_mat_kcol<q8_0, (int)1, (int)1>	2226
+q8-fn-c4	qwen35moe	kcol::mul_mat_kcol<q8_0, (int)3, (int)1>	168
+q8-fn-c4	qwen35moe	kcol::mul_mat_kcol<q8_0, (int)4, (int)1>	23016
+q8-fn-c4	qwen35moe	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4452
+q8-fn-c4	qwen35moe	mul_mat_vec_f<float, float, (int)3, (int)128, (bool)0, (bool)0>	28
+q8-fn-c4	qwen35moe	mul_mat_vec_f<float, float, (int)4, (int)128, (bool)0, (bool)0>	3836
+q8-fn-c4	qwen35moe	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	2226
+q8-fn-c4	qwen35moe	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)1, (int)0, (int)16, (bool)0>	17752
+q8-fn-c4	qwen35moe	mul_mat_vec_q_pascal_mc<q8_0, (int)2, (int)2, (bool)0, (int)0, (bool)0, (int)16, (bool)0>	1932
+q8-fn-c4	qwen35moe	mul_mat_vec_q_pascal_mc<q8_0, (int)2, (int)2, (bool)1, (int)0, (bool)0, (int)16, (bool)0>	1932
+q8-fn-c4	qwen3next	kcol::mul_mat_kcol<q8_0, (int)1, (int)1>	2226
+q8-fn-c4	qwen3next	kcol::mul_mat_kcol<q8_0, (int)3, (int)1>	154
+q8-fn-c4	qwen3next	kcol::mul_mat_kcol<q8_0, (int)4, (int)1>	21098
+q8-fn-c4	qwen3next	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4452
+q8-fn-c4	qwen3next	mul_mat_vec_f<float, float, (int)3, (int)128, (bool)0, (bool)0>	28
+q8-fn-c4	qwen3next	mul_mat_vec_f<float, float, (int)4, (int)128, (bool)0, (bool)0>	3836
+q8-fn-c4	qwen3next	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	2226
+q8-fn-c4	qwen3next	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)1, (int)0, (int)16, (bool)0>	16646
+q8-fn-c4	qwen3next	mul_mat_vec_q_pascal_mc<q8_0, (int)2, (int)2, (bool)0, (int)0, (bool)0, (int)16, (bool)0>	1932
+q8-fn-c4	qwen3next	mul_mat_vec_q_pascal_mc<q8_0, (int)2, (int)2, (bool)1, (int)0, (bool)0, (int)16, (bool)0>	1932
+q8-fn-c4	qwen4exp	kcol::mul_mat_kcol<q8_0, (int)1, (int)1>	2234
+q8-fn-c4	qwen4exp	kcol::mul_mat_kcol<q8_0, (int)3, (int)1>	182
+q8-fn-c4	qwen4exp	kcol::mul_mat_kcol<q8_0, (int)3, (int)2>	14
+q8-fn-c4	qwen4exp	kcol::mul_mat_kcol<q8_0, (int)4, (int)1>	24934
+q8-fn-c4	qwen4exp	kcol::mul_mat_kcol<q8_0, (int)4, (int)2>	1918
+q8-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	6688
+q8-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)256, (bool)0, (bool)0>	10032
+q8-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)32, (bool)0, (bool)0>	5578
+q8-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)3, (int)128, (bool)0, (bool)0>	56
+q8-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)3, (int)256, (bool)0, (bool)0>	84
+q8-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)3, (int)32, (bool)0, (bool)0>	42
+q8-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)4, (int)128, (bool)0, (bool)0>	7672
+q8-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)4, (int)256, (bool)0, (bool)0>	11508
+q8-fn-c4	qwen4exp	mul_mat_vec_f<float, float, (int)4, (int)32, (bool)0, (bool)0>	5754
+q8-fn-c4	qwen4exp	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	2234
+q8-fn-c4	qwen4exp	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)1, (int)0, (int)16, (bool)0>	20036
+q8-fn-c4	qwen4exp	mul_mat_vec_q_pascal_mc<q8_0, (int)2, (int)2, (bool)0, (int)0, (bool)0, (int)16, (bool)0>	1932
+q8-fn-c4	qwen4exp	mul_mat_vec_q_pascal_mc<q8_0, (int)2, (int)2, (bool)1, (int)0, (bool)0, (int)16, (bool)0>	1932
+q8-fn	flint	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	154
+q8-fn	flint	kcol::mul_mat_kcol<q8_0, (int)1, (int)1>	2298
+q8-fn	flint	mul_mat_q<q8_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	154
+q8-fn	flint	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	1156
+q8-fn	flint	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	1156
+q8-fn	flint	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)1, (int)0, (int)16, (bool)0>	17200
+q8-fn	qwen35	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+q8-fn	qwen35	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	140
+q8-fn	qwen35	kcol::mul_mat_kcol<q8_0, (int)1, (int)1>	2226
+q8-fn	qwen35	mul_mat_q<q8_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	140
+q8-fn	qwen35	mul_mat_q<q8_0, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	28
+q8-fn	qwen35	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)1, (int)0, (int)16, (bool)0>	15526
+q8-fn	qwen35	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)1, (int)1, (int)16, (bool)0>	1120
+q8-fn	qwen35moe	ampere_sgemm_32x32_sliced1x4_tn	28
+q8-fn	qwen35moe	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+q8-fn	qwen35moe	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	196
+q8-fn	qwen35moe	kcol::mul_mat_kcol<q8_0, (int)1, (int)1>	2226
+q8-fn	qwen35moe	mul_mat_q<q8_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	140
+q8-fn	qwen35moe	mul_mat_q<q8_0, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	56
+q8-fn	qwen35moe	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4480
+q8-fn	qwen35moe	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	2226
+q8-fn	qwen35moe	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)1, (int)0, (int)16, (bool)0>	17752
+q8-fn	qwen3next	ampere_sgemm_32x32_sliced1x4_tn	28
+q8-fn	qwen3next	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	14
+q8-fn	qwen3next	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	196
+q8-fn	qwen3next	kcol::mul_mat_kcol<q8_0, (int)1, (int)1>	2226
+q8-fn	qwen3next	mul_mat_q<q8_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	140
+q8-fn	qwen3next	mul_mat_q<q8_0, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	42
+q8-fn	qwen3next	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4480
+q8-fn	qwen3next	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	2226
+q8-fn	qwen3next	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)1, (int)0, (int)16, (bool)0>	16646
+q8-fn	qwen4exp	ampere_h1688gemm_128x128_ldg8_stages_32x1_tn	14
+q8-fn	qwen4exp	ampere_sgemm_32x128_tn	84
+q8-fn	qwen4exp	ampere_sgemm_32x32_sliced1x4_tn	126
+q8-fn	qwen4exp	cutlass::Kernel2<cutlass_80_tensorop_s1688gemm_256x128_16x3_tn_align4>	14
+q8-fn	qwen4exp	cutlass::Kernel2<cutlass_80_tensorop_s1688gemm_64x64_16x6_tn_align4>	112
+q8-fn	qwen4exp	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+q8-fn	qwen4exp	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	210
+q8-fn	qwen4exp	kcol::mul_mat_kcol<q8_0, (int)1, (int)1>	2234
+q8-fn	qwen4exp	mul_mat_q<q8_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	168
+q8-fn	qwen4exp	mul_mat_q<q8_0, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	56
+q8-fn	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	6716
+q8-fn	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)256, (bool)0, (bool)0>	10032
+q8-fn	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)32, (bool)0, (bool)0>	5578
+q8-fn	qwen4exp	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	2234
+q8-fn	qwen4exp	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)1, (int)0, (int)16, (bool)0>	20036
+q8-p106-c4	flint	kcol::mul_mat_kcol<q8_0, (int)1, (int)1>	2298
+q8-p106-c4	flint	kcol::mul_mat_kcol<q8_0, (int)3, (int)1>	154
+q8-p106-c4	flint	kcol::mul_mat_kcol<q8_0, (int)4, (int)1>	21098
+q8-p106-c4	flint	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	1156
+q8-p106-c4	flint	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	1156
+q8-p106-c4	flint	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)1, (int)0, (int)16, (bool)0>	17200
+q8-p106-c4	qwen35	kcol::mul_mat_kcol<q8_0, (int)1, (int)1>	2226
+q8-p106-c4	qwen35	kcol::mul_mat_kcol<q8_0, (int)3, (int)1>	168
+q8-p106-c4	qwen35	kcol::mul_mat_kcol<q8_0, (int)4, (int)1>	23016
+q8-p106-c4	qwen35	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)1, (int)0, (int)16, (bool)0>	15526
+q8-p106-c4	qwen35	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)1, (int)1, (int)16, (bool)0>	1120
+q8-p106-c4	qwen35moe	kcol::mul_mat_kcol<q8_0, (int)1, (int)1>	2226
+q8-p106-c4	qwen35moe	kcol::mul_mat_kcol<q8_0, (int)3, (int)1>	168
+q8-p106-c4	qwen35moe	kcol::mul_mat_kcol<q8_0, (int)4, (int)1>	23016
+q8-p106-c4	qwen35moe	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4452
+q8-p106-c4	qwen35moe	mul_mat_vec_f<float, float, (int)3, (int)128, (bool)0, (bool)0>	28
+q8-p106-c4	qwen35moe	mul_mat_vec_f<float, float, (int)4, (int)128, (bool)0, (bool)0>	3836
+q8-p106-c4	qwen35moe	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	2226
+q8-p106-c4	qwen35moe	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)1, (int)0, (int)16, (bool)0>	17752
+q8-p106-c4	qwen35moe	mul_mat_vec_q_pascal_mc<q8_0, (int)2, (int)2, (bool)0, (int)0, (bool)0, (int)16, (bool)0>	1932
+q8-p106-c4	qwen35moe	mul_mat_vec_q_pascal_mc<q8_0, (int)2, (int)2, (bool)1, (int)0, (bool)0, (int)16, (bool)0>	1932
+q8-p106-c4	qwen3next	kcol::mul_mat_kcol<q8_0, (int)1, (int)1>	2226
+q8-p106-c4	qwen3next	kcol::mul_mat_kcol<q8_0, (int)3, (int)1>	154
+q8-p106-c4	qwen3next	kcol::mul_mat_kcol<q8_0, (int)4, (int)1>	21098
+q8-p106-c4	qwen3next	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4452
+q8-p106-c4	qwen3next	mul_mat_vec_f<float, float, (int)3, (int)128, (bool)0, (bool)0>	28
+q8-p106-c4	qwen3next	mul_mat_vec_f<float, float, (int)4, (int)128, (bool)0, (bool)0>	3836
+q8-p106-c4	qwen3next	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	2226
+q8-p106-c4	qwen3next	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)1, (int)0, (int)16, (bool)0>	16646
+q8-p106-c4	qwen3next	mul_mat_vec_q_pascal_mc<q8_0, (int)2, (int)2, (bool)0, (int)0, (bool)0, (int)16, (bool)0>	1932
+q8-p106-c4	qwen3next	mul_mat_vec_q_pascal_mc<q8_0, (int)2, (int)2, (bool)1, (int)0, (bool)0, (int)16, (bool)0>	1932
+q8-p106-c4	qwen4exp	kcol::mul_mat_kcol<q8_0, (int)1, (int)1>	2234
+q8-p106-c4	qwen4exp	kcol::mul_mat_kcol<q8_0, (int)3, (int)1>	196
+q8-p106-c4	qwen4exp	kcol::mul_mat_kcol<q8_0, (int)4, (int)1>	26852
+q8-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	6688
+q8-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)256, (bool)0, (bool)0>	10032
+q8-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)32, (bool)0, (bool)0>	5578
+q8-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)3, (int)128, (bool)0, (bool)0>	56
+q8-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)3, (int)256, (bool)0, (bool)0>	84
+q8-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)3, (int)32, (bool)0, (bool)0>	42
+q8-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)4, (int)128, (bool)0, (bool)0>	7672
+q8-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)4, (int)256, (bool)0, (bool)0>	11508
+q8-p106-c4	qwen4exp	mul_mat_vec_f<float, float, (int)4, (int)32, (bool)0, (bool)0>	5754
+q8-p106-c4	qwen4exp	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	2234
+q8-p106-c4	qwen4exp	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)1, (int)0, (int)16, (bool)0>	20036
+q8-p106-c4	qwen4exp	mul_mat_vec_q_pascal_mc<q8_0, (int)2, (int)2, (bool)0, (int)0, (bool)0, (int)16, (bool)0>	1932
+q8-p106-c4	qwen4exp	mul_mat_vec_q_pascal_mc<q8_0, (int)2, (int)2, (bool)1, (int)0, (bool)0, (int)16, (bool)0>	1932
+q8-p106	flint	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	154
+q8-p106	flint	kcol::mul_mat_kcol<q8_0, (int)1, (int)1>	2298
+q8-p106	flint	mul_mat_q<q8_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	154
+q8-p106	flint	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	1156
+q8-p106	flint	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	1156
+q8-p106	flint	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)1, (int)0, (int)16, (bool)0>	17200
+q8-p106	qwen35	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+q8-p106	qwen35	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	140
+q8-p106	qwen35	kcol::mul_mat_kcol<q8_0, (int)1, (int)1>	2226
+q8-p106	qwen35	mul_mat_q<q8_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	140
+q8-p106	qwen35	mul_mat_q<q8_0, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	28
+q8-p106	qwen35	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)1, (int)0, (int)16, (bool)0>	15526
+q8-p106	qwen35	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)1, (int)1, (int)16, (bool)0>	1120
+q8-p106	qwen35moe	ampere_sgemm_32x32_sliced1x4_tn	28
+q8-p106	qwen35moe	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+q8-p106	qwen35moe	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	196
+q8-p106	qwen35moe	kcol::mul_mat_kcol<q8_0, (int)1, (int)1>	2226
+q8-p106	qwen35moe	mul_mat_q<q8_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	140
+q8-p106	qwen35moe	mul_mat_q<q8_0, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	56
+q8-p106	qwen35moe	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4480
+q8-p106	qwen35moe	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	2226
+q8-p106	qwen35moe	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)1, (int)0, (int)16, (bool)0>	17752
+q8-p106	qwen3next	ampere_sgemm_32x32_sliced1x4_tn	28
+q8-p106	qwen3next	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	14
+q8-p106	qwen3next	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	196
+q8-p106	qwen3next	kcol::mul_mat_kcol<q8_0, (int)1, (int)1>	2226
+q8-p106	qwen3next	mul_mat_q<q8_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	140
+q8-p106	qwen3next	mul_mat_q<q8_0, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	42
+q8-p106	qwen3next	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4480
+q8-p106	qwen3next	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	2226
+q8-p106	qwen3next	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)1, (int)0, (int)16, (bool)0>	16646
+q8-p106	qwen4exp	ampere_h1688gemm_128x128_ldg8_stages_32x1_tn	14
+q8-p106	qwen4exp	ampere_sgemm_32x128_tn	84
+q8-p106	qwen4exp	ampere_sgemm_32x32_sliced1x4_tn	126
+q8-p106	qwen4exp	cutlass::Kernel2<cutlass_80_tensorop_s1688gemm_256x128_16x3_tn_align4>	14
+q8-p106	qwen4exp	cutlass::Kernel2<cutlass_80_tensorop_s1688gemm_64x64_16x6_tn_align4>	112
+q8-p106	qwen4exp	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+q8-p106	qwen4exp	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	210
+q8-p106	qwen4exp	kcol::mul_mat_kcol<q8_0, (int)1, (int)1>	2234
+q8-p106	qwen4exp	mul_mat_q<q8_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	168
+q8-p106	qwen4exp	mul_mat_q<q8_0, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	56
+q8-p106	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	6716
+q8-p106	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)256, (bool)0, (bool)0>	10032
+q8-p106	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)32, (bool)0, (bool)0>	5578
+q8-p106	qwen4exp	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)0, (int)0, (int)16, (bool)0>	2234
+q8-p106	qwen4exp	mul_mat_vec_q_pascal<q8_0, (int)2, (int)2, (bool)1, (int)0, (int)16, (bool)0>	20036
+q8-stock	flint	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	154
+q8-stock	flint	mul_mat_q<q8_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	154
+q8-stock	flint	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	1156
+q8-stock	flint	mul_mat_vec_q<q8_0, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	20654
+q8-stock	qwen35	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+q8-stock	qwen35	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	140
+q8-stock	qwen35	mul_mat_q<q8_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	140
+q8-stock	qwen35	mul_mat_q<q8_0, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	28
+q8-stock	qwen35	mul_mat_vec_q<q8_0, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	17752
+q8-stock	qwen35	mul_mat_vec_q<q8_0, (int)1, (bool)1, (bool)1, (bool)0, (bool)0>	1120
+q8-stock	qwen35moe	ampere_sgemm_32x32_sliced1x4_tn	28
+q8-stock	qwen35moe	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+q8-stock	qwen35moe	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	196
+q8-stock	qwen35moe	mul_mat_q<q8_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	140
+q8-stock	qwen35moe	mul_mat_q<q8_0, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	56
+q8-stock	qwen35moe	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4480
+q8-stock	qwen35moe	mul_mat_vec_q<q8_0, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	22204
+q8-stock	qwen3next	ampere_sgemm_32x32_sliced1x4_tn	28
+q8-stock	qwen3next	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	14
+q8-stock	qwen3next	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	196
+q8-stock	qwen3next	mul_mat_q<q8_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	140
+q8-stock	qwen3next	mul_mat_q<q8_0, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	42
+q8-stock	qwen3next	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	4480
+q8-stock	qwen3next	mul_mat_vec_q<q8_0, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	21098
+q8-stock	qwen4exp	ampere_h1688gemm_128x128_ldg8_stages_32x1_tn	14
+q8-stock	qwen4exp	ampere_sgemm_32x128_tn	84
+q8-stock	qwen4exp	ampere_sgemm_32x32_sliced1x4_tn	126
+q8-stock	qwen4exp	cutlass::Kernel2<cutlass_80_tensorop_s1688gemm_256x128_16x3_tn_align4>	14
+q8-stock	qwen4exp	cutlass::Kernel2<cutlass_80_tensorop_s1688gemm_64x64_16x6_tn_align4>	112
+q8-stock	qwen4exp	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align2>	28
+q8-stock	qwen4exp	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>	210
+q8-stock	qwen4exp	mul_mat_q<q8_0, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0>	168
+q8-stock	qwen4exp	mul_mat_q<q8_0, (int)64, (bool)1, (ggml_prec)30, (bool)0, (bool)0>	56
+q8-stock	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>	6716
+q8-stock	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)256, (bool)0, (bool)0>	10032
+q8-stock	qwen4exp	mul_mat_vec_f<float, float, (int)1, (int)32, (bool)0, (bool)0>	5578
+q8-stock	qwen4exp	mul_mat_vec_q<q8_0, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>	24504

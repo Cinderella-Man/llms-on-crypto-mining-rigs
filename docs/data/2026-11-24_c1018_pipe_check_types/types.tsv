@@ -1,0 +1,36 @@
+arch	models	tensors by type
+qwen4exp	iq4_xs	f16 1, f32 78, iq4_nl 5, iq4_xs 19
+qwen4exp	mix	f16 1, f32 78, iq4_xs 3, q2_0 4, q4_K 4, q5_0 2, q5_K 6, q6_K 1, q8_0 4
+qwen4exp	q2_0	f16 1, f32 78, q2_0 24
+qwen4exp	q4_k	f16 1, f32 78, q4_K 19, q5_0 5
+qwen4exp	q5_k	f16 1, f32 78, q5_1 5, q5_K 19
+qwen4exp	q6_k	f16 1, f32 78, q6_K 19, q8_0 5
+qwen4exp	q8	f16 1, f32 78, q8_0 24
+qwen35	iq4_xs	f32 49, iq4_nl 2, iq4_xs 16
+qwen35	mix	f32 49, iq4_nl 2, iq4_xs 7, q5_K 6, q6_K 1, q8_0 2
+qwen35	q2_0	f32 49, q2_0 18
+qwen35	q4_k	f32 49, q4_K 16, q5_0 2
+qwen35	q5_k	f32 49, q5_1 2, q5_K 16
+qwen35	q6_k	f32 49, q6_K 16, q8_0 2
+qwen35	q8	f32 49, q8_0 18
+qwen35moe	iq4_xs	f32 56, iq4_nl 4, iq4_xs 17
+qwen35moe	mix	f32 56, iq4_xs 3, q2_0 4, q4_K 4, q5_0 2, q5_K 6, q6_K 1, q8_0 1
+qwen35moe	q2_0	f32 56, q2_0 21
+qwen35moe	q4_k	f32 56, q4_K 17, q5_0 4
+qwen35moe	q5_k	f32 56, q5_1 4, q5_K 17
+qwen35moe	q6_k	f32 56, q6_K 17, q8_0 4
+qwen35moe	q8	f32 56, q8_0 21
+qwen3next	iq4_xs	f32 54, iq4_nl 4, iq4_xs 17
+qwen3next	mix	f32 54, iq4_xs 3, q2_0 4, q4_K 4, q5_0 2, q5_K 6, q6_K 1, q8_0 1
+qwen3next	q2_0	f32 54, q2_0 21
+qwen3next	q4_k	f32 54, q4_K 17, q5_0 4
+qwen3next	q5_k	f32 54, q5_1 4, q5_K 17
+qwen3next	q6_k	f32 54, q6_K 17, q8_0 4
+qwen3next	q8	f32 54, q8_0 21
+flint	iq4_xs	f32 57, iq4_nl 3, iq4_xs 16
+flint	mix	f32 57, iq4_nl 1, iq4_xs 2, q2_0 3, q4_K 2, q5_0 1, q5_K 8, q6_K 1, q8_0 1
+flint	q2_0	f32 57, q2_0 19
+flint	q4_k	f32 57, q4_K 16, q5_0 3
+flint	q5_k	f32 57, q5_1 3, q5_K 16
+flint	q6_k	f32 57, q6_K 16, q8_0 3
+flint	q8	f32 57, q8_0 19

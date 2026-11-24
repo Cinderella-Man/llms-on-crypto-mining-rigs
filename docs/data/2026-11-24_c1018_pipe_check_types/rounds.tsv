@@ -1,0 +1,9 @@
+work	round	builds	arms	layouts	checks	exit	seconds	verdicts
+out	defaults	base head	f32-stock q8-p106 mix-fn-c4	one split	host fed recurrent kernels	0	504	12 INFO; 180 OK; 
+out	reach	tip	f32-stock q8-stock q8-p106 q8-fn q8-p106-c4 q8-fn-c4 mix-stock mix-p106 mix-fn mix-p106-c4 mix-fn-c4 q2_0-stock q2_0-p106 q2_0-fn q2_0-p106-c4 q2_0-fn-c4 q4_k-stock q4_k-p106 q4_k-fn q4_k-p106-c4 q4_k-fn-c4 q5_k-stock q5_k-p106 q5_k-fn q5_k-p106-c4 q5_k-fn-c4 q6_k-stock q6_k-p106 q6_k-fn q6_k-p106-c4 q6_k-fn-c4 iq4_xs-stock iq4_xs-p106 iq4_xs-fn iq4_xs-p106-c4 iq4_xs-fn-c4	one	host fed recurrent kernels	0	1108	36 INFO; 540 OK; 
+out	split	tip	f32-stock q8-p106 q8-fn-c4 mix-fn-c4 q2_0-fn-c4 q4_k-fn-c4 q5_k-fn-c4 q6_k-fn-c4 iq4_xs-fn-c4	split	host fed recurrent kernels	0	428	9 INFO; 135 OK; 
+out	prof	tip	f32-stock q8-stock q8-p106 q8-fn q8-p106-c4 q8-fn-c4 mix-stock mix-p106 mix-fn mix-p106-c4 mix-fn-c4 q2_0-stock q2_0-p106 q2_0-fn q2_0-p106-c4 q2_0-fn-c4 q4_k-stock q4_k-p106 q4_k-fn q4_k-p106-c4 q4_k-fn-c4 q5_k-stock q5_k-p106 q5_k-fn q5_k-p106-c4 q5_k-fn-c4 q6_k-stock q6_k-p106 q6_k-fn q6_k-p106-c4 q6_k-fn-c4 iq4_xs-stock iq4_xs-p106 iq4_xs-fn iq4_xs-p106-c4 iq4_xs-fn-c4	one	profile	0	4431	180 INFO; 
+out	fault	base head	mix-fn-c4 q2_0-fn-c4 q4_k-fn-c4 q5_k-fn-c4 q6_k-fn-c4 iq4_xs-fn-c4	one split	host fed recurrent kernels	1	824	36 DIFFERS; 24 INFO; 324 OK; 
+quiet	old	base head	f32-stock q8-p106	one split	host fed recurrent kernels	0	183	8 INFO; 120 OK; 
+quiet	defaults	base head	f32-stock q8-p106 mix-fn-c4	one split	host fed recurrent kernels	0	314	12 INFO; 180 OK; 
+final	defaults	base head	f32-stock q8-p106 mix-fn-c4@one	one split	host fed recurrent kernels	0	234	10 INFO; 150 OK; 
