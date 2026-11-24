@@ -1,0 +1,9 @@
+name: llama.cpp-20261124-af00bb13b-pascal-p106-v5
+ref: fork/pascal-p106-v5
+commit: af00bb13b0fd59612bcab545964b61978f04b8d6 (2026-11-24 09:46:31 +0100)
+patch: none
+web page: asked b12483 (given), took b12483
+check tools: llama-pipe-recurrent-check test-moe-ids test-hop-cast test-hop-mailbox test-kpool-dev test-kpool-stage test-pool-mask-dev test-llama-archs test-bytes-switches test-route-once test-top-k-sort test-cuda-keepalive llama-quantize
+image: nvidia/cuda:12.9.2-devel-ubuntu24.04
+built: 2026-11-24T19:49:50+00:00
+avx instructions in llama-bench: 0

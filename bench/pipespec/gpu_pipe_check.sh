@@ -112,11 +112,11 @@
 #   [MIX_ARGS=...] [P106_ENV=...] [FN_SW=...] [P106ALL_ENV=...] [JITCACHE=<dir>] [QUANT=<llama-quantize>]
 #   [NSYS=<nsys, for CHECKS with profile>] bash gpu_pipe_check.sh
 # A bin dir is a rig tarball's bin/: scripts/build_llamacpp_docker.sh with TESTS=1 packs llama-pipe-recurrent-check and
-# test-llama-archs beside llama-pipespec and llama-completion (since 2026-11-24, C984). The rig tarball has no
-# llama-quantize, so QUANT (default: the bin dir's own, if it has one) names one that runs in IMG, e.g. a static CPU
-# build (cpu_tests.sh with SHARED=OFF and KEEP_BUILD=1); one QUANT for every build gives every build the same copies
-# (models.md5). Every tool runs in a container (docker run --gpus, no network) of IMG with the build, this folder, MOUNTS
-# and WORK at the same paths.
+# test-llama-archs (since 2026-11-24, C984) and llama-quantize (C1017) beside llama-pipespec and llama-completion, so
+# each build makes its copies with its own llama-quantize. QUANT names one llama-quantize for every build instead (one
+# that runs in IMG, e.g. a static CPU build: cpu_tests.sh with SHARED=OFF and KEEP_BUILD=1), which gives every build the
+# same copies (models.md5); a tarball built before C1017 has none, so it needs QUANT. Every tool runs in a container
+# (docker run --gpus, no network) of IMG with the build, this folder, MOUNTS and WORK at the same paths.
 # MODEL_SEED, the random models' seed, must be a whole number (test-llama-archs -s); the script stops at once, before it
 # writes anything, on any other value. The older name SEED is still read, but only when it holds a whole number and
 # MODEL_SEED is unset: a caller's own SEED of another kind (a clone's path, say) is left alone and the seed stays 1.
@@ -497,6 +497,7 @@ for spec in $BUILDS; do
     (cd "$bin" && md5sum llama-pipespec llama-pipe-recurrent-check test-llama-archs llama-completion 2>&1) > "$T/bin.md5"
     quant=${QUANT:-$bin/llama-quantize}
     [ -n "$KINDS" ] && md5sum "$quant" >> "$T/bin.md5" 2>&1
+    [ -n "$KINDS" ] && [ ! -x "$quant" ] && say "$tag: no llama-quantize at $quant, so no $KINDS copies: pass QUANT"
     if [ ! -x "$bin/test-llama-archs" ]; then
         printf '%s\t-\t-\t-\tmodels\tSKIP\tno test-llama-archs in %s\t-\t-\n' "$tag" "$bin" >> "$WORK/summary.tsv"
         continue

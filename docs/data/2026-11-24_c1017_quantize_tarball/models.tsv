@@ -1,0 +1,16 @@
+file	md5 (this tarball's llama-quantize)	md5 (C1019, the outside llama-quantize)	same	tensor types (type count)
+flint/flint-moe.gguf	8a91d5448c650c93b981d7e89e348110	8a91d5448c650c93b981d7e89e348110	yes	the random model (test-llama-archs)
+flint/mix.gguf	5cc3b294e19ebf20d5311d860b09d626	5cc3b294e19ebf20d5311d860b09d626	yes	f32 57, iq4_nl 1, iq4_xs 2, q2_0 3, q4_K 2, q5_0 1, q5_K 8, q6_K 1, q8_0 1
+flint/q8.gguf	7e3ed050c9f8535003bdfc27c95cf29b	7e3ed050c9f8535003bdfc27c95cf29b	yes	f32 57, q8_0 19
+qwen35/mix.gguf	87eaa43de1e2d9de15319bbd2e75dbec	87eaa43de1e2d9de15319bbd2e75dbec	yes	f32 49, iq4_nl 2, iq4_xs 7, q5_K 6, q6_K 1, q8_0 2
+qwen35/q8.gguf	0e61db5346f7207d1695f401da817fc8	0e61db5346f7207d1695f401da817fc8	yes	f32 49, q8_0 18
+qwen35/qwen35-dense.gguf	ab091bd4f8e97ebd5bae37d0265be427	ab091bd4f8e97ebd5bae37d0265be427	yes	the random model (test-llama-archs)
+qwen35moe/mix.gguf	566f69980ac58ef6a28af0caf040f919	566f69980ac58ef6a28af0caf040f919	yes	f32 56, iq4_xs 3, q2_0 4, q4_K 4, q5_0 2, q5_K 6, q6_K 1, q8_0 1
+qwen35moe/q8.gguf	8a330240f6b6d5d7ce45d0a96ea0cfe7	8a330240f6b6d5d7ce45d0a96ea0cfe7	yes	f32 56, q8_0 21
+qwen35moe/qwen35moe-moe.gguf	30b2bfd6a845bd14ef3a486c1ed94f07	30b2bfd6a845bd14ef3a486c1ed94f07	yes	the random model (test-llama-archs)
+qwen3next/mix.gguf	4c0b2289942157b4a9f95d2935c15b8a	4c0b2289942157b4a9f95d2935c15b8a	yes	f32 54, iq4_xs 3, q2_0 4, q4_K 4, q5_0 2, q5_K 6, q6_K 1, q8_0 1
+qwen3next/q8.gguf	13ef0dd3c993fc6592afa6168551e835	13ef0dd3c993fc6592afa6168551e835	yes	f32 54, q8_0 21
+qwen3next/qwen3next-moe.gguf	758bb4d68e8e76b1a2eee558cfb01108	758bb4d68e8e76b1a2eee558cfb01108	yes	the random model (test-llama-archs)
+qwen4exp/mix.gguf	17b443f1e7e7b2f6bd5eadc6da038692	17b443f1e7e7b2f6bd5eadc6da038692	yes	f16 1, f32 78, iq4_xs 3, q2_0 4, q4_K 4, q5_0 2, q5_K 6, q6_K 1, q8_0 4
+qwen4exp/q8.gguf	fa000fd68cdd96edcb5892bbed7d7cac	fa000fd68cdd96edcb5892bbed7d7cac	yes	f16 1, f32 78, q8_0 24
+qwen4exp/qwen4exp-moe.gguf	3c1f8f2cc6bd17a424e459ba638650c5	3c1f8f2cc6bd17a424e459ba638650c5	yes	the random model (test-llama-archs)

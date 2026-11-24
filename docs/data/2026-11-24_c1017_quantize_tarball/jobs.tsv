@@ -1,0 +1,15 @@
+tree	job	cards	rc	seconds
+base	models	0	0	5
+base	mix-fn-c4-one	2	0	91
+base	q8-p106-one	1	0	100
+base	f32-stock-one	0	0	133
+base	q8-p106-split	0,1,2	0	288
+base	f32-stock-split	0,1,2	0	391
+base	total	0,1,2	-	396
+head	models	0	0	4
+head	mix-fn-c4-one	2	0	86
+head	q8-p106-one	1	0	93
+head	q8-p106-split	0,1,2	0	128
+head	f32-stock-one	0	0	131
+head	f32-stock-split	0,1,2	0	284
+head	total	0,1,2	-	288

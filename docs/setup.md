@@ -101,8 +101,11 @@ built-in chat UI) during the build; the script asks for the page of the upstream
 on, also for Miner Llama's branches, or of the newest release below it when upstream has no page for that one, and
 prints which one the build took. With `TESTS=1` the tarball also holds `test-backend-ops` (llama.cpp's
 per-operation tests) and Miner Llama's own check tools that the tree has: the pipelined-decoding, expert-id, card-hop
-and pool checks and `test-llama-archs`, which writes the random models they load. They add about 0.54 GB;
-`CHECK_TOOLS=0` leaves them out ([what they cost](data/2026-11-24_c984_tests_build_tools/README.md)).
+and pool checks, the other hand-run tests (bytes per token, route once, top-k order, the card keep-alive),
+`test-llama-archs`, which writes the random models they load, and `llama-quantize`, which makes those models'
+quantized copies. Each adds about 0.07 GB; `CHECK_TOOLS=0` leaves them out
+([what they cost](data/2026-11-24_c984_tests_build_tools/README.md),
+[the last five](data/2026-11-24_c1017_quantize_tarball/README.md)).
 
 ## Running llama-server on a 4 GB host
 
