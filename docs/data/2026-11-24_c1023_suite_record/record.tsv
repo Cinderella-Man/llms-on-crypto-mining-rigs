@@ -1,0 +1,4 @@
+share	cases (.meta files)	files	bytes	manifest md5
+mul_mat_id	2370	7110	29517090436	758db38bd4df6eb24059d860acfd9514
+mul_mat	5125	15375	18021068767	3b8c6931855cfd00f8396358b0d22345
+# largest file mul_mat/cases/65f1df1b10a033894d64.ref, read after dropping its cached pages: 673745920 bytes (674 MB, 643 MiB) copied, 3.19124 s, 211 MB/s

@@ -1,0 +1,7 @@
+share	replay on	live OK while recording	replay OK	replay FAIL	NOREC	live OK cases not OK in the replay	verdict
+mul_mat_id	af00bb13b	2370	2370	0	0	0	passed
+mul_mat_id	8a9629942	2370	2370	0	0	0	passed
+mul_mat_id	af00bb13b-cpucheck	2370	2370	0	0	0	passed
+mul_mat	af00bb13b	5125	5125	0	0	0	passed
+mul_mat	8a9629942	5125	5125	0	0	0	passed
+mul_mat	af00bb13b-cpucheck	5125	5125	0	0	0	passed

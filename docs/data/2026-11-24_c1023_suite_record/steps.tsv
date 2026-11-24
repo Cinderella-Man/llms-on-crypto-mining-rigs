@@ -1,0 +1,9 @@
+share	step	exit	summary	OK	FAIL	NOREC	not supported	illegal access	record or replay line	wall s
+mul_mat_id	record	0	2370/2370 tests passed	2371	0	0	8	0	record: $REC/mul_mat_id: 2370 cases, 29.515 GB of files, 0 left out by the caps, 0 kept from an earlier run	2084
+mul_mat_id	replay-af00bb13b	0	2370/2370 tests passed	2371	0	0	8	0	replay: $REC/mul_mat_id: 2370 cases replayed, 0 selected by the filter have no record	145
+mul_mat_id	replay-8a9629942	0	2370/2370 tests passed	2371	0	0	8	0	replay: $REC/mul_mat_id: 2370 cases replayed, 0 selected by the filter have no record	68
+mul_mat_id	replay-af00bb13b-cpucheck	0	2370/2370 tests passed	2371	0	0	8	0	replay: $REC/mul_mat_id: 2370 cases replayed, 0 selected by the filter have no record; replay cpu-check: 84 cases, 84 references identical, 0 verdicts differ	77
+mul_mat	record	0	5125/5125 tests passed	5126	0	0	521	0	record: $REC/mul_mat: 5125 cases, 18.016 GB of files, 0 left out by the caps, 0 kept from an earlier run	393
+mul_mat	replay-af00bb13b	0	5125/5125 tests passed	5126	0	0	521	0	replay: $REC/mul_mat: 5125 cases replayed, 0 selected by the filter have no record	81
+mul_mat	replay-8a9629942	0	5125/5125 tests passed	5126	0	0	521	0	replay: $REC/mul_mat: 5125 cases replayed, 0 selected by the filter have no record	45
+mul_mat	replay-af00bb13b-cpucheck	0	5125/5125 tests passed	5126	0	0	521	0	replay: $REC/mul_mat: 5125 cases replayed, 0 selected by the filter have no record; replay cpu-check: 204 cases, 204 references identical, 0 verdicts differ	41
