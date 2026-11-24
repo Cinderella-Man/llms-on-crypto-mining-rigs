@@ -176,6 +176,13 @@ the v5 presets every release file gives the same replies, the same MiB per card 
 candidate as on `af00bb13b`, the kernel record sets give the last check's results, and the random models differ in
 exactly the 120 models above, by the same amounts. The two agent runs remain.
 
+**Ornith's agent run on 2026-11-24** ([2026-11-24_c912_ornith_agent](../2026-11-24_c912_ornith_agent/README.md)): on
+the second rig, the v5 preset against R232 (b)'s control run of the same preset on `af00bb13b` on the same boot, the
+engine the only difference. 12 of 12 tasks, no server error, no reply read again, 1.87 minutes a task at equal work
+against 1.88. At the shared mix a decode step took 51.37 ms against 51.46. The 19 requests read on the same prompt took
+176.72 s against 182.57 (3.2 % less, each of them less), and each card's peak memory was the same. One run of each
+engine: the control's second run on the same boot gives the spread before a class. Flash-Next's run remains.
+
 ## Files
 
 | File | What |

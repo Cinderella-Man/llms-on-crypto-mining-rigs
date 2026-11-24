@@ -1,0 +1,6 @@
+arm	passed	turns	prompt_tok_s	gen_tok_s	ttft_median_s	ttft_p90_s	ttft_turn1_median_s	acceptance	tokens_per_step	minutes_all	minutes_per_task_median	equal_work_min_per_task	equal_work_vs_ref	prompt_read_per_task	reread_per_task	reread_s_per_task	reread_turns	ttft_max_s
+v3ka	12/12	63	60.1	16.42	9.34	19.86	16.39	nan	nan	30.2	2.11	2.52	+0.0 %	3459	430	5.35	3	42.45
+o5t1a	12/12	64	102.5	19.41	6.13	9.58	8.00	nan	nan	21.4	1.33	1.89	-25.0 %	3080	0	0.00	0	26.70
+o5t1b	11/12	55	106.0	19.01	6.94	10.31	7.98	nan	nan	34.8	1.52	1.90	-24.6 %	2886	0	0.00	0	26.89
+o5f16a	12/12	59	104.3	19.42	6.59	10.27	8.01	nan	nan	21.9	1.68	1.88	-25.4 %	2937	0	0.00	0	26.28
+o5cand	12/12	62	105.5	19.49	6.06	9.38	7.71	nan	nan	20.0	1.62	1.87	-25.8 %	2985	0	0.00	0	25.55
