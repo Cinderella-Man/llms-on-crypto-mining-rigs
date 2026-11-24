@@ -1,14 +1,14 @@
-task	t1400a_prompt_s	t1400a_prompt_tokens	t1400a_turns	t1400b_prompt_s	t1400b_prompt_tokens	t1400b_turns	f5cand_prompt_s	f5cand_prompt_tokens	f5cand_turns
-bugfix-javascript-complex-numbers	30.72	5460	6	22.45	4688	5	21.50	2749	7
-bugfix-javascript-grade-school	15.42	2860	5	19.01	3007	6	16.34	2853	5
-bugfix-javascript-phone-number	16.37	3211	5	19.67	3200	5	17.66	2893	5
-bugfix-javascript-space-age	14.52	2178	5	15.84	2328	5	17.77	2243	5
-bugfix-javascript-triangle	15.24	2529	5	16.72	2678	6	16.16	2504	5
-bugfix-javascript-variable-length-quantity	17.84	3504	5	17.88	3295	5	21.59	3827	6
-bugfix-python-affine-cipher	45.27	5132	7	41.58	4733	5	44.12	4673	5
-bugfix-python-list-ops	14.73	2312	5	15.37	2434	5	15.77	2425	5
-bugfix-python-phone-number	23.05	3717	6	23.23	3687	7	16.47	2427	4
-bugfix-python-pig-latin	15.55	2065	6	18.76	2654	7	16.17	2209	5
-bugfix-python-scale-generator	22.11	3679	5	19.31	3323	5	20.54	3150	5
-bugfix-python-variable-length-quantity	13.64	1951	6	19.82	3622	6	19.11	3242	5
-mean a task	20.37	3216	5.50	20.80	3304	5.58	20.27	2933	5.17
+task	t1400a_prompt_s	t1400a_prompt_tokens	t1400a_turns	t1400b_prompt_s	t1400b_prompt_tokens	t1400b_turns	f5cand_prompt_s	f5cand_prompt_tokens	f5cand_turns	f5ref_prompt_s	f5ref_prompt_tokens	f5ref_turns
+bugfix-javascript-complex-numbers	30.72	5460	6	22.45	4688	5	21.50	2749	7	158.59	22216	40
+bugfix-javascript-grade-school	15.42	2860	5	19.01	3007	6	16.34	2853	5	16.46	2854	5
+bugfix-javascript-phone-number	16.37	3211	5	19.67	3200	5	17.66	2893	5	17.53	2866	5
+bugfix-javascript-space-age	14.52	2178	5	15.84	2328	5	17.77	2243	5	17.55	2380	5
+bugfix-javascript-triangle	15.24	2529	5	16.72	2678	6	16.16	2504	5	16.74	2505	5
+bugfix-javascript-variable-length-quantity	17.84	3504	5	17.88	3295	5	21.59	3827	6	12.99	1715	4
+bugfix-python-affine-cipher	45.27	5132	7	41.58	4733	5	44.12	4673	5	43.75	4626	5
+bugfix-python-list-ops	14.73	2312	5	15.37	2434	5	15.77	2425	5	16.45	2479	5
+bugfix-python-phone-number	23.05	3717	6	23.23	3687	7	16.47	2427	4	24.22	3867	5
+bugfix-python-pig-latin	15.55	2065	6	18.76	2654	7	16.17	2209	5	23.47	3776	5
+bugfix-python-scale-generator	22.11	3679	5	19.31	3323	5	20.54	3150	5	24.19	3709	6
+bugfix-python-variable-length-quantity	13.64	1951	6	19.82	3622	6	19.11	3242	5	19.21	3459	5
+mean a task	20.37	3216	5.50	20.80	3304	5.58	20.27	2933	5.17	32.60	4704	7.92

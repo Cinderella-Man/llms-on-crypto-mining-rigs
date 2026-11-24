@@ -1,0 +1,5 @@
+run	requests	tokens_sampled	while_grammar_applied	requests_without_grammar	rejected
+t1400a	66	31373	3947	12	1
+t1400b	67	18343	3561	12	0
+f5cand	62	32088	32088	0	1
+f5ref	95	26635	6715	11	1

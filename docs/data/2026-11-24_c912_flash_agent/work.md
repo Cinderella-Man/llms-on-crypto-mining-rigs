@@ -7,6 +7,7 @@ Prompt tokens read: the prompt tokens the server processed (the rest came from i
 | t1400a | 12 | 66 | 38598 (3216) | 31360 (2613) | 0 (0; 0.0 of 244.5) | 27.37 (bugfix-python-affine-cipher, 1) |
 | t1400b | 12 | 67 | 39649 (3304) | 18328 (1527) | 215 (1; 2.9 of 249.6) | 27.53 (bugfix-python-affine-cipher, 1) |
 | f5cand | 12 | 62 | 35195 (2933) | 32077 (2673) | 0 (0; 0.0 of 243.2) | 28.58 (bugfix-python-affine-cipher, 1) |
+| f5ref | 12 | 96 | 56452 (4704) | 26616 (2218) | 0 (0; 0.0 of 391.2) | 28.52 (bugfix-python-affine-cipher, 1) |
 
 ### The turns that read a reply again
 

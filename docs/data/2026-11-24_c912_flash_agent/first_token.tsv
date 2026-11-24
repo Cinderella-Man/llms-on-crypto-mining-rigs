@@ -2,3 +2,4 @@ run	turns	longest_s	task	turn	prompt_n	cache_n	prompt_ms	later_turns_median_s	la
 t1400a	66	27.37	bugfix-python-affine-cipher	1	2780	0	27334	2.03	7.88
 t1400b	67	27.53	bugfix-python-affine-cipher	1	2780	0	27407	2.05	7.90
 f5cand	62	28.58	bugfix-python-affine-cipher	1	2780	0	28536	2.19	8.38
+f5ref	96	28.52	bugfix-python-affine-cipher	1	2780	0	28482	2.33	8.10

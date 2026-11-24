@@ -4,13 +4,38 @@ t1400a	all	600-1,023	7	5452	32.84	6.023
 t1400a	all	1,024-1,999	9	12122	65.20	5.378
 t1400a	all	2,000+	5	12203	66.51	5.450
 t1400a	all	all turns	66	38598	244.47	6.334
+t1400a	without capped	under 600	42	8243	74.94	9.092
+t1400a	without capped	600-1,023	6	4556	26.84	5.891
+t1400a	without capped	1,024-1,999	8	10883	58.74	5.397
+t1400a	without capped	2,000+	4	9456	53.23	5.629
+t1400a	without capped	all turns	60	33138	213.75	6.450
 t1400b	all	under 600	45	9201	81.21	8.826
 t1400b	all	600-1,023	8	6282	37.43	5.958
 t1400b	all	1,024-1,999	10	13885	73.24	5.274
 t1400b	all	2,000+	4	10281	57.76	5.618
 t1400b	all	all turns	67	39649	249.63	6.296
+t1400b	without capped	under 600	42	8777	76.71	8.740
+t1400b	without capped	600-1,023	7	5386	32.40	6.016
+t1400b	without capped	1,024-1,999	10	13885	73.24	5.274
+t1400b	without capped	2,000+	3	6913	44.83	6.485
+t1400b	without capped	all turns	62	34961	227.18	6.498
 f5cand	all	under 600	42	7964	79.83	10.024
 f5cand	all	600-1,023	7	5594	37.94	6.783
 f5cand	all	1,024-1,999	9	12425	70.14	5.645
 f5cand	all	2,000+	4	9212	55.29	6.002
 f5cand	all	all turns	62	35195	243.20	6.910
+f5cand	without capped	under 600	37	6815	69.43	10.188
+f5cand	without capped	600-1,023	5	3994	26.84	6.720
+f5cand	without capped	1,024-1,999	9	12425	70.14	5.645
+f5cand	without capped	2,000+	4	9212	55.29	6.002
+f5cand	without capped	all turns	55	32446	221.70	6.833
+f5ref	all	under 600	61	11586	115.48	9.967
+f5ref	all	600-1,023	11	9023	61.31	6.795
+f5ref	all	1,024-1,999	18	23601	142.85	6.053
+f5ref	all	2,000+	5	12242	71.51	5.841
+f5ref	all	all turns	95	56452	391.16	6.929
+f5ref	without capped	under 600	35	6596	65.85	9.983
+f5ref	without capped	600-1,023	7	5932	39.72	6.697
+f5ref	without capped	1,024-1,999	9	12534	68.66	5.478
+f5ref	without capped	2,000+	4	9174	58.33	6.358
+f5ref	without capped	all turns	55	34236	232.57	6.793

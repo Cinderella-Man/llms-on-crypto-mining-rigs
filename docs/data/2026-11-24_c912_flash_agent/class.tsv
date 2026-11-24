@@ -1,0 +1,11 @@
+measure	f5cand	f5ref	t1400a	t1400b	diff	diff_pct	gap_t1400a_t1400b	band	class
+minutes a task at equal work	2.34	2.4	2.25	2.24	-0.06	-2.5 %	0.01	0.024	gain
+generation tok/s	28.59	26.78	30.71	30.87	+1.81	+6.8 %	0.16	0.2678	gain
+ms a decode step, all requests	117	118.8	107.2	106	-1.78	-1.5 %	1.23	1.23	gain
+prompt tok/s	144.7	144.3	157.9	158.8	+0.4	+0.3 %	0.9	1.443	negligible
+first token median s	2.51	2.59	2.32	2.83	-0.08	-3.1 %	0.51	0.51	negligible
+first token p90 s	8.25	8.34	7.88	7.9	-0.09	-1.1 %	0.02	0.0834	gain
+first token on a task's first turn, median s	5.11	5.15	4.67	4.62	-0.04	-0.8 %	0.05	0.0515	negligible
+prompt tokens read a task	2933	4704	3216	3304	-1771	-37.7 %	87.58	87.58	gain
+reply tokens re-read a task	0	0	0	17.92	+0	—	17.92	17.92	negligible
+longest first-token wait s	28.58	28.52	27.37	27.53	+0.0514	+0.2 %	0.1542	0.2852	negligible

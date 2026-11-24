@@ -2,3 +2,4 @@ arm	tasks	turns	prompt_read	generated	reread_turns	older_checkpoint_turns	reread
 t1400a	12	66	38598	31360	0	0	0	0.000	244.469	27.3743	bugfix-python-affine-cipher	1	0
 t1400b	12	67	39649	18328	1	0	215	2.875	249.635	27.5285	bugfix-python-affine-cipher	1	0
 f5cand	12	62	35195	32077	0	0	0	0.000	243.201	28.5762	bugfix-python-affine-cipher	1	0
+f5ref	12	96	56452	26616	0	0	0	0.000	391.155	28.5248	bugfix-python-affine-cipher	1	0

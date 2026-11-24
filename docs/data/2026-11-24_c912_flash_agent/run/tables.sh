@@ -15,10 +15,13 @@
 # preset's line as it is now, on the second rig at its clock profile and on pascal-p106-v5 602691153,
 # docs/data/2026-11-20_r227_flash_taper1400_agent/agent/: context only, another rig, clocks and engine). This is R227's
 # run/tables.sh with those context rows in place of R220's two runs and this folder as the output. As there, the
-# second agent table leaves out every task that ran to its 12-minute cap in any of the named runs (capped.tsv); the
+# second agent table leaves out every task that ran to a cap (12 minutes or the turn cap) in any of the named runs (capped.tsv); the
 # prompt seconds of each turn are also summed by the turn's new tokens (prompt_n) in the taper's buckets (under 600, 600
-# to 1,023, 1,024 to 1,999, 2,000 and more); and the taper the server read at its load is listed per run.
-# Writes this folder's tables.
+# to 1,023, 1,024 to 1,999, 2,000 and more); and the taper the server read at its load is listed per run. With two runs
+# named (the candidate, then the control) it also writes the class (run/class.py: class.tsv, and class_nocap.tsv
+# without the tasks that ran to a cap), the decode step at a shared mix of contexts (run/steps_mix.py), the requests read
+# on the same prompt in the two runs alone (same_prompts_pair.md) and the tokens sampled under the tool-call grammar
+# (grammar.tsv). Writes this folder's tables.
 set -u
 T=${1:?}; shift
 RUNS=("$@")
@@ -49,14 +52,15 @@ for f in ("turns.csv", "attempts.csv"):
 PY
 py docs/data/2026-11-05_keepalive/run/agent_tables.py "$T" r90v3 "${REFS[@]}" "${RUNS[@]}" > "$T/agent_tables.out" 2>&1
 cp "$T/agent.tsv" "$D/agent.tsv"
-# the tasks that ran to the 12-minute cap (runaway_kind time) in any named run, and the table without them
+# the tasks that ran to a cap (the 12-minute cap, runaway_kind time, or the turn cap, runaway_kind turns) in any named
+# run, and the table without them
 py - "${RUNS[@]/#/$D/agent/}" > "$D/capped.tsv" <<'PY'
 import csv, sys
-print("run\ttask\twall_s\tturns\tpassed")
+print("run\ttask\tcap\twall_s\tturns\tpassed")
 for d in sys.argv[1:]:
     for a in csv.DictReader(open(f"{d}/attempts.csv")):
-        if a["runaway_kind"] == "time":
-            print(f"{a['file']}\t{a['task_id']}\t{a['wall_s']}\t{a['turns']}\t{a['pass']}")
+        if a["runaway_kind"] in ("time", "turns"):
+            print(f"{a['file']}\t{a['task_id']}\t{a['runaway_kind']}\t{a['wall_s']}\t{a['turns']}\t{a['pass']}")
 PY
 CAPPED=$(tail -n +2 "$D/capped.tsv" | cut -f 2 | sort -u | paste -sd,)
 if [ -n "$CAPPED" ]; then
@@ -156,3 +160,57 @@ py scripts/realloc_counts.py "${ra[@]}" > "$D/reallocs.tsv"
 # text reuse's own cost: the time from choosing the slot to processing each request, per run
 sg=(); for r in "${RUNS[@]}"; do sg+=("$T/rig/server-$r.log"); done
 py $S/run/slot_gap.py "${sg[@]}" > "$D/slot_gap.tsv"
+# the tokens each server sampled while the tool-call grammar applied (C1080, Q1813): the server log's sampling lines
+gr=(); for r in "${REFS[@]}" "${RUNS[@]}"; do gr+=("$r=$T/rig/server-$r.log"); done
+py - "${gr[@]}" > "$D/grammar.tsv" <<'PY'
+import re, sys
+print("run\trequests\ttokens_sampled\twhile_grammar_applied\trequests_without_grammar\trejected")
+pat = re.compile(r"sampling =\s+(\d+) tokens, \d+ drawn on the device, (\d+) while the grammar applied, (\d+) rejected")
+for arg in sys.argv[1:]:
+    name, log = arg.split("=", 1)
+    n = tok = gram = none = rej = 0
+    for ln in open(log, errors="replace"):
+        m = pat.search(ln)
+        if m:
+            a, g, j = map(int, m.groups())
+            n += 1; tok += a; gram += g; none += g == 0; rej += j
+    print(f"{name}\t{n}\t{tok}\t{gram}\t{none}\t{rej}")
+PY
+# the candidate against the control (C912's class, two runs named: the candidate first): run/class.py with R227's two
+# runs of the same started command as the band (never under 1 %), the decode step at a shared mix of contexts (the two
+# runs alone, then with R227's two), and the requests read on the same prompt and cached prefix in the two runs alone
+# and in R227's two alone
+if [ ${#RUNS[@]} -ge 2 ]; then
+  py $D/run/class.py "$D/agent.tsv" "$D/work.tsv" "$D/steps.md" "${RUNS[0]}" "${RUNS[1]}" "${REFS[@]}" > "$D/class.tsv"
+  { py $D/run/steps_mix.py "$D/steps.md" "${RUNS[0]}" "${RUNS[1]}"; echo
+    py $D/run/steps_mix.py "$D/steps.md" "${RUNS[0]}" "${RUNS[1]}" "${REFS[@]}"; } > "$D/steps_mix.md"
+  py $C/run/same_prompts.py "${RUNS[0]}=$D/agent/${RUNS[0]}/turns.csv" "${RUNS[1]}=$D/agent/${RUNS[1]}/turns.csv" \
+    > "$D/same_prompts_pair.md"
+  py $C/run/same_prompts.py "${REFS[0]}=$Q/${REFS[0]}/turns.csv" "${REFS[1]}=$Q/${REFS[1]}/turns.csv" > "$D/same_prompts_refs.md"
+  # the same without the tasks that ran to a cap in either run (capped.tsv), left out of every run named and of R227's:
+  # the work counts, the decode steps and the class
+  if [ -n "$CAPPED" ]; then
+    nc=(); ns=()
+    for a in "${REFS[@]}" "${RUNS[@]}"; do
+      src=$Q/$a; [[ " ${RUNS[*]} " == *" $a "* ]] && src=$D/agent/$a
+      mkdir -p "$T/nocap/$a"
+      CAPPED=$CAPPED py - "$src/turns.csv" "$T/nocap/$a/turns.csv" <<'PY'
+import csv, os, sys
+skip = set(os.environ["CAPPED"].split(","))
+rows = list(csv.DictReader(open(sys.argv[1])))
+with open(sys.argv[2], "w", newline="") as fh:
+    w = csv.DictWriter(fh, fieldnames=list(rows[0]), lineterminator="\n")
+    w.writeheader()
+    w.writerows(r for r in rows if r["task_id"] not in skip)
+PY
+      nc+=("$a=$T/nocap/$a/turns.csv"); ns+=("$a=$T/rig/server-$a.log=$T/nocap/$a/turns.csv")
+    done
+    py bench/agent_check/report.py work "${nc[@]}" --tsv "$D/work_nocap.tsv" > "$D/work_nocap.md"
+    py docs/data/2026-11-18_r203_ornith_offsets/run/flash_steps.py "${ns[@]}" > "$D/steps_nocap.md"
+    py $D/run/class.py "$D/agent_nocap.tsv" "$D/work_nocap.tsv" "$D/steps_nocap.md" "${RUNS[0]}" "${RUNS[1]}" \
+      "${REFS[@]}" > "$D/class_nocap.tsv"
+    py $D/run/steps_mix.py "$D/steps_nocap.md" "${RUNS[0]}" "${RUNS[1]}" > "$D/steps_mix_nocap.md"
+  else
+    rm -f "$D/work_nocap.tsv" "$D/work_nocap.md" "$D/steps_nocap.md" "$D/class_nocap.tsv" "$D/steps_mix_nocap.md"
+  fi
+fi
