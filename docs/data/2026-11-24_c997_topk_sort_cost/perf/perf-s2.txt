@@ -1,0 +1,33 @@
+ggml_cuda_init: found 1 CUDA devices (Total VRAM: 6068 MiB):
+  Device 0: NVIDIA P106-090, compute capability 6.1, VMM: yes, VRAM: 6068 MiB
+operator(): GGML_CUDA_TOP_K_SORT=1: the radix top-k's columns sorted by descending value, ties by column
+Testing 2 devices
+
+Backend 1/2: CUDA0
+  Device description: NVIDIA P106-090
+  Device memory: 6068 MB (6023 MB free)
+
+  TOP_K(type=f32,ne=[131072,1,1,1],k=16,ties=0):               16384 runs -   108.30 us/run -      512 kB/run -    4.51 GB/s
+  TOP_K(type=f32,ne=[131072,16,1,1],k=16,ties=0):               4096 runs -   482.23 us/run -     8193 kB/run -   16.20 GB/s
+  TOP_K(type=f32,ne=[131072,1,1,1],k=2048,ties=0):              8192 runs -   145.60 us/run -      520 kB/run -    3.41 GB/s
+  TOP_K(type=f32,ne=[131072,1,1,1],k=2048,ties=1):              8192 runs -   139.87 us/run -      520 kB/run -    3.55 GB/s
+  TOP_K(type=f32,ne=[131072,2,1,1],k=2048,ties=0):              8192 runs -   162.85 us/run -     1040 kB/run -    6.09 GB/s
+  TOP_K(type=f32,ne=[131072,2,1,1],k=2048,ties=1):              8192 runs -   154.72 us/run -     1040 kB/run -    6.41 GB/s
+  TOP_K(type=f32,ne=[131072,4,1,1],k=2048,ties=0):              8192 runs -   232.14 us/run -     2080 kB/run -    8.54 GB/s
+  TOP_K(type=f32,ne=[131072,4,1,1],k=2048,ties=1):              8192 runs -   218.79 us/run -     2080 kB/run -    9.07 GB/s
+  TOP_K(type=f32,ne=[131072,8,1,1],k=2048,ties=0):              8066 runs -   352.54 us/run -     4160 kB/run -   11.25 GB/s
+  TOP_K(type=f32,ne=[131072,8,1,1],k=2048,ties=1):              8066 runs -   326.31 us/run -     4160 kB/run -   12.16 GB/s
+  TOP_K(type=f32,ne=[131072,16,1,1],k=2048,ties=0):                     4033 runs -   620.17 us/run -     8320 kB/run -   12.79 GB/s
+  TOP_K(type=f32,ne=[131072,16,1,1],k=2048,ties=1):                     4033 runs -   577.39 us/run -     8320 kB/run -   13.74 GB/s
+  TOP_K(type=f32,ne=[131072,32,1,1],k=2048,ties=0):                     2017 runs -  1200.40 us/run -    16640 kB/run -   13.22 GB/s
+  TOP_K(type=f32,ne=[131072,32,1,1],k=2048,ties=1):                     2017 runs -  1108.91 us/run -    16640 kB/run -   14.31 GB/s
+  TOP_K(type=f32,ne=[151936,1,1,1],k=20,ties=0):               16384 runs -    87.20 us/run -      593 kB/run -    6.49 GB/s
+  TOP_K(type=f32,ne=[151936,1,1,1],k=40,ties=0):               16384 runs -   111.83 us/run -      593 kB/run -    5.06 GB/s
+  TOP_K(type=f32,ne=[248320,1,1,1],k=20,ties=0):               16384 runs -   115.03 us/run -      970 kB/run -    8.04 GB/s
+  TOP_K(type=f32,ne=[248320,2,1,1],k=20,ties=0):                8192 runs -   135.28 us/run -     1940 kB/run -   13.68 GB/s
+  TOP_K(type=f32,ne=[248320,4,1,1],k=20,ties=0):                8192 runs -   211.74 us/run -     3880 kB/run -   17.48 GB/s
+  Backend CUDA0: OK
+Backend 2/2: CPU
+  Skipping
+2/2 backends passed
+OK
