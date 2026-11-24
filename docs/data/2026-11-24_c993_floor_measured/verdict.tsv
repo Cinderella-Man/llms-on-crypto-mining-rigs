@@ -1,0 +1,31 @@
+check	measure	value	rule	result
+x 1.01: q8f101 - q8	kld	0.000500 ± 0.000157 (t 3.18)	t >= 3	seen
+x 1.01: q8f101 - q8	top_differs_pct	-0.067000 ± 0.074385 (t -0.90)	t >= 3	not seen
+x 1.01: q8f101 - q8	ln_ppl_ratio	0.001620 ± 0.000880 (t 1.84)	|t| >= 3 (reported, not in the answer)	not seen
+x 1.02: q8f102 - q8	kld	0.001080 ± 0.000116 (t 9.30)	t >= 3	seen
+x 1.02: q8f102 - q8	top_differs_pct	0.147000 ± 0.041252 (t 3.56)	t >= 3	seen
+x 1.02: q8f102 - q8	ln_ppl_ratio	0.000820 ± 0.000361 (t 2.27)	|t| >= 3 (reported, not in the answer)	not seen
+x 1.03: q8f103 - q8	kld	0.002320 ± 0.000464 (t 5.00)	t >= 3	seen
+x 1.03: q8f103 - q8	top_differs_pct	0.253000 ± 0.054463 (t 4.65)	t >= 3	seen
+x 1.03: q8f103 - q8	ln_ppl_ratio	0.000690 ± 0.000503 (t 1.37)	|t| >= 3 (reported, not in the answer)	not seen
+x 1.05: q8f105 - q8	kld	0.004280 ± 0.000671 (t 6.38)	t >= 3	seen
+x 1.05: q8f105 - q8	top_differs_pct	0.403000 ± 0.036810 (t 10.95)	t >= 3	seen
+x 1.05: q8f105 - q8	ln_ppl_ratio	0.000350 ± 0.001178 (t 0.30)	|t| >= 3 (reported, not in the answer)	not seen
+answer: the smallest factor seen in kld (C989's est.: 3.43 %)	kld	x 1.01 (1 %)	t >= 3	measured
+answer: the smallest factor seen in top_differs_pct (C989's est.: 1.37 %)	top_differs_pct	x 1.02 (2 %)	t >= 3	measured
+answer: the smallest factor seen in KLD or top-token disagreement	kld, top_differs_pct	x 1.01 (1 %)	t >= 3	measured
+validity: f16 logs the compute 6.1 prompt attention kernel	kernel	head 256, f16 K/V	head 256, f16 K/V	pass
+validity: f16 runs without the fault	fault line	none	none	pass
+validity: q8 logs the compute 6.1 prompt attention kernel	kernel	head 256, q8_0 K/V	head 256, q8_0 K/V	pass
+validity: q8 runs without the fault	fault line	none	none	pass
+validity: q8f101 logs the compute 6.1 prompt attention kernel	kernel	head 256, q8_0 K/V	head 256, q8_0 K/V	pass
+validity: q8f101 logs the fault at its factor	fault line	1.00999999	output x 1.01 (as a float)	pass
+validity: q8f102 logs the compute 6.1 prompt attention kernel	kernel	head 256, q8_0 K/V	head 256, q8_0 K/V	pass
+validity: q8f102 logs the fault at its factor	fault line	1.01999998	output x 1.02 (as a float)	pass
+validity: q8f103 logs the compute 6.1 prompt attention kernel	kernel	head 256, q8_0 K/V	head 256, q8_0 K/V	pass
+validity: q8f103 logs the fault at its factor	fault line	1.02999997	output x 1.03 (as a float)	pass
+validity: q8f105 logs the compute 6.1 prompt attention kernel	kernel	head 256, q8_0 K/V	head 256, q8_0 K/V	pass
+validity: q8f105 logs the fault at its factor	fault line	1.04999995	output x 1.05 (as a float)	pass
+repeat: q8 against C989's pass g q8, every stretch	ln, kld, top	largest difference 0.00000	<= 0.00002 (expected, not required)	same
+repeat: q8f105 against C989's pass g q8f1, every stretch	ln, kld, top	largest difference 0.00000	<= 0.00002 (expected, not required)	same
+repeat: the F16 reference's perplexity against C989's	ppl_base	1.579050 against 1.579050	equal (expected, not required)	same

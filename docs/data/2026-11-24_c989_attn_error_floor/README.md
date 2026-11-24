@@ -8,9 +8,10 @@ so that later attention-kernel checks on Ornith know what size of error they can
 ([Q1722](../../../quants/experiments.md)). It is a correctness check on three RTX 3090s through the rig build's compute
 6.1 PTX; no time on these cards means anything for a P106.
 
-**Result: against the F16 cache, the per-stretch check sees a 5 % error in the attention output clearly, and est. down
-to about 3.4 % in KLD. Against Ornith's own Q8_0 model it only just sees 5 %, and per-stretch perplexity does not see
-5 % at all. A dropped key tile is seen by every measure.**
+**Result: against the F16 cache, the per-stretch check sees a 5 % error in the attention output clearly, and down to 1 %
+in KLD and 2 % in top-token disagreement (measured in [C993](../2026-11-24_c993_floor_measured/README.md)). Against
+Ornith's own Q8_0 model it only just sees 5 %, and per-stretch perplexity does not see 5 % at all. A dropped key tile
+is seen by every measure.**
 - **A 5 % error (`=1`), against the F16 cache:** on the 12 stretches it adds 0.004280 ± 0.000671 to the KLD
   (6.4 standard errors) and 0.403 ± 0.037 points to the share of tokens whose top token differs (11 standard errors).
   It stands out from rounding too: 0.003570 ± 0.000817 more KLD than reading the F16 cache in micro-batches of 128
@@ -20,28 +21,31 @@ to about 3.4 % in KLD. Against Ornith's own Q8_0 model it only just sees 5 %, an
   points). Part of the change must point toward the Q8_0 model's output, so this comparison sees less of it.
 - **Perplexity per stretch does not see a 5 % error** in either comparison: +0.00035 ± 0.00118 and +0.00036 ± 0.00119
   in ln PPL (0.3 standard errors). The stretches move both ways and cancel.
-- **The smallest error the check sees, est.:** 3.43 % in KLD against the F16 cache, an upper estimate that keeps the
-  spread across stretches as it was at 5 %. The spread follows how sensitive each stretch is (correlation 0.86 with
-  rounding's KLD on the same stretch), so it shrinks with the error. Against the Q8_0 model: est. 4.86 %. A 6.58 %
-  error (est.) moves the output as far as rounding does.
+- **The smallest error the check sees against the F16 cache, measured**
+  ([C993](../2026-11-24_c993_floor_measured/README.md), the same fault at × 1.01, 1.02, 1.03 and 1.05 on these 12
+  stretches): 1 % in KLD (+0.000500 ± 0.000157, t 3.18) and 2 % in top-token disagreement (+0.147 ± 0.041 points,
+  t 3.56). The KLD difference grows more slowly than the square of the error, so scaling this folder's 5 % down as a
+  square (3.43 %) puts the floor too high. Against the Q8_0 model: est. 4.86 %. A 6.58 % error (est.) moves the output
+  as far as rounding does.
 - **A dropped key tile (`=3`)** is a gross error: KLD 0.366182 against the Q8_0 cache's 0.006699, same top token 85.368 %
   against 98.175 %, perplexity +33.6 %. That is 12 to 14 standard errors in every measure and comparison, and plain on
   every single stretch (the smallest rise in one stretch's KLD is +0.1667).
 
 **For later attention-kernel checks on Ornith:** compare against the F16 cache or the base kernel, per stretch, and judge
-by KLD and top-token disagreement. With 12 stretches of 8,192 tokens that comparison sees a uniform error of 5 % and,
-est., down to about 3.4 %. Smaller errors pass unseen. A structural bug, such as a missing tile or a wrong mask, shows
-plainly. The comparison against the Q8_0 model is the quality bar's measure: it sees kernel errors only from about 5 %.
-Perplexity is not a kernel-error test. More stretches help little: twice as many lower the KLD estimate by about a
-sixth, est. A size knob for the fault switch would measure the floor instead of estimating it, and scoring each fault
-against its own unfaulted run would remove the reference's own error from the check. Both are new rows
-([Q1726, Q1727](../../../quants/experiments.md)).
+by KLD and top-token disagreement. With 12 stretches of 8,192 tokens that comparison sees a uniform error of 1 % in KLD
+and 2 % in top-token disagreement (C993). Smaller errors pass unseen. A structural bug, such as a missing tile or a
+wrong mask, shows plainly. The comparison against the Q8_0 model is the quality bar's measure: it sees kernel errors
+only from about 5 %. Perplexity is not a kernel-error test. More stretches help little: twice as many lower the KLD
+estimate by about a sixth, est. The fault switch's size measured the floor
+([Q1726](../../../quants/experiments.md)), and scoring each fault against its own unfaulted run removes the
+reference's own error from the check ([Q1727](../../../quants/experiments.md)). Telling a kernel error from a correct
+kernel that sums in another order needs more: about 5 % (C993, beside rounding).
 
 **Scored against its own unfaulted run** ([C994](../2026-11-24_c994_attn_fault_selfref/README.md)), the form a new-kernel
 check takes, the same 5 % error has a KLD of 0.011030, 2.58 times what the comparison against the F16 cache reads:
 part of it cancels against the Q8_0 cache's own change. Judged there against rounding (the base kernel in micro-batches
 of 128), uniform errors are seen from est. about 4.4 %, because that rounding is itself as large as a 4.25 % error; the
-est. 3.4 % above assumes a new kernel brings no rounding of its own. Later attention-kernel checks take that form.
+1 % above assumes a new kernel brings no rounding of its own. Later attention-kernel checks take that form.
 
 ## What ran
 
@@ -189,12 +193,12 @@ down on five. What it adds to the KLD follows the stretch: correlation 0.86 with
 - **Against the F16 cache the check sees a 5 % error with room to spare.** In KLD it is 6.4 standard errors from zero,
   and 4.4 above rounding, which any new kernel brings with it. The top-token disagreement sees it more sharply still
   (11 standard errors): a uniform error tips the tokens whose top two candidates are nearly tied.
-- **How small an error it sees (est.):** the KLD of a small output error grows with the square of its size. With the
-  spread across stretches held at its value for 5 %, the check reaches 3 standard errors at a 3.43 % error. The spread
-  is mostly the stretches' own sensitivity, which shrinks with the error, so 3.43 % is the upper estimate. For the
-  top-token disagreement, which grows about in proportion to the error, the same reasoning gives est. 1.37 %; that
-  estimate was not part of the rule fixed before the run. Reading the cache in micro-batches of 128 moves the output as
-  far as a 6.58 % error would (est.).
+- **How small an error it sees:** 1 % in KLD and 2 % in top-token disagreement, measured with the fault's size set
+  ([C993](../2026-11-24_c993_floor_measured/README.md)). Against the F16 cache the difference also carries a cross
+  term with the Q8_0 cache's own change, so it grows more slowly than the square of the error (per error squared,
+  5.00 at 1 % and 1.71 at 5 %), and a square-law estimate from this 5 % fault gives 3.43 % in KLD. Top-token
+  disagreement grows about in proportion from 2 % up; from 5 % it estimates 1.37 %. Reading the cache in
+  micro-batches of 128 moves the output as far as a 6.58 % error would (est.).
 - **Against the Q8_0 model the check is weaker.** The same 5 % error adds a third as much KLD there (0.001470 against
   0.004280) and no top-token disagreement, so part of its change points toward the larger model's output. The quality
   bar's comparison resolves cache and file quality to about 0.0003 in KLD (C976), but a kernel error only from about
@@ -207,7 +211,7 @@ down on five. What it adds to the KLD follows the stretch: correlation 0.86 with
 - **The Q8_0 cache moves the output less than rounding does** (KLD 0.000710 ± 0.000231 below `f16u`, 3.1 standard
   errors), as C976 found at every depth.
 
-**Limits.** Two fault sizes, so the smallest error seen is an estimate from one size, not a measurement. One kind of
+**Limits.** One size of the uniform fault here; the smallest error seen is measured in C993. One kind of
 error (a uniform scale); an error that hits some heads, layers or positions would spread differently. The faults hit
 the prompt kernel only; the decode path was not faulted. These cards run the rig build's compute 6.1 PTX with the
 fork's kernels forced on; how many keys `=3` drops depends on the card's occupancy, so a P106 drops a different count.

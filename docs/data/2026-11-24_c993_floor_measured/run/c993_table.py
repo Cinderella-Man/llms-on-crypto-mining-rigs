@@ -161,6 +161,24 @@ def main():
         verdict.append([f"x {f:.2f}: {arm} - q8", "ln_ppl_ratio", f"{ml:.6f} ± {sl:.6f} (t {tl:.2f})",
                         f"|t| >= {SEEN_T:g} (reported, not in the answer)",
                         "seen" if abs(tl) >= SEEN_T else "not seen"])
+    # context, not in the rule: each arm against C989's rounding yardstick (its f16u arm, the F16 cache read in
+    # micro-batches of 128, run on C989's build), stretch by stretch; valid as a pair only where q8 repeats C989's q8
+    old_f16u = None
+    for r in read_tsv(os.path.join(c989, "chunks.tsv")):
+        if r["pass"] == "g" and r["arm"] == "f16u":
+            old_f16u = (old_f16u or []) + [(float(r["ln_ppl_ratio"]), float(r["kld"]), float(r["same_top_pct"]))]
+    for arm in ARMS:
+        a, f = per.get(arm), FACTOR[arm]
+        if not a or not old_f16u or len(a) != len(old_f16u):
+            continue
+        out = [f"{arm} - f16u (C989's arm, context)", f"{f:.2f}" if f else "1.00", len(a)]
+        ups = []
+        for idx, sign in ((1, 1), (2, -1), (0, 1)):
+            d = [sign * (x[idx] - y[idx]) for x, y in zip(a, old_f16u)]
+            m, se, t = stats(d)
+            out += [f"{m:.6f}", f"{se:.6f}", f"{t:.2f}"]
+            ups.append(sum(1 for v in d if v > 0))
+        prow.append(out + [ups[0], ups[1], "", "", "", ""])
     write(os.path.join(dest, "paired.tsv"),
           ["pair", "factor", "stretches", "kld_diff", "kld_diff_se", "kld_t", "top_differs_diff_pct",
            "top_differs_diff_se", "top_differs_t", "ln_ppl_ratio_diff", "ln_ppl_ratio_diff_se", "ln_ppl_ratio_t",
