@@ -1,0 +1,25 @@
+item	kind	before-base	base-head
+llama-dense.gguf	model md5	same	same
+llama-moe.gguf	model md5	same	same
+qwen4exp-moe.gguf	model md5	same	same
+hand bytes-switches	verdict	same	same
+hand bytes-zero-tail	verdict	same	same
+hand context-model	verdict	same	same
+hand eval-callback	verdict	same	same
+hand hop-cast	verdict	same	same
+hand moe-ids	verdict	same	same
+hand route-once-x1	verdict	same	same
+hand route-once-x30	verdict	same	same
+hand thread-safety	verdict	same	same
+bytes-switches	log	same	same
+bytes-zero-tail	log	same	same
+context-model	log, sorted	same	same
+eval-callback	log	same	same
+hop-cast	log	same	same
+moe-ids	log	same	same
+random/archs	log	same	same
+random/dense	log	same	same
+route-once-x1	log	same	same
+route-once-x30	log	same	same
+thread-safety	log, sorted	same	same
+eval-callback sums	sums	same	same

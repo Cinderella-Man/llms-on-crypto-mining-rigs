@@ -1,0 +1,39 @@
+kind	program	file	guard added	exits flushed	upstream has it	upstream copy
+example	llama-batched	examples/batched/batched.cpp	yes	0	yes	the base's
+example	llama-convert-llama2c-to-ggml	examples/convert-llama2c-to-ggml/convert-llama2c-to-ggml.cpp	yes	4	yes	the base's
+example	llama-debug	examples/debug/debug.cpp	yes	0	yes	the base's
+example	llama-diffusion-cli	examples/diffusion/diffusion-cli.cpp	yes	0	yes	the base's
+example	llama-embedding	examples/embedding/embedding.cpp	yes	0	yes	the base's
+example	llama-idle	examples/idle/idle.cpp	yes	0	yes	the base's
+example	llama-lookahead	examples/lookahead/lookahead.cpp	yes	0	yes	the base's
+example	llama-lookup-create	examples/lookup/lookup-create.cpp	yes	0	yes	the base's
+example	llama-lookup-stats	examples/lookup/lookup-stats.cpp	yes	1	yes	the base's
+example	llama-lookup	examples/lookup/lookup.cpp	yes	1	yes	the base's
+example	llama-parallel	examples/parallel/parallel.cpp	yes	0	yes	the base's
+example	llama-passkey	examples/passkey/passkey.cpp	yes	0	yes	the base's
+example	llama-pipe-recurrent-check	examples/pipe-recurrent-check/pipe-recurrent-check.cpp	yes	0	no (fork)	-
+example	llama-pipespec	examples/pipespec/pipespec.cpp	yes	0	no (fork)	-
+example	llama-retrieval	examples/retrieval/retrieval.cpp	yes	0	yes	the base's
+example	llama-screen-check	examples/screen-check/screen-check.cpp	yes	0	no (fork)	-
+example	llama-speculative-simple	examples/speculative-simple/speculative-simple.cpp	yes	0	yes	the base's
+example	llama-speculative	examples/speculative/speculative.cpp	yes	0	yes	the base's
+example	llama-finetune	examples/training/finetune.cpp	yes	0	yes	the base's
+test	test-chat-analysis	tests/test-chat-analysis.cpp	yes	0	yes	the base's
+test	test-chat-auto-parser	tests/test-chat-auto-parser.cpp	yes	0	yes	the base's
+test	test-export-graph-ops	tests/test-export-graph-ops.cpp	yes	0	yes	the base's
+test	test-fp8	tests/test-fp8.cpp	yes	0	yes	the base's
+test	test-fusion	tests/test-fusion.cpp	yes	2	yes	the base's
+test	test-spec-reject-stop	tests/test-spec-reject-stop.cpp	yes	0	no (fork)	-
+test	test-speculative-rejection-sampling	tests/test-speculative-rejection-sampling.cpp	yes	0	yes	the base's
+tool	llama-batched-bench	tools/batched-bench/batched-bench.cpp	yes	0	yes	the base's
+tool	llama-cli	tools/cli/cli.cpp	yes	0	yes	the base's
+tool	llama-completion	tools/completion/completion.cpp	yes	0	yes	the base's
+tool	llama-cvector-generator	tools/cvector-generator/cvector-generator.cpp	yes	1	yes	the base's
+tool	llama-export-lora	tools/export-lora/export-lora.cpp	yes	1	yes	the base's
+tool	llama-imatrix	tools/imatrix/imatrix.cpp	yes	8	yes	differs from the base
+tool	llama-mtmd-debug	tools/mtmd/debug/mtmd-debug.cpp	yes	1	yes	the base's
+tool	llama-mtmd-cli	tools/mtmd/mtmd-cli.cpp	yes	4	yes	differs from the base
+tool	llama-perplexity	tools/perplexity/perplexity.cpp	yes	0	yes	the base's
+tool	llama-results	tools/results/results.cpp	yes	0	yes	the base's
+tool	llama-tokenize	tools/tokenize/tokenize.cpp	yes	0	yes	the base's
+tool	llama-tts	tools/tts/tts.cpp	yes	0	yes	differs from the base

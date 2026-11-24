@@ -1,0 +1,11 @@
+round	tree	program	runs	rc 0	whole	cut short	differs	lines when cut short (of the whole log's)
+repeat	base	batched-bench	20	20	20	0	0	-
+repeat	head	batched-bench	20	20	20	0	0	-
+repeat	base	completion	20	20	20	0	0	-
+repeat	head	completion	20	20	20	0	0	-
+repeat2	base	embedding	20	20	20	0	0	-
+repeat2	head	embedding	20	20	20	0	0	-
+repeat3	base	completion-nomodel	20	0	20	0	0	-
+repeat3	head	completion-nomodel	20	0	20	0	0	-
+repeat3	base	tokenize-nomodel	20	0	20	0	0	-
+repeat3	head	tokenize-nomodel	20	0	20	0	0	-

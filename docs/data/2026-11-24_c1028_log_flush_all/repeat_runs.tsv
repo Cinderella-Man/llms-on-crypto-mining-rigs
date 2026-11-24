@@ -1,0 +1,201 @@
+round	tree	program	run	rc	lines	lines when whole	verdict	md5 masked	last line (masked)
+repeat	base	batched-bench	1	0	9	9	whole	5fc3eb2dc841	| N | N | N | N | N | N | N | N | N | N |
+repeat	base	batched-bench	2	0	9	9	whole	5fc3eb2dc841	| N | N | N | N | N | N | N | N | N | N |
+repeat	base	batched-bench	3	0	9	9	whole	5fc3eb2dc841	| N | N | N | N | N | N | N | N | N | N |
+repeat	base	batched-bench	4	0	9	9	whole	5fc3eb2dc841	| N | N | N | N | N | N | N | N | N | N |
+repeat	base	batched-bench	5	0	9	9	whole	5fc3eb2dc841	| N | N | N | N | N | N | N | N | N | N |
+repeat	base	batched-bench	6	0	9	9	whole	5fc3eb2dc841	| N | N | N | N | N | N | N | N | N | N |
+repeat	base	batched-bench	7	0	9	9	whole	5fc3eb2dc841	| N | N | N | N | N | N | N | N | N | N |
+repeat	base	batched-bench	8	0	9	9	whole	5fc3eb2dc841	| N | N | N | N | N | N | N | N | N | N |
+repeat	base	batched-bench	9	0	9	9	whole	5fc3eb2dc841	| N | N | N | N | N | N | N | N | N | N |
+repeat	base	batched-bench	10	0	9	9	whole	5fc3eb2dc841	| N | N | N | N | N | N | N | N | N | N |
+repeat	base	batched-bench	11	0	9	9	whole	5fc3eb2dc841	| N | N | N | N | N | N | N | N | N | N |
+repeat	base	batched-bench	12	0	9	9	whole	5fc3eb2dc841	| N | N | N | N | N | N | N | N | N | N |
+repeat	base	batched-bench	13	0	9	9	whole	5fc3eb2dc841	| N | N | N | N | N | N | N | N | N | N |
+repeat	base	batched-bench	14	0	9	9	whole	5fc3eb2dc841	| N | N | N | N | N | N | N | N | N | N |
+repeat	base	batched-bench	15	0	9	9	whole	5fc3eb2dc841	| N | N | N | N | N | N | N | N | N | N |
+repeat	base	batched-bench	16	0	9	9	whole	5fc3eb2dc841	| N | N | N | N | N | N | N | N | N | N |
+repeat	base	batched-bench	17	0	9	9	whole	5fc3eb2dc841	| N | N | N | N | N | N | N | N | N | N |
+repeat	base	batched-bench	18	0	9	9	whole	5fc3eb2dc841	| N | N | N | N | N | N | N | N | N | N |
+repeat	base	batched-bench	19	0	9	9	whole	5fc3eb2dc841	| N | N | N | N | N | N | N | N | N | N |
+repeat	base	batched-bench	20	0	9	9	whole	5fc3eb2dc841	| N | N | N | N | N | N | N | N | N | N |
+repeat	head	batched-bench	1	0	9	9	whole	5fc3eb2dc841	| N | N | N | N | N | N | N | N | N | N |
+repeat	head	batched-bench	2	0	9	9	whole	5fc3eb2dc841	| N | N | N | N | N | N | N | N | N | N |
+repeat	head	batched-bench	3	0	9	9	whole	5fc3eb2dc841	| N | N | N | N | N | N | N | N | N | N |
+repeat	head	batched-bench	4	0	9	9	whole	5fc3eb2dc841	| N | N | N | N | N | N | N | N | N | N |
+repeat	head	batched-bench	5	0	9	9	whole	5fc3eb2dc841	| N | N | N | N | N | N | N | N | N | N |
+repeat	head	batched-bench	6	0	9	9	whole	5fc3eb2dc841	| N | N | N | N | N | N | N | N | N | N |
+repeat	head	batched-bench	7	0	9	9	whole	5fc3eb2dc841	| N | N | N | N | N | N | N | N | N | N |
+repeat	head	batched-bench	8	0	9	9	whole	5fc3eb2dc841	| N | N | N | N | N | N | N | N | N | N |
+repeat	head	batched-bench	9	0	9	9	whole	5fc3eb2dc841	| N | N | N | N | N | N | N | N | N | N |
+repeat	head	batched-bench	10	0	9	9	whole	5fc3eb2dc841	| N | N | N | N | N | N | N | N | N | N |
+repeat	head	batched-bench	11	0	9	9	whole	5fc3eb2dc841	| N | N | N | N | N | N | N | N | N | N |
+repeat	head	batched-bench	12	0	9	9	whole	5fc3eb2dc841	| N | N | N | N | N | N | N | N | N | N |
+repeat	head	batched-bench	13	0	9	9	whole	5fc3eb2dc841	| N | N | N | N | N | N | N | N | N | N |
+repeat	head	batched-bench	14	0	9	9	whole	5fc3eb2dc841	| N | N | N | N | N | N | N | N | N | N |
+repeat	head	batched-bench	15	0	9	9	whole	5fc3eb2dc841	| N | N | N | N | N | N | N | N | N | N |
+repeat	head	batched-bench	16	0	9	9	whole	5fc3eb2dc841	| N | N | N | N | N | N | N | N | N | N |
+repeat	head	batched-bench	17	0	9	9	whole	5fc3eb2dc841	| N | N | N | N | N | N | N | N | N | N |
+repeat	head	batched-bench	18	0	9	9	whole	5fc3eb2dc841	| N | N | N | N | N | N | N | N | N | N |
+repeat	head	batched-bench	19	0	9	9	whole	5fc3eb2dc841	| N | N | N | N | N | N | N | N | N | N |
+repeat	head	batched-bench	20	0	9	9	whole	5fc3eb2dc841	| N | N | N | N | N | N | N | N | N | N |
+repeat	base	completion	1	0	28	28	whole	dc5b3fdc5c84	N.N I common_perf_print: graph reallocs = N / N (same size) / (changed size)
+repeat	base	completion	2	0	28	28	whole	dc5b3fdc5c84	N.N I common_perf_print: graph reallocs = N / N (same size) / (changed size)
+repeat	base	completion	3	0	28	28	whole	dc5b3fdc5c84	N.N I common_perf_print: graph reallocs = N / N (same size) / (changed size)
+repeat	base	completion	4	0	28	28	whole	dc5b3fdc5c84	N.N I common_perf_print: graph reallocs = N / N (same size) / (changed size)
+repeat	base	completion	5	0	28	28	whole	dc5b3fdc5c84	N.N I common_perf_print: graph reallocs = N / N (same size) / (changed size)
+repeat	base	completion	6	0	28	28	whole	dc5b3fdc5c84	N.N I common_perf_print: graph reallocs = N / N (same size) / (changed size)
+repeat	base	completion	7	0	28	28	whole	dc5b3fdc5c84	N.N I common_perf_print: graph reallocs = N / N (same size) / (changed size)
+repeat	base	completion	8	0	28	28	whole	dc5b3fdc5c84	N.N I common_perf_print: graph reallocs = N / N (same size) / (changed size)
+repeat	base	completion	9	0	28	28	whole	dc5b3fdc5c84	N.N I common_perf_print: graph reallocs = N / N (same size) / (changed size)
+repeat	base	completion	10	0	28	28	whole	dc5b3fdc5c84	N.N I common_perf_print: graph reallocs = N / N (same size) / (changed size)
+repeat	base	completion	11	0	28	28	whole	dc5b3fdc5c84	N.N I common_perf_print: graph reallocs = N / N (same size) / (changed size)
+repeat	base	completion	12	0	28	28	whole	dc5b3fdc5c84	N.N I common_perf_print: graph reallocs = N / N (same size) / (changed size)
+repeat	base	completion	13	0	28	28	whole	dc5b3fdc5c84	N.N I common_perf_print: graph reallocs = N / N (same size) / (changed size)
+repeat	base	completion	14	0	28	28	whole	dc5b3fdc5c84	N.N I common_perf_print: graph reallocs = N / N (same size) / (changed size)
+repeat	base	completion	15	0	28	28	whole	dc5b3fdc5c84	N.N I common_perf_print: graph reallocs = N / N (same size) / (changed size)
+repeat	base	completion	16	0	28	28	whole	dc5b3fdc5c84	N.N I common_perf_print: graph reallocs = N / N (same size) / (changed size)
+repeat	base	completion	17	0	28	28	whole	dc5b3fdc5c84	N.N I common_perf_print: graph reallocs = N / N (same size) / (changed size)
+repeat	base	completion	18	0	28	28	whole	dc5b3fdc5c84	N.N I common_perf_print: graph reallocs = N / N (same size) / (changed size)
+repeat	base	completion	19	0	28	28	whole	dc5b3fdc5c84	N.N I common_perf_print: graph reallocs = N / N (same size) / (changed size)
+repeat	base	completion	20	0	28	28	whole	dc5b3fdc5c84	N.N I common_perf_print: graph reallocs = N / N (same size) / (changed size)
+repeat	head	completion	1	0	28	28	whole	dc5b3fdc5c84	N.N I common_perf_print: graph reallocs = N / N (same size) / (changed size)
+repeat	head	completion	2	0	28	28	whole	dc5b3fdc5c84	N.N I common_perf_print: graph reallocs = N / N (same size) / (changed size)
+repeat	head	completion	3	0	28	28	whole	dc5b3fdc5c84	N.N I common_perf_print: graph reallocs = N / N (same size) / (changed size)
+repeat	head	completion	4	0	28	28	whole	dc5b3fdc5c84	N.N I common_perf_print: graph reallocs = N / N (same size) / (changed size)
+repeat	head	completion	5	0	28	28	whole	dc5b3fdc5c84	N.N I common_perf_print: graph reallocs = N / N (same size) / (changed size)
+repeat	head	completion	6	0	28	28	whole	dc5b3fdc5c84	N.N I common_perf_print: graph reallocs = N / N (same size) / (changed size)
+repeat	head	completion	7	0	28	28	whole	dc5b3fdc5c84	N.N I common_perf_print: graph reallocs = N / N (same size) / (changed size)
+repeat	head	completion	8	0	28	28	whole	dc5b3fdc5c84	N.N I common_perf_print: graph reallocs = N / N (same size) / (changed size)
+repeat	head	completion	9	0	28	28	whole	dc5b3fdc5c84	N.N I common_perf_print: graph reallocs = N / N (same size) / (changed size)
+repeat	head	completion	10	0	28	28	whole	dc5b3fdc5c84	N.N I common_perf_print: graph reallocs = N / N (same size) / (changed size)
+repeat	head	completion	11	0	28	28	whole	dc5b3fdc5c84	N.N I common_perf_print: graph reallocs = N / N (same size) / (changed size)
+repeat	head	completion	12	0	28	28	whole	dc5b3fdc5c84	N.N I common_perf_print: graph reallocs = N / N (same size) / (changed size)
+repeat	head	completion	13	0	28	28	whole	dc5b3fdc5c84	N.N I common_perf_print: graph reallocs = N / N (same size) / (changed size)
+repeat	head	completion	14	0	28	28	whole	dc5b3fdc5c84	N.N I common_perf_print: graph reallocs = N / N (same size) / (changed size)
+repeat	head	completion	15	0	28	28	whole	dc5b3fdc5c84	N.N I common_perf_print: graph reallocs = N / N (same size) / (changed size)
+repeat	head	completion	16	0	28	28	whole	dc5b3fdc5c84	N.N I common_perf_print: graph reallocs = N / N (same size) / (changed size)
+repeat	head	completion	17	0	28	28	whole	dc5b3fdc5c84	N.N I common_perf_print: graph reallocs = N / N (same size) / (changed size)
+repeat	head	completion	18	0	28	28	whole	dc5b3fdc5c84	N.N I common_perf_print: graph reallocs = N / N (same size) / (changed size)
+repeat	head	completion	19	0	28	28	whole	dc5b3fdc5c84	N.N I common_perf_print: graph reallocs = N / N (same size) / (changed size)
+repeat	head	completion	20	0	28	28	whole	dc5b3fdc5c84	N.N I common_perf_print: graph reallocs = N / N (same size) / (changed size)
+repeat2	base	embedding	1	0	12	12	whole	ba398e583881	embedding N: N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N
+repeat2	base	embedding	2	0	12	12	whole	ba398e583881	embedding N: N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N
+repeat2	base	embedding	3	0	12	12	whole	ba398e583881	embedding N: N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N
+repeat2	base	embedding	4	0	12	12	whole	ba398e583881	embedding N: N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N
+repeat2	base	embedding	5	0	12	12	whole	ba398e583881	embedding N: N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N
+repeat2	base	embedding	6	0	12	12	whole	ba398e583881	embedding N: N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N
+repeat2	base	embedding	7	0	12	12	whole	ba398e583881	embedding N: N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N
+repeat2	base	embedding	8	0	12	12	whole	ba398e583881	embedding N: N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N
+repeat2	base	embedding	9	0	12	12	whole	ba398e583881	embedding N: N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N
+repeat2	base	embedding	10	0	12	12	whole	ba398e583881	embedding N: N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N
+repeat2	base	embedding	11	0	12	12	whole	ba398e583881	embedding N: N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N
+repeat2	base	embedding	12	0	12	12	whole	ba398e583881	embedding N: N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N
+repeat2	base	embedding	13	0	12	12	whole	ba398e583881	embedding N: N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N
+repeat2	base	embedding	14	0	12	12	whole	ba398e583881	embedding N: N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N
+repeat2	base	embedding	15	0	12	12	whole	ba398e583881	embedding N: N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N
+repeat2	base	embedding	16	0	12	12	whole	ba398e583881	embedding N: N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N
+repeat2	base	embedding	17	0	12	12	whole	ba398e583881	embedding N: N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N
+repeat2	base	embedding	18	0	12	12	whole	ba398e583881	embedding N: N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N
+repeat2	base	embedding	19	0	12	12	whole	ba398e583881	embedding N: N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N
+repeat2	base	embedding	20	0	12	12	whole	ba398e583881	embedding N: N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N
+repeat2	head	embedding	1	0	12	12	whole	ba398e583881	embedding N: N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N
+repeat2	head	embedding	2	0	12	12	whole	ba398e583881	embedding N: N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N
+repeat2	head	embedding	3	0	12	12	whole	ba398e583881	embedding N: N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N
+repeat2	head	embedding	4	0	12	12	whole	ba398e583881	embedding N: N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N
+repeat2	head	embedding	5	0	12	12	whole	ba398e583881	embedding N: N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N
+repeat2	head	embedding	6	0	12	12	whole	ba398e583881	embedding N: N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N
+repeat2	head	embedding	7	0	12	12	whole	ba398e583881	embedding N: N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N
+repeat2	head	embedding	8	0	12	12	whole	ba398e583881	embedding N: N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N
+repeat2	head	embedding	9	0	12	12	whole	ba398e583881	embedding N: N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N
+repeat2	head	embedding	10	0	12	12	whole	ba398e583881	embedding N: N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N
+repeat2	head	embedding	11	0	12	12	whole	ba398e583881	embedding N: N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N
+repeat2	head	embedding	12	0	12	12	whole	ba398e583881	embedding N: N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N
+repeat2	head	embedding	13	0	12	12	whole	ba398e583881	embedding N: N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N
+repeat2	head	embedding	14	0	12	12	whole	ba398e583881	embedding N: N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N
+repeat2	head	embedding	15	0	12	12	whole	ba398e583881	embedding N: N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N
+repeat2	head	embedding	16	0	12	12	whole	ba398e583881	embedding N: N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N
+repeat2	head	embedding	17	0	12	12	whole	ba398e583881	embedding N: N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N
+repeat2	head	embedding	18	0	12	12	whole	ba398e583881	embedding N: N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N
+repeat2	head	embedding	19	0	12	12	whole	ba398e583881	embedding N: N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N
+repeat2	head	embedding	20	0	12	12	whole	ba398e583881	embedding N: N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N N
+repeat3	base	completion-nomodel	1	1	14	14	whole	ac39d9476c49	N.N E llama_completion: error: unable to create context
+repeat3	base	completion-nomodel	2	1	14	14	whole	ac39d9476c49	N.N E llama_completion: error: unable to create context
+repeat3	base	completion-nomodel	3	1	14	14	whole	ac39d9476c49	N.N E llama_completion: error: unable to create context
+repeat3	base	completion-nomodel	4	1	14	14	whole	ac39d9476c49	N.N E llama_completion: error: unable to create context
+repeat3	base	completion-nomodel	5	1	14	14	whole	ac39d9476c49	N.N E llama_completion: error: unable to create context
+repeat3	base	completion-nomodel	6	1	14	14	whole	ac39d9476c49	N.N E llama_completion: error: unable to create context
+repeat3	base	completion-nomodel	7	1	14	14	whole	ac39d9476c49	N.N E llama_completion: error: unable to create context
+repeat3	base	completion-nomodel	8	1	14	14	whole	ac39d9476c49	N.N E llama_completion: error: unable to create context
+repeat3	base	completion-nomodel	9	1	14	14	whole	ac39d9476c49	N.N E llama_completion: error: unable to create context
+repeat3	base	completion-nomodel	10	1	14	14	whole	ac39d9476c49	N.N E llama_completion: error: unable to create context
+repeat3	base	completion-nomodel	11	1	14	14	whole	ac39d9476c49	N.N E llama_completion: error: unable to create context
+repeat3	base	completion-nomodel	12	1	14	14	whole	ac39d9476c49	N.N E llama_completion: error: unable to create context
+repeat3	base	completion-nomodel	13	1	14	14	whole	ac39d9476c49	N.N E llama_completion: error: unable to create context
+repeat3	base	completion-nomodel	14	1	14	14	whole	ac39d9476c49	N.N E llama_completion: error: unable to create context
+repeat3	base	completion-nomodel	15	1	14	14	whole	ac39d9476c49	N.N E llama_completion: error: unable to create context
+repeat3	base	completion-nomodel	16	1	14	14	whole	ac39d9476c49	N.N E llama_completion: error: unable to create context
+repeat3	base	completion-nomodel	17	1	14	14	whole	ac39d9476c49	N.N E llama_completion: error: unable to create context
+repeat3	base	completion-nomodel	18	1	14	14	whole	ac39d9476c49	N.N E llama_completion: error: unable to create context
+repeat3	base	completion-nomodel	19	1	14	14	whole	ac39d9476c49	N.N E llama_completion: error: unable to create context
+repeat3	base	completion-nomodel	20	1	14	14	whole	ac39d9476c49	N.N E llama_completion: error: unable to create context
+repeat3	head	completion-nomodel	1	1	14	14	whole	ac39d9476c49	N.N E llama_completion: error: unable to create context
+repeat3	head	completion-nomodel	2	1	14	14	whole	ac39d9476c49	N.N E llama_completion: error: unable to create context
+repeat3	head	completion-nomodel	3	1	14	14	whole	ac39d9476c49	N.N E llama_completion: error: unable to create context
+repeat3	head	completion-nomodel	4	1	14	14	whole	ac39d9476c49	N.N E llama_completion: error: unable to create context
+repeat3	head	completion-nomodel	5	1	14	14	whole	ac39d9476c49	N.N E llama_completion: error: unable to create context
+repeat3	head	completion-nomodel	6	1	14	14	whole	ac39d9476c49	N.N E llama_completion: error: unable to create context
+repeat3	head	completion-nomodel	7	1	14	14	whole	ac39d9476c49	N.N E llama_completion: error: unable to create context
+repeat3	head	completion-nomodel	8	1	14	14	whole	ac39d9476c49	N.N E llama_completion: error: unable to create context
+repeat3	head	completion-nomodel	9	1	14	14	whole	ac39d9476c49	N.N E llama_completion: error: unable to create context
+repeat3	head	completion-nomodel	10	1	14	14	whole	ac39d9476c49	N.N E llama_completion: error: unable to create context
+repeat3	head	completion-nomodel	11	1	14	14	whole	ac39d9476c49	N.N E llama_completion: error: unable to create context
+repeat3	head	completion-nomodel	12	1	14	14	whole	ac39d9476c49	N.N E llama_completion: error: unable to create context
+repeat3	head	completion-nomodel	13	1	14	14	whole	ac39d9476c49	N.N E llama_completion: error: unable to create context
+repeat3	head	completion-nomodel	14	1	14	14	whole	ac39d9476c49	N.N E llama_completion: error: unable to create context
+repeat3	head	completion-nomodel	15	1	14	14	whole	ac39d9476c49	N.N E llama_completion: error: unable to create context
+repeat3	head	completion-nomodel	16	1	14	14	whole	ac39d9476c49	N.N E llama_completion: error: unable to create context
+repeat3	head	completion-nomodel	17	1	14	14	whole	ac39d9476c49	N.N E llama_completion: error: unable to create context
+repeat3	head	completion-nomodel	18	1	14	14	whole	ac39d9476c49	N.N E llama_completion: error: unable to create context
+repeat3	head	completion-nomodel	19	1	14	14	whole	ac39d9476c49	N.N E llama_completion: error: unable to create context
+repeat3	head	completion-nomodel	20	1	14	14	whole	ac39d9476c49	N.N E llama_completion: error: unable to create context
+repeat3	base	tokenize-nomodel	1	1	4	4	whole	46f4b76f0049	N.N E error: could not load model from file '$W/run1/base/
+repeat3	base	tokenize-nomodel	2	1	4	4	whole	46f4b76f0049	N.N E error: could not load model from file '$W/run1/base/
+repeat3	base	tokenize-nomodel	3	1	4	4	whole	46f4b76f0049	N.N E error: could not load model from file '$W/run1/base/
+repeat3	base	tokenize-nomodel	4	1	4	4	whole	46f4b76f0049	N.N E error: could not load model from file '$W/run1/base/
+repeat3	base	tokenize-nomodel	5	1	4	4	whole	46f4b76f0049	N.N E error: could not load model from file '$W/run1/base/
+repeat3	base	tokenize-nomodel	6	1	4	4	whole	46f4b76f0049	N.N E error: could not load model from file '$W/run1/base/
+repeat3	base	tokenize-nomodel	7	1	4	4	whole	46f4b76f0049	N.N E error: could not load model from file '$W/run1/base/
+repeat3	base	tokenize-nomodel	8	1	4	4	whole	46f4b76f0049	N.N E error: could not load model from file '$W/run1/base/
+repeat3	base	tokenize-nomodel	9	1	4	4	whole	46f4b76f0049	N.N E error: could not load model from file '$W/run1/base/
+repeat3	base	tokenize-nomodel	10	1	4	4	whole	46f4b76f0049	N.N E error: could not load model from file '$W/run1/base/
+repeat3	base	tokenize-nomodel	11	1	4	4	whole	46f4b76f0049	N.N E error: could not load model from file '$W/run1/base/
+repeat3	base	tokenize-nomodel	12	1	4	4	whole	46f4b76f0049	N.N E error: could not load model from file '$W/run1/base/
+repeat3	base	tokenize-nomodel	13	1	4	4	whole	46f4b76f0049	N.N E error: could not load model from file '$W/run1/base/
+repeat3	base	tokenize-nomodel	14	1	4	4	whole	46f4b76f0049	N.N E error: could not load model from file '$W/run1/base/
+repeat3	base	tokenize-nomodel	15	1	4	4	whole	46f4b76f0049	N.N E error: could not load model from file '$W/run1/base/
+repeat3	base	tokenize-nomodel	16	1	4	4	whole	46f4b76f0049	N.N E error: could not load model from file '$W/run1/base/
+repeat3	base	tokenize-nomodel	17	1	4	4	whole	46f4b76f0049	N.N E error: could not load model from file '$W/run1/base/
+repeat3	base	tokenize-nomodel	18	1	4	4	whole	46f4b76f0049	N.N E error: could not load model from file '$W/run1/base/
+repeat3	base	tokenize-nomodel	19	1	4	4	whole	46f4b76f0049	N.N E error: could not load model from file '$W/run1/base/
+repeat3	base	tokenize-nomodel	20	1	4	4	whole	46f4b76f0049	N.N E error: could not load model from file '$W/run1/base/
+repeat3	head	tokenize-nomodel	1	1	4	4	whole	46f4b76f0049	N.N E error: could not load model from file '$W/run1/base/
+repeat3	head	tokenize-nomodel	2	1	4	4	whole	46f4b76f0049	N.N E error: could not load model from file '$W/run1/base/
+repeat3	head	tokenize-nomodel	3	1	4	4	whole	46f4b76f0049	N.N E error: could not load model from file '$W/run1/base/
+repeat3	head	tokenize-nomodel	4	1	4	4	whole	46f4b76f0049	N.N E error: could not load model from file '$W/run1/base/
+repeat3	head	tokenize-nomodel	5	1	4	4	whole	46f4b76f0049	N.N E error: could not load model from file '$W/run1/base/
+repeat3	head	tokenize-nomodel	6	1	4	4	whole	46f4b76f0049	N.N E error: could not load model from file '$W/run1/base/
+repeat3	head	tokenize-nomodel	7	1	4	4	whole	46f4b76f0049	N.N E error: could not load model from file '$W/run1/base/
+repeat3	head	tokenize-nomodel	8	1	4	4	whole	46f4b76f0049	N.N E error: could not load model from file '$W/run1/base/
+repeat3	head	tokenize-nomodel	9	1	4	4	whole	46f4b76f0049	N.N E error: could not load model from file '$W/run1/base/
+repeat3	head	tokenize-nomodel	10	1	4	4	whole	46f4b76f0049	N.N E error: could not load model from file '$W/run1/base/
+repeat3	head	tokenize-nomodel	11	1	4	4	whole	46f4b76f0049	N.N E error: could not load model from file '$W/run1/base/
+repeat3	head	tokenize-nomodel	12	1	4	4	whole	46f4b76f0049	N.N E error: could not load model from file '$W/run1/base/
+repeat3	head	tokenize-nomodel	13	1	4	4	whole	46f4b76f0049	N.N E error: could not load model from file '$W/run1/base/
+repeat3	head	tokenize-nomodel	14	1	4	4	whole	46f4b76f0049	N.N E error: could not load model from file '$W/run1/base/
+repeat3	head	tokenize-nomodel	15	1	4	4	whole	46f4b76f0049	N.N E error: could not load model from file '$W/run1/base/
+repeat3	head	tokenize-nomodel	16	1	4	4	whole	46f4b76f0049	N.N E error: could not load model from file '$W/run1/base/
+repeat3	head	tokenize-nomodel	17	1	4	4	whole	46f4b76f0049	N.N E error: could not load model from file '$W/run1/base/
+repeat3	head	tokenize-nomodel	18	1	4	4	whole	46f4b76f0049	N.N E error: could not load model from file '$W/run1/base/
+repeat3	head	tokenize-nomodel	19	1	4	4	whole	46f4b76f0049	N.N E error: could not load model from file '$W/run1/base/
+repeat3	head	tokenize-nomodel	20	1	4	4	whole	46f4b76f0049	N.N E error: could not load model from file '$W/run1/base/

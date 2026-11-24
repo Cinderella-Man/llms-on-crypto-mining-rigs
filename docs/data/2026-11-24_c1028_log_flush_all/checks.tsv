@@ -1,0 +1,43 @@
+check	C1007's run 2 base	base	head
+archs compare	OK	OK	OK
+archs files	OK	OK	OK
+archs plain	OK	OK	OK
+archs write	OK	OK	OK
+build	OK	OK	OK
+ctest	FAIL	FAIL	FAIL
+hand bytes-switches	OK	OK	OK
+hand bytes-zero-tail	OK	OK	OK
+hand context-model	OK	OK	OK
+hand eval-callback	OK	OK	OK
+hand hop-cast	OK	OK	OK
+hand moe-ids	OK	OK	OK
+hand route-once-x1	OK	OK	OK
+hand route-once-x30	OK	OK	OK
+hand thread-safety	OK	OK	OK
+ident vs base	-	-	SAME
+pipe flint identity	-	OK	OK
+pipe flint race	-	OK	OK
+pipe flint recurrent	-	OK	OK
+pipe flint sampled	-	OK	OK
+pipe flint streams	-	OK	OK
+pipe qwen35 identity	-	OK	OK
+pipe qwen35 race	-	OK	OK
+pipe qwen35 recurrent	-	OK	OK
+pipe qwen35 sampled	-	OK	OK
+pipe qwen35 streams	-	OK	OK
+pipe qwen35moe identity	-	OK	OK
+pipe qwen35moe race	-	OK	OK
+pipe qwen35moe recurrent	-	OK	OK
+pipe qwen35moe sampled	-	OK	OK
+pipe qwen35moe streams	-	OK	OK
+pipe qwen3next identity	-	OK	OK
+pipe qwen3next race	-	OK	OK
+pipe qwen3next recurrent	-	OK	OK
+pipe qwen3next sampled	-	OK	OK
+pipe qwen3next streams	-	OK	OK
+pipe qwen4exp identity	-	OK	OK
+pipe qwen4exp race	-	OK	OK
+pipe qwen4exp recurrent	-	OK	OK
+pipe qwen4exp sampled	-	OK	OK
+pipe qwen4exp streams	-	OK	OK
+tree	OK	OK	OK

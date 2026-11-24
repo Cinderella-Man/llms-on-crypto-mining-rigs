@@ -1,0 +1,26 @@
+model	arm	base	head	head's detail
+flint	identity	OK	OK	check_identity.sh rc=0: pipelined runs differing 0 of 14; N=256, greedy, depths 1 3, misses 0 0.5, floor 3; flint-moe.gguf md5 8a91d5448c65
+flint	race	OK	OK	check_identity.sh rc=0: pipelined runs differing 0 of 12; N=256, race of 2, --temp 1 --top-k 20 --top-p 0.95 --seed 41, depths 1 3, miss 0.5, stop token 3433 (text kt, sample 1's token 64), floor 3; p
+flint	recurrent	OK	OK	llama-pipe-recurrent-check rc=0: PIPE-RECURRENT-CHECK n_prompt=550 n_gen=256 inplace=85 guesses=64 leave_pipe=64 leave_decode=21 tokens=same logits=same state=same probe=same first_logits_diff=-1
+flint	sampled	OK	OK	check_identity.sh rc=0: pipelined runs differing 0 of 14; N=256, --temp 1 --top-k 20 --top-p 0.95 --seed 42, depths 1 3, misses 0 0.5, floor 3; flint-moe.gguf md5 8a91d5448c65
+flint	streams	OK	OK	check_streams.sh rc=0: conversations differing 0 of 14; guesses with a budget of one item: 0; 2 conversations, --temp 1 --top-k 20 --top-p 0.95 --seed 42 (+ c), NTOK=64, chunks of 16, arrivals every 1
+qwen35	identity	OK	OK	check_identity.sh rc=0: pipelined runs differing 0 of 14; N=256, greedy, depths 1 3, misses 0 0.5, floor 3; qwen35-dense.gguf md5 ab091bd4f8e9
+qwen35	race	OK	OK	check_identity.sh rc=0: pipelined runs differing 0 of 12; N=256, race of 2, --temp 1 --top-k 20 --top-p 0.95 --seed 41, depths 1 3, miss 0.5, stop token 3424 (text kk, sample 1's token 64), floor 3; p
+qwen35	recurrent	OK	OK	llama-pipe-recurrent-check rc=0: PIPE-RECURRENT-CHECK n_prompt=550 n_gen=256 inplace=85 guesses=64 leave_pipe=64 leave_decode=21 tokens=same logits=same state=same probe=same first_logits_diff=-1
+qwen35	sampled	OK	OK	check_identity.sh rc=0: pipelined runs differing 0 of 14; N=256, --temp 1 --top-k 20 --top-p 0.95 --seed 42, depths 1 3, misses 0 0.5, floor 3; qwen35-dense.gguf md5 ab091bd4f8e9
+qwen35	streams	OK	OK	check_streams.sh rc=0: conversations differing 0 of 14; guesses with a budget of one item: 0; 2 conversations, --temp 1 --top-k 20 --top-p 0.95 --seed 42 (+ c), NTOK=64, chunks of 16, arrivals every 1
+qwen35moe	identity	OK	OK	check_identity.sh rc=0: pipelined runs differing 0 of 14; N=256, greedy, depths 1 3, misses 0 0.5, floor 3; qwen35moe-moe.gguf md5 30b2bfd6a845
+qwen35moe	race	OK	OK	check_identity.sh rc=0: pipelined runs differing 0 of 12; N=256, race of 2, --temp 1 --top-k 20 --top-p 0.95 --seed 41, depths 1 3, miss 0.5, stop token 3766 (text vl, sample 1's token 64), floor 3; p
+qwen35moe	recurrent	OK	OK	llama-pipe-recurrent-check rc=0: PIPE-RECURRENT-CHECK n_prompt=550 n_gen=256 inplace=85 guesses=64 leave_pipe=64 leave_decode=21 tokens=same logits=same state=same probe=same first_logits_diff=-1
+qwen35moe	sampled	OK	OK	check_identity.sh rc=0: pipelined runs differing 0 of 14; N=256, --temp 1 --top-k 20 --top-p 0.95 --seed 42, depths 1 3, misses 0 0.5, floor 3; qwen35moe-moe.gguf md5 30b2bfd6a845
+qwen35moe	streams	OK	OK	check_streams.sh rc=0: conversations differing 0 of 14; guesses with a budget of one item: 0; 2 conversations, --temp 1 --top-k 20 --top-p 0.95 --seed 42 (+ c), NTOK=64, chunks of 16, arrivals every 1
+qwen3next	identity	OK	OK	check_identity.sh rc=0: pipelined runs differing 0 of 14; N=256, greedy, depths 1 3, misses 0 0.5, floor 3; qwen3next-moe.gguf md5 758bb4d68e8e
+qwen3next	race	OK	OK	check_identity.sh rc=0: pipelined runs differing 0 of 12; N=256, race of 2, --temp 1 --top-k 20 --top-p 0.95 --seed 41, depths 1 3, miss 0.5, stop token 3766 (text vl, sample 1's token 64), floor 3; p
+qwen3next	recurrent	OK	OK	llama-pipe-recurrent-check rc=0: PIPE-RECURRENT-CHECK n_prompt=550 n_gen=256 inplace=85 guesses=64 leave_pipe=64 leave_decode=21 tokens=same logits=same state=same probe=same first_logits_diff=-1
+qwen3next	sampled	OK	OK	check_identity.sh rc=0: pipelined runs differing 0 of 14; N=256, --temp 1 --top-k 20 --top-p 0.95 --seed 42, depths 1 3, misses 0 0.5, floor 3; qwen3next-moe.gguf md5 758bb4d68e8e
+qwen3next	streams	OK	OK	check_streams.sh rc=0: conversations differing 0 of 14; guesses with a budget of one item: 0; 2 conversations, --temp 1 --top-k 20 --top-p 0.95 --seed 42 (+ c), NTOK=64, chunks of 16, arrivals every 1
+qwen4exp	identity	OK	OK	check_identity.sh rc=0: pipelined runs differing 0 of 14; N=256, greedy, depths 1 3, misses 0 0.5, floor 3; qwen4exp-moe.gguf md5 3c1f8f2cc6bd
+qwen4exp	race	OK	OK	check_identity.sh rc=0: pipelined runs differing 0 of 12; N=256, race of 2, --temp 1 --top-k 20 --top-p 0.95 --seed 41, depths 1 3, miss 0.5, stop token 2150 (text Bh, sample 1's token 64), floor 3; p
+qwen4exp	recurrent	OK	OK	llama-pipe-recurrent-check rc=0: PIPE-RECURRENT-CHECK n_prompt=550 n_gen=256 inplace=85 guesses=64 leave_pipe=64 leave_decode=21 tokens=same logits=same state=same probe=same first_logits_diff=-1
+qwen4exp	sampled	OK	OK	check_identity.sh rc=0: pipelined runs differing 0 of 14; N=256, --temp 1 --top-k 20 --top-p 0.95 --seed 42, depths 1 3, misses 0 0.5, floor 3; qwen4exp-moe.gguf md5 3c1f8f2cc6bd
+qwen4exp	streams	OK	OK	check_streams.sh rc=0: conversations differing 0 of 14; guesses with a budget of one item: 0; 2 conversations, --temp 1 --top-k 20 --top-p 0.95 --seed 42 (+ c), NTOK=64, chunks of 16, arrivals every 1
