@@ -1,0 +1,34 @@
+== old: the v5 tip, the script before the change
+name: llama.cpp-20261124-8a9629942
+commit: 8a9629942a4635ea0b2711b72e59556b96a63f86 (2026-11-24 01:31:53 +0100)
+web page: asked b12483 (given), took b12483
+
+== new: the v5 tip, the changed script
+name: llama.cpp-20261124-8a9629942
+commit: 8a9629942a4635ea0b2711b72e59556b96a63f86 (2026-11-24 01:31:53 +0100)
+web page: asked b12483 (given), took b12483
+check tools: llama-pipe-recurrent-check test-moe-ids test-hop-cast test-hop-mailbox test-kpool-dev test-kpool-stage test-pool-mask-dev test-llama-archs
+
+== off: the v5 tip, the changed script, CHECK_TOOLS=0
+name: llama.cpp-20261124-8a9629942
+commit: 8a9629942a4635ea0b2711b72e59556b96a63f86 (2026-11-24 01:31:53 +0100)
+web page: asked b12483 (given), took b12483
+check tools: not built (TESTS=1, CHECK_TOOLS=0)
+
+== dup: the v5 tip, the changed script, EXTRA_TARGETS="test-llama-archs test-cuda-keepalive"
+name: llama.cpp-20261124-8a9629942
+commit: 8a9629942a4635ea0b2711b72e59556b96a63f86 (2026-11-24 01:31:53 +0100)
+web page: asked b12483 (given), took b12483
+check tools: llama-pipe-recurrent-check test-moe-ids test-hop-cast test-hop-mailbox test-kpool-dev test-kpool-stage test-pool-mask-dev test-llama-archs
+
+== v3: miner-llama-v3.0, the changed script
+name: llama.cpp-20261124-1551f5fe1
+commit: 1551f5fe12424d7006748c1628b0df9550f20171 (2026-11-05 18:07:22 +0100)
+web page: asked b12091 (the newest upstream release with an archive at or below b12092, the one this tree sits on), took b12091
+check tools: llama-pipe-recurrent-check test-moe-ids test-hop-cast test-hop-mailbox test-llama-archs (not in this tree: test-kpool-dev test-kpool-stage test-pool-mask-dev)
+
+== v2: miner-llama-v2.0, the changed script
+name: llama.cpp-20261124-37e717ff6
+commit: 37e717ff65f641a2b365eebeef33fc1e1292e707 (2026-10-25 19:54:42 +0100)
+web page: asked b11819 (the newest upstream release with an archive at or below b11820, the one this tree sits on), took b11819
+check tools: test-llama-archs (not in this tree: llama-pipe-recurrent-check test-moe-ids test-hop-cast test-hop-mailbox test-kpool-dev test-kpool-stage test-pool-mask-dev)

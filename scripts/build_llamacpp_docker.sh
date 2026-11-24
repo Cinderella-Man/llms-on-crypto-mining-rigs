@@ -28,7 +28,12 @@
 #                         (git -C ~/llama-builds/src remote add fork https://github.com/<you>/llama.cpp)
 #   --cuda-graphs-pascal  also apply llama.cpp PR #27721, which re-enables CUDA graphs on Pascal (compute 6.1)
 # Env PATCHES: extra patch files (paths relative to $WORK, applied with git apply), e.g. PATCHES=patches/x.diff
-#     TESTS=1: also build test-backend-ops (per-operation correctness and speed tests, e.g. `-o MUL_MAT perf`)
+#     TESTS=1: also build test-backend-ops (per-operation correctness and speed tests, e.g. `-o MUL_MAT perf`) and
+#     Miner Llama's own check tools, run by hand on a model or on the cards: llama-pipe-recurrent-check, test-moe-ids,
+#     test-hop-cast, test-hop-mailbox, test-kpool-dev, test-kpool-stage, test-pool-mask-dev and test-llama-archs, each
+#     only when the tree defines it as a target (older trees lack some; BUILDINFO.txt lists which were built)
+#     CHECK_TOOLS=0: with TESTS=1, leave those check tools out: each is a static binary with every CUDA kernel, so
+#     the eight add ~0.54 GB to the tarball (1.25 GB against 0.71 GB for Miner Llama v5 on 2026-11-24)
 #     EXTRA_TARGETS="t1 t2": also build these targets (tests need TESTS=1) and copy them into bin/, e.g. a test the
 #     rig runs on its cards
 #     SCHED_COPIES=N: ggml scheduler input copies for pipeline parallelism (default 4); each copy holds the inputs of
@@ -55,7 +60,7 @@ if [ -n "${HF_UI_VERSION:-}" ] && [[ " ${DOCKER_ARGS:-} " != *HF_UI_VERSION=* ]]
     UI_ENV=(-e "HF_UI_VERSION=$HF_UI_VERSION")
 fi
 
-docker run --rm ${DOCKER_ARGS:-} ${UI_ENV[@]+"${UI_ENV[@]}"} -e REF="$REF" -e PATCH="$PATCH" -e PATCHES="${PATCHES:-}" -e TESTS="${TESTS:-0}" -e EXTRA_TARGETS="${EXTRA_TARGETS:-}" -e SCHED_COPIES="${SCHED_COPIES:-}" -e RPC="${RPC:-0}" -e JOBS="${JOBS:-}" -e HOST_UID="$(id -u)" -e HOST_GID="$(id -g)" \
+docker run --rm ${DOCKER_ARGS:-} ${UI_ENV[@]+"${UI_ENV[@]}"} -e REF="$REF" -e PATCH="$PATCH" -e PATCHES="${PATCHES:-}" -e TESTS="${TESTS:-0}" -e CHECK_TOOLS="${CHECK_TOOLS:-1}" -e EXTRA_TARGETS="${EXTRA_TARGETS:-}" -e SCHED_COPIES="${SCHED_COPIES:-}" -e RPC="${RPC:-0}" -e JOBS="${JOBS:-}" -e HOST_UID="$(id -u)" -e HOST_GID="$(id -g)" \
     -v "$WORK:/work" "$IMAGE" bash -euo pipefail -c '
     export DEBIAN_FRONTEND=noninteractive CCACHE_DIR=/work/ccache
     apt-get update -qq && apt-get install -y -qq git cmake build-essential ccache curl > /dev/null
@@ -130,10 +135,22 @@ docker run --rm ${DOCKER_ARGS:-} ${UI_ENV[@]+"${UI_ENV[@]}"} -e REF="$REF" -e PA
         $([ -n "$SCHED_COPIES" ] && echo -DGGML_SCHED_MAX_COPIES=$SCHED_COPIES) \
         $([ "$RPC" = 1 ] && echo -DGGML_RPC=ON) \
         -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_CUDA_COMPILER_LAUNCHER=ccache > /dev/null
+    # the check tools of Miner Llama (see the header): each one that is a target of this tree, as CMake lists them
+    checks= checks_missing= checks_info="not built (TESTS=$TESTS, CHECK_TOOLS=$CHECK_TOOLS)"
+    if [ "$TESTS" = 1 ] && [ "$CHECK_TOOLS" != 0 ]; then
+        targets=" $( { cmake --build build --target help || true; } | sed -n "s/^\.\.\. \([^ ]*\).*/\1/p" | tr "\n" " ") "
+        for t in llama-pipe-recurrent-check test-moe-ids test-hop-cast test-hop-mailbox test-kpool-dev \
+                test-kpool-stage test-pool-mask-dev test-llama-archs; do
+            case "$targets" in *" $t "*) checks="$checks $t" ;; *) checks_missing="$checks_missing $t" ;; esac
+        done
+        checks_info="${checks:- none}"
+        checks_info="${checks_info# }${checks_missing:+ (not in this tree:$checks_missing)}"
+    fi
+    echo "check tools: $checks_info"
     cmake --build build -j "${JOBS:-$(nproc)}" --target llama-bench llama-server llama-cli llama-completion \
         llama-perplexity llama-batched-bench llama-gguf $([ "$TESTS" = 1 ] && echo test-backend-ops) $([ "$RPC" = 1 ] && echo ggml-rpc-server) \
         $([ -d examples/pipespec ] && echo llama-pipespec) $([ -d examples/screen-check ] && echo llama-screen-check) \
-        $(grep -qs llama-pipe-drafter-check examples/pipespec/CMakeLists.txt && echo llama-pipe-drafter-check) $EXTRA_TARGETS \
+        $(grep -qs llama-pipe-drafter-check examples/pipespec/CMakeLists.txt && echo llama-pipe-drafter-check) $checks $EXTRA_TARGETS \
         | { grep "^-- UI:" || true; } | tee /tmp/ui.log
     # the release whose archive the build took ("UI: HF download succeeded, stamp updated (<bucket>|<asked>, resolved: <took>)")
     ui_took=$(sed -n "s/.*, resolved: \(.*\))$/\1/p" /tmp/ui.log | tail -n 1)
@@ -149,7 +166,7 @@ docker run --rm ${DOCKER_ARGS:-} ${UI_ENV[@]+"${UI_ENV[@]}"} -e REF="$REF" -e PA
     rm -rf "$out" && mkdir -p "$out/bin"
     cp build/bin/llama-* "$out/bin/"
     [ "$TESTS" = 1 ] && cp build/bin/test-backend-ops "$out/bin/"
-    for t in $EXTRA_TARGETS; do cp "build/bin/$t" "$out/bin/"; done
+    for t in $checks $EXTRA_TARGETS; do cp "build/bin/$t" "$out/bin/"; done
     [ "$RPC" = 1 ] && cp build/bin/ggml-rpc-server "$out/bin/"
     {
         echo "name: $name"
@@ -157,6 +174,7 @@ docker run --rm ${DOCKER_ARGS:-} ${UI_ENV[@]+"${UI_ENV[@]}"} -e REF="$REF" -e PA
         echo "commit: $(git rev-parse HEAD) ($(git log -1 --format=%ci))"
         echo "patch: ${PATCH:-none}"
         echo "web page: $ui_page"
+        echo "check tools: $checks_info"
         echo "image: '"$IMAGE"'"
         echo "built: $(date -Is)"
         echo "avx instructions in llama-bench: $(objdump -d build/bin/llama-bench | grep -c ymm)"

@@ -34,7 +34,9 @@ TESTS=1 scripts/build_llamacpp_docker.sh miner-llama-v2.0
 ```
 
 It writes `llama.cpp-<date>-<commit>.tar.gz` with `bin/` and `BUILDINFO.txt` (commit, image, AVX count, highest
-glibc symbol, the web page). `SCHED_COPIES=8` builds the variant with eight scheduler copies for prefill.
+glibc symbol, the web page). With `TESTS=1`, `bin/` also holds Miner Llama's check tools that the tree
+has (for v2.0 only `test-llama-archs`); `CHECK_TOOLS=0` leaves them out. `SCHED_COPIES=8` builds the variant with
+eight scheduler copies for prefill.
 
 **The web page.** The build downloads llama-server's chat page from upstream's archive by upstream release. Upstream
 has no archive for b11820, the release v2.0 sits on, nor for v3.0's b12092, and its newest archive lacks files these

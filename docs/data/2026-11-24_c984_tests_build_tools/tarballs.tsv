@@ -1,0 +1,7 @@
+arm	build	rc	seconds	tarball	bytes	md5	files_in_bin	check_tools_line
+old	the v5 tip, the script before the change	0	53	llama.cpp-20261124-8a9629942.tar.gz	708062047	3307785a58b9dacec93556b61f594b57	11	(no such line: the script before the change)
+new	the v5 tip, the changed script	0	80	llama.cpp-20261124-8a9629942.tar.gz	1252901378	59ca8336b87367a6522e63c6fcc1381b	19	llama-pipe-recurrent-check test-moe-ids test-hop-cast test-hop-mailbox test-kpool-dev test-kpool-stage test-pool-mask-dev test-llama-archs
+off	the v5 tip, the changed script, CHECK_TOOLS=0	0	52	llama.cpp-20261124-8a9629942.tar.gz	708062576	beaedda1ee5c9e663bf63bf829b4e0dc	11	not built (TESTS=1, CHECK_TOOLS=0)
+dup	the v5 tip, the changed script, EXTRA_TARGETS="test-llama-archs test-cuda-keepalive"	0	76	llama.cpp-20261124-8a9629942.tar.gz	1318839641	bc400b6bc90b6f84a78294727139fe5b	20	llama-pipe-recurrent-check test-moe-ids test-hop-cast test-hop-mailbox test-kpool-dev test-kpool-stage test-pool-mask-dev test-llama-archs
+v3	miner-llama-v3.0, the changed script	0	440	llama.cpp-20261124-1551f5fe1.tar.gz	956074494	8b2fe50cb6d792d5b4e7c622e17ab70f	16	llama-pipe-recurrent-check test-moe-ids test-hop-cast test-hop-mailbox test-llama-archs (not in this tree: test-kpool-dev test-kpool-stage test-pool-mask-dev)
+v2	miner-llama-v2.0, the changed script	0	50	llama.cpp-20261124-37e717ff6.tar.gz	320560684	57202bff954dcc6d1532962defcc27ec	12	test-llama-archs (not in this tree: llama-pipe-recurrent-check test-moe-ids test-hop-cast test-hop-mailbox test-kpool-dev test-kpool-stage test-pool-mask-dev)

@@ -20,13 +20,15 @@
 #       packages a build that already exists
 # Env [defaults]: WORK [~/llama-builds] (build_llamacpp_docker.sh's), OUT [WORK/release-<PREFIX>-<VERSION>],
 #   PREFIX [llama-p106], IMAGE [nvidia/cuda:12.9.2-devel-ubuntu24.04], DOCKER_ARGS (e.g. a label the machine's policy
-#   asks for), TESTS [1], JOBS, NOTES [release/notes-<VERSION>.md in this repository, if present], SRC [the llama.cpp
-#   checkout the build came from: the build folder's sibling src/], NOTES_ONLY [0; 1 rewrites only RELEASE_NOTES.md of
-#   the assets already in OUT, e.g. once the measured numbers are in the template], NOTES_VARIANT [none]: the engine
-#   variant of the notes, as scripts/release_variant.sh takes it (rc4, rc3, rc1 or a list of tags); tagged lines and
-#   blocks of other variants are removed, DRAFTS: drafter side files (export_gguf.py's GGUFs) as "name=file ...",
-#   each copied unchanged into OUT under its name and added to SHA256SUMS and to the notes' asset table
-#   ({{DRAFT_ROWS}}); DRAFT=<file> adds one as DRAFT_NAME [flint-staircase-drafter-<VERSION>.gguf]
+#   asks for), TESTS [1], CHECK_TOOLS [0] (1 keeps Miner Llama's check tools, which build_llamacpp_docker.sh adds with
+#   TESTS=1: llama-pipe-recurrent-check would go with the binaries, the tests with test-backend-ops; a BUILD_DIR built
+#   with them is packed with them), JOBS, NOTES [release/notes-<VERSION>.md in this repository, if present], SRC [the
+#   llama.cpp checkout the build came from: the build folder's sibling src/], NOTES_ONLY [0; 1 rewrites only
+#   RELEASE_NOTES.md of the assets already in OUT, e.g. once the measured numbers are in the template], NOTES_VARIANT
+#   [none]: the engine variant of the notes, as scripts/release_variant.sh takes it (rc4, rc3, rc1 or a list of tags);
+#   tagged lines and blocks of other variants are removed, DRAFTS: drafter side files (export_gguf.py's GGUFs) as
+#   "name=file ...", each copied unchanged into OUT under its name and added to SHA256SUMS and to the notes' asset
+#   table ({{DRAFT_ROWS}}); DRAFT=<file> adds one as DRAFT_NAME [flint-staircase-drafter-<VERSION>.gguf]
 # Exit status: 0 assets written and checked, 1 a step failed, 2 usage.
 set -euo pipefail
 here=$(cd "$(dirname "$0")" && pwd)
@@ -51,7 +53,7 @@ else
 if [ -z "${BUILD_DIR:-}" ]; then
     [ "$REF" != - ] || { echo "give a git ref, or BUILD_DIR"; exit 2; }
     log=$(mktemp)
-    TESTS=${TESTS:-1} WORK=$WORK IMAGE=$IMAGE "$here/build_llamacpp_docker.sh" "$REF" | tee "$log"
+    TESTS=${TESTS:-1} CHECK_TOOLS=${CHECK_TOOLS:-0} WORK=$WORK IMAGE=$IMAGE "$here/build_llamacpp_docker.sh" "$REF" | tee "$log"
     name=$(sed -n 's/^name: //p' "$log" | tail -1); rm -f "$log"
     BUILD_DIR=$WORK/$name
 fi
