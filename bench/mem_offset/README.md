@@ -36,7 +36,8 @@ came from steps 2 to 5 ([R201](../../docs/data/2026-11-18_r201_soak_ladder/READM
 once in 22 rounds, so that rig runs at stock; the search by halves named no card
 ([R226](../../docs/data/2026-11-20_r226_rig1_card_search/README.md): cards 0 to 4 alone held 56 of 56 rounds, cards
 5, 7 and 8 alone 55 of 55), and the whole profile again for 90 minutes differed in round 137 (R228, same folder): with
-R224, two differences in 159 rounds, est. once in about 42 minutes of rounds.
+R224, two differences in 159 rounds, est. once in about 42 minutes of rounds. Every memory one step (100 MT/s) lower
+with the cores kept differed in round 22 (R231, same folder), so one memory step is no fix there.
 
 | Step | What happens | How it runs | What it gives | Time |
 |---|---|---|---|---|
