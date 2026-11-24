@@ -1,0 +1,5 @@
+tree	program	runs	rc 0	whole	cut short	differs	counts when cut short
+base	eval-callback	20	20	13	7	0	96 sums, 96 sums, 98 sums, 97 sums, 96 sums, 96 sums, 95 sums
+base	thread-safety	20	20	20	0	0	-
+head	eval-callback	20	20	20	0	0	-
+head	thread-safety	20	20	20	0	0	-

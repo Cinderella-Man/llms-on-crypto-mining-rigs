@@ -1,0 +1,25 @@
+item	kind	before-base-run1	base-twice	head-twice	base-head-run1	base-head-run2
+llama-dense.gguf	model md5	same	same	same	same	same
+llama-moe.gguf	model md5	same	same	same	same	same
+qwen4exp-moe.gguf	model md5	same	same	same	same	same
+hand bytes-switches	verdict	same	same	same	same	same
+hand bytes-zero-tail	verdict	same	same	same	same	same
+hand context-model	verdict	same	same	same	same	same
+hand eval-callback	verdict	same	same	same	same	same
+hand hop-cast	verdict	same	same	same	same	same
+hand moe-ids	verdict	same	same	same	same	same
+hand route-once-x1	verdict	same	same	same	same	same
+hand route-once-x30	verdict	same	same	same	same	same
+hand thread-safety	verdict	same	same	same	same	same
+bytes-switches	log	DIFFERS	same	same	same	same
+bytes-zero-tail	log	DIFFERS	same	same	same	same
+context-model	log, sorted	same	same	same	same	same
+eval-callback	log	DIFFERS	same	same	same	same
+hop-cast	log	same	same	same	same	same
+moe-ids	log	DIFFERS	same	same	same	same
+random/archs	log	same	same	same	same	same
+random/dense	log	same	same	same	same	same
+route-once-x1	log	DIFFERS	same	same	same	same
+route-once-x30	log	DIFFERS	same	same	same	same
+thread-safety	log, sorted	cut short	same	same	same	same
+eval-callback sums	sums	same	same	same	same	same

@@ -1,0 +1,6 @@
+pair	tree a	tree b	comparisons	same	cut short	differ	not same
+before-base-run1	landing's run of the base	run 1 base	24	17	1	6	bytes-switches DIFFERS; bytes-zero-tail DIFFERS; eval-callback DIFFERS; moe-ids DIFFERS; route-once-x1 DIFFERS; route-once-x30 DIFFERS; thread-safety cut short
+base-twice	run 1 base	run 2 base	24	24	0	0	-
+head-twice	run 1 head	run 2 head	24	24	0	0	-
+base-head-run1	run 1 base	run 1 head	24	24	0	0	-
+base-head-run2	run 2 base	run 2 head	24	24	0	0	-

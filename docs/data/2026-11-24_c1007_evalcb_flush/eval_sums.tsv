@@ -1,0 +1,6 @@
+tree	eval-callback sums	eval-callback lines	md5 of the sums	thread-safety's last line
+run1 base	99	895	cf742168eb51	All threads finished without errors.
+run1 head	99	895	cf742168eb51	All threads finished without errors.
+run2 base	99	895	cf742168eb51	All threads finished without errors.
+run2 head	99	895	cf742168eb51	All threads finished without errors.
+landing's run of the base	99	892	cf742168eb51	All threads finished without errors.

@@ -1,0 +1,38 @@
+check	landing's run of the base	run1-base	run1-head	run2-base	run2-head
+archs compare	OK	OK	OK	OK	OK
+archs files	OK	OK	OK	OK	OK
+archs plain	OK	OK	OK	OK	OK
+archs write	OK	OK	OK	OK	OK
+build	OK	OK	OK	OK	OK
+ctest	FAIL	FAIL	FAIL	FAIL	FAIL
+hand bytes-switches	OK	OK	OK	OK	OK
+hand bytes-zero-tail	OK	OK	OK	OK	OK
+hand context-model	OK	OK	OK	OK	OK
+hand eval-callback	OK	OK	OK	OK	OK
+hand hop-cast	OK	OK	OK	OK	OK
+hand moe-ids	OK	OK	OK	OK	OK
+hand route-once-x1	OK	OK	OK	OK	OK
+hand route-once-x30	OK	OK	OK	OK	OK
+hand thread-safety	OK	OK	OK	OK	OK
+ident vs base	SAME	-	SAME	-	SAME
+pipe flint identity	OK	-	-	-	-
+pipe flint race	OK	-	-	-	-
+pipe flint recurrent	OK	-	-	-	-
+pipe flint sampled	OK	-	-	-	-
+pipe qwen35 identity	OK	-	-	-	-
+pipe qwen35 race	OK	-	-	-	-
+pipe qwen35 recurrent	OK	-	-	-	-
+pipe qwen35 sampled	OK	-	-	-	-
+pipe qwen35moe identity	OK	-	-	-	-
+pipe qwen35moe race	OK	-	-	-	-
+pipe qwen35moe recurrent	OK	-	-	-	-
+pipe qwen35moe sampled	OK	-	-	-	-
+pipe qwen3next identity	OK	-	-	-	-
+pipe qwen3next race	OK	-	-	-	-
+pipe qwen3next recurrent	OK	-	-	-	-
+pipe qwen3next sampled	OK	-	-	-	-
+pipe qwen4exp identity	OK	-	-	-	-
+pipe qwen4exp race	OK	-	-	-	-
+pipe qwen4exp recurrent	OK	-	-	-	-
+pipe qwen4exp sampled	OK	-	-	-	-
+tree	OK	OK	OK	OK	OK

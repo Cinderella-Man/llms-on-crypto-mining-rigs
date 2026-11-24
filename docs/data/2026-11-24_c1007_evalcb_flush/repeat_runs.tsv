@@ -1,0 +1,81 @@
+tree	program	run	rc	count	lines	verdict	log md5 (time stamps dropped)	last line
+base	eval-callback	1	0	99 sums	895	whole	68f9c6774a29	sum = -1.064878
+base	eval-callback	2	0	96 sums	877	cut short	8e37a4946df8	[      2.1839,       1.5469,      -0.3803,    ...,       1.2825
+base	eval-callback	3	0	99 sums	895	whole	68f9c6774a29	sum = -1.064878
+base	eval-callback	4	0	96 sums	877	cut short	1c0639b0b57d	[      2.1839,       1.5469,      -0.3803,    ...,       1.2825,
+base	eval-callback	5	0	99 sums	895	whole	68f9c6774a29	sum = -1.064878
+base	eval-callback	6	0	99 sums	895	whole	68f9c6774a29	sum = -1.064878
+base	eval-callback	7	0	99 sums	895	whole	68f9c6774a29	sum = -1.064878
+base	eval-callback	8	0	99 sums	895	whole	68f9c6774a29	sum = -1.064878
+base	eval-callback	9	0	99 sums	895	whole	68f9c6774a29	sum = -1.064878
+base	eval-callback	10	0	99 sums	895	whole	68f9c6774a29	sum = -1.064878
+base	eval-callback	11	0	98 sums	887	cut short	46e9d8f99d8c	sum = 2.093218
+base	eval-callback	12	0	99 sums	895	whole	68f9c6774a29	sum = -1.064878
+base	eval-callback	13	0	97 sums	884	cut short	19b4f30247c8	[     -0.1033,      -0.2737,      -0.0897,    ...,      -0.0032,
+base	eval-callback	14	0	96 sums	877	cut short	b9e7e39360ae	[      2.1839,       1.5469
+base	eval-callback	15	0	99 sums	895	whole	68f9c6774a29	sum = -1.064878
+base	eval-callback	16	0	99 sums	895	whole	68f9c6774a29	sum = -1.064878
+base	eval-callback	17	0	99 sums	895	whole	68f9c6774a29	sum = -1.064878
+base	eval-callback	18	0	96 sums	877	cut short	26d96f435c25	[      2.1839,       1.5469,
+base	eval-callback	19	0	99 sums	895	whole	68f9c6774a29	sum = -1.064878
+base	eval-callback	20	0	95 sums	866	cut short	e4a7b60f1152	sum = 0.122840
+head	eval-callback	1	0	99 sums	895	whole	68f9c6774a29	sum = -1.064878
+head	eval-callback	2	0	99 sums	895	whole	68f9c6774a29	sum = -1.064878
+head	eval-callback	3	0	99 sums	895	whole	68f9c6774a29	sum = -1.064878
+head	eval-callback	4	0	99 sums	895	whole	68f9c6774a29	sum = -1.064878
+head	eval-callback	5	0	99 sums	895	whole	68f9c6774a29	sum = -1.064878
+head	eval-callback	6	0	99 sums	895	whole	68f9c6774a29	sum = -1.064878
+head	eval-callback	7	0	99 sums	895	whole	68f9c6774a29	sum = -1.064878
+head	eval-callback	8	0	99 sums	895	whole	68f9c6774a29	sum = -1.064878
+head	eval-callback	9	0	99 sums	895	whole	68f9c6774a29	sum = -1.064878
+head	eval-callback	10	0	99 sums	895	whole	68f9c6774a29	sum = -1.064878
+head	eval-callback	11	0	99 sums	895	whole	68f9c6774a29	sum = -1.064878
+head	eval-callback	12	0	99 sums	895	whole	68f9c6774a29	sum = -1.064878
+head	eval-callback	13	0	99 sums	895	whole	68f9c6774a29	sum = -1.064878
+head	eval-callback	14	0	99 sums	895	whole	68f9c6774a29	sum = -1.064878
+head	eval-callback	15	0	99 sums	895	whole	68f9c6774a29	sum = -1.064878
+head	eval-callback	16	0	99 sums	895	whole	68f9c6774a29	sum = -1.064878
+head	eval-callback	17	0	99 sums	895	whole	68f9c6774a29	sum = -1.064878
+head	eval-callback	18	0	99 sums	895	whole	68f9c6774a29	sum = -1.064878
+head	eval-callback	19	0	99 sums	895	whole	68f9c6774a29	sum = -1.064878
+head	eval-callback	20	0	99 sums	895	whole	68f9c6774a29	sum = -1.064878
+base	thread-safety	1	0	29 lines	29	whole	c72fba6fbe38	All threads finished without errors.
+base	thread-safety	2	0	29 lines	29	whole	c72fba6fbe38	All threads finished without errors.
+base	thread-safety	3	0	29 lines	29	whole	c72fba6fbe38	All threads finished without errors.
+base	thread-safety	4	0	29 lines	29	whole	c72fba6fbe38	All threads finished without errors.
+base	thread-safety	5	0	29 lines	29	whole	c72fba6fbe38	All threads finished without errors.
+base	thread-safety	6	0	29 lines	29	whole	c72fba6fbe38	All threads finished without errors.
+base	thread-safety	7	0	29 lines	29	whole	c72fba6fbe38	All threads finished without errors.
+base	thread-safety	8	0	29 lines	29	whole	c72fba6fbe38	All threads finished without errors.
+base	thread-safety	9	0	29 lines	29	whole	c72fba6fbe38	All threads finished without errors.
+base	thread-safety	10	0	29 lines	29	whole	c72fba6fbe38	All threads finished without errors.
+base	thread-safety	11	0	29 lines	29	whole	c72fba6fbe38	All threads finished without errors.
+base	thread-safety	12	0	29 lines	29	whole	c72fba6fbe38	All threads finished without errors.
+base	thread-safety	13	0	29 lines	29	whole	c72fba6fbe38	All threads finished without errors.
+base	thread-safety	14	0	29 lines	29	whole	c72fba6fbe38	All threads finished without errors.
+base	thread-safety	15	0	29 lines	29	whole	c72fba6fbe38	All threads finished without errors.
+base	thread-safety	16	0	29 lines	29	whole	c72fba6fbe38	All threads finished without errors.
+base	thread-safety	17	0	29 lines	29	whole	c72fba6fbe38	All threads finished without errors.
+base	thread-safety	18	0	29 lines	29	whole	c72fba6fbe38	All threads finished without errors.
+base	thread-safety	19	0	29 lines	29	whole	c72fba6fbe38	All threads finished without errors.
+base	thread-safety	20	0	29 lines	29	whole	c72fba6fbe38	All threads finished without errors.
+head	thread-safety	1	0	29 lines	29	whole	c72fba6fbe38	All threads finished without errors.
+head	thread-safety	2	0	29 lines	29	whole	c72fba6fbe38	All threads finished without errors.
+head	thread-safety	3	0	29 lines	29	whole	c72fba6fbe38	All threads finished without errors.
+head	thread-safety	4	0	29 lines	29	whole	c72fba6fbe38	All threads finished without errors.
+head	thread-safety	5	0	29 lines	29	whole	c72fba6fbe38	All threads finished without errors.
+head	thread-safety	6	0	29 lines	29	whole	c72fba6fbe38	All threads finished without errors.
+head	thread-safety	7	0	29 lines	29	whole	c72fba6fbe38	All threads finished without errors.
+head	thread-safety	8	0	29 lines	29	whole	c72fba6fbe38	All threads finished without errors.
+head	thread-safety	9	0	29 lines	29	whole	c72fba6fbe38	All threads finished without errors.
+head	thread-safety	10	0	29 lines	29	whole	c72fba6fbe38	All threads finished without errors.
+head	thread-safety	11	0	29 lines	29	whole	c72fba6fbe38	All threads finished without errors.
+head	thread-safety	12	0	29 lines	29	whole	c72fba6fbe38	All threads finished without errors.
+head	thread-safety	13	0	29 lines	29	whole	c72fba6fbe38	All threads finished without errors.
+head	thread-safety	14	0	29 lines	29	whole	c72fba6fbe38	All threads finished without errors.
+head	thread-safety	15	0	29 lines	29	whole	c72fba6fbe38	All threads finished without errors.
+head	thread-safety	16	0	29 lines	29	whole	c72fba6fbe38	All threads finished without errors.
+head	thread-safety	17	0	29 lines	29	whole	c72fba6fbe38	All threads finished without errors.
+head	thread-safety	18	0	29 lines	29	whole	c72fba6fbe38	All threads finished without errors.
+head	thread-safety	19	0	29 lines	29	whole	c72fba6fbe38	All threads finished without errors.
+head	thread-safety	20	0	29 lines	29	whole	c72fba6fbe38	All threads finished without errors.
