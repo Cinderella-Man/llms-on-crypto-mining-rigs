@@ -1,0 +1,23 @@
+form	arm or pair	measure	stretches	mean	se	t
+alone	q8f1	kld	12	0.011030	0.001957	5.63
+alone	q8f1	top_differs_pct	12	2.249000	0.262790	8.56
+alone	q8f1	ln_ppl_ratio	12	0.000380	0.001194	0.32
+alone	q8f3	kld	12	0.365240	0.029057	12.57
+alone	q8f3	top_differs_pct	12	14.664000	1.088867	13.47
+alone	q8f3	ln_ppl_ratio	12	0.290270	0.023463	12.37
+alone	q8u	kld	12	0.007960	0.001781	4.47
+alone	q8u	top_differs_pct	12	2.061000	0.269150	7.66
+alone	q8u	ln_ppl_ratio	12	0.000430	0.001323	0.33
+alone	q8r	kld	12	0.000000	0.000000	0.00
+alone	q8r	top_differs_pct	12	0.000000	0.000000	0.00
+alone	q8r	ln_ppl_ratio	12	0.000030	0.000031	0.97
+against rounding	q8f1 - q8u	kld	12	0.003070	0.000469	6.54
+against rounding	q8f1 - q8u	top_differs_pct	12	0.188000	0.075615	2.49
+against rounding	q8f1 - q8u	ln_ppl_ratio	12	-0.000050	0.002155	-0.02
+against rounding, divided by rounding	(q8f1 - q8u) / q8u	kld	12	0.504086	0.074878	6.73
+against rounding, divided by rounding	(q8f1 - q8u) / q8u	top_differs_pct	12	0.121316	0.037824	3.21
+against rounding	q8f3 - q8u	kld	12	0.357280	0.027976	12.77
+against rounding	q8f3 - q8u	top_differs_pct	12	12.603000	0.900613	13.99
+against rounding	q8f3 - q8u	ln_ppl_ratio	12	0.289840	0.023778	12.19
+against rounding, divided by rounding	(q8f3 - q8u) / q8u	kld	12	63.204834	11.300524	5.59
+against rounding, divided by rounding	(q8f3 - q8u) / q8u	top_differs_pct	12	7.021303	0.794356	8.84

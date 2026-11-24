@@ -1,0 +1,32 @@
+check	measure	value	rule	result
+against rounding: q8f1 - q8u	kld	0.003070 ± 0.000469 (t 6.54)	t >= 3	seen
+against rounding: q8f1 - q8u	top_differs_pct	0.188000 ± 0.075615 (t 2.49)	t >= 3	not seen
+against rounding: q8f1 - q8u	ln_ppl_ratio	-0.000050 ± 0.002155 (t -0.02)	|t| >= 3	not seen
+against rounding, divided by rounding: (q8f1 - q8u) / q8u	kld	0.504086 ± 0.074878 (t 6.73)	t >= 3	seen
+against rounding, divided by rounding: (q8f1 - q8u) / q8u	top_differs_pct	0.121316 ± 0.037824 (t 3.21)	t >= 3	seen
+against rounding: q8f3 - q8u	kld	0.357280 ± 0.027976 (t 12.77)	t >= 3	seen
+against rounding: q8f3 - q8u	top_differs_pct	12.603000 ± 0.900613 (t 13.99)	t >= 3	seen
+against rounding: q8f3 - q8u	ln_ppl_ratio	0.289840 ± 0.023778 (t 12.19)	|t| >= 3	seen
+against rounding, divided by rounding: (q8f3 - q8u) / q8u	kld	63.204834 ± 11.300524 (t 5.59)	t >= 3	seen
+against rounding, divided by rounding: (q8f3 - q8u) / q8u	top_differs_pct	7.021303 ± 0.794356 (t 8.84)	t >= 3	seen
+against rounding: smallest output scale error seen, est. (q8f1 scaled by (eps/0.05)^2)	kld	4.58 %		est.
+against rounding: smallest output scale error seen, est. (q8f1 scaled by (eps/0.05)^1)	top_differs_pct	5.09 %		est.
+against rounding, divided by rounding: smallest output scale error seen, est. (q8f1 scaled by (eps/0.05)^2)	kld	4.43 %		est.
+against rounding, divided by rounding: smallest output scale error seen, est. (q8f1 scaled by (eps/0.05)^1)	top_differs_pct	4.97 %		est.
+output scale error whose KLD equals rounding's (q8u), est. 0.05 * sqrt(mean U / mean F)	kld	4.25 %		est.
+output scale error whose top-token disagreement equals rounding's, est. 0.05 * mean V / mean T	top_differs_pct	4.58 %		est.
+correlation over the stretches of q8f1's KLD with q8u's (C989: 0.86 with f16u's)	kld	0.97		context
+correlation over the stretches of q8f1's top-token disagreement with q8u's	top_differs_pct	0.96		context
+spread across stretches of q8f1's KLD: sd / mean	spread	0.615		context
+spread across stretches of q8f1's KLD / q8u's: sd / mean	spread	0.172		context
+spread across stretches of q8f1's top-token disagreement: sd / mean	spread	0.405		context
+spread across stretches of q8f1's top-token disagreement / q8u's: sd / mean	spread	0.117		context
+C989's g q8f1 - q8 (against the F16 cache) minus this run's q8f1 alone, per stretch	kld	-0.006750 ± 0.001396 (t -4.83)		context
+C989's g q8f1 - q8 (against the F16 cache) minus this run's q8f1 alone, per stretch	top_differs_pct	-1.846000 ± 0.244683 (t -7.54)		context
+validity: q8r repeats q8 exactly (every stretch's KLD 0.00000, same top 100.000 %)	kld, top	largest stretch KLD 0.00000, largest top differs 0.000; over all tokens mean KLD -0.000003 and ln PPL ratio 0.000026 ± 0.000030 (the reference file's 16-bit storage)	0 on every stretch	pass
+validity: q8's run (repeated as q8r) has the perplexity of C989's pass g q8	ppl	1.577901 against 1.577901	equal at 6 decimals	pass
+validity: q8 logs the compute 6.1 prompt attention kernel	kernel	head 256, q8_0 K/V	head 256, q8_0 K/V	pass
+validity: q8f1 logs the compute 6.1 prompt attention kernel	kernel	head 256, q8_0 K/V	head 256, q8_0 K/V	pass
+validity: q8f3 logs the compute 6.1 prompt attention kernel	kernel	head 256, q8_0 K/V	head 256, q8_0 K/V	pass
+validity: q8u logs the compute 6.1 prompt attention kernel	kernel	head 256, q8_0 K/V	head 256, q8_0 K/V	pass
+validity: q8r logs the compute 6.1 prompt attention kernel	kernel	head 256, q8_0 K/V	head 256, q8_0 K/V	pass

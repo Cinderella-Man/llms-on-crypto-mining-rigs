@@ -37,6 +37,12 @@ sixth, est. A size knob for the fault switch would measure the floor instead of 
 against its own unfaulted run would remove the reference's own error from the check. Both are new rows
 ([Q1726, Q1727](../../../quants/experiments.md)).
 
+**Scored against its own unfaulted run** ([C994](../2026-11-24_c994_attn_fault_selfref/README.md)), the form a new-kernel
+check takes, the same 5 % error has a KLD of 0.011030, 2.58 times what the comparison against the F16 cache reads:
+part of it cancels against the Q8_0 cache's own change. Judged there against rounding (the base kernel in micro-batches
+of 128), uniform errors are seen from est. about 4.4 %, because that rounding is itself as large as a 4.25 % error; the
+est. 3.4 % above assumes a new kernel brings no rounding of its own. Later attention-kernel checks take that form.
+
 ## What ran
 
 | | |
