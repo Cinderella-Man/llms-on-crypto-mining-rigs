@@ -1,0 +1,6 @@
+arch	file	md5 tip	md5 fix
+qwen4exp	qwen4exp-moe.gguf	3c1f8f2cc6bd	3c1f8f2cc6bd
+qwen35	qwen35-dense.gguf	ab091bd4f8e9	ab091bd4f8e9
+qwen35moe	qwen35moe-moe.gguf	30b2bfd6a845	30b2bfd6a845
+qwen3next	qwen3next-moe.gguf	758bb4d68e8e	758bb4d68e8e
+flint	flint-moe.gguf	8a91d5448c65	8a91d5448c65

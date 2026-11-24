@@ -28,23 +28,53 @@
 #           trees' hand logs compare line by line (compare_hand.py); hand/models.md5 lists the models' checksums. Each
 #           test writes its log from inside its container, stdout and stderr into one file: docker would carry them as
 #           two streams and interleave them differently on every run
-# TREES: '<tag>=<commit>[+<commit>...][:<targets>][@<base tag>] ...'; a tree with ":<targets>" runs only archs and ident.
-# Usage: WORK=<dir> SRC=<llama.cpp clone holding the commits> TREES='...' [STEPS='tree build ctest archs ident hand']
+#   pipe    pipelined decoding against plain decoding (C935), which ctest never runs: for each architecture of PIPE_ARCHS
+#           (by default every one llama_pipe_init accepts: the delta-net models qwen4exp, qwen35, qwen35moe and
+#           qwen3next, and flint, Flint's architecture, a model without recurrent state), a random model from this tree's
+#           test-llama-archs with -s PIPE_SEED and a 4,096-token vocabulary (its MoE model where it writes one), then on
+#           the CPU (-ngl 0 -fa on -c 2048, greedy, PIPE_N tokens of prompts/rewrite.txt as plain text):
+#             identity   bench/pipespec/check_identity.sh, depths 1 and 3, 0 and 50 % wrong guesses (the oracle), the four
+#                        guessers and depth 0: every pipelined run's tokens, logits, KV state and probe hashes plain's
+#             recurrent  llama-pipe-recurrent-check: the rollbacks the slot rotation rarely makes (the stash, dropped
+#                        guesses, the token in flight dropped and sent again), each hash plain's
+#           OK when every hash is plain's, DIFFERS when a pipelined run gives other hashes, FAIL when a tool stopped
+#           before comparing. It runs whenever STEPS names pipe or hand, so every check that runs the hand step runs it
+#           too; PIPE_ARCHS='' leaves it out. It needs check_identity.sh and prompts/rewrite.txt: PIPESPEC=<bench/pipespec>,
+#           by default ./pipespec beside this script, else bench/pipespec of the repository this script is in; both
+#           are copied into the tree's pipe/ folder, so the record holds the script that ran. A tree with ":<targets>"
+#           runs it when its targets include llama-pipespec, llama-pipe-recurrent-check and test-llama-archs
+# TREES: '<tag>=<commit>[+<commit>...][:<targets>][@<base tag>] ...'; a tree with ":<targets>" runs only archs, ident
+#   and pipe.
+# Usage: WORK=<dir> SRC=<llama.cpp clone holding the commits> TREES='...' [STEPS='tree build ctest archs ident hand pipe']
 #   [JOBS=8] [SHARED=ON] [CTEST_JOBS=8] [THREADS=8] [LOCK=<flock file>] [DOCKER_ARGS=...] [BASE_IMAGE=ubuntu:24.04]
 #   [IMAGE=pq-c565-cpu:24.04] [PIP='<packages>'] [MODEL15M=<file>] [CTEST_EXCLUDE=<names, a|b>] [NET_TESTS=<names>]
-#   [KEEP_BUILD=1] [HAND_SEED=1] bash cpu_tests.sh
+#   [KEEP_BUILD=1] [HAND_SEED=1] [PIPESPEC=<dir>] [PIPE_ARCHS='qwen4exp qwen35 qwen35moe qwen3next flint'] [PIPE_SEED=1]
+#   [PIPE_N=64] [PIPE_TIMEOUT=900] bash cpu_tests.sh
 # Output: $WORK/<tag>/ (tree.txt, build.log, ctest.log, ctest.xml, archs/*.log, ident/*.log, hand/*.log, the logits
-#   in archs/logits/), $WORK/summary.tsv (tree, check, verdict, detail); done when $WORK/DONE exists
+#   in archs/logits/, pipe/: models/<arch>/ with gen.log, models.md5, <arch>.log check_identity's table and <arch>/ its
+#   folder, prc-<arch>.log, the two scripts), $WORK/summary.tsv (tree, check, verdict, detail); done when $WORK/DONE exists
 set -uo pipefail
 WORK=$(realpath "${WORK:?WORK=<work dir>}")
 SRC=$(realpath "${SRC:?SRC=<llama.cpp clone>}")
 : "${TREES:?TREES=<tag>=<commit>...}"
-STEPS=${STEPS:-tree build ctest net archs ident hand}
+STEPS=${STEPS:-tree build ctest net archs ident hand pipe}
 JOBS=${JOBS:-8}
 SHARED=${SHARED:-ON}
 CTEST_JOBS=${CTEST_JOBS:-8}
 THREADS=${THREADS:-8}
 HAND_SEED=${HAND_SEED:-1}
+PIPE_ARCHS=${PIPE_ARCHS-qwen4exp qwen35 qwen35moe qwen3next flint}
+PIPE_SEED=${PIPE_SEED:-1}
+PIPE_N=${PIPE_N:-64}
+PIPE_TIMEOUT=${PIPE_TIMEOUT:-900}
+PIPE_TOOLS="llama-pipespec llama-pipe-recurrent-check test-llama-archs"
+if [ -z "${PIPESPEC:-}" ]; then
+    HERE=$(cd "$(dirname "$0")" && pwd)
+    for d in "$HERE/pipespec" "$HERE/../../../../bench/pipespec"; do
+        [ -f "$d/check_identity.sh" ] && { PIPESPEC=$(cd "$d" && pwd); break; }
+    done
+fi
+PIPESPEC=${PIPESPEC:-}
 BASE_IMAGE=${BASE_IMAGE:-ubuntu:24.04}
 IMAGE=${IMAGE:-pq-c565-cpu:24.04}
 NET_TESTS=${NET_TESTS:-test-arg-parser}
@@ -67,8 +97,12 @@ rm -f "$WORK/DONE"
 verdict() { printf '%s\t%s\t%s\t%s\n' "$tag" "$1" "$2" "$3" | tee -a "$WORK/summary.tsv"; }
 locked()  { if [ -n "${LOCK:-}" ]; then flock -w 21600 "$LOCK" "$@"; else "$@"; fi; }
 step()    { [[ " $STEPS " == *" $1 "* ]]; }
+# the pipe step runs with the hand step, so a driver that lists its steps gets it without naming it
+pipe_on() { [ -n "$PIPE_ARCHS" ] && { step pipe || step hand; }; }
 # shellcheck disable=SC2086
 box()     { docker run --rm $D -v "$WORK:$WORK" ${MODEL15M:+-v "$(dirname "$MODEL15M"):$(dirname "$MODEL15M"):ro"} "$IMAGE" "$@"; }
+# <log> <command ...>: the command in a container, its stdout and stderr into <log> from inside the container
+inbox()   { box bash -c 'f=$1; shift; exec "$@" > "$f" 2>&1' _ "$@"; }
 
 # the image: the compiler and the tests' tools, nothing else (ctest's Python test needs PIP's packages)
 if ! docker image inspect "$IMAGE" > /dev/null 2>&1; then
@@ -174,8 +208,6 @@ for spec in $TREES; do
     if step hand && [ -z "$targets" ]; then
         H=$R/hand
         rm -rf "$H" && mkdir -p "$H/random"
-        # <log> <command ...>: the command in a container, its stdout and stderr into <log> from inside the container
-        inbox() { box bash -c 'f=$1; shift; exec "$@" > "$f" 2>&1' _ "$@"; }
         # <check> <binary> [args]: exit status 0 passes; the log's last line goes into the detail
         hand() {
             local n=$1 b=$2; shift 2
@@ -208,6 +240,54 @@ for spec in $TREES; do
             hand eval-callback llama-eval-callback -m "$L" --prompt hello --seed 42 -ngl 0
         else
             verdict "hand llama-dense" FAIL "no $L: $H/random/dense.log"
+        fi
+    fi
+
+    if pipe_on; then
+        P=$R/pipe
+        missing=""
+        for t in $PIPE_TOOLS; do [ -x "$B/bin/$t" ] || missing="$missing $t"; done
+        if [ -n "$missing" ]; then
+            # a tree of only some targets runs the step when it built the tools; a whole tree without them is no fork tree
+            [ -n "$targets" ] || verdict pipe SKIP "no$missing in the build ($([ -d "$T/src/examples/pipespec" ] && echo "examples/pipespec is in the tree: see the build" || echo "a tree without the fork's pipelined tools"))"
+        elif [ -z "$PIPESPEC" ] || [ ! -f "$PIPESPEC/check_identity.sh" ] || [ ! -f "$PIPESPEC/prompts/rewrite.txt" ]; then
+            verdict pipe FAIL "no check_identity.sh and prompts/rewrite.txt: set PIPESPEC=<bench/pipespec> (now '${PIPESPEC}')"
+        else
+            rm -rf "$P" && mkdir -p "$P/models"
+            cp "$PIPESPEC/check_identity.sh" "$PIPESPEC/prompts/rewrite.txt" "$P/"
+            pargs="-ngl 0 -t $THREADS -c 2048 -fa on"
+            for a in $PIPE_ARCHS; do
+                G=$P/models/$a
+                mkdir -p "$G"
+                # the anchored name: -a takes a regular expression, and qwen35 would also match qwen35moe
+                inbox "$G/gen.log" env LLAMA_TEST_ARCHS_N_VOCAB=4096 "$B/bin/test-llama-archs" -a "^$a\$" -s "$PIPE_SEED" -o "$G"
+                m=$(ls "$G/$a"-moe.gguf "$G/$a"-dense.gguf 2> /dev/null | head -n 1)
+                if [ -z "$m" ]; then
+                    verdict "pipe $a" FAIL "no random model: $(grep -av '^ *$' "$G/gen.log" | tail -n 1 | cut -c1-160)"
+                    continue
+                fi
+                md5=$(md5sum < "$m" | cut -c1-12)
+                echo "$md5  $a/$(basename "$m")" >> "$P/models.md5"
+                inbox "$P/$a.log" env BIN="$B/bin" MODEL="$m" CHAT=0 SPEED=0 TIMEOUT="$PIPE_TIMEOUT" PROMPT="$P/rewrite.txt" \
+                    OUT="$P/$a" ARGS="$pargs" N="$PIPE_N" DEPTHS="1 3" MISSES="0 0.5" nice -n 19 bash "$P/check_identity.sh"
+                rc=$?
+                # check_identity's table: one line per run, the verdict last; plain is the reference
+                runs=$(grep -aE ' (same|DIFF)$' "$P/$a.log" | grep -av '^plain ')
+                nr=$(echo "$runs" | grep -acE ' (same|DIFF)$')
+                nd=$(echo "$runs" | grep -ac ' DIFF$')
+                why="pipelined runs differing $nd of $nr"
+                [ "$nd" -gt 0 ] && why="$why: $(echo "$runs" | awk '$NF == "DIFF" {print $1}' | head -n 5 | tr '\n' ' ')"
+                if [ $rc = 0 ]; then v=OK
+                elif grep -aq '^plain ' "$P/$a.log" && [ "$nd" -gt 0 ]; then v=DIFFERS
+                else v=FAIL why="$why; $(grep -av '^ *$' "$P/$a.log" | tail -n 1 | cut -c1-100)"; fi
+                verdict "pipe $a identity" "$v" "check_identity.sh rc=$rc: $why; N=$PIPE_N, depths 1 3, misses 0 0.5; $(basename "$m") md5 $md5"
+                inbox "$P/prc-$a.log" nice -n 19 timeout "$PIPE_TIMEOUT" "$B/bin/llama-pipe-recurrent-check" -m "$m" -f "$P/rewrite.txt" \
+                    -n "$PIPE_N" $pargs
+                rc=$?
+                line=$(grep -a -o 'PIPE-RECURRENT-CHECK.*' "$P/prc-$a.log" | tail -n 1)
+                verdict "pipe $a recurrent" "$(case $rc in 0) echo OK ;; 2) echo DIFFERS ;; *) echo FAIL ;; esac)" \
+                    "llama-pipe-recurrent-check rc=$rc: ${line:-$(grep -av '^ *$' "$P/prc-$a.log" | tail -n 1 | cut -c1-120)}"
+            done
         fi
     fi
 

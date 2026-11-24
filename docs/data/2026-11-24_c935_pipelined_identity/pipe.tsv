@@ -1,0 +1,21 @@
+tree	arch	check	verdict	detail
+tip	qwen4exp	identity	DIFFERS	check_identity.sh rc=1: pipelined runs differing 13 of 13: pipe-d0 oracle-d1-m0 oracle-d1-m0.5 copy2-d1 cont4-d1 ; N=64, depths 1 3, misses 0 0.5; qwen4exp-moe.gguf md5 3c1f8f2cc6bd
+tip	qwen4exp	recurrent	DIFFERS	llama-pipe-recurrent-check rc=2: PIPE-RECURRENT-CHECK n_prompt=550 n_gen=64 inplace=21 guesses=16 leave_pipe=16 leave_decode=5 tokens=same logits=DIFF state=DIFF probe=DIFF first_logits_diff=2
+tip	qwen35	identity	OK	check_identity.sh rc=0: pipelined runs differing 0 of 13; N=64, depths 1 3, misses 0 0.5; qwen35-dense.gguf md5 ab091bd4f8e9
+tip	qwen35	recurrent	OK	llama-pipe-recurrent-check rc=0: PIPE-RECURRENT-CHECK n_prompt=550 n_gen=64 inplace=21 guesses=16 leave_pipe=16 leave_decode=5 tokens=same logits=same state=same probe=same first_logits_diff=-1
+tip	qwen35moe	identity	OK	check_identity.sh rc=0: pipelined runs differing 0 of 13; N=64, depths 1 3, misses 0 0.5; qwen35moe-moe.gguf md5 30b2bfd6a845
+tip	qwen35moe	recurrent	OK	llama-pipe-recurrent-check rc=0: PIPE-RECURRENT-CHECK n_prompt=550 n_gen=64 inplace=21 guesses=16 leave_pipe=16 leave_decode=5 tokens=same logits=same state=same probe=same first_logits_diff=-1
+tip	qwen3next	identity	OK	check_identity.sh rc=0: pipelined runs differing 0 of 13; N=64, depths 1 3, misses 0 0.5; qwen3next-moe.gguf md5 758bb4d68e8e
+tip	qwen3next	recurrent	OK	llama-pipe-recurrent-check rc=0: PIPE-RECURRENT-CHECK n_prompt=550 n_gen=64 inplace=21 guesses=16 leave_pipe=16 leave_decode=5 tokens=same logits=same state=same probe=same first_logits_diff=-1
+tip	flint	identity	OK	check_identity.sh rc=0: pipelined runs differing 0 of 13; N=64, depths 1 3, misses 0 0.5; flint-moe.gguf md5 8a91d5448c65
+tip	flint	recurrent	OK	llama-pipe-recurrent-check rc=0: PIPE-RECURRENT-CHECK n_prompt=550 n_gen=64 inplace=21 guesses=16 leave_pipe=16 leave_decode=5 tokens=same logits=same state=same probe=same first_logits_diff=-1
+fix	qwen4exp	identity	OK	check_identity.sh rc=0: pipelined runs differing 0 of 13; N=64, depths 1 3, misses 0 0.5; qwen4exp-moe.gguf md5 3c1f8f2cc6bd
+fix	qwen4exp	recurrent	OK	llama-pipe-recurrent-check rc=0: PIPE-RECURRENT-CHECK n_prompt=550 n_gen=64 inplace=21 guesses=16 leave_pipe=16 leave_decode=5 tokens=same logits=same state=same probe=same first_logits_diff=-1
+fix	qwen35	identity	OK	check_identity.sh rc=0: pipelined runs differing 0 of 13; N=64, depths 1 3, misses 0 0.5; qwen35-dense.gguf md5 ab091bd4f8e9
+fix	qwen35	recurrent	OK	llama-pipe-recurrent-check rc=0: PIPE-RECURRENT-CHECK n_prompt=550 n_gen=64 inplace=21 guesses=16 leave_pipe=16 leave_decode=5 tokens=same logits=same state=same probe=same first_logits_diff=-1
+fix	qwen35moe	identity	OK	check_identity.sh rc=0: pipelined runs differing 0 of 13; N=64, depths 1 3, misses 0 0.5; qwen35moe-moe.gguf md5 30b2bfd6a845
+fix	qwen35moe	recurrent	OK	llama-pipe-recurrent-check rc=0: PIPE-RECURRENT-CHECK n_prompt=550 n_gen=64 inplace=21 guesses=16 leave_pipe=16 leave_decode=5 tokens=same logits=same state=same probe=same first_logits_diff=-1
+fix	qwen3next	identity	OK	check_identity.sh rc=0: pipelined runs differing 0 of 13; N=64, depths 1 3, misses 0 0.5; qwen3next-moe.gguf md5 758bb4d68e8e
+fix	qwen3next	recurrent	OK	llama-pipe-recurrent-check rc=0: PIPE-RECURRENT-CHECK n_prompt=550 n_gen=64 inplace=21 guesses=16 leave_pipe=16 leave_decode=5 tokens=same logits=same state=same probe=same first_logits_diff=-1
+fix	flint	identity	OK	check_identity.sh rc=0: pipelined runs differing 0 of 13; N=64, depths 1 3, misses 0 0.5; flint-moe.gguf md5 8a91d5448c65
+fix	flint	recurrent	OK	llama-pipe-recurrent-check rc=0: PIPE-RECURRENT-CHECK n_prompt=550 n_gen=64 inplace=21 guesses=16 leave_pipe=16 leave_decode=5 tokens=same logits=same state=same probe=same first_logits_diff=-1

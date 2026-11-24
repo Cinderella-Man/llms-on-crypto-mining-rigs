@@ -1,0 +1,49 @@
+pair	item	kind	a	b	verdict	detail
+before-tip	llama-dense.gguf	model md5	c57717ea92ba10c4398c849394010588	c57717ea92ba10c4398c849394010588	same	
+before-tip	llama-moe.gguf	model md5	86effb74ecc2046ac4358acea7b4eec2	86effb74ecc2046ac4358acea7b4eec2	same	
+before-tip	qwen4exp-moe.gguf	model md5	e532a2ffc7861df1cd7d6542836d27de	e532a2ffc7861df1cd7d6542836d27de	same	
+before-tip	hand bytes-switches	verdict	OK rc=0	OK rc=0	same	
+before-tip	hand bytes-zero-tail	verdict	OK rc=0	OK rc=0	same	
+before-tip	hand context-model	verdict	OK rc=0	OK rc=0	same	
+before-tip	hand eval-callback	verdict	OK rc=0	OK rc=0	same	
+before-tip	hand hop-cast	verdict	OK rc=0	OK rc=0	same	
+before-tip	hand moe-ids	verdict	OK rc=0	OK rc=0	same	
+before-tip	hand route-once-x1	verdict	OK rc=0	OK rc=0	same	
+before-tip	hand route-once-x30	verdict	OK rc=0	OK rc=0	same	
+before-tip	hand thread-safety	verdict	OK rc=0	OK rc=0	same	
+before-tip	bytes-switches	log	24176 lines	24176 lines	same	535 checks, 0 failed
+before-tip	bytes-zero-tail	log	24086 lines	24086 lines	same	536 checks, 0 failed
+before-tip	context-model	log, sorted	38 lines	38 lines	same	failed   : 0
+before-tip	eval-callback	log	895 lines	895 lines	same	    sum = -1.064878
+before-tip	hop-cast	log	31 lines	31 lines	same	54 checks, 0 failed
+before-tip	moe-ids	log	655 lines	655 lines	same	13 checks, 0 failed
+before-tip	random/archs	log	2 lines	2 lines	same	save_models: 'qwen4exp MoE' -> <WORK>/<TAG>/hand/random/qwen4exp-moe.gguf ... (97.63 MB)
+before-tip	random/dense	log	3 lines	3 lines	same	save_models: 'llama MoE' -> <WORK>/<TAG>/hand/random/llama-moe.gguf ... (6.79 MB)
+before-tip	route-once-x1	log	2792 lines	2792 lines	same	223 checks, 0 failed
+before-tip	route-once-x30	log	2793 lines	2793 lines	same	223 checks, 0 failed
+before-tip	thread-safety	log, sorted	29 lines	29 lines	same	All threads finished without errors.
+before-tip	eval-callback sums	sums	99 sums	99 sums	same	first 1.384906, last -1.064878
+tip-fix	llama-dense.gguf	model md5	c57717ea92ba10c4398c849394010588	c57717ea92ba10c4398c849394010588	same	
+tip-fix	llama-moe.gguf	model md5	86effb74ecc2046ac4358acea7b4eec2	86effb74ecc2046ac4358acea7b4eec2	same	
+tip-fix	qwen4exp-moe.gguf	model md5	e532a2ffc7861df1cd7d6542836d27de	e532a2ffc7861df1cd7d6542836d27de	same	
+tip-fix	hand bytes-switches	verdict	OK rc=0	OK rc=0	same	
+tip-fix	hand bytes-zero-tail	verdict	OK rc=0	OK rc=0	same	
+tip-fix	hand context-model	verdict	OK rc=0	OK rc=0	same	
+tip-fix	hand eval-callback	verdict	OK rc=0	OK rc=0	same	
+tip-fix	hand hop-cast	verdict	OK rc=0	OK rc=0	same	
+tip-fix	hand moe-ids	verdict	OK rc=0	OK rc=0	same	
+tip-fix	hand route-once-x1	verdict	OK rc=0	OK rc=0	same	
+tip-fix	hand route-once-x30	verdict	OK rc=0	OK rc=0	same	
+tip-fix	hand thread-safety	verdict	OK rc=0	OK rc=0	same	
+tip-fix	bytes-switches	log	24176 lines	24176 lines	same	535 checks, 0 failed
+tip-fix	bytes-zero-tail	log	24086 lines	24086 lines	same	536 checks, 0 failed
+tip-fix	context-model	log, sorted	38 lines	38 lines	same	failed   : 0
+tip-fix	eval-callback	log	895 lines	870 lines	cut short	the same as far as the shorter goes (870 lines)
+tip-fix	hop-cast	log	31 lines	31 lines	same	54 checks, 0 failed
+tip-fix	moe-ids	log	655 lines	655 lines	same	13 checks, 0 failed
+tip-fix	random/archs	log	2 lines	2 lines	same	save_models: 'qwen4exp MoE' -> <WORK>/<TAG>/hand/random/qwen4exp-moe.gguf ... (97.63 MB)
+tip-fix	random/dense	log	3 lines	3 lines	same	save_models: 'llama MoE' -> <WORK>/<TAG>/hand/random/llama-moe.gguf ... (6.79 MB)
+tip-fix	route-once-x1	log	2792 lines	2792 lines	same	223 checks, 0 failed
+tip-fix	route-once-x30	log	2793 lines	2793 lines	same	223 checks, 0 failed
+tip-fix	thread-safety	log, sorted	29 lines	29 lines	same	All threads finished without errors.
+tip-fix	eval-callback sums	sums	99 sums	95 sums	cut short	the first 95 the same; one log ends there
