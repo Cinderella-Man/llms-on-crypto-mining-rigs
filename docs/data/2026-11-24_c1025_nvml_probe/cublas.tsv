@@ -1,0 +1,7 @@
+function	compute_type	C-unset	H-unset	H-0	H-1
+cublasCreate_v2	-	1	1	1	1
+cublasGemmEx	CUBLAS_COMPUTE_16F	128	128	128	128
+cublasSetMathMode	-	1	1	1	1
+cublasSetStream_v2	-	1	1	1	1
+cublasSetWorkspace_v2	-	1	1	1	1
+cublasSgemm_v2	-	62	62	62	62

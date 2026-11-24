@@ -1,0 +1,6 @@
+arm	rc	libnvidia_ml_loads	probe_line
+C-unset	rc=0	2	-
+H-unset	rc=0	2	ggml_cuda_init: NVML probe ran (a device has fast BF16): library loaded, nvmlInit ok; open and init <t> ms, shutdown and close <t> ms; host RSS +19.4 MiB after init, +0.1 MiB after close; BF16 accumulation for quantized cuBLAS on devices: none
+H-0	rc=0	0	ggml_cuda_init: NVML probe skipped (GGML_CUDA_NVML_PROBE=0)
+H-1	rc=0	2	ggml_cuda_init: NVML probe ran (GGML_CUDA_NVML_PROBE=1): library loaded, nvmlInit ok; open and init <t> ms, shutdown and close <t> ms; host RSS +19.4 MiB after init, +0.1 MiB after close; BF16 accumulation for quantized cuBLAS on devices: none
+H-2	rc=0	2	ggml_cuda_init: ignoring invalid GGML_CUDA_NVML_PROBE="2" (0 or 1) | ggml_cuda_init: NVML probe ran (a device has fast BF16): library loaded, nvmlInit ok; open and init <t> ms, shutdown and close <t> ms; host RSS +19.4 MiB after init, +0.1 MiB after close; BF16 accumulation for quantized cuBLAS on devices: none
