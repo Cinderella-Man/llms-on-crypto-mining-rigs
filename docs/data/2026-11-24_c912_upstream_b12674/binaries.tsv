@@ -1,0 +1,23 @@
+file	name	base md5	head md5
+tarball	base llama.cpp-20261124-af00bb13b-pascal-p106-v5-land-batch2.tar.gz, head llama.cpp-20261124-eee615cdb-pascal-p106-v5-cand-b12674.tar.gz	b51ad2740d5822e7e14af656c413ec22	575ef3c702f69f14d7d3022c1287c38f
+bin/llama-batched-bench		d472f09b3f6ac304412cba97b140470e	610112052b349c1dbbdad18a98d13f3a
+bin/llama-bench		57f6ce85a62a155f118ec4b24cb9f925	0d75e833e0b489993d054dbb935c5c74
+bin/llama-cli		7b307d82ea51b443057f368252d4d56a	1cabc0f0c93d718fc2de01c7f28329f6
+bin/llama-completion		a7d3d62a34b8f941f96e5a64d72f9651	46c24218006b8fb067d62c1ca23c713f
+bin/llama-gguf		00ceec2f05a78e99b78b09d04adb269c	8136d7697656e4fe35abcae192399286
+bin/llama-perplexity		1c967216e551e89cff64fb769bf1de83	72c9991a4543e3e85b3939a8bd9407e7
+bin/llama-pipe-drafter-check		dc125ea4a1741a41f795d9fbe9218e1e	099be24508c19109aa1b52c77dd0b452
+bin/llama-pipe-recurrent-check		a3ac84e3889c870a95fa9d825383aca1	fe79489ad23d5555231e35a0f4772cce
+bin/llama-pipespec		091830d65e87dde7e9118895483f508b	6b0e00ff3d2c0cf68395c53d3704c115
+bin/llama-screen-check		a7c7b234e2a7fb31da7517d32df0d009	ad3cb51b1480b97f6ca2b1f0b99efa99
+bin/llama-server		f5cca34ea6bd4f3712cd6193bf0605be	2727faf28b5b34dfe42399a9d431da67
+bin/test-backend-ops		65fd4d6b430b6f326bedc3ca2233db06	7e6731c4d42a98cfd6a90cf4bdeb0cc5
+bin/test-cuda-keepalive		ab2115adb0433b0fdafd1540f5057530	9c6eff15da5a269d09573e4c41ac5965
+bin/test-hop-cast		088551ba6858367269228d8a300817af	77718800cda4b887f3dfa97965d50cb9
+bin/test-hop-mailbox		34e60d4f089d431549e6279a4a7794fc	d766db3bf6538dc53ed133fe1cf5e229
+bin/test-kpool-dev		5ce862bf2d606344b88c051bd35ca8ed	9db5cc7b4e775956ce8a9ee5be06284e
+bin/test-kpool-stage		3dde929103855dc83a55bc2948741a39	2965fd95afe5a565deb8fc2980c886d5
+bin/test-llama-archs		bf171d94e7000d14d1933e594eb0d2de	4e5a143af3fe0e4252e323f983973545
+bin/test-moe-ids		26a2cceb1ac0d96780223459c16baf4c	f360164be2236f5cf83732773eea9e60
+bin/test-pool-mask-dev		6418049672a19f496b18132a59019654	ae7e29938a0aabc9086891ac89b7bcde
+bin/test-top-k-sort		435ad5f406cfefddb8643f1d51d8f94b	39a6bc85fee625333b0966be87d17cf3

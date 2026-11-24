@@ -1,0 +1,25 @@
+family	identical	differ	missing in candidate	only in candidate
+mul_mat_f	0	0	1536	768
+mul_mat_q	0	1008	0	1008
+mul_mat_q_stream_k_fixup	0	896	0	0
+mul_mat_f_ids	0	768	0	0
+mul_mat_q_few	0	0	30	38
+k_set_rows_quant	0	0	12	24
+mm_ids_helper	0	0	8	8
+conv2d_implicit_gemm_f16	0	0	6	6
+norm_f32	0	0	2	9
+k_set_rows	12	0	0	10
+rope_multi	12	0	0	8
+rope_neox	12	0	0	8
+rope_norm	12	0	0	8
+rope_vision	8	0	0	4
+pool1d_row_kernel	0	0	0	2
+ssm_conv_long_token_f32	12	0	0	2
+quantize_mmq_few_q8_1	0	2	0	0
+quantize_mmq_few_id_q8_1	0	0	0	2
+ssm_conv_f32	12	0	0	2
+ggml_cuda_batch_get_kernel	0	0	1	0
+ggml_cuda_batch_copy_kernel	0	0	0	1
+sleep_ns	0	0	0	1
+the other 200 families	4493	0	0	0
+total	4573	2674	1595	1909
