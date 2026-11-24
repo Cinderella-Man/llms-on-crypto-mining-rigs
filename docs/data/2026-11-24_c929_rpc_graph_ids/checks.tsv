@@ -1,0 +1,19 @@
+tree	check	verdict	detail
+base	tree	OK	commit 3c8f51216d86a11ca581dc1d03735a8b5b7e4c81 
+base	build	OK	rc=0; BUILD_SHARED_LIBS=OFF; -DGGML_RPC=ON; all targets; 0 error lines
+base	ctest	FAIL	96% tests passed, 3 tests failed out of 78; failed: test-kv-cache test-kv-cache-scales test-rpc-graph-cache ; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+base	archs plain	OK	Summary: all 153 test(s) passed; plain rc=0
+base	archs write	OK	Summary: all 153 test(s) passed; write rc=0
+base	archs compare	OK	Summary: all 153 test(s) passed; compare rc=0
+base	archs files	OK	148 files written; 148 compared, differ: none; compared while writing (a shared file): none
+head	tree	OK	commit 60c8ad7884fe9734adf93568e0be6e18a3dc0f02 
+head	build	OK	rc=0; BUILD_SHARED_LIBS=OFF; -DGGML_RPC=ON; all targets; 0 error lines
+head	ctest	FAIL	97% tests passed, 2 tests failed out of 78; failed: test-kv-cache test-kv-cache-scales ; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+head	archs plain	OK	Summary: all 153 test(s) passed; plain rc=0
+head	archs write	OK	Summary: all 153 test(s) passed; write rc=0
+head	archs compare	OK	Summary: all 153 test(s) passed; compare rc=0
+head	archs files	OK	148 files written; 148 compared, differ: none; compared while writing (a shared file): none
+head	ident vs base	SAME	base wrote 148 files; 148 compared, differ: none; written by head only: 0; Summary: all 153 test(s) passed
+rpc-head	build	OK	rc=0; 12 s; llama-server ggml-rpc-server test-llama-archs; commit 60c8ad7884fe9734adf93568e0be6e18a3dc0f02
+rpc-base	build	OK	rc=0; 12 s; llama-server ggml-rpc-server test-llama-archs; commit 3c8f51216d86a11ca581dc1d03735a8b5b7e4c81
+rpc-c901	build	OK	rc=0; 12 s; llama-server ggml-rpc-server test-llama-archs; commit 19048bb6d63868106a221063a4f6c3efdac3100e patch 3c8f51216d86a11ca581dc1d03735a8b5b7e4c81 patch 60c8ad7884fe9734adf93568e0be6e18a3dc0f02

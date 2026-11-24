@@ -1,0 +1,45 @@
+build	arm	request	tokens	prompt_n	tokens_md5	same_as_head_cpu_off
+head	cpu_off	Q1	700	104	13046c93f53f	yes
+head	cpu_off	Q2	700	104	42e3f829214e	yes
+head	cpu_off	Q3	39	26	42bf0f14000f	yes
+head	cpu_off	Q4	700	104	7e0c62ba61d5	yes
+head	rpc_noreuse_off	Q1	700	104	13046c93f53f	yes
+head	rpc_noreuse_off	Q2	700	104	42e3f829214e	yes
+head	rpc_noreuse_off	Q3	39	26	42bf0f14000f	yes
+head	rpc_noreuse_off	Q4	700	104	7e0c62ba61d5	yes
+head	rpc_reuse_off	Q1	700	104	13046c93f53f	yes
+head	rpc_reuse_off	Q2	700	104	42e3f829214e	yes
+head	rpc_reuse_off	Q3	39	26	42bf0f14000f	yes
+head	rpc_reuse_off	Q4	700	104	7e0c62ba61d5	yes
+base	rpc_noreuse_off	Q1	700	104	13046c93f53f	yes
+base	rpc_noreuse_off	Q2	700	104	42e3f829214e	yes
+base	rpc_noreuse_off	Q3	39	26	42bf0f14000f	yes
+base	rpc_noreuse_off	Q4	700	104	7e0c62ba61d5	yes
+base	rpc_reuse_off	Q1			no reply	no
+base	rpc_reuse_off	Q2			no reply	no
+base	rpc_reuse_off	Q3			no reply	no
+base	rpc_reuse_off	Q4			no reply	no
+c901	cpu_off	Q1	700	104	13046c93f53f	yes
+c901	cpu_off	Q2	700	104	42e3f829214e	yes
+c901	cpu_off	Q3	39	26	42bf0f14000f	yes
+c901	cpu_off	Q4	700	104	7e0c62ba61d5	yes
+c901	cpu_on	Q1	700	104	13046c93f53f	yes
+c901	cpu_on	Q2	700	104	42e3f829214e	yes
+c901	cpu_on	Q3	39	26	42bf0f14000f	yes
+c901	cpu_on	Q4	700	104	7e0c62ba61d5	yes
+c901	rpc_noreuse_off	Q1	700	104	13046c93f53f	yes
+c901	rpc_noreuse_off	Q2	700	104	42e3f829214e	yes
+c901	rpc_noreuse_off	Q3	39	26	42bf0f14000f	yes
+c901	rpc_noreuse_off	Q4	700	104	7e0c62ba61d5	yes
+c901	rpc_noreuse_on	Q1	700	104	13046c93f53f	yes
+c901	rpc_noreuse_on	Q2	700	104	42e3f829214e	yes
+c901	rpc_noreuse_on	Q3	39	26	42bf0f14000f	yes
+c901	rpc_noreuse_on	Q4	700	104	7e0c62ba61d5	yes
+c901	rpc_reuse_off	Q1	700	104	13046c93f53f	yes
+c901	rpc_reuse_off	Q2	700	104	42e3f829214e	yes
+c901	rpc_reuse_off	Q3	39	26	42bf0f14000f	yes
+c901	rpc_reuse_off	Q4	700	104	7e0c62ba61d5	yes
+c901	rpc_reuse_on	Q1	700	104	13046c93f53f	yes
+c901	rpc_reuse_on	Q2	700	104	42e3f829214e	yes
+c901	rpc_reuse_on	Q3	39	26	42bf0f14000f	yes
+c901	rpc_reuse_on	Q4	700	104	7e0c62ba61d5	yes

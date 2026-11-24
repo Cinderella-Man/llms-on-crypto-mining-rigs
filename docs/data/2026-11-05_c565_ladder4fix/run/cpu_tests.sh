@@ -4,7 +4,8 @@
 #   tree    git archive of the commit into $WORK/tree/src, then each +commit's own patch applied on top (git apply)
 #   build   a CPU build of every target (GGML_CUDA=OFF, GGML_NATIVE=ON, LLAMA_BUILD_TESTS=ON; shared libraries, upstream's
 #           default, or SHARED=OFF static as the rig's builds), a fresh build folder each tree, under LOCK, going on past
-#           errors so the log lists them all; a tree with ":<targets>" builds only those
+#           errors so the log lists them all; a tree with ":<targets>" builds only those; CMAKE_ARGS adds CMake options
+#           to every tree (-DGGML_RPC=ON also builds the RPC tests, which ctest then runs)
 #   ctest   every registered test (ctest -j CTEST_JOBS, 1,800 s each, no network) except CTEST_EXCLUDE: by default the
 #           five that need upstream's downloaded model (test-download-model, test-eval-callback-download-model and their
 #           users test-llama-context-model, test-thread-safety, test-eval-callback: the hand step runs them on a
@@ -49,7 +50,7 @@
 #   [JOBS=8] [SHARED=ON] [CTEST_JOBS=8] [THREADS=8] [LOCK=<flock file>] [DOCKER_ARGS=...] [BASE_IMAGE=ubuntu:24.04]
 #   [IMAGE=pq-c565-cpu:24.04] [PIP='<packages>'] [MODEL15M=<file>] [CTEST_EXCLUDE=<names, a|b>] [NET_TESTS=<names>]
 #   [KEEP_BUILD=1] [HAND_SEED=1] [PIPESPEC=<dir>] [PIPE_ARCHS='qwen4exp qwen35 qwen35moe qwen3next flint'] [PIPE_SEED=1]
-#   [PIPE_N=64] [PIPE_TIMEOUT=900] bash cpu_tests.sh
+#   [PIPE_N=64] [PIPE_TIMEOUT=900] [CMAKE_ARGS=<cmake options>] bash cpu_tests.sh
 # Output: $WORK/<tag>/ (tree.txt, build.log, ctest.log, ctest.xml, archs/*.log, ident/*.log, hand/*.log, the logits
 #   in archs/logits/, pipe/: models/<arch>/ with gen.log, models.md5, <arch>.log check_identity's table and <arch>/ its
 #   folder, prc-<arch>.log, the two scripts), $WORK/summary.tsv (tree, check, verdict, detail); done when $WORK/DONE exists
@@ -143,11 +144,11 @@ for spec in $TREES; do
         locked docker run --rm $D -v "$WORK:$WORK" -e CCACHE_DIR="$WORK/ccache" -e CCACHE_BASEDIR="$T" "$IMAGE" bash -c '
             cmake -S '"$T/src"' -B '"$B"' -DCMAKE_BUILD_TYPE=Release -DGGML_CUDA=OFF -DGGML_NATIVE=ON -DLLAMA_BUILD_TESTS=ON \
                 -DBUILD_SHARED_LIBS='"$SHARED"' -DLLAMA_CURL=OFF -DCMAKE_C_COMPILER_LAUNCHER=ccache \
-                -DCMAKE_CXX_COMPILER_LAUNCHER=ccache > '"$R/cmake.log"' 2>&1 &&
+                -DCMAKE_CXX_COMPILER_LAUNCHER=ccache '"${CMAKE_ARGS:-}"' > '"$R/cmake.log"' 2>&1 &&
             nice -n 19 cmake --build '"$B"' -j '"$JOBS"' '"${targets:+--target ${targets//,/ }}"' -- -k > '"$R/build.log"' 2>&1'
         rc=$?
         errs=$(grep -aE 'error:|undefined reference' "$R/build.log" | sed -E 's/^.*(error: .*|undefined reference to .*)$/\1/' | sort | uniq -c | sort -rn)
-        verdict build "$([ $rc = 0 ] && echo OK || echo FAIL)" "rc=$rc; BUILD_SHARED_LIBS=$SHARED; ${targets:-all targets}; $(grep -acE 'error:|undefined reference' "$R/build.log") error lines${errs:+: $(echo "$errs" | head -n 5 | tr -s ' ' | tr '\n' ';')}"
+        verdict build "$([ $rc = 0 ] && echo OK || echo FAIL)" "rc=$rc; BUILD_SHARED_LIBS=$SHARED; ${CMAKE_ARGS:+$CMAKE_ARGS; }${targets:-all targets}; $(grep -acE 'error:|undefined reference' "$R/build.log") error lines${errs:+: $(echo "$errs" | head -n 5 | tr -s ' ' | tr '\n' ';')}"
         # a failed build still tests what it built (ctest names any test whose binary is missing)
         [ $rc = 0 ] || [ -x "$B/bin/test-llama-archs" ] || continue
     fi

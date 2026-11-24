@@ -1,0 +1,20 @@
+build	arm	llama_server_alive	client_aborts	sched_replans	galloc_grow	rpc_server	graph_compute	sent_whole_again	graph_recompute	alloc_buffer	free_buffer	rejected_uids
+head	cpu_off	yes	0	0	42							
+head	rpc_noreuse_off	yes	0	120	46	50152	2372	0	0	15	15	0
+head	rpc_noreuse_off	yes	0	120	46	50153	2372	0	0	23	23	0
+head	rpc_reuse_off	yes	0	120	46	50152	149	0	2223	15	15	0
+head	rpc_reuse_off	yes	0	120	46	50153	158	9	2214	23	23	0
+base	rpc_noreuse_off	yes	0	120	46	50152	2372	0	0	15	15	0
+base	rpc_noreuse_off	yes	0	120	46	50153	2372	0	0	23	23	0
+base	rpc_reuse_off	no	1	10	46	50152	19	0	2	15	1	0
+base	rpc_reuse_off	no	1	10	46	50153	19	0	2	23	11	1
+c901	cpu_off	yes	0	0	42							
+c901	cpu_on	yes	0	0	42							
+c901	rpc_noreuse_off	yes	0	120	46	50152	2372	0	0	15	15	0
+c901	rpc_noreuse_off	yes	0	120	46	50153	2372	0	0	23	23	0
+c901	rpc_noreuse_on	yes	0	30	56	50152	2372	0	0	15	15	0
+c901	rpc_noreuse_on	yes	0	30	56	50153	2372	0	0	23	23	0
+c901	rpc_reuse_off	yes	0	120	46	50152	149	0	2223	15	15	0
+c901	rpc_reuse_off	yes	0	120	46	50153	158	9	2214	23	23	0
+c901	rpc_reuse_on	yes	0	30	56	50152	149	0	2223	15	15	0
+c901	rpc_reuse_on	yes	0	30	56	50153	158	9	2214	23	23	0
