@@ -77,6 +77,16 @@ above at its default, and the server's two checkpoint-reuse rules (`LLAMA_SERVER
 `LLAMA_SERVER_CKPT_RESUME_NEXT`) apply as before inside upstream's new slot scheduler. It is built, not yet checked on
 a P106 ([docs/data/2026-11-17_c854b_upstream_newest/](data/2026-11-17_c854b_upstream_newest/README.md)).
 
+**Fourteen branches landed on 2026-11-24** (`pascal-p106-v5` = `af00bb13b`;
+[docs/data/2026-11-24_land_v5_batch2/](data/2026-11-24_land_v5_batch2/README.md)). They bring `LLAMA_SCHED_PER_SIZE_PP`
+(read only under `LLAMA_SCHED_PER_SIZE=1`), `LLAMA_PIPE_SLOT_PLAN`, `GGML_CUDA_MMVQ_PASCAL_MT=2`,
+`LLAMA_SERVER_CKPT_NOWAIT`, the taper key `cuts=1`, `GGML_CUDA_KEEPALIVE_TRACE`, `GGML_CUDA_TOP_K_SORT` and
+`GGML_CUDA_PROFILE_HOST_NOWAIT`, each off by default and each with its row below, and six changes without a switch
+([listed below](#what-has-no-switch)). With no switch set, the combined build gives the build before it's logits on
+every random model, the same card-suite results with the fork's Pascal kernels forced, and the same greedy replies and
+memory on Flint Pascal Q8 GGUF and Ornith-1.5-122B Pascal N2P GGUF. The one result that changes is the Flash-Next
+fix's: pipelined Flash-Next decoding now gives plain decoding's tokens.
+
 ## Which preset sets each switch
 
 Each model has a preset per release, `release/<model>-<version>/settings.env`: the switches (`PRESET_ENV`) and the
@@ -384,6 +394,23 @@ Q1040.
   set by name; devices without a backend registry report no features. On v4 also the two recurrent-state fixes of
   Q1158: a new sequence's state is cleared with a fill, so a NaN cannot stay in a cell (upstream's open #31913), and a
   sequence that the slot finder moves to another cell takes its rollback depth along (upstream's #31656).
+- **v5's changes without a switch, landed 2026-11-24** ([docs/data/2026-11-24_land_v5_batch2/](data/2026-11-24_land_v5_batch2/README.md)):
+  - Flash-Next's fused conv window writes its new histories to the micro-batch's own state group, so pipelined
+    Flash-Next decoding gives plain decoding's tokens again; plain decoding's graph is unchanged (C932,
+    [Q1670](../quants/experiments.md)).
+  - A Flash-Next MTP draft block that its file marks plain attention (compress ratio 0) runs dense attention over its
+    own cache, with no indexer cache or k-pool inputs; a head with ratio 4, as the preset's, builds what it built
+    before (C898, Q1623).
+  - Removing one sequence's positions from a KV cache reads its cells through upstream's per-sequence removal
+    (#32380): the same cells and head, fewer fork lines (C881, Q1590). `LLAMA_KV_SEQ_RM_BOUND` now bounds only the
+    every-sequence removal.
+  - `--mtp-device N`'s copy of the output head gets its room in the memory fit, is freed with the model and is copied
+    card to card through a bounded host buffer (C910, Q1647).
+  - ggml's RPC client sends a graph whole after its server dropped it at a buffer free, where it aborted before
+    (C929, Q1667); nothing changes without RPC.
+  - `llama-quantize` keeps Flash-Next's `ple_norm` tensors F32 when a file stores them 2-D (C983, Q1716).
+  - Output only: the server's `pipe reallocs` timing line with pipe slots (C901, Q1629) and the host profile's last
+    column `queued` (C877, Q1583).
 - **Output only:** the `COMPUTE_6_1` backend feature entry, the server's extra timing fields (`sampled_on_device`,
   `grammar_n`, `cache_src`, `ckpt_*`, ...) and the info level of its checkpoint log lines.
 - **The -1 expert-id checks** compiled into llama.cpp's expert kernels: a comparison never taken for valid ids

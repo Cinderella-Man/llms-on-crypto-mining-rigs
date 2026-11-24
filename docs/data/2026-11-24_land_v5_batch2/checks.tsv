@@ -1,0 +1,23 @@
+check	base 8a9629942	head af00bb13b	verdict	detail
+rig build (TESTS=1)	-	llama.cpp-20261124-af00bb13b-pascal-p106-v5-land-batch2.tar.gz	OK	md5 b51ad2740d5822e7e14af656c413ec22, 1385271121 bytes
+rig build warnings	32	32	OK	only in head: 0; only in base: 0
+CPU build warnings	2	2	OK	only in head: 0; only in base: 0
+test-llama-archs -b CPU -s 1, rig builds: logits files	148 written	148 compared	SAME	differ: 0; head Summary: all 153 test(s) passed; head against base Summary: all 153 test(s) passed
+CPU tree: build	OK	OK	OK	rc=0; BUILD_SHARED_LIBS=ON; -DGGML_RPC=ON; all targets; 0 error lines
+CPU tree: archs files	OK	OK	OK	148 files written; 148 compared, differ: none; compared while writing (a shared file): none
+CPU tree: ident vs base	-	SAME	SAME	base wrote 148 files; 148 compared, differ: none; written by land only: 0; Summary: all 153 test(s) passed
+ctest, test by test	77 tests, 75 pass	80 tests, 79 pass	SAME but named	test-cuda-mmvq-pascal-pick: - -> Passed; test-kv-cache: Subprocess aborted***Exception -> Passed; test-quantize-default-rules: - -> Passed; test-rpc-graph-cache: - -> Passed
+hand-run tests, verdicts	9 of 9 OK	9 of 9 OK	SAME	
+hand-run tests, logs line by line (compare_hand.py)	-	-	SAME but named	24 comparisons, 23 the same; context-model: 6 lines differ; first line 3: 'cases    : 24' / 'cases    : 26'
+CPU pipe step (C935, C1010): 5 architectures x 4 arms	16 of 20 OK; DIFFERS: qwen4exp identity, qwen4exp race, qwen4exp recurrent, qwen4exp sampled	20 of 20 OK	FIXED	the base's DIFFERS is C932's fault
+card pipe step (C1009), base	-	48 of 60 OK	DIFFERS	not OK: qwen4exp fed, qwen4exp host, qwen4exp recurrent
+card pipe step (C1009), head	-	60 of 60 OK	OK	
+card pipe step: plain decoding's hashes, head against base	-	20 of 20 the same	SAME	
+greedy reply, Flint Pascal Q8 GGUF (v5 preset, -ts 1,1,1)	256 tokens	256 tokens	SAME	the same token ids
+greedy reply, Ornith-1.5-122B Pascal N2P GGUF (v5 preset, -ts 1,1,1)	256 tokens	256 tokens	SAME	the same token ids
+test-backend-ops mul_mat-p106	-	5125/5125 tests passed	OK	settings: P106_ENV; FAIL lines 0; not supported 521; illegal access 0
+test-backend-ops mul_mat-p106-mt2	-	5125/5125 tests passed	OK	settings: P106_ENV GGML_CUDA_MMVQ_PASCAL_MT=2; FAIL lines 0; not supported 521; illegal access 0
+test-backend-ops mul_mat_id-p106	-	2370/2370 tests passed	OK	settings: P106_ENV; FAIL lines 0; not supported 8; illegal access 0
+test-backend-ops fa-plain	-	4679/4679 tests passed	OK	settings: none; FAIL lines 0; not supported 1405; illegal access 0
+test-backend-ops fa-forced	-	4679/4679 tests passed	OK	settings: GGML_CUDA_FATTN_TILE_PASCAL=2; FAIL lines 0; not supported 1405; illegal access 0
+test-backend-ops fa-all	-	4679/4679 tests passed	OK	settings: GGML_CUDA_FATTN_TILE_PASCAL=2 _LDS=1 _KDP=1 _MIN=1 GGML_CUDA_FATTN_DEC_PASCAL=4; FAIL lines 0; not supported 1405; illegal access 0

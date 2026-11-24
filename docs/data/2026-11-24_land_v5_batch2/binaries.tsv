@@ -1,0 +1,23 @@
+file	name	base md5	head md5
+tarball	base llama.cpp-20261124-8a9629942.tar.gz, head llama.cpp-20261124-af00bb13b-pascal-p106-v5-land-batch2.tar.gz	59ca8336b87367a6522e63c6fcc1381b	b51ad2740d5822e7e14af656c413ec22
+bin/llama-batched-bench		7b3bb5d03ea5e8ecaa24a30182f75008	d472f09b3f6ac304412cba97b140470e
+bin/llama-bench		9e35d23af624ed71d3dd0e4e055ed7f1	57f6ce85a62a155f118ec4b24cb9f925
+bin/llama-cli		7c641a05bef707286a30f9706b4a6bb8	7b307d82ea51b443057f368252d4d56a
+bin/llama-completion		9e289c77ccd78cd5b521ec4192709345	a7d3d62a34b8f941f96e5a64d72f9651
+bin/llama-gguf		5a10788d83982cec6bc3bfc7df98f08b	00ceec2f05a78e99b78b09d04adb269c
+bin/llama-perplexity		045bbe72ccd8cfa1b9063c61a79454c0	1c967216e551e89cff64fb769bf1de83
+bin/llama-pipe-drafter-check		b71d78f5980c25cb6d796702a4c17809	dc125ea4a1741a41f795d9fbe9218e1e
+bin/llama-pipe-recurrent-check		fa27be3ef02019bda3a7bf34c933e83d	a3ac84e3889c870a95fa9d825383aca1
+bin/llama-pipespec		280ad667f2df869ed190b149d8195cd8	091830d65e87dde7e9118895483f508b
+bin/llama-screen-check		4231d3b6fbb85eedf554ed20dab8983f	a7c7b234e2a7fb31da7517d32df0d009
+bin/llama-server		1741fbce759489b052cf0d06ebec2e09	f5cca34ea6bd4f3712cd6193bf0605be
+bin/test-backend-ops		f089e54a68e7a4051fc126abf5f41439	65fd4d6b430b6f326bedc3ca2233db06
+bin/test-cuda-keepalive		-	ab2115adb0433b0fdafd1540f5057530
+bin/test-hop-cast		c8c046621519de915ee7cb9363bd8b23	088551ba6858367269228d8a300817af
+bin/test-hop-mailbox		3c2eedb5e0ae8e23b99b5303cc1e15b8	34e60d4f089d431549e6279a4a7794fc
+bin/test-kpool-dev		58f4cbd4d19a8aece46ca4b1bbbaccff	5ce862bf2d606344b88c051bd35ca8ed
+bin/test-kpool-stage		93f12cfd89f86404b368d1d4a8fce57e	3dde929103855dc83a55bc2948741a39
+bin/test-llama-archs		eb9dd8a6d59d58f144e7ca7f8ca0582e	bf171d94e7000d14d1933e594eb0d2de
+bin/test-moe-ids		5b7c7ad12e3226692c34a5466b395512	26a2cceb1ac0d96780223459c16baf4c
+bin/test-pool-mask-dev		d7cb1b65dd63cd84dfefc38a85361909	6418049672a19f496b18132a59019654
+bin/test-top-k-sort		-	435ad5f406cfefddb8643f1d51d8f94b

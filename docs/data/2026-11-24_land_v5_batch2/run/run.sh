@@ -38,7 +38,7 @@
 #   (bench/pipespec with gpu_pipe_check.sh) and release/{flint,ornith}-v5/settings.env> FLINT_Q8=<file> ORNITH=<file>
 #   QUANT=<llama-quantize> [RIG_CCACHE=<dir>] [CPU_CCACHE=<dir>] [JIT_SEED=<a PTX JIT cache to copy>] [LOCK=<flock file>]
 #   [PREFLIGHT=<cuda_preflight.sh>] [MOUNTS='<folders the GPU containers mount at the same paths>'] [GPUS=0,1,2]
-#   [STEPS=...] [GPU_STEPS=...] [JOBS=8] [THREADS=6] bash run.sh
+#   [STEPS=...] [GPU_STEPS=...] [PIPE_SEED=1] [JOBS=8] [THREADS=6] bash run.sh (STEPS=none runs the GPU steps alone)
 # Every container: labels pascal-quants=1 and land2=1, --cpu-shares=256; every CPU container --memory=16g and without
 # network. Done when $W/DONE exists (it holds the exit code).
 set -uo pipefail
@@ -154,9 +154,10 @@ gpu_chain() {
     DR=(docker run --rm $LBL --cpu-shares=256 "${VOL[@]}" -e "CUDA_CACHE_PATH=$W/jitcache" -e CUDA_CACHE_MAXSIZE=4294967296)
 
     if gstep gpupipe; then
-        mkdir -p "$W/gpupipe"
+        rm -rf "$W/gpupipe" && mkdir -p "$W/gpupipe"
         say "gpupipe start"
-        env WORK="$W/gpupipe" BUILDS="base=$B0/bin head=$T/bin" GPUS="$GPUS" MOUNTS="${MOUNTS:-}" \
+        # SEED here is the random models' seed (gpu_pipe_check.sh's own variable), not this script's clone
+        env SEED="${PIPE_SEED:-1}" WORK="$W/gpupipe" BUILDS="base=$B0/bin head=$T/bin" GPUS="$GPUS" MOUNTS="${MOUNTS:-}" \
             DOCKER_ARGS="$LBL --cpu-shares=256" PREFLIGHT="${PREFLIGHT:-}" QUANT="${QUANT:?QUANT=<llama-quantize>}" \
             JITCACHE="$W/jitcache" NAME=land2-pipe bash "$REPO/pipespec/gpu_pipe_check.sh" > "$W/logs/gpupipe.log" 2>&1
         say "gpupipe rc=$?"

@@ -1,0 +1,15 @@
+order	branch	branch head	merge commit	code row	registry	switch it brings	default
+1	pascal-p106-v5-pipe-logits	80d83fa1a	0c83f4a86	C932	Q1670	none: a fix (pipelined Flash-Next decoding)	-
+2	pascal-p106-v5-mtp-plain-attn	c9c3134d4	b29895ab5	C898	Q1623	none: an MTP block marked plain attention runs dense attention	-
+3	pascal-p106-v5-sched-per-size-pp	c1772c7fc	9df41868a	C903	Q1632	LLAMA_SCHED_PER_SIZE_PP (read only with LLAMA_SCHED_PER_SIZE=1)	1 under LLAMA_SCHED_PER_SIZE=1, which is off by default; no preset sets it
+4	pascal-p106-v5-pipe-slot-plan	19048bb6d	c775a4d91	C901	Q1629	LLAMA_PIPE_SLOT_PLAN; a pipe reallocs timing line with pipe slots	off
+5	pascal-p106-v5-kv-seq-rm	003bf4023	cab7e2eec	C881	Q1590	none: seq_rm of one sequence on upstream's per-sequence removal	-
+6	pascal-p106-v5-kcol-ornith	37c05b76a	25b87f5a9	C899	Q1625	GGML_CUDA_MMVQ_PASCAL_MT=2 (a new value)	off (unset, 0 and 1 as before)
+7	pascal-p106-v5-mtp-device-mem	f94aa552b	0fe6124be	C910	Q1647	none: --mtp-device N's head copy planned and freed (the flag stays off by default)	-
+8	pascal-p106-v5-ckpt-stall	0aebc4a57	cd464eb46	C907	Q1644	LLAMA_SERVER_CKPT_NOWAIT	off
+9	pascal-p106-v5-taper-cuts	1720f26d3	7ad7608b7	C905	Q1638	the taper key cuts=1 (--ubatch-taper, LLAMA_UBATCH_TAPER, a request's ubatch_taper)	off (cuts=0)
+10	pascal-p106-v5-keepalive-why-new	1d177d31e	20b97896e	C878	Q1585	GGML_CUDA_KEEPALIVE_TRACE	off
+11	pascal-p106-v5-topk-order	931d777f5	0fe61193c	C985	Q1718	GGML_CUDA_TOP_K_SORT	off
+12	pascal-p106-v5-host-profile-nowait	7d182f9b0	988aa8e3e	C877	Q1583	GGML_CUDA_PROFILE_HOST_NOWAIT; a queued column in the host profile	off
+13	pascal-p106-v5-rpc-graph-ids	60c8ad788	31e28e39e	C929	Q1667	none: the RPC client's fix (only with RPC)	-
+14	pascal-p106-v5-quantize-ple-norm	91eead67a	af00bb13b	C983	Q1716	none: a llama-quantize rule	-
