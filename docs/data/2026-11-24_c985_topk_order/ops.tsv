@@ -1,0 +1,3 @@
+switch	top_k_cases	ok	fail	not_supported	summary
+off	607	607	0	0	607/607 tests passed
+on	607	607	0	0	607/607 tests passed

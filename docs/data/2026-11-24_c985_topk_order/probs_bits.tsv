@@ -1,0 +1,19 @@
+switch	round_1	round_2	positions_compared	positions_with_other_probabilities	largest_difference
+off	off-d v1	off-d v2	256	37	2.38e-07
+off	off-d v1	off-d v3	256	32	1.19e-07
+off	off-d v2	off-d v3	256	32	1.19e-07
+on	on-d v1	on-d v2	256	0	0
+on	on-d v1	on-d v3	256	0	0
+on	on-d v1	on-e v1	256	0	0
+on	on-d v1	on-e v2	256	0	0
+on	on-d v1	on-e v3	256	0	0
+on	on-d v2	on-d v3	256	0	0
+on	on-d v2	on-e v1	256	0	0
+on	on-d v2	on-e v2	256	0	0
+on	on-d v2	on-e v3	256	0	0
+on	on-d v3	on-e v1	256	0	0
+on	on-d v3	on-e v2	256	0	0
+on	on-d v3	on-e v3	256	0	0
+on	on-e v1	on-e v2	256	0	0
+on	on-e v1	on-e v3	256	0	0
+on	on-e v2	on-e v3	256	0	0

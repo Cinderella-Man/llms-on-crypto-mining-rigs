@@ -1,0 +1,11 @@
+switch	request	rounds	loads	distinct_lists	lists
+off	R14 greedy	3	3	1	fe36bf356f32 (C950 first (greedy)): 3
+off	R14 p95	3	3	1	fe36bf356f32 (C950 first (greedy)): 3
+off	R14 pipe	15	3	2	fe36bf356f32 (C950 first (greedy)): 11; de544dad17e0 (C950 second): 4
+off	R14 probs	3	1	1	fe36bf356f32 (C950 first (greedy)): 3
+on	R14 greedy	3	3	1	fe36bf356f32 (C950 first (greedy)): 3
+on	R14 p95	3	3	1	fe36bf356f32 (C950 first (greedy)): 3
+on	R14 pipe	15	3	1	e4b9ba7e039e: 15
+on	R14 probs	6	2	1	e4b9ba7e039e: 6
+off	R3	24	4	1	45f26934f6df: 24
+on	R3	27	5	1	bce8d0e84421: 27

@@ -1,0 +1,10 @@
+check	base 8a9629942	head 931d777f5, switch unset	verdict
+rig build (CUDA 12.9, sm_61, TESTS=1): warning lines	32	32 (with test-top-k-sort and test-backend-sampler built too)	none new
+CPU build of every target: warning lines	2	2, the same two (the CMake line names the work folder)	none new
+card code: SASS kernel copies in llama-server (one SHA-1 each)	9,518	9,519	every base copy identical; one new: top_k_sort_rows
+card code: PTX functions in llama-server (one SHA-1 each)	9,518	9,519	every base function identical; one new function and its shared-memory declaration
+test-llama-archs -b CPU -s 1 of the rig builds	writes 148 logits files, 153 of 153 pass	153 of 153 pass, plain and comparing	148 of 148 files the base's, bit for bit
+ctest, 75 tests, no network (CPU build)	71 pass; fail: test-kv-cache, test-jinja, test-jinja-py, test-kv-cache-scales	the same	the same, test by test
+test-backend-ops -o TOP_K on one RTX 3090		607 of 607 (switch set: 607 of 607)	pass both ways
+test-backend-sampler --device gpu, tiny Flint		21 of 23 exit 0: test_logit_bias, test_top_k_rows_switch abort (switch set: 22 of 23, test_logit_bias)	test_top_k_rows_switch needs a fixed order on the card; test_logit_bias fails on random weights (as in C691, C802)
+Flint's greedy requests in C962's session (9 a round), three cards		51 rounds on 9 loads (24 unset, 27 set)	the same replies in every round

@@ -1,0 +1,52 @@
+arm	switch	round	r14_variant	greedy_requests	greedy_id	greedy_as_every_round	r3_md5	r14_tokens	r14_md5	r14_known_as
+off-a	off	v1	pipe	9	cc6cb55f4657	yes	45f26934f6df	256	de544dad17e0	C950 second
+off-a	off	v2	pipe	9	cc6cb55f4657	yes	45f26934f6df	256	fe36bf356f32	C950 first (greedy)
+off-a	off	v3	pipe	9	cc6cb55f4657	yes	45f26934f6df	256	de544dad17e0	C950 second
+off-a	off	v4	pipe	9	cc6cb55f4657	yes	45f26934f6df	256	fe36bf356f32	C950 first (greedy)
+off-a	off	v5	pipe	9	cc6cb55f4657	yes	45f26934f6df	256	fe36bf356f32	C950 first (greedy)
+off-a	off	v6	p95	9	cc6cb55f4657	yes	45f26934f6df	256	fe36bf356f32	C950 first (greedy)
+off-a	off	v7	greedy	9	cc6cb55f4657	yes	45f26934f6df	256	fe36bf356f32	C950 first (greedy)
+off-b	off	v1	pipe	9	cc6cb55f4657	yes	45f26934f6df	256	fe36bf356f32	C950 first (greedy)
+off-b	off	v2	pipe	9	cc6cb55f4657	yes	45f26934f6df	256	fe36bf356f32	C950 first (greedy)
+off-b	off	v3	pipe	9	cc6cb55f4657	yes	45f26934f6df	256	fe36bf356f32	C950 first (greedy)
+off-b	off	v4	pipe	9	cc6cb55f4657	yes	45f26934f6df	256	fe36bf356f32	C950 first (greedy)
+off-b	off	v5	pipe	9	cc6cb55f4657	yes	45f26934f6df	256	de544dad17e0	C950 second
+off-b	off	v6	p95	9	cc6cb55f4657	yes	45f26934f6df	256	fe36bf356f32	C950 first (greedy)
+off-b	off	v7	greedy	9	cc6cb55f4657	yes	45f26934f6df	256	fe36bf356f32	C950 first (greedy)
+off-c	off	v1	pipe	9	cc6cb55f4657	yes	45f26934f6df	256	fe36bf356f32	C950 first (greedy)
+off-c	off	v2	pipe	9	cc6cb55f4657	yes	45f26934f6df	256	fe36bf356f32	C950 first (greedy)
+off-c	off	v3	pipe	9	cc6cb55f4657	yes	45f26934f6df	256	fe36bf356f32	C950 first (greedy)
+off-c	off	v4	pipe	9	cc6cb55f4657	yes	45f26934f6df	256	fe36bf356f32	C950 first (greedy)
+off-c	off	v5	pipe	9	cc6cb55f4657	yes	45f26934f6df	256	de544dad17e0	C950 second
+off-c	off	v6	p95	9	cc6cb55f4657	yes	45f26934f6df	256	fe36bf356f32	C950 first (greedy)
+off-c	off	v7	greedy	9	cc6cb55f4657	yes	45f26934f6df	256	fe36bf356f32	C950 first (greedy)
+off-d	off	v1	probs	9	cc6cb55f4657	yes	45f26934f6df	256	fe36bf356f32	C950 first (greedy)
+off-d	off	v2	probs	9	cc6cb55f4657	yes	45f26934f6df	256	fe36bf356f32	C950 first (greedy)
+off-d	off	v3	probs	9	cc6cb55f4657	yes	45f26934f6df	256	fe36bf356f32	C950 first (greedy)
+on-a	on	v1	pipe	9	cc6cb55f4657	yes	bce8d0e84421	256	e4b9ba7e039e	
+on-a	on	v2	pipe	9	cc6cb55f4657	yes	bce8d0e84421	256	e4b9ba7e039e	
+on-a	on	v3	pipe	9	cc6cb55f4657	yes	bce8d0e84421	256	e4b9ba7e039e	
+on-a	on	v4	pipe	9	cc6cb55f4657	yes	bce8d0e84421	256	e4b9ba7e039e	
+on-a	on	v5	pipe	9	cc6cb55f4657	yes	bce8d0e84421	256	e4b9ba7e039e	
+on-a	on	v6	p95	9	cc6cb55f4657	yes	bce8d0e84421	256	fe36bf356f32	C950 first (greedy)
+on-a	on	v7	greedy	9	cc6cb55f4657	yes	bce8d0e84421	256	fe36bf356f32	C950 first (greedy)
+on-b	on	v1	pipe	9	cc6cb55f4657	yes	bce8d0e84421	256	e4b9ba7e039e	
+on-b	on	v2	pipe	9	cc6cb55f4657	yes	bce8d0e84421	256	e4b9ba7e039e	
+on-b	on	v3	pipe	9	cc6cb55f4657	yes	bce8d0e84421	256	e4b9ba7e039e	
+on-b	on	v4	pipe	9	cc6cb55f4657	yes	bce8d0e84421	256	e4b9ba7e039e	
+on-b	on	v5	pipe	9	cc6cb55f4657	yes	bce8d0e84421	256	e4b9ba7e039e	
+on-b	on	v6	p95	9	cc6cb55f4657	yes	bce8d0e84421	256	fe36bf356f32	C950 first (greedy)
+on-b	on	v7	greedy	9	cc6cb55f4657	yes	bce8d0e84421	256	fe36bf356f32	C950 first (greedy)
+on-c	on	v1	pipe	9	cc6cb55f4657	yes	bce8d0e84421	256	e4b9ba7e039e	
+on-c	on	v2	pipe	9	cc6cb55f4657	yes	bce8d0e84421	256	e4b9ba7e039e	
+on-c	on	v3	pipe	9	cc6cb55f4657	yes	bce8d0e84421	256	e4b9ba7e039e	
+on-c	on	v4	pipe	9	cc6cb55f4657	yes	bce8d0e84421	256	e4b9ba7e039e	
+on-c	on	v5	pipe	9	cc6cb55f4657	yes	bce8d0e84421	256	e4b9ba7e039e	
+on-c	on	v6	p95	9	cc6cb55f4657	yes	bce8d0e84421	256	fe36bf356f32	C950 first (greedy)
+on-c	on	v7	greedy	9	cc6cb55f4657	yes	bce8d0e84421	256	fe36bf356f32	C950 first (greedy)
+on-d	on	v1	probs	9	cc6cb55f4657	yes	bce8d0e84421	256	e4b9ba7e039e	
+on-d	on	v2	probs	9	cc6cb55f4657	yes	bce8d0e84421	256	e4b9ba7e039e	
+on-d	on	v3	probs	9	cc6cb55f4657	yes	bce8d0e84421	256	e4b9ba7e039e	
+on-e	on	v1	probs	9	cc6cb55f4657	yes	bce8d0e84421	256	e4b9ba7e039e	
+on-e	on	v2	probs	9	cc6cb55f4657	yes	bce8d0e84421	256	e4b9ba7e039e	
+on-e	on	v3	probs	9	cc6cb55f4657	yes	bce8d0e84421	256	e4b9ba7e039e	

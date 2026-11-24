@@ -1,0 +1,10 @@
+arm	switch	round	context_tokens	tokens	positions_where_the_order_decides	tokens_eq_descending_pick	at_deciding_positions_eq_descending	md5
+off-d	off	v1	2290	256	2	255	1	fe36bf356f32
+off-d	off	v2	2290	256	2	255	1	fe36bf356f32
+off-d	off	v3	2290	256	2	255	1	fe36bf356f32
+on-d	on	v1	2290	256	3	256	3	e4b9ba7e039e
+on-d	on	v2	2290	256	3	256	3	e4b9ba7e039e
+on-d	on	v3	2290	256	3	256	3	e4b9ba7e039e
+on-e	on	v1	2290	256	3	256	3	e4b9ba7e039e
+on-e	on	v2	2290	256	3	256	3	e4b9ba7e039e
+on-e	on	v3	2290	256	3	256	3	e4b9ba7e039e
