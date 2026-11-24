@@ -1,0 +1,11 @@
+round	tree	sums_printed	log_lines	md5_of_the_sums	last_sum
+round 1	run1-base	98	891	e5e9bda3ee09	2.093218
+round 1	run1-head	99	895	cf742168eb51	-1.064878
+round 1	run2-base	90	835	5d6ed09f0229	-5.181669
+round 1	run2-head	99	895	cf742168eb51	-1.064878
+-	before C933: C880 landing's run	99	-	018f361b6266	-
+-	before C933: C914's run	92	-	ab1f0e26b55f	-
+round 2	run1-base	99	895	cf742168eb51	-1.064878
+round 2	run1-head	98	891	e5e9bda3ee09	2.093218
+round 2	run2-base	97	884	b9ac002129b0	-0.167520
+round 2	run2-head	99	895	cf742168eb51	-1.064878

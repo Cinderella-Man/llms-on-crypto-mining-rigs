@@ -1,0 +1,25 @@
+item	kind	base-twice	head-twice	base-head-run1	base-head-run2
+llama-dense.gguf	model md5	same	same	same	same
+llama-moe.gguf	model md5	same	same	same	same
+qwen4exp-moe.gguf	model md5	same	same	same	same
+hand bytes-switches	verdict	same	same	same	same
+hand bytes-zero-tail	verdict	same	same	same	same
+hand context-model	verdict	same	same	same	same
+hand eval-callback	verdict	same	same	same	same
+hand hop-cast	verdict	same	same	same	same
+hand moe-ids	verdict	same	same	same	same
+hand route-once-x1	verdict	same	same	same	same
+hand route-once-x30	verdict	same	same	same	same
+hand thread-safety	verdict	same	same	same	same
+bytes-switches	log	DIFFERS (24176 lines / 24176 lines)	DIFFERS (24176 lines / 24176 lines)	DIFFERS (24176 lines / 24176 lines)	DIFFERS (24176 lines / 24176 lines)
+bytes-zero-tail	log	DIFFERS (24086 lines / 24086 lines)	DIFFERS (24086 lines / 24086 lines)	DIFFERS (24086 lines / 24086 lines)	DIFFERS (24086 lines / 24086 lines)
+context-model	log, sorted	same (38 lines)	same (38 lines)	same (38 lines)	same (38 lines)
+eval-callback	log	cut short (891 lines / 835 lines)	same (895 lines)	cut short (891 lines / 895 lines)	cut short (835 lines / 895 lines)
+hop-cast	log	same (31 lines)	same (31 lines)	same (31 lines)	same (31 lines)
+moe-ids	log	same (655 lines)	same (655 lines)	same (655 lines)	same (655 lines)
+random/archs	log	same (2 lines)	same (2 lines)	same (2 lines)	same (2 lines)
+random/dense	log	same (3 lines)	same (3 lines)	same (3 lines)	same (3 lines)
+route-once-x1	log	same (2792 lines)	same (2792 lines)	same (2792 lines)	same (2792 lines)
+route-once-x30	log	same (2793 lines)	same (2793 lines)	same (2793 lines)	same (2793 lines)
+thread-safety	log, sorted	same (29 lines)	same (29 lines)	same (29 lines)	same (29 lines)
+eval-callback sums	sums	cut short (98 sums / 90 sums)	same	cut short (98 sums / 99 sums)	cut short (90 sums / 99 sums)

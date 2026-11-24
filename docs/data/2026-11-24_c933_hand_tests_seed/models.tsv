@@ -1,0 +1,25 @@
+round	tree	model	md5
+round 1	run1/base	llama-dense.gguf	c57717ea92ba10c4398c849394010588
+round 1	run1/base	llama-moe.gguf	86effb74ecc2046ac4358acea7b4eec2
+round 1	run1/base	qwen4exp-moe.gguf	e532a2ffc7861df1cd7d6542836d27de
+round 1	run1/head	llama-dense.gguf	c57717ea92ba10c4398c849394010588
+round 1	run1/head	llama-moe.gguf	86effb74ecc2046ac4358acea7b4eec2
+round 1	run1/head	qwen4exp-moe.gguf	e532a2ffc7861df1cd7d6542836d27de
+round 1	run2/base	llama-dense.gguf	c57717ea92ba10c4398c849394010588
+round 1	run2/base	llama-moe.gguf	86effb74ecc2046ac4358acea7b4eec2
+round 1	run2/base	qwen4exp-moe.gguf	e532a2ffc7861df1cd7d6542836d27de
+round 1	run2/head	llama-dense.gguf	c57717ea92ba10c4398c849394010588
+round 1	run2/head	llama-moe.gguf	86effb74ecc2046ac4358acea7b4eec2
+round 1	run2/head	qwen4exp-moe.gguf	e532a2ffc7861df1cd7d6542836d27de
+round 2	run1/base	llama-dense.gguf	c57717ea92ba10c4398c849394010588
+round 2	run1/base	llama-moe.gguf	86effb74ecc2046ac4358acea7b4eec2
+round 2	run1/base	qwen4exp-moe.gguf	e532a2ffc7861df1cd7d6542836d27de
+round 2	run1/head	llama-dense.gguf	c57717ea92ba10c4398c849394010588
+round 2	run1/head	llama-moe.gguf	86effb74ecc2046ac4358acea7b4eec2
+round 2	run1/head	qwen4exp-moe.gguf	e532a2ffc7861df1cd7d6542836d27de
+round 2	run2/base	llama-dense.gguf	c57717ea92ba10c4398c849394010588
+round 2	run2/base	llama-moe.gguf	86effb74ecc2046ac4358acea7b4eec2
+round 2	run2/base	qwen4exp-moe.gguf	e532a2ffc7861df1cd7d6542836d27de
+round 2	run2/head	llama-dense.gguf	c57717ea92ba10c4398c849394010588
+round 2	run2/head	llama-moe.gguf	86effb74ecc2046ac4358acea7b4eec2
+round 2	run2/head	qwen4exp-moe.gguf	e532a2ffc7861df1cd7d6542836d27de

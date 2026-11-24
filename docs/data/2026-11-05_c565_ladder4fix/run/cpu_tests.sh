@@ -25,7 +25,9 @@
 #           runs them on the downloaded stories15M model); thread-safety also gets --seed HAND_SEED, since without one
 #           its sampler draws a new seed each run. Both models come from this tree's test-llama-archs with -s HAND_SEED,
 #           so every run and every tree gets the same models (without -s it seeds from std::random_device), and two
-#           trees' hand logs compare line by line (compare_hand.py); hand/models.md5 lists the models' checksums
+#           trees' hand logs compare line by line (compare_hand.py); hand/models.md5 lists the models' checksums. Each
+#           test writes its log from inside its container, stdout and stderr into one file: docker would carry them as
+#           two streams and interleave them differently on every run
 # TREES: '<tag>=<commit>[+<commit>...][:<targets>][@<base tag>] ...'; a tree with ":<targets>" runs only archs and ident.
 # Usage: WORK=<dir> SRC=<llama.cpp clone holding the commits> TREES='...' [STEPS='tree build ctest archs ident hand']
 #   [JOBS=8] [SHARED=ON] [CTEST_JOBS=8] [THREADS=8] [LOCK=<flock file>] [DOCKER_ARGS=...] [BASE_IMAGE=ubuntu:24.04]
@@ -172,10 +174,12 @@ for spec in $TREES; do
     if step hand && [ -z "$targets" ]; then
         H=$R/hand
         rm -rf "$H" && mkdir -p "$H/random"
+        # <log> <command ...>: the command in a container, its stdout and stderr into <log> from inside the container
+        inbox() { box bash -c 'f=$1; shift; exec "$@" > "$f" 2>&1' _ "$@"; }
         # <check> <binary> [args]: exit status 0 passes; the log's last line goes into the detail
         hand() {
             local n=$1 b=$2; shift 2
-            box nice -n 19 "$B/bin/$b" "$@" > "$H/$n.log" 2>&1
+            inbox "$H/$n.log" nice -n 19 "$B/bin/$b" "$@"
             local rc=$?
             verdict "hand $n" "$([ $rc = 0 ] && echo OK || echo FAIL)" "$b rc=$rc: $(grep -av '^ *$' "$H/$n.log" | tail -n 1 | cut -c1-160)"
         }
@@ -184,9 +188,9 @@ for spec in $TREES; do
         # one, which -a llama also writes) as ctest's test-generate-models makes it, whose own copy has a new seed each run
         M=$H/random/qwen4exp-moe.gguf
         L=$H/random/llama-dense.gguf
-        docker run --rm $D -v "$WORK:$WORK" -e LLAMA_TEST_ARCHS_N_VOCAB=4096 -e LLAMA_TEST_ARCHS_N_EXPERT=32,8 "$IMAGE" \
-            "$B/bin/test-llama-archs" -a qwen4exp -s "$HAND_SEED" -o "$H/random" > "$H/random/archs.log" 2>&1
-        box "$B/bin/test-llama-archs" -a llama -s "$HAND_SEED" -o "$H/random" > "$H/random/dense.log" 2>&1
+        inbox "$H/random/archs.log" env LLAMA_TEST_ARCHS_N_VOCAB=4096 LLAMA_TEST_ARCHS_N_EXPERT=32,8 \
+            "$B/bin/test-llama-archs" -a qwen4exp -s "$HAND_SEED" -o "$H/random"
+        inbox "$H/random/dense.log" "$B/bin/test-llama-archs" -a llama -s "$HAND_SEED" -o "$H/random"
         (cd "$H/random" && md5sum -- *.gguf) > "$H/models.md5" 2>&1
         if [ -f "$M" ]; then
             hand route-once-x1   test-route-once -m "$M" -t "$THREADS" -n 16 --router-scale 1

@@ -1,0 +1,10 @@
+round	pair	a	b	comparisons	same	cut_short	differ	cut_short_items	differing_items
+before C933	old-script-twice	C880 landing's run of 8a9629942	C914's run of 8a9629942	21	12	0	9	-	models.md5, bytes-switches, bytes-zero-tail, eval-callback, random/archs, route-once-x1, route-once-x30, thread-safety, eval-callback sums
+round 1	base-twice	run1/base	run2/base	24	20	2	2	eval-callback, eval-callback sums	bytes-switches, bytes-zero-tail
+round 1	head-twice	run1/head	run2/head	24	22	0	2	-	bytes-switches, bytes-zero-tail
+round 1	base-head-run1	run1/base	run1/head	24	20	2	2	eval-callback, eval-callback sums	bytes-switches, bytes-zero-tail
+round 1	base-head-run2	run2/base	run2/head	24	20	2	2	eval-callback, eval-callback sums	bytes-switches, bytes-zero-tail
+round 2	base-twice	run1/base	run2/base	24	22	2	0	eval-callback, eval-callback sums	-
+round 2	head-twice	run1/head	run2/head	24	22	2	0	eval-callback, eval-callback sums	-
+round 2	base-head-run1	run1/base	run1/head	24	22	2	0	eval-callback, eval-callback sums	-
+round 2	base-head-run2	run2/base	run2/head	24	22	2	0	eval-callback, eval-callback sums	-

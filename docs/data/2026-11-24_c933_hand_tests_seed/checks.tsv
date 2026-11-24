@@ -1,0 +1,19 @@
+check	before	run1-base	run1-head	run2-base	run2-head
+archs compare	OK	OK	OK	OK	OK
+archs files	OK	OK	OK	OK	OK
+archs plain	OK	OK	OK	OK	OK
+archs write	OK	OK	OK	OK	OK
+build	OK	OK	OK	OK	OK
+ctest	FAIL	FAIL	FAIL	FAIL	FAIL
+hand bytes-switches	OK	OK	OK	OK	OK
+hand bytes-zero-tail	OK	OK	OK	OK	OK
+hand context-model	OK	OK	OK	OK	OK
+hand eval-callback	OK	OK	OK	OK	OK
+hand hop-cast	OK	OK	OK	OK	OK
+hand moe-ids	OK	OK	OK	OK	OK
+hand route-once-x1	OK	OK	OK	OK	OK
+hand route-once-x30	OK	OK	OK	OK	OK
+hand thread-safety	OK	OK	OK	OK	OK
+ident vs base	-	-	SAME	-	SAME
+ident vs before	SAME	-	-	-	-
+tree	OK	OK	OK	OK	OK
