@@ -1,0 +1,7 @@
+runs of	binary	setting	runs	runs with rc != 0	cases per run	OK	FAIL	failing cases (times)
+live	base	unset	40	0	55	2200	0	
+live	base	p106	40	3	55	2197	3	TOPK_MOE_TAIL(n_expert=256,n_tokens=22,n_expert_used=8,with_norm=1,gating_func=1,scale_w=2.500000,p=0.800000,w=0.000000,renorm=1,n_skip=8,repeat=0) x3
+live	head	unset	40	0	55	2200	0	
+live	head	p106	40	0	55	2200	0	
+soak	base	unset	300	9	55	16491	9	TOPK_MOE_TAIL(n_expert=128,n_tokens=22,n_expert_used=8,with_norm=1,gating_func=0,scale_w=0.000000,p=0.900000,w=0.000000,renorm=1,n_skip=0,repeat=0) x1; TOPK_MOE_TAIL(n_expert=256,n_tokens=22,n_expert_used=8,with_norm=1,gating_func=1,scale_w=2.500000,p=0.800000,w=0.000000,renorm=1,n_skip=8,repeat=0) x3; TOPK_MOE_TAIL(n_expert=256,n_tokens=8,n_expert_used=8,with_norm=1,gating_func=1,scale_w=2.500000,p=0.800000,w=0.000000,renorm=1,n_skip=8,repeat=0) x2; TOPK_MOE_TAIL(n_expert=256,n_tokens=9,n_expert_used=8,with_norm=1,gating_func=1,scale_w=2.500000,p=0.800000,w=0.000000,renorm=1,n_skip=8,repeat=0) x3
+soak	head	unset	300	0	55	16500	0	

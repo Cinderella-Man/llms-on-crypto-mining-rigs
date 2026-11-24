@@ -1,0 +1,4 @@
+record	TOPK_MOE_TAIL cases	tokens	tokens with a pair under a relative 2^-16	tokens with a pair within 4 float32 ulps	smallest gap (float32 ulps)
+C968's kept case	1	9	5	1	1
+drawn by the base	55	473	24	0	13
+drawn by the head	55	473	0	0	299

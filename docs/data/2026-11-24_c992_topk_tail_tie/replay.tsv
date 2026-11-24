@@ -1,0 +1,9 @@
+record	binary	setting	cases	OK	FAIL	failing cases
+base	base	unset	185	185	0	
+base	head	unset	185	185	0	
+base	base	p106	185	185	0	
+base	head	p106	185	185	0	
+head	base	unset	185	185	0	
+head	head	unset	185	185	0	
+head	base	p106	185	185	0	
+head	head	p106	185	185	0	

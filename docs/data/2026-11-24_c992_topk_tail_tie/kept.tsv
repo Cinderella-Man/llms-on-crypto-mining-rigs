@@ -1,0 +1,5 @@
+binary	setting	verdict	errors (w_cut,ids_cut,out)	live check on the restored inputs
+base	unset	FAIL	5.19485678e-15,3.51146374e-05,5.67832141e-15	cpu-check: live FAIL, reference identical (1296 values, 0 differ, max |diff| 0)
+base	p106	FAIL	5.19485678e-15,3.51146374e-05,5.67832141e-15	cpu-check: live FAIL, reference identical (1296 values, 0 differ, max |diff| 0)
+head	unset	OK	5.19485678e-15,0,5.67832141e-15	cpu-check: live OK, reference identical (1296 values, 0 differ, max |diff| 0)
+head	p106	OK	5.19485678e-15,0,5.67832141e-15	cpu-check: live OK, reference identical (1296 values, 0 differ, max |diff| 0)

@@ -33,7 +33,9 @@ kernels off: it is not theirs. Forcing them also runs 278 of the fork's own test
   cuts that 8th slot to weight 0 in every token, so the product never reads the differing id
   ([run/topk_tail_tie.py](run/topk_tail_tie.py)). Which draws tie is random: C947's draw of this case passed, and so did
   the same parameters at 22 tokens here. Its record is kept in [topk_moe_tail/](topk_moe_tail/) and replays the
-  failure on its own (command below). Registry Q1725: compare the cut ids only where the weight is not 0.
+  failure on its own (command below). [C992](../2026-11-24_c992_topk_tail_tie/README.md) (Q1725) fixed the test: it
+  no longer compares the ids of slots cut to weight 0 past `n_skip` tokens and draws its logits without near ties, and
+  with it this record passes.
 - **The fork's kernels take 5,237 of C947's cases.** Replayed on the same inputs, 2,264 `MUL_MAT`, 1,042 `MUL_MAT_ID`
   and 1,931 fused cases give another result with the kernels forced than without, so those are the cases C947's run
   computed on llama.cpp's kernels where a P106 runs the fork's. Unset replayed twice gives every case the same result,
