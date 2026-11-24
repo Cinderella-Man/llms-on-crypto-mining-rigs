@@ -183,6 +183,11 @@ against 1.88. At the shared mix a decode step took 51.37 ms against 51.46. The 1
 176.72 s against 182.57 (3.2 % less, each of them less), and each card's peak memory was the same. One run of each
 engine: the control's second run on the same boot gives the spread before a class. Flash-Next's run remains.
 
+**Flash-Next's agent run on 2026-11-24** ([2026-11-24_c912_flash_agent](../2026-11-24_c912_flash_agent/README.md)): on
+the first rig at stock, the v5 preset on the candidate passed 12 of 12 tasks with no server error and no reply read
+again: 2.34 minutes a task at equal work, 28.59 tok/s generation, 117.02 ms a decode step, prompts at 144.7 tok/s. Its
+control, the same launcher on `af00bb13b` on the same boot, remains before a class.
+
 ## Files
 
 | File | What |

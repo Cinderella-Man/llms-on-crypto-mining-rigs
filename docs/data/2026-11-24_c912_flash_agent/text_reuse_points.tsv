@@ -1,0 +1,13 @@
+run	task	turn	differ_at	kept	prompt_before	prompt_after	cache_n	prompt_n	prompt_ms	prev_prompt_end	prev_reply_tokens	into_reply	grammar_from	where	client
+f5cand	bugfix-python-affine-cipher	3	4732	1940	7112	7120	6672	448	3293.633	4189	2484	543	0	in the tool call	same
+f5cand	bugfix-python-affine-cipher	4	4732	2774	7526	7534	7506	28	1007.866	7120	387	-2388		before the previous reply	same, arguments re-serialized
+f5cand	bugfix-python-affine-cipher	5	4732	3016	7831	7839	7748	91	1708.465	7534	215	-2802		before the previous reply	same
+f5cand	bugfix-python-variable-length-quantity	3	4849	7041	12184	12185	11890	295	2263.774	4480	7411	369	0	in the tool call	same
+f5cand	bugfix-python-variable-length-quantity	4	4849	7722	12602	12603	12571	32	1064.179	12185	387	-7336		before the previous reply	same, arguments re-serialized
+f5cand	bugfix-python-variable-length-quantity	5	4849	7977	12896	12897	12826	71	1918.335	12603	223	-7754		before the previous reply	same
+f5cand	bugfix-javascript-complex-numbers	5	4367	46	4662	4663	4413	250	2217.154	4148	266	219	0	in the tool call	same
+f5cand	bugfix-javascript-complex-numbers	6	4367	419	4814	4815	4786	29	1011.207	4663	124	-296		before the previous reply	same, arguments re-serialized
+f5cand	bugfix-javascript-complex-numbers	7	4367	599	5095	5096	4966	130	1729.479	4815	151	-448		before the previous reply	same
+f5cand	bugfix-python-pig-latin	3	4331	212	4765	4766	4543	223	2046.675	3461	1083	870	0	in the tool call	same
+f5cand	bugfix-python-pig-latin	4	4331	737	5099	5100	5068	32	1008.842	4766	303	-435		before the previous reply	same, arguments re-serialized
+f5cand	bugfix-python-pig-latin	5	4331	1171	5629	5630	5502	128	1671.169	5100	403	-769		before the previous reply	same

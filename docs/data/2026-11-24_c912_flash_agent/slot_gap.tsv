@@ -1,0 +1,2 @@
+log	requests	median_ms	max_ms	sum_ms
+server-f5cand.log	62	0.73	5.56	69.0
