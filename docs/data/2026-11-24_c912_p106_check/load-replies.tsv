@@ -1,0 +1,25 @@
+model	load	prompt	prompt_tokens	tokens	md5	drafted	accepted	gen_tok_s_diag	start
+flashnext	cand	code	27	256	765e21aa9b2ce0bef1e70ee347741f18	242	174	26.85	\n\n<think>\nThe user wants me to write a Python function that 
+flashnext	cand	prose	19	256	8dbac6224928c4de85b178d687e55b08	278	162	25.58	\n\n<think>\nThe user wants two things:\n1. A one-paragraph expl
+flashnext	cand	long	321	256	264d18bca4b15218ee385335050f8e89	317	149	22.15	\n\n<think>\nThe user is asking me to analyze a concurrency bug
+flashnext	ref	code	27	256	765e21aa9b2ce0bef1e70ee347741f18	242	174	27.43	\n\n<think>\nThe user wants me to write a Python function that 
+flashnext	ref	prose	19	256	8dbac6224928c4de85b178d687e55b08	278	162	25.59	\n\n<think>\nThe user wants two things:\n1. A one-paragraph expl
+flashnext	ref	long	321	256	264d18bca4b15218ee385335050f8e89	317	149	22.19	\n\n<think>\nThe user is asking me to analyze a concurrency bug
+flintq5	cand	code	25	256	9963f082f73ae5c07bfde959cbc28c06			53.64	 The function should handle timezone-aware strings, and the 
+flintq5	cand	prose	18	256	7915fe00cb343f2bf4baea7b3a112ef7			41.37	 Please be concise.\n\nWe need answer. Need parse. User asks: 
+flintq5	cand	long	321	256	1b9c8ab3372c9be76f29cc1d6faf6c09			39.92	 The code should not use any external libraries beyond the a
+flintq5	ref	code	25	256	9963f082f73ae5c07bfde959cbc28c06			54.32	 The function should handle timezone-aware strings, and the 
+flintq5	ref	prose	18	256	7915fe00cb343f2bf4baea7b3a112ef7			41.91	 Please be concise.\n\nWe need answer. Need parse. User asks: 
+flintq5	ref	long	321	256	1b9c8ab3372c9be76f29cc1d6faf6c09			51.3	 The code should not use any external libraries beyond the a
+flintq8	cand	code	25	256	5bb2804ec9a96885ac9aad846d1e9c6d			50.73	 The function should handle timezone-aware strings, and the 
+flintq8	cand	prose	18	256	1586394daf8a9781a6c8b5fb683d9776			42.28	 Please be concise.\n\nWe need answer. Need parse. User asks: 
+flintq8	cand	long	321	256	cdb48119132c1bc90981efdfd857d8f6			51.08	 The code should not use global state.\n\n global state refers
+flintq8	ref	code	25	256	5bb2804ec9a96885ac9aad846d1e9c6d			51.04	 The function should handle timezone-aware strings, and the 
+flintq8	ref	prose	18	256	1586394daf8a9781a6c8b5fb683d9776			31.3	 Please be concise.\n\nWe need answer. Need parse. User asks: 
+flintq8	ref	long	321	256	cdb48119132c1bc90981efdfd857d8f6			45.61	 The code should not use global state.\n\n global state refers
+ornith	cand	code	27	256	c3e5184716bcaebe327169ae3a60b939			15.38	\n\n<think>\nThe user wants a Python function that parses an IS
+ornith	cand	prose	19	256	47180e43fcade087a9652ff3d624c0d0			17.57	\n\n<think>\nA hash map handles collisions when two different k
+ornith	cand	long	321	256	04a6268649cf3da6cb7e320b5d8fb560			17.82	\n\n<think>\nLet me think about this problem carefully. It's a 
+ornith	ref	code	27	256	c3e5184716bcaebe327169ae3a60b939			15.82	\n\n<think>\nThe user wants a Python function that parses an IS
+ornith	ref	prose	19	256	47180e43fcade087a9652ff3d624c0d0			16.75	\n\n<think>\nA hash map handles collisions when two different k
+ornith	ref	long	321	256	04a6268649cf3da6cb7e320b5d8fb560			17.73	\n\n<think>\nLet me think about this problem carefully. It's a 

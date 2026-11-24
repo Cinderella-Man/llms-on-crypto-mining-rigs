@@ -171,6 +171,11 @@ then the identity check and launches a token on the four release files, then one
 Flash-Next on their v5 presets. The archs part compares the candidate against itself, since the random models differ from
 the base's (above). If they pass, `pascal-p106-v5` fast-forwards to `eee615cdb`.
 
+**The P106 check passed on 2026-11-24** ([2026-11-24_c912_p106_check](../2026-11-24_c912_p106_check/README.md)): on
+the v5 presets every release file gives the same replies, the same MiB per card and the same launch groups on the
+candidate as on `af00bb13b`, the kernel record sets give the last check's results, and the random models differ in
+exactly the 120 models above, by the same amounts. The two agent runs remain.
+
 ## Files
 
 | File | What |
