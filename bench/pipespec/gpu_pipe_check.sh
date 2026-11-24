@@ -19,11 +19,23 @@
 #           IQ4_XS, Q4_K and Q5_K), so each type of the release files needs its own copy. Q6_K weights stay on
 #           llama.cpp's kernels in these models under every setting (C1018's profile)
 #   runs    for each layout of LAYOUTS and arm of ARMS that runs in it, one container with that layout's cards; per
-#           architecture:
-#             host       check_identity.sh, depths 1 and 3, 0 and 50 % wrong guesses (the oracle), the four guessers and
-#                        depth 0, host sampling: every pipelined run's tokens, logits, KV state and probe hashes plain's
-#             fed        the same with greedy sampling on the device in every run, plain's too (--pipe-backend-greedy),
-#                        the token embedding on the first card (LLAMA_INPUT_ON_GPU=1) and FEED=1, which adds depth 0
+#           architecture, each check N tokens of prompts/rewrite.txt as plain text (cpu_tests.sh's pipe step's arms):
+#             host       check_identity.sh, greedy on the host: depth 0, the floor (depth FLOOR, every guess a filler
+#                        token), and at depths 1 and 3 the oracle with 0 and 50 % of its guesses wrong and the four
+#                        guessers: every pipelined run's tokens, logits, KV state and probe hashes plain's
+#             sampled    the same with seeded sampling on the host (SAMPLING --seed SAMPLE_SEED), where a fault that only
+#                        nudges the logits changes the tokens themselves (C932's did, C1010)
+#             race       the same with a race of RACE samples (seeds SAMPLE_SEED-1, SAMPLE_SEED, ...) at depths 1 and 3
+#                        with 50 % wrong guesses and the floor: the plain run decodes the samples round robin, the
+#                        pipelined runs keep one token of each in flight. Its stop text is the token the sampled check's
+#                        plain run (the race's sample 1) first emits at or after token RACE_AT, written so the random
+#                        models' dummy tokenizer reads it as that one token, so the race ends part way and the winner
+#                        (sample 1, in sequence 1) goes on alone with the guessers; the winner, the race's tokens and
+#                        every sample's tokens and logits are compared too. Without the sampled check first the race has
+#                        no stop and runs to the token limit
+#             fed        the host check with greedy sampling on the device in every run, plain's too
+#                        (--pipe-backend-greedy), the token embedding on the first card (LLAMA_INPUT_ON_GPU=1) and FEED=1,
+#                        which adds depth 0
 #                        with each next token fed on the devices from the last card's sample (llama_pipe_submit_fed);
 #                        the logits and probe hashes then hash token ids, while the KV state hash still reads every cell.
 #                        llama_pipe_submit_fed refuses, by design, a model whose KV cells keep their token (M-RoPE, as in
@@ -38,7 +50,7 @@
 #                        (nsys profile -t cuda --cuda-graph-trace=node): every kernel the cards ran and its launch count,
 #                        in prof-<arch>.tsv, recorded, not judged; the report's times are deleted unread
 #           Each identity check also records the plain run's tokens and logits hashes, so two arms on the same model show
-#           whether different kernels computed them (other logits hashes)
+#           whether different kernels computed them (other logits hashes), and every check its seconds (times.tsv)
 # Layouts: one    the first card of GPUS
 #          split  every card of GPUS, the layers in equal shares (-ts 1,1,...), so every token hops between cards: the
 #                 embedding on the first card, the output and the device sampler on the last
@@ -76,9 +88,15 @@
 #                   every one
 #          (default "f32-stock q8-p106 mix-fn-c4@one": the CPU step's models on llama.cpp's kernels and the fork's
 #          kernels on the Q8_0 copy, in every layout; the release types under the Flash-Next preset's switches with the
-#          prompt in calls of 4 tokens, on one card only, which keeps a build under two minutes on three cards (the
-#          split layout's hops are the other two arms'; the kernels are the same on one card). The per-type arms, such
-#          as "q2_0-fn-c4 q4_k-fn-c4 q5_k-fn-c4 q6_k-fn-c4 iq4_xs-fn-c4", on request)
+#          prompt in calls of 4 tokens, on one card only (the split layout's hops are the other two arms'; the kernels
+#          are the same on one card). With the default checks and containers a build takes under three minutes on three
+#          cards (165 s, C1019). The per-type arms, such as "q2_0-fn-c4 q4_k-fn-c4 q5_k-fn-c4 q6_k-fn-c4 iq4_xs-fn-c4",
+#          on request)
+# Containers: a build's containers run JOBS at a time (0, the default: every one at once), the split layouts first, then
+# the one-card layouts with the cards in turn. Every tool runs on THREADS processor threads (-t, default 2): these small
+# models leave the cards mostly idle and the processor does the waiting, and with each tool's own thread count (every
+# core, spinning while it waits) the host-sampled checks of five containers side by side took thirteen times as long
+# as alone (C1019)
 # Verdicts (summary.tsv): OK when every hash is plain's, DIFFERS when a pipelined run gives other hashes, FAIL when a
 # tool stopped before comparing (its exit code and the log's last line), SKIP when the build lacks a tool, INFO for the
 # kernels line.
@@ -86,8 +104,10 @@
 # Usage (on the machine with the cards; this script beside check_identity.sh and prompts/rewrite.txt, as in
 # bench/pipespec):
 #   WORK=<dir> BUILDS='<tag>=<bin dir> ...' [GPUS=0,1,2] [LAYOUTS='one split'] [ARMS='f32-stock q8-p106 mix-fn-c4@one']
-#   [ARCHS='qwen4exp qwen35 qwen35moe qwen3next flint'] [CHECKS='host fed recurrent kernels'] [MODEL_SEED=1] [N=64]
-#   [TIMEOUT=900] [VIRT=3] [IMG=nvidia/cuda:12.9.2-devel-ubuntu24.04] [MOUNTS='<folders mounted read-only>']
+#   [ARCHS='qwen4exp qwen35 qwen35moe qwen3next flint'] [CHECKS='host sampled race fed recurrent kernels']
+#   [MODEL_SEED=1] [N=256] [SAMPLING='--temp 1 --top-k 20 --top-p 0.95'] [SAMPLE_SEED=42] [FLOOR=3] [RACE=2]
+#   [RACE_AT=N/4] [JOBS=0] [THREADS=2] [TIMEOUT=900] [VIRT=3] [IMG=nvidia/cuda:12.9.2-devel-ubuntu24.04]
+#   [MOUNTS='<folders mounted read-only>']
 #   [DOCKER_ARGS='<labels, --cpu-shares>'] [PREFLIGHT=<cuda_preflight.sh>] [NAME=gpupipe] [QUANT_ARGS=...]
 #   [MIX_ARGS=...] [P106_ENV=...] [FN_SW=...] [P106ALL_ENV=...] [JITCACHE=<dir>] [QUANT=<llama-quantize>]
 #   [NSYS=<nsys, for CHECKS with profile>] bash gpu_pipe_check.sh
@@ -106,22 +126,34 @@
 # install folder is mounted read-only into the containers (the CUDA images carry Nsight Compute but not Nsight Systems).
 # Output: WORK/<tag>/models/<arch>/ (gen.log, the model, q8.gguf and quant.log for q8, <kind>.gguf and
 #   quant-<kind>.log for the other copies), WORK/<tag>/models.md5, WORK/<tag>/types.tsv (each copy's tensors by type),
-#   WORK/<tag>/<arm>-<layout>/ (check_identity's folders <arch>-host/ and <arch>-fed/ with .log their tables,
-#   prc-<arch>.log, kernels.log, prof-<arch>.tsv, env.txt, verdicts.tsv), WORK/summary.tsv (tree, arm, layout, arch, check, verdict,
-#   detail, plain tokens hash, plain logits hash); done when WORK/DONE exists. Exit status 0 when no verdict is FAIL or
-#   DIFFERS.
+#   WORK/<tag>/<arm>-<layout>/ (check_identity's folders <arch>-<check>/ with .log their tables, prc-<arch>.log,
+#   kernels.log, prof-<arch>.tsv, env.txt, verdicts.tsv, times.tsv), WORK/summary.tsv (tree, arm, layout, arch, check,
+#   verdict, detail, plain tokens hash, plain logits hash), WORK/times.tsv (tree, arm, layout, arch, check, seconds),
+#   WORK/jobs.tsv (tree, job, cards, rc, seconds: each container and each build's total); done when WORK/DONE exists.
+#   Exit status 0 when no verdict is FAIL or DIFFERS.
 set -uo pipefail
 HERE=$(cd "$(dirname "$0")" && pwd)
 SELF=$HERE/$(basename "$0")
 ARCHS=${ARCHS-qwen4exp qwen35 qwen35moe qwen3next flint}
-CHECKS=${CHECKS:-host fed recurrent kernels}
-N=${N:-64}
+CHECKS=${CHECKS:-host sampled race fed recurrent kernels}
+N=${N:-256}
+SAMPLING=${SAMPLING:---temp 1 --top-k 20 --top-p 0.95}
+SAMPLE_SEED=${SAMPLE_SEED:-42}
+FLOOR=${FLOOR-3}
+RACE=${RACE:-2}
+[[ "$N" =~ ^[0-9]{1,9}$ ]] && RACE_AT=${RACE_AT:-$((N / 4))}
+RACE_AT=${RACE_AT:-0}
 TIMEOUT=${TIMEOUT:-900}
 VIRT=${VIRT:-3}
+# the random models' vocabulary (test-llama-archs); the race's stop text is hashed to a token id modulo this
+VOCAB=4096
 
 # ---- inside a container: one arm and layout, every architecture ----
 if [ "${GPU_PIPE_INNER:-}" = 1 ]; then
     : "${BIN:?}" "${MD:?}" "${KIND:?}" "${OUTD:?}" "${LARGS:?}"
+    # check_identity.sh reads SAMPLING, RACE and FLOOR from its environment: this script's settings of those names stay
+    # in this shell, and each check passes its own
+    export -n SAMPLING SAMPLE_SEED FLOOR RACE RACE_AT
     mkdir -p "$OUTD"
     V=$OUTD/verdicts.tsv
     : > "$V"
@@ -129,15 +161,43 @@ if [ "${GPU_PIPE_INNER:-}" = 1 ]; then
     pf() { grep -ao 'name=plain .*' "$1/results.txt" 2> /dev/null | grep -o " $2=[^ ]*" | cut -d= -f2; }
     last() { grep -av '^ *$' "$1" 2> /dev/null | tail -n 1 | cut -c1-140; }
     on() { [[ " $CHECKS " == *" $1 "* ]]; }
-    # <arch> <check> <model> [VAR=value ...]: check_identity.sh, judged as cpu_tests.sh's pipe step judges it
+    # <arch> <check> <start, date +%s.%N>: a line of times.tsv
+    tm() { printf '%s\t%s\t%s\n' "$1" "$2" "$(awk -v a="$3" -v b="$(date +%s.%N)" 'BEGIN { printf "%.1f", b - a }')" >> "$OUTD/times.tsv"; }
+    # <plain.tok of the sampled check, "<position> <token> <hash>" lines>: "<position> <token>" of the first token at or
+    # after RACE_AT that the sample had not emitted before (else the last such token before it, from position 1);
+    # cpu_tests.sh's pipe_race_tok
+    race_tok() {
+        awk -v at="$RACE_AT" '!($2 in seen) && $1 >= 1 { if ($1 >= at) { if (t == "") t = $1 " " $2 } else l = $1 " " $2 }
+            { seen[$2] = 1 } END { print (t != "" ? t : l) }' "$1"
+    }
+    # <token id>: a text of two or three letters and digits that the random models' dummy tokenizer turns into that one
+    # token (it cuts text into chunks of 5 bytes and hashes each, h = 31 h + byte, modulo the vocabulary); cpu_tests.sh's
+    # pipe_stop_text
+    stop_text() {
+        awk -v t="$1" -v V="$VOCAB" 'BEGIN {
+            a = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"; n = length(a)
+            for (c = 32; c < 127; c++) ord[sprintf("%c", c)] = c
+            for (i = 1; i <= n; i++) { ch[i] = substr(a, i, 1); o[i] = ord[ch[i]] }
+            for (i = 1; i <= n; i++) for (j = 1; j <= n; j++) if ((o[i] * 31 + o[j]) % V == t) { print ch[i] ch[j]; exit }
+            for (i = 1; i <= n; i++) for (j = 1; j <= n; j++) for (k = 1; k <= n; k++)
+                if (((o[i] * 31 + o[j]) * 31 + o[k]) % V == t) { print ch[i] ch[j] ch[k]; exit }
+        }'
+    }
+    # <arch> <check> <model> [VAR=value ...]: check_identity.sh, judged as cpu_tests.sh's pipe step judges it; depths 1 3,
+    # misses 0 0.5 and the floor unless a VAR says otherwise
     ident() {
         local a=$1 c=$2 m=$3
         shift 3
-        local o=$OUTD/$a-$c rc runs nr nd nt why vd refused=""
+        local o=$OUTD/$a-$c rc runs nr nd nt why vd refused="" t0 kv dp="1 3" ms="0 0.5" fl=$FLOOR race=""
+        for kv in "$@"; do
+            case $kv in DEPTHS=*) dp=${kv#*=} ;; MISSES=*) ms=${kv#*=} ;; FLOOR=*) fl=${kv#*=} ;; esac
+        done
         rm -rf "$o"
-        env ARGS="$LARGS${PARGS:+ $PARGS}" "$@" BIN="$BIN" MODEL="$m" CHAT=0 SPEED=0 TIMEOUT="$TIMEOUT" PROMPT="$HERE/prompts/rewrite.txt" OUT="$o" \
-            N="$N" DEPTHS="1 3" MISSES="0 0.5" bash "$HERE/check_identity.sh" > "$o.log" 2>&1
+        t0=$(date +%s.%N)
+        env ARGS="$LARGS${PARGS:+ $PARGS}" DEPTHS="$dp" MISSES="$ms" FLOOR="$fl" "$@" BIN="$BIN" MODEL="$m" CHAT=0 SPEED=0 \
+            TIMEOUT="$TIMEOUT" PROMPT="$HERE/prompts/rewrite.txt" OUT="$o" N="$N" bash "$HERE/check_identity.sh" > "$o.log" 2>&1
         rc=$?
+        tm "$a" "$c" "$t0"
         # check_identity's table: one line per run, the verdict last, column 8 the tokens; plain is the reference
         runs=$(grep -aE ' (same|DIFF)$' "$o.log" | grep -av '^plain ')
         nr=$(echo "$runs" | grep -acE ' (same|DIFF)$')
@@ -155,21 +215,27 @@ if [ "${GPU_PIPE_INNER:-}" = 1 ]; then
         elif [ -n "$refused" ] && grep -aq "^only $((nr + 1)) of $((nr + 2)) runs finished" "$o.log"; then vd=OK
         else vd=FAIL why="$why; $(last "$o.log")"; fi
         why="$why$refused"
-        v "$a" "$c" "$vd" "check_identity.sh rc=$rc: $why; N=$N, depths 1 3, misses 0 0.5${*:+; $*}" "$(pf "$o" tokens)" "$(pf "$o" logits)"
+        # a race: who won and after how many of the samples' tokens (the plain run's; every pipelined run is compared)
+        [[ " $* " == *" RACE="* ]] && race="; plain: $(grep -a 'name=plain ' "$o/results.txt" 2> /dev/null |
+            grep -o 'winner=[-0-9]* race_tokens=[0-9]*' || echo 'no result')"
+        v "$a" "$c" "$vd" "check_identity.sh rc=$rc: $why; N=$N, depths $dp, misses $ms${fl:+, floor $fl}$race${*:+; $*}" \
+            "$(pf "$o" tokens)" "$(pf "$o" logits)"
     }
     have() { [ -x "$BIN/$1" ]; }
     # <arch>: the model file of this arm's kind
     model() { if [ "$KIND" = f32 ]; then echo "$MD/$1/$(cat "$MD/$1/model.txt" 2> /dev/null)"; else echo "$MD/$1/$KIND.gguf"; fi; }
     # <arch> <model>: the host check's runs under nsys; each kernel's launch count and name, without its parameters
     prof() {
-        local a=$1 m=$2 o=$OUTD/$1-prof rc nk mm
+        local a=$1 m=$2 o=$OUTD/$1-prof rc nk mm t0
         rm -rf "$o" "$o.log"
         mkdir -p "$o"
+        t0=$(date +%s.%N)
         timeout "$TIMEOUT" "$NSYS" profile -t cuda --cuda-graph-trace=node --sample=none --cpuctxsw=none \
             --force-overwrite=true -o "$o/rep" env ARGS="$LARGS${PARGS:+ $PARGS}" BIN="$BIN" MODEL="$m" CHAT=0 SPEED=0 TIMEOUT="$TIMEOUT" \
-            PROMPT="$HERE/prompts/rewrite.txt" OUT="$o/ident" N="$N" DEPTHS="1 3" MISSES="0 0.5" \
+            PROMPT="$HERE/prompts/rewrite.txt" OUT="$o/ident" N="$N" DEPTHS="1 3" MISSES="0 0.5" FLOOR="$FLOOR" \
             bash "$HERE/check_identity.sh" > "$o.log" 2>&1
         rc=$?
+        tm "$a" profile "$t0"
         "$NSYS" stats -q -r cuda_gpu_kern_sum -f csv -o "$o/kern" "$o/rep.nsys-rep" >> "$o.log" 2>&1
         # cuda_gpu_kern_sum: column 3 the launches, the last column the demangled name (quoted when it holds a comma)
         awk -F'"' 'function last(s, t,   i, j) { i = 0; while ((j = index(substr(s, i + 1), t)) > 0) i += j; return i }
@@ -189,8 +255,10 @@ if [ "${GPU_PIPE_INNER:-}" = 1 ]; then
     }
     {
         echo "kind=$KIND args=$LARGS pipespec args=${PARGS:-}"
+        echo "checks=$CHECKS N=$N sampling=$SAMPLING sample seed=$SAMPLE_SEED floor=${FLOOR:-none} race=$RACE race at=$RACE_AT"
         env | grep -E '^(GGML_|LLAMA_|CUDA_VISIBLE|NVIDIA_VISIBLE)' | sort
     } > "$OUTD/env.txt"
+    : > "$OUTD/times.tsv"
     for a in $ARCHS; do
         m=$(model "$a")
         if [ ! -f "$m" ]; then
@@ -199,6 +267,29 @@ if [ "${GPU_PIPE_INNER:-}" = 1 ]; then
         fi
         if on host; then
             if have llama-pipespec; then ident "$a" host "$m"; else v "$a" host SKIP "no llama-pipespec in $BIN"; fi
+        fi
+        if on sampled; then
+            if have llama-pipespec; then
+                ident "$a" sampled "$m" SAMPLING="$SAMPLING --seed $SAMPLE_SEED"
+            else
+                v "$a" sampled SKIP "no llama-pipespec in $BIN"
+            fi
+        fi
+        if on race; then
+            if have llama-pipespec; then
+                # the stop: a token the sampled check's plain run (seed SAMPLE_SEED, the race's sample 1) emits part way
+                pt=""
+                [ -f "$OUTD/$a-sampled/plain.tok" ] && pt=$(race_tok "$OUTD/$a-sampled/plain.tok")
+                if [ -n "$pt" ]; then
+                    ident "$a" race "$m" MISSES=0.5 RACE="$RACE" RACE_STOP="$(stop_text "${pt#* }")" \
+                        SAMPLING="$SAMPLING --seed $((SAMPLE_SEED - 1))" STOP_TOKEN="${pt#* }@${pt% *}"
+                else
+                    # no sampled check before it: the default stop text never comes, so the race runs to the token limit
+                    ident "$a" race "$m" MISSES=0.5 RACE="$RACE" SAMPLING="$SAMPLING --seed $((SAMPLE_SEED - 1))" STOP_TOKEN=none
+                fi
+            else
+                v "$a" race SKIP "no llama-pipespec in $BIN"
+            fi
         fi
         if on fed; then
             if have llama-pipespec; then
@@ -209,10 +300,12 @@ if [ "${GPU_PIPE_INNER:-}" = 1 ]; then
         fi
         if on recurrent; then
             if have llama-pipe-recurrent-check; then
+                t0=$(date +%s.%N)
                 # shellcheck disable=SC2086
                 timeout "$TIMEOUT" "$BIN/llama-pipe-recurrent-check" -m "$m" -f "$HERE/prompts/rewrite.txt" -n "$N" $LARGS \
                     > "$OUTD/prc-$a.log" 2>&1
                 rc=$?
+                tm "$a" recurrent "$t0"
                 line=$(grep -a -o 'PIPE-RECURRENT-CHECK.*' "$OUTD/prc-$a.log" | tail -n 1)
                 v "$a" recurrent "$(case $rc in 0) echo OK ;; 2) echo DIFFERS ;; *) echo FAIL ;; esac)" \
                     "llama-pipe-recurrent-check rc=$rc: ${line:-$(last "$OUTD/prc-$a.log")}"
@@ -233,10 +326,12 @@ if [ "${GPU_PIPE_INNER:-}" = 1 ]; then
             [ -f "$f" ] && { m=$f; break; }
         done
         if have llama-completion && [ -n "$m" ]; then
+            t0=$(date +%s.%N)
             # shellcheck disable=SC2086
             timeout 300 "$BIN/llama-completion" -m "$m" -p 'The quick brown fox' -n 1 $LARGS -no-cnv --temp 0 -lv 4 \
                 > "$OUTD/kernels.log" 2>&1 < /dev/null
             rc=$?
+            tm all kernels "$t0"
             f=$(grep -aoE '(MMV[QF]_PASCAL|COMPUTE_6_1) = 1' "$OUTD/kernels.log" | sort -u | paste -sd' ')
             nd=$(grep -ac 'using device CUDA' "$OUTD/kernels.log")
             mb=$(grep -aoE 'CUDA[0-9]+ model buffer size = *[0-9.]+ MiB' "$OUTD/kernels.log" | sed -E 's/ model buffer size = */ /' |
@@ -266,6 +361,17 @@ if ! [[ "$MODEL_SEED" =~ ^[0-9]{1,19}$ ]]; then
     echo "gpu_pipe_check.sh: MODEL_SEED='$MODEL_SEED' is not a whole number of at most 19 digits (test-llama-archs -s takes one); nothing was run" >&2
     exit 2
 fi
+# the other numbers (the race's seeds are SAMPLE_SEED-1 and up, so SAMPLE_SEED is at least 1)
+for kv in "N=$N" "SAMPLE_SEED=$SAMPLE_SEED" "RACE=$RACE" "RACE_AT=$RACE_AT" ${FLOOR:+"FLOOR=$FLOOR"}; do
+    if ! [[ "${kv#*=}" =~ ^[0-9]{1,9}$ ]] || { [ "${kv%%=*}" != RACE_AT ] && [ "${kv#*=}" -lt 1 ]; }; then
+        echo "gpu_pipe_check.sh: ${kv%%=*}='${kv#*=}' is not a whole number of at least 1 (RACE_AT may be 0); nothing was run" >&2
+        exit 2
+    fi
+done
+JOBS=${JOBS:-0}
+[[ "$JOBS" =~ ^[0-9]{1,4}$ ]] || { echo "gpu_pipe_check.sh: JOBS='$JOBS' is not a whole number (0: every container at once); nothing was run" >&2; exit 2; }
+THREADS=${THREADS:-2}
+[[ "$THREADS" =~ ^[1-9][0-9]{0,2}$ ]] || { echo "gpu_pipe_check.sh: THREADS='$THREADS' is not a whole number of at least 1; nothing was run" >&2; exit 2; }
 mkdir -p "$WORK"
 WORK=$(cd "$WORK" && pwd)
 GPUS=${GPUS:-0,1,2}
@@ -287,7 +393,7 @@ P106_ENV=${P106_ENV:-GGML_CUDA_MMVQ_PASCAL=2 GGML_CUDA_MMVF_PASCAL=2 GGML_CUDA_M
 # every GGML_CUDA_MMV* switch of release/flash-next-v5/settings.env, GGML_CUDA_MMVF_F32_MT at 2 for the preset's 1 (C968)
 FN_SW=${FN_SW:-GGML_CUDA_MMVQ_PASCAL_KCOL_SMEM=32768 GGML_CUDA_MMVQ_PASCAL_KCOL_TABLE=0 GGML_CUDA_MMVQ_PASCAL_DMT=1 GGML_CUDA_MMVQ_PASCAL_Q5K_MT=1 GGML_CUDA_MMVQ_PASCAL_Q3K_MT=1 GGML_CUDA_MMVQ_PASCAL_GLU_MT=1 GGML_CUDA_MMVQ_PASCAL_Q6K_MT=1 GGML_CUDA_MMVF_F32_MT=2 GGML_CUDA_MMVQ_PASCAL_KCOL_EXACT=1 GGML_CUDA_MMVQ_PASCAL_KCOL_SKIP=q4_0,q5_0}
 P106ALL_ENV=${P106ALL_ENV:-$P106_ENV GGML_CUDA_ATTN_BLOCK=2 GGML_CUDA_PERSISTENT_MOE=2 GGML_CUDA_FATTN_TILE_PASCAL=2 GGML_CUDA_MMVF_F32_MT=2}
-BASE_ARGS="-ngl 99 -fa on -c 2048 -fit off"
+BASE_ARGS="-ngl 99 -fa on -c 2048 -fit off -t $THREADS"
 # the quantized copies the arms name (every kind but f32)
 KINDS=$(for a in $ARMS; do echo "${a%%-*}"; done | grep -vx f32 | sort -u | paste -sd' ')
 ones() { local s=1 i; for ((i = 1; i < $1; i++)); do s="$s,1"; done; echo "$s"; }
@@ -309,8 +415,12 @@ DR=(docker run --rm --network none ${DOCKER_ARGS:-} "${VOL[@]}" -e "CUDA_CACHE_P
 rm -f "$WORK/DONE"
 [ -f "$WORK/summary.tsv" ] ||
     printf 'tree\tarm\tlayout\tarch\tcheck\tverdict\tdetail\tplain tokens hash\tplain logits hash\n' > "$WORK/summary.tsv"
+[ -f "$WORK/times.tsv" ] || printf 'tree\tarm\tlayout\tarch\tcheck\tseconds\n' > "$WORK/times.tsv"
+[ -f "$WORK/jobs.tsv" ] || printf 'tree\tjob\tcards\trc\tseconds\n' > "$WORK/jobs.tsv"
+# <tree> <job> <cards> <rc> <start, date +%s>: a line of jobs.tsv
+jobline() { printf '%s\t%s\t%s\t%s\t%s\n' "$1" "$2" "$3" "$4" "$(($(date +%s) - $5))" >> "$WORK/jobs.tsv"; }
 md5sum "$SELF" "$HERE/check_identity.sh" "$HERE/prompts/rewrite.txt" > "$WORK/scripts.md5"
-say "gpu pipe check: builds '$BUILDS', cards $GPUS, layouts '$LAYOUTS', arms '$ARMS', archs '$ARCHS', checks '$CHECKS', model seed $MODEL_SEED ($SEEDNOTE)"
+say "gpu pipe check: builds '$BUILDS', cards $GPUS, layouts '$LAYOUTS', arms '$ARMS', archs '$ARCHS', checks '$CHECKS', jobs $JOBS, threads $THREADS, model seed $MODEL_SEED ($SEEDNOTE), N=$N, sampling '$SAMPLING' seed $SAMPLE_SEED, floor ${FLOOR:-none}, race of $RACE from token $RACE_AT"
 echo "$MODEL_SEED" > "$WORK/model_seed.txt"
 # whether fn still matches the Flash-Next preset, when this folder sits in the repo
 fnused=0
@@ -364,14 +474,18 @@ job() {
     rm -rf "$o"
     mkdir -p "$o"
     docker rm -f "$c" > /dev/null 2>&1
+    local t0
+    t0=$(date +%s)
     # shellcheck disable=SC2086
-    timeout $(( (4 * $(echo $ARCHS | wc -w) + 2) * TIMEOUT )) "${DR[@]}" --name "$c" --gpus "\"device=$cards\"" "$IMG" \
+    timeout $(( (6 * $(echo $ARCHS | wc -w) + 2) * TIMEOUT )) "${DR[@]}" --name "$c" --gpus "\"device=$cards\"" "$IMG" \
         env $senv GPU_PIPE_INNER=1 BIN="$bin" MD="$WORK/$tag/models" KIND="$kind" OUTD="$o" LARGS="$largs" PARGS="$pargs" \
-        ARCHS="$ARCHS" CHECKS="$CHECKS" N="$N" TIMEOUT="$TIMEOUT" NSYS="$NSYS" bash "$SELF" > "$o/container.log" 2>&1
+        ARCHS="$ARCHS" CHECKS="$CHECKS" N="$N" SAMPLING="$SAMPLING" SAMPLE_SEED="$SAMPLE_SEED" FLOOR="$FLOOR" RACE="$RACE" \
+        RACE_AT="$RACE_AT" TIMEOUT="$TIMEOUT" NSYS="$NSYS" bash "$SELF" > "$o/container.log" 2>&1
     local rc=$?
     docker rm -f "$c" > /dev/null 2>&1
+    jobline "$tag" "$arm-$layout" "$cards" "$rc" "$t0"
     [ $rc = 0 ] || printf 'all\tcontainer\tFAIL\trc=%s (124: timed out): %s\t-\t-\n' "$rc" "$(tail -n 1 "$o/container.log")" >> "$o/verdicts.tsv"
-    say "$tag $arm $layout (cards $cards): rc=$rc; $(cut -f3 "$o/verdicts.tsv" 2> /dev/null | sort | uniq -c | awk '{printf "%s %s; ", $1, $2}')"
+    say "$tag $arm $layout (cards $cards): rc=$rc in $(($(date +%s) - t0)) s; $(cut -f3 "$o/verdicts.tsv" 2> /dev/null | sort | uniq -c | awk '{printf "%s %s; ", $1, $2}')"
 }
 
 for spec in $BUILDS; do
@@ -379,6 +493,7 @@ for spec in $BUILDS; do
     T=$WORK/$tag
     mkdir -p "$T/models"
     say "$tag: $bin"
+    tb=$(date +%s)
     (cd "$bin" && md5sum llama-pipespec llama-pipe-recurrent-check test-llama-archs llama-completion 2>&1) > "$T/bin.md5"
     quant=${QUANT:-$bin/llama-quantize}
     [ -n "$KINDS" ] && md5sum "$quant" >> "$T/bin.md5" 2>&1
@@ -409,6 +524,7 @@ for spec in $BUILDS; do
                     echo "$(md5sum < "$d/$k.gguf" | cut -c1-32)  $a/$k.gguf" || echo "$a: no $k copy ($log)"
             done
         done' _ "$T" "$bin" "$MODEL_SEED" "$KINDS" "$QUANT_ARGS" "$quant" "$MIX_ARGS" $ARCHS > "$T/models.md5" 2>&1
+    jobline "$tag" models "${G[0]}" "$?" "$tb"
     say "$tag models: $(grep -c '\.gguf$' "$T/models.md5") files; $(grep -a 'no ' "$T/models.md5" | tr '\n' ' ')"
     docker rm -f "$NAME-$tag-models" > /dev/null 2>&1
     # each copy's tensors by type, from llama-quantize's log (its last word on each tensor: the type it wrote)
@@ -422,22 +538,30 @@ for spec in $BUILDS; do
         done
     done > "$T/types.tsv"
 
-    # one-card layouts: up to one container per card at a time; then the split layouts, one at a time over every card
+    # the containers: the split layouts first (over every card), then the one-card layouts (the cards in turn), JOBS of
+    # them at a time
+    q=()
+    for layout in $LAYOUTS; do
+        [ "$layout" = split ] || continue
+        for spec in $ARMS; do inlayout "$spec" split && q+=("${spec%%@*} split $GPUS"); done
+    done
     i=0
     for layout in $LAYOUTS; do
         case $layout in one | virt) ;; *) continue ;; esac
         for spec in $ARMS; do
             inlayout "$spec" "$layout" || continue
-            job "$tag" "$bin" "${spec%%@*}" "$layout" "${G[$((i % NG))]}" &
+            q+=("${spec%%@*} $layout ${G[$((i % NG))]}")
             i=$((i + 1))
-            [ $((i % NG)) = 0 ] && wait
         done
     done
-    wait
-    for layout in $LAYOUTS; do
-        [ "$layout" = split ] || continue
-        for spec in $ARMS; do inlayout "$spec" split && job "$tag" "$bin" "${spec%%@*}" split "$GPUS"; done
+    n=0
+    for j in "${q[@]}"; do
+        read -r arm layout cards <<< "$j"
+        job "$tag" "$bin" "$arm" "$layout" "$cards" &
+        n=$((n + 1))
+        [ "$JOBS" -gt 0 ] && [ "$n" -ge "$JOBS" ] && { wait -n; n=$((n - 1)); }
     done
+    wait
     for layout in $LAYOUTS; do
         for spec in $ARMS; do
             inlayout "$spec" "$layout" || continue
@@ -445,8 +569,12 @@ for spec in $BUILDS; do
             f=$T/$arm-$layout/verdicts.tsv
             [ -f "$f" ] || { printf '%s\t%s\t%s\tall\tcontainer\tFAIL\tno verdicts\t-\t-\n' "$tag" "$arm" "$layout" >> "$WORK/summary.tsv"; continue; }
             awk -v t="$tag" -v a="$arm" -v l="$layout" 'BEGIN { FS = OFS = "\t" } { print t, a, l, $0 }' "$f" >> "$WORK/summary.tsv"
+            awk -v t="$tag" -v a="$arm" -v l="$layout" 'BEGIN { FS = OFS = "\t" } { print t, a, l, $0 }' \
+                "$T/$arm-$layout/times.tsv" >> "$WORK/times.tsv" 2> /dev/null
         done
     done
+    jobline "$tag" total "$GPUS" - "$tb"
+    say "$tag: $(($(date +%s) - tb)) s for the build"
 done
 
 say "done: our containers left: $(docker ps -q --filter "name=^$NAME-" | wc -l); card MiB: $(nvidia-smi --query-gpu=memory.used --format=csv,noheader,nounits -i "$GPUS" 2> /dev/null | paste -sd' ')"

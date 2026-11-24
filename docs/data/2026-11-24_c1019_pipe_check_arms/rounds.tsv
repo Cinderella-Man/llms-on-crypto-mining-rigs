@@ -1,0 +1,12 @@
+round	script	builds	settings	rc	seconds	verdicts	other jobs' containers at start
+t12/old	old	tip		0	113	5 INFO; 75 OK; 	1
+t12/serial	new	tip	JOBS=1	0	384	5 INFO; 125 OK; 	0
+t12/jobs3	new	tip	JOBS=3	0	432	5 INFO; 125 OK; 	0
+t12/jobsall	new	tip	JOBS=0	0	707	5 INFO; 125 OK; 	0
+t2/jobsall	new	tip	JOBS=0 THREADS=2	0	167	5 INFO; 125 OK; 	1
+t2/jobs3	new	tip	JOBS=3 THREADS=2	0	297	5 INFO; 125 OK; 	1
+t2/defaults	new	base head	THREADS=2	0	764	10 INFO; 250 OK; 	1
+t2/fault	new	base head	THREADS=2	1	745	25 DIFFERS; 10 INFO; 225 OK; 	1
+t2/types	new	tip	ARMS=q2_0-fn-c4 q4_k-fn-c4 q5_k-fn-c4 q6_k-fn-c4 iq4_xs-fn-c4 THREADS=2	0	476	10 INFO; 250 OK; 	1
+q2/jobsall	new	tip	JOBS=0 THREADS=2	0	173	5 INFO; 125 OK; 	0
+q2/old	old	tip	THREADS=2	0	112	5 INFO; 75 OK; 	0
