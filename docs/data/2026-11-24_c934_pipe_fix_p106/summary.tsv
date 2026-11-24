@@ -1,0 +1,11 @@
+step	model	build	rc	pipelined jobs	jobs differing	jobs with other tokens	plain logits hash
+random	qwen4exp	ref	1	13	13	0	bf25a5eb24f82b1a
+random	qwen4exp	ref-fuse0	0	13	0	0	bf25a5eb24f82b1a
+random	qwen4exp	new	0	13	0	0	bf25a5eb24f82b1a
+random	flint	ref	0	13	0	0	10639afab5fda5c4
+random	flint	ref-fuse0	0	13	0	0	10639afab5fda5c4
+random	flint	new	0	13	0	0	10639afab5fda5c4
+flint	flint-q8	new	0	7	0	0	96d96b8aafcce425
+flint	flint-q8	ref	0	7	0	0	96d96b8aafcce425
+fn	swift-q2	ref	1	13	13	13	12a9ae53edfff142
+fn	swift-q2	new	0	13	0	0	12a9ae53edfff142

@@ -172,6 +172,10 @@ All on the CPU of a build machine, against the base `3dfad876f`, with nothing se
 
 ## The P106 check (its own row, not run here)
 
+**Run on 2026-11-24 and passed** ([2026-11-24_c934_pipe_fix_p106](../2026-11-24_c934_pipe_fix_p106/README.md), Q1672), with the fix as
+landed in `pascal-p106-v5` (`af00bb13b`) against the tip before it (`8a9629942`): the base's fault shows on the P106,
+on the real file too, and the fix gives plain decoding's hashes in every pipelined job; Flint the same on both builds.
+
 `run/p106_check.sh` runs on the rig, with the fix's rig build and the base's, and nothing is timed.
 
 1. **Random models on card 0.** Flash-Next and Flint random models (made by the fix's `test-llama-archs`), 96 tokens,
