@@ -1,0 +1,25 @@
+arm	type	row_check	tile_rows_x_cols
+mul_mat-j64i64	q1_0	row check	64 x 64
+mul_mat-j64i64	q1_0	no row check	64 x 64
+mul_mat-j64i64	q2_0	row check	64 x 64
+mul_mat-j64i64	q2_0	no row check	64 x 64
+mul_mat-j64i64	q4_0	row check	64 x 64
+mul_mat-j64i64	q4_0	no row check	64 x 64
+mul_mat-j64i64	q4_1	row check	64 x 64
+mul_mat-j64i64	q4_1	no row check	64 x 64
+mul_mat-j64i64	q5_0	row check	64 x 64
+mul_mat-j64i64	q5_0	no row check	64 x 64
+mul_mat-j64i64	q5_1	row check	64 x 64
+mul_mat-j64i64	q5_1	no row check	64 x 64
+mul_mat-j64i64	q8_0	row check	64 x 64
+mul_mat-j64i64	q8_0	no row check	64 x 64
+mul_mat-j64i64	iq2_xxs	row check	64 x 64
+mul_mat-j64i64	iq2_xxs	no row check	64 x 64
+mul_mat-j64i64	iq3_xxs	row check	64 x 64
+mul_mat-j64i64	iq3_xxs	no row check	64 x 64
+mul_mat-j64i64	iq4_nl	row check	64 x 64
+mul_mat-j64i64	iq4_nl	no row check	64 x 64
+mul_mat-j64i64	iq4_xs	row check	64 x 64
+mul_mat-j64i64	iq4_xs	no row check	64 x 64
+mul_mat_id-j64i64	q8_0	row check	64 x 64
+mul_mat_id-j64i64	iq2_xxs	row check	64 x 64

@@ -1,0 +1,15 @@
+check	what	result
+source	fork/pascal-p106-v5-mmq-j64-tile against the candidate eee615cdb	ebec6544e, one commit: 15 files, 213 lines added, 2 removed
+rig build	scripts/build_llamacpp_docker.sh with TESTS=1, web page b12674	rc 0; llama.cpp-20261124-ebec6544e-pascal-p106-v5-mmq-j64-tile.tar.gz, 1,416,336,444 B, md5 a2e397f480f39f7ce7f86d20a969bcff (candidate's 1,403,235,928 B); llama-server md5 ac6e5a6d36621a27e7c2ab252768ef2f, test-backend-ops md5 24a37ae645a34e2db52a334eb302812d; 21 binaries, the candidate's names; 0 AVX instructions in llama-bench; highest glibc symbol GLIBC_2.38
+warnings	the rig build's warning lines against the candidate's (line numbers dropped)	32 and 32; none new
+reference build	the candidate with its DP4A table's 22 J=64 rows of the 11 types at 64 rows, TESTS=0	rc 0; the patch applied cleanly; llama-server md5 3141096bcdb660669d812ab84f61cc51
+SASS, candidate against reference	every kernel copy of llama-server (10,009 and 10,009)	9,442 of 9,508 names the same bytes; 66 differ in code: the 11 types' 64-column mul_mat_q (22), its forced-tiling twin (22) and stream-k fixup (22)
+SASS, candidate against head	every kernel copy of llama-server (10,009 and 10,075)	7,778 of 9,508 names the same bytes; 1,664 differ only in one MOV32I constant, a stub's printed source line (1,103 to 1,124); the 66 names above hold one more copy each in the head; no candidate copy missing
+SASS, the switch's kernels	the head's two copies of each 64-column mul_mat_q of the 11 types, without and with the row check (22 names)	22 of 22: one copy the candidate's, the other the reference's, byte for byte; instructions in j64_sass.tsv
+PTX, the switch's kernels	the head's 64-column mul_mat_q entries of the 11 types against the reference's, basic-block labels renumbered (run/ptx_j64.py)	44 of 44 (the 22 and their forced-tiling twins) the same text; the 4 fused gate/up entries are 30-instruction stubs that trap on this table, the same in candidate and reference
+MUL_MAT, switch unset	test-backend-ops -o MUL_MAT, every case but dup=1, a P106's Pascal paths forced, GPU 0	5,458 of 5,458 passed (521 not supported); the 297 C1024 cases 297 OK; no first-launch line
+MUL_MAT, switch 2	the same with GGML_CUDA_MMQ_J64_I64=2, GPU 1	5,458 of 5,458 passed (521 not supported); the 297 C1024 cases 297 OK; 22 first-launch lines, every copy at 64 x 64
+MUL_MAT, switch 1	the 297 C1024 cases with GGML_CUDA_MMQ_J64_I64=1 on a card that is not compute 6.1, GPU 0	297 of 297 passed; the switch's line logged, no first-launch line (no launch redirected)
+MUL_MAT_ID, switch unset	test-backend-ops -o MUL_MAT_ID, the 11 types' cases but dup=1, GPU 0	968 of 968 passed
+MUL_MAT_ID, switch 2	the same with GGML_CUDA_MMQ_J64_I64=2, GPU 1	968 of 968 passed; 2 first-launch lines (Q8_0 and IQ2_XXS with the row check, 64 x 64)
+MUL_MAT_ID, whole suite (stopped)	the first run's every-type MUL_MAT_ID arms, stopped to run the 11 types alone	751 (unset) and 748 (switch 2) cases passed, none failed, when stopped

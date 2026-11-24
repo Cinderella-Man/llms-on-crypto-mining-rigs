@@ -1,0 +1,6 @@
+arm	rc	passed	OK	FAIL	not_supported	C1024_cases	C1024_OK	switch_line	first_launch_lines
+mul_mat-unset	0	5458/5458	5458	0	521	297	297	-	0
+mul_mat-j64i64	0	5458/5458	5458	0	521	297	297	GGML_CUDA_MMQ_J64_I64=2: 64-column prompt tiles keep 64 rows (any NVIDIA GPU on the DP4A table)	22
+mul_mat_id-unset	0	968/968	968	0	0	0	0	-	0
+mul_mat_id-j64i64	0	968/968	968	0	0	0	0	GGML_CUDA_MMQ_J64_I64=2: 64-column prompt tiles keep 64 rows (any NVIDIA GPU on the DP4A table)	2
+mul_mat-j64-mode1	0	297/297	297	0	0	297	297	GGML_CUDA_MMQ_J64_I64=1: 64-column prompt tiles keep 64 rows (compute 6.1 only)	0
