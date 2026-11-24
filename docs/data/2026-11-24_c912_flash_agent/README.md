@@ -19,7 +19,7 @@ with or without that task:
   acceptance (0.781 against 0.742), which follows the text the model sampled, not from a faster engine.
 - **Prompts:** the 13 requests both runs read on the same prompt and cached prefix took 93.71 s against 92.75 s
   (1.0 % more), inside the 1.6 % between R227's two runs of the same command on the 15 such requests they share.
-  Seven of the 13 were faster on the candidate; two first turns were slower.
+  Eight of the 13 were faster on the candidate; two first turns were slower (by 19.4 % and 7.3 %).
 - **No regressions:** no server error, no reply read again, no graph reallocation, the same peak memory on every card.
 
 With the P106 check and Ornith's agent run, all three checks for moving `pascal-p106-v5` to `eee615cdb` have passed.
@@ -135,7 +135,8 @@ A measure is a gain or a loss only where the candidate differs from the control 
 - **Prompts on the same work: negligible.** 13 requests read the same new tokens on the same cached prefix in both runs
   ([same_prompts_pair.md](same_prompts_pair.md)). They took 93.71 s on the candidate against 92.75 s (+1.0 %); R227's
   two runs took 92.74 and 91.32 s on the 15 such requests they share (1.6 % apart,
-  [same_prompts_refs.md](same_prompts_refs.md)). Seven of the 13 were faster on the candidate. Two first turns were slower: JavaScript `space-age` (803 new tokens, 6.22 s against 5.21) and
+  [same_prompts_refs.md](same_prompts_refs.md)). Eight of the 13 were faster on the candidate and three slower (by
+  0.2 %, 0.2 % and 1.7 %). Two first turns were slower by more: JavaScript `space-age` (803 new tokens, 6.22 s against 5.21) and
   Python `phone-number` (1,130 new tokens, 7.30 s against 6.81). Without those two the candidate was 0.7 % faster
   (80.19 s against 80.74). Both are read in the taper's 64-token micro-batches, as 10 of the 13 are. Ornith's prompts
   were 3.2 % faster on the candidate; Flash-Next's 64-token micro-batches are where upstream's 128-row prompt tiles

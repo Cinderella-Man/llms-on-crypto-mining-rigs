@@ -184,9 +184,16 @@ against 1.88. At the shared mix a decode step took 51.37 ms against 51.46. The 1
 engine: the control's second run on the same boot gives the spread before a class. Flash-Next's run remains.
 
 **Flash-Next's agent run on 2026-11-24** ([2026-11-24_c912_flash_agent](../2026-11-24_c912_flash_agent/README.md)): on
-the first rig at stock, the v5 preset on the candidate passed 12 of 12 tasks with no server error and no reply read
-again: 2.34 minutes a task at equal work, 28.59 tok/s generation, 117.02 ms a decode step, prompts at 144.7 tok/s. Its
-control, the same launcher on `af00bb13b` on the same boot, remains before a class.
+the first rig at stock, the v5 preset on the candidate against a control run of the same launcher on `af00bb13b` on the
+same boot. The candidate passed 12 of 12 tasks and the control 11 of 12 (its `complex-numbers` ran to the turn cap); no
+server error, no reply read again. No measure is a loss. Without the capped task a task took 2.42 minutes at equal work
+against 2.45 and a decode step 117.06 ms against 117.35. The 13 requests read on the same prompt took 93.71 s against
+92.75, inside the gap between two runs of one build. The candidate's server counts every sampled token under the
+tool-call grammar, where `af00bb13b` counts only the tokens after a tool call opens; Ornith's run shows the same, at no
+cost on either model (registry Q1813).
+
+**All three checks have passed:** the P106 check, Ornith's agent run and Flash-Next's. `pascal-p106-v5` fast-forwards
+to `eee615cdb` on the owner's word.
 
 ## Files
 
