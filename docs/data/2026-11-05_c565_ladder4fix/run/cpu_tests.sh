@@ -29,31 +29,43 @@
 #           trees' hand logs compare line by line (compare_hand.py); hand/models.md5 lists the models' checksums. Each
 #           test writes its log from inside its container, stdout and stderr into one file: docker would carry them as
 #           two streams and interleave them differently on every run
-#   pipe    pipelined decoding against plain decoding (C935), which ctest never runs: for each architecture of PIPE_ARCHS
-#           (by default every one llama_pipe_init accepts: the delta-net models qwen4exp, qwen35, qwen35moe and
-#           qwen3next, and flint, Flint's architecture, a model without recurrent state), a random model from this tree's
-#           test-llama-archs with -s PIPE_SEED and a 4,096-token vocabulary (its MoE model where it writes one), then on
-#           the CPU (-ngl 0 -fa on -c 2048, greedy, PIPE_N tokens of prompts/rewrite.txt as plain text):
-#             identity   bench/pipespec/check_identity.sh, depths 1 and 3, 0 and 50 % wrong guesses (the oracle), the four
-#                        guessers and depth 0: every pipelined run's tokens, logits, KV state and probe hashes plain's
-#             recurrent  llama-pipe-recurrent-check: the rollbacks the slot rotation rarely makes (the stash, dropped
-#                        guesses, the token in flight dropped and sent again), each hash plain's
-#           OK when every hash is plain's, DIFFERS when a pipelined run gives other hashes, FAIL when a tool stopped
-#           before comparing. It runs whenever STEPS names pipe or hand, so every check that runs the hand step runs it
-#           too; PIPE_ARCHS='' leaves it out. It needs check_identity.sh and prompts/rewrite.txt: PIPESPEC=<bench/pipespec>,
-#           by default ./pipespec beside this script, else bench/pipespec of the repository this script is in; both
-#           are copied into the tree's pipe/ folder, so the record holds the script that ran. A tree with ":<targets>"
-#           runs it when its targets include llama-pipespec, llama-pipe-recurrent-check and test-llama-archs
+#   pipe    pipelined decoding against plain decoding (C935, widened by C1010), which ctest never runs: for each
+#           architecture of PIPE_ARCHS (by default every one llama_pipe_init accepts: the delta-net models qwen4exp,
+#           qwen35, qwen35moe and qwen3next, and flint, Flint's architecture, a model without recurrent state), every
+#           random model this tree's test-llama-archs writes with -s PIPE_SEED and a 4,096-token vocabulary (MoE and
+#           dense where it writes both: the MoE model is checked as <arch>, the dense one as <arch>-dense), then on the
+#           CPU (-ngl 0 -fa on -c 2048, PIPE_N tokens of prompts/rewrite.txt as plain text), the arms of PIPE_ARMS:
+#             identity   bench/pipespec/check_identity.sh, greedy: depth 0, the floor (depth PIPE_FLOOR, every guess a
+#                        filler token), and at depths 1 and 3 the oracle with 0 and 50 % of its guesses wrong and the four
+#                        guessers: every pipelined run's tokens, logits, KV state and probe hashes plain's
+#             sampled    the same with seeded sampling (PIPE_SAMPLING --seed PIPE_SAMPLE_SEED)
+#             race       the same with a race of PIPE_RACE samples (seeds PIPE_SAMPLE_SEED-1, PIPE_SAMPLE_SEED, ...) at
+#                        depths 1 and 3 with 50 % wrong guesses; its stop text is the token the sampled arm's plain run
+#                        (the race's sample 1) first emits at or after token PIPE_RACE_AT, so the race ends part way and
+#                        the winner goes on alone with the guessers; the winner, the race's tokens and every sample's
+#                        tokens and logits are compared too
+#             recurrent  llama-pipe-recurrent-check (greedy): the rollbacks the slot rotation rarely makes (the stash,
+#                        dropped guesses, the token in flight dropped and sent again), each hash plain's
+#           Verdicts "pipe <model> <arm>": OK when every hash is plain's, DIFFERS when a pipelined run gives other hashes,
+#           FAIL when a tool stopped before comparing; pipe/times.tsv has each check's seconds. It runs whenever STEPS
+#           names pipe or hand, so every check that runs the hand step runs it too; PIPE_ARCHS='' leaves it out. It needs
+#           check_identity.sh and prompts/rewrite.txt: PIPESPEC=<bench/pipespec>, by default ./pipespec beside this
+#           script, else bench/pipespec of the repository this script is in; both are copied into the tree's pipe/
+#           folder, so the record holds the script that ran. A tree with ":<targets>" runs it when its targets include
+#           llama-pipespec, llama-pipe-recurrent-check and test-llama-archs
 # TREES: '<tag>=<commit>[+<commit>...][:<targets>][@<base tag>] ...'; a tree with ":<targets>" runs only archs, ident
 #   and pipe.
 # Usage: WORK=<dir> SRC=<llama.cpp clone holding the commits> TREES='...' [STEPS='tree build ctest archs ident hand pipe']
 #   [JOBS=8] [SHARED=ON] [CTEST_JOBS=8] [THREADS=8] [LOCK=<flock file>] [DOCKER_ARGS=...] [BASE_IMAGE=ubuntu:24.04]
 #   [IMAGE=pq-c565-cpu:24.04] [PIP='<packages>'] [MODEL15M=<file>] [CTEST_EXCLUDE=<names, a|b>] [NET_TESTS=<names>]
 #   [KEEP_BUILD=1] [HAND_SEED=1] [PIPESPEC=<dir>] [PIPE_ARCHS='qwen4exp qwen35 qwen35moe qwen3next flint'] [PIPE_SEED=1]
-#   [PIPE_N=64] [PIPE_TIMEOUT=900] [CMAKE_ARGS=<cmake options>] bash cpu_tests.sh
+#   [PIPE_N=256] [PIPE_ARMS='identity sampled race recurrent'] [PIPE_SAMPLING='--temp 1 --top-k 20 --top-p 0.95']
+#   [PIPE_SAMPLE_SEED=42] [PIPE_FLOOR=3] [PIPE_RACE=2] [PIPE_RACE_AT=PIPE_N/4] [PIPE_TIMEOUT=900]
+#   [CMAKE_ARGS=<cmake options>] bash cpu_tests.sh
 # Output: $WORK/<tag>/ (tree.txt, build.log, ctest.log, ctest.xml, archs/*.log, ident/*.log, hand/*.log, the logits
-#   in archs/logits/, pipe/: models/<arch>/ with gen.log, models.md5, <arch>.log check_identity's table and <arch>/ its
-#   folder, prc-<arch>.log, the two scripts), $WORK/summary.tsv (tree, check, verdict, detail); done when $WORK/DONE exists
+#   in archs/logits/, pipe/: models/<arch>/ with gen.log, models.md5, <model>-<arm>.log check_identity's table and
+#   <model>-<arm>/ its folder, <model>-recurrent.log, times.tsv, the two scripts), $WORK/summary.tsv (tree, check,
+#   verdict, detail); done when $WORK/DONE exists
 set -uo pipefail
 WORK=$(realpath "${WORK:?WORK=<work dir>}")
 SRC=$(realpath "${SRC:?SRC=<llama.cpp clone>}")
@@ -66,8 +78,16 @@ THREADS=${THREADS:-8}
 HAND_SEED=${HAND_SEED:-1}
 PIPE_ARCHS=${PIPE_ARCHS-qwen4exp qwen35 qwen35moe qwen3next flint}
 PIPE_SEED=${PIPE_SEED:-1}
-PIPE_N=${PIPE_N:-64}
+PIPE_N=${PIPE_N:-256}
+PIPE_ARMS=${PIPE_ARMS-identity sampled race recurrent}
+PIPE_SAMPLING=${PIPE_SAMPLING:---temp 1 --top-k 20 --top-p 0.95}
+PIPE_SAMPLE_SEED=${PIPE_SAMPLE_SEED:-42}
+PIPE_FLOOR=${PIPE_FLOOR-3}
+PIPE_RACE=${PIPE_RACE:-2}
+PIPE_RACE_AT=${PIPE_RACE_AT:-$((PIPE_N / 4))}
 PIPE_TIMEOUT=${PIPE_TIMEOUT:-900}
+# the random models' vocabulary; the race's stop text is hashed to a token id modulo this (the dummy tokenizer's rule)
+PIPE_VOCAB=4096
 PIPE_TOOLS="llama-pipespec llama-pipe-recurrent-check test-llama-archs"
 if [ -z "${PIPESPEC:-}" ]; then
     HERE=$(cd "$(dirname "$0")" && pwd)
@@ -104,6 +124,78 @@ pipe_on() { [ -n "$PIPE_ARCHS" ] && { step pipe || step hand; }; }
 box()     { docker run --rm $D -v "$WORK:$WORK" ${MODEL15M:+-v "$(dirname "$MODEL15M"):$(dirname "$MODEL15M"):ro"} "$IMAGE" "$@"; }
 # <log> <command ...>: the command in a container, its stdout and stderr into <log> from inside the container
 inbox()   { box bash -c 'f=$1; shift; exec "$@" > "$f" 2>&1' _ "$@"; }
+
+# the pipe step's helpers (they use the tree's $P, $B, $pargs and $tag)
+# <model> <arm> <start, date +%s.%N>: a line of pipe/times.tsv
+pipe_time() { printf '%s\t%s\t%s\n' "$1" "$2" "$(awk -v a="$3" -v b="$(date +%s.%N)" 'BEGIN { printf "%.1f", b - a }')" >> "$P/times.tsv"; }
+# <plain.tok of the sampled arm, "<position> <token> <hash>" lines>: "<position> <token>" of the first token at or after
+# PIPE_RACE_AT that the sample had not emitted before (else the last such token before it, from position 1)
+pipe_race_tok() {
+    awk -v at="$PIPE_RACE_AT" '!($2 in seen) && $1 >= 1 { if ($1 >= at) { if (t == "") t = $1 " " $2 } else l = $1 " " $2 }
+        { seen[$2] = 1 } END { print (t != "" ? t : l) }' "$1"
+}
+# <token id>: a text of two or three letters and digits that the random models' dummy tokenizer turns into that one
+# token (it cuts text into chunks of 5 bytes and hashes each, h = 31 h + byte, modulo the vocabulary)
+pipe_stop_text() {
+    awk -v t="$1" -v V="$PIPE_VOCAB" 'BEGIN {
+        a = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"; n = length(a)
+        for (c = 32; c < 127; c++) ord[sprintf("%c", c)] = c
+        for (i = 1; i <= n; i++) { ch[i] = substr(a, i, 1); o[i] = ord[ch[i]] }
+        for (i = 1; i <= n; i++) for (j = 1; j <= n; j++) if ((o[i] * 31 + o[j]) % V == t) { print ch[i] ch[j]; exit }
+        for (i = 1; i <= n; i++) for (j = 1; j <= n; j++) for (k = 1; k <= n; k++)
+            if (((o[i] * 31 + o[j]) * 31 + o[k]) % V == t) { print ch[i] ch[j] ch[k]; exit }
+    }'
+}
+# <model key> <arm> <gguf> <its md5>: one arm of the pipe step, its verdict and its time
+pipe_arm() {
+    local key=$1 arm=$2 m=$3 md5=$4 t0 rc v why runs nr nd line pt desc
+    local -a env=()
+    t0=$(date +%s.%N)
+    case $arm in
+        identity) desc="greedy, depths 1 3, misses 0 0.5" env=(DEPTHS="1 3" MISSES="0 0.5") ;;
+        sampled)  desc="$PIPE_SAMPLING --seed $PIPE_SAMPLE_SEED, depths 1 3, misses 0 0.5"
+                  env=(DEPTHS="1 3" MISSES="0 0.5" SAMPLING="$PIPE_SAMPLING --seed $PIPE_SAMPLE_SEED") ;;
+        race)
+            desc="race of $PIPE_RACE, $PIPE_SAMPLING --seed $((PIPE_SAMPLE_SEED - 1)), depths 1 3, miss 0.5"
+            env=(DEPTHS="1 3" MISSES="0.5" RACE="$PIPE_RACE" SAMPLING="$PIPE_SAMPLING --seed $((PIPE_SAMPLE_SEED - 1))")
+            # the stop: a token the sampled arm's sample (seed PIPE_SAMPLE_SEED, the race's sample 1) emits part way
+            pt=""; [ -f "$P/$key-sampled/plain.tok" ] && pt=$(pipe_race_tok "$P/$key-sampled/plain.tok")
+            if [ -n "$pt" ]; then
+                env+=(RACE_STOP="$(pipe_stop_text "${pt#* }")")
+                desc="$desc, stop token ${pt#* } (text ${env[-1]#RACE_STOP=}, sample 1's token ${pt% *})"
+            else
+                desc="$desc, no stop token (no sampled arm before it): the race runs to the token limit"
+            fi ;;
+        recurrent)
+            inbox "$P/$key-recurrent.log" nice -n 19 timeout "$PIPE_TIMEOUT" "$B/bin/llama-pipe-recurrent-check" -m "$m" \
+                -f "$P/rewrite.txt" -n "$PIPE_N" $pargs
+            rc=$?
+            pipe_time "$key" "$arm" "$t0"
+            line=$(grep -a -o 'PIPE-RECURRENT-CHECK.*' "$P/$key-recurrent.log" | tail -n 1)
+            verdict "pipe $key recurrent" "$(case $rc in 0) echo OK ;; 2) echo DIFFERS ;; *) echo FAIL ;; esac)" \
+                "llama-pipe-recurrent-check rc=$rc: ${line:-$(grep -av '^ *$' "$P/$key-recurrent.log" | tail -n 1 | cut -c1-120)}"
+            return ;;
+        *) verdict "pipe $key $arm" FAIL "unknown arm (PIPE_ARMS: identity, sampled, race, recurrent)"; return ;;
+    esac
+    [ -n "$PIPE_FLOOR" ] && { env+=(FLOOR="$PIPE_FLOOR"); desc="$desc, floor $PIPE_FLOOR"; }
+    inbox "$P/$key-$arm.log" env "${env[@]}" BIN="$B/bin" MODEL="$m" CHAT=0 SPEED=0 TIMEOUT="$PIPE_TIMEOUT" \
+        PROMPT="$P/rewrite.txt" OUT="$P/$key-$arm" ARGS="$pargs" N="$PIPE_N" nice -n 19 bash "$P/check_identity.sh"
+    rc=$?
+    pipe_time "$key" "$arm" "$t0"
+    # check_identity's table: one line per run, the verdict last; plain is the reference
+    runs=$(grep -aE ' (same|DIFF)$' "$P/$key-$arm.log" | grep -av '^plain ')
+    nr=$(echo "$runs" | grep -acE ' (same|DIFF)$')
+    nd=$(echo "$runs" | grep -ac ' DIFF$')
+    why="pipelined runs differing $nd of $nr"
+    [ "$nd" -gt 0 ] && why="$why: $(echo "$runs" | awk '$NF == "DIFF" {print $1}' | head -n 5 | tr '\n' ' ')"
+    if [ $rc = 0 ]; then v=OK
+    elif grep -aq '^plain ' "$P/$key-$arm.log" && [ "$nd" -gt 0 ]; then v=DIFFERS
+    else v=FAIL why="$why; $(grep -av '^ *$' "$P/$key-$arm.log" | tail -n 1 | cut -c1-100)"; fi
+    # the race: who won and after how many of the samples' tokens
+    [ "$arm" = race ] && desc="$desc; plain: $(grep -a 'name=plain ' "$P/$key-$arm/results.txt" 2> /dev/null \
+        | grep -o 'winner=[-0-9]* race_tokens=[0-9]*' || echo 'no result')"
+    verdict "pipe $key $arm" "$v" "check_identity.sh rc=$rc: $why; N=$PIPE_N, $desc; $(basename "$m") md5 $md5"
+}
 
 # the image: the compiler and the tests' tools, nothing else (ctest's Python test needs PIP's packages)
 if ! docker image inspect "$IMAGE" > /dev/null 2>&1; then
@@ -256,39 +348,31 @@ for spec in $TREES; do
         else
             rm -rf "$P" && mkdir -p "$P/models"
             cp "$PIPESPEC/check_identity.sh" "$PIPESPEC/prompts/rewrite.txt" "$P/"
+            printf 'model\tarm\tseconds\n' > "$P/times.tsv"
             pargs="-ngl 0 -t $THREADS -c 2048 -fa on"
+            t_pipe=$(date +%s.%N)
             for a in $PIPE_ARCHS; do
                 G=$P/models/$a
                 mkdir -p "$G"
+                t0=$(date +%s.%N)
                 # the anchored name: -a takes a regular expression, and qwen35 would also match qwen35moe
-                inbox "$G/gen.log" env LLAMA_TEST_ARCHS_N_VOCAB=4096 "$B/bin/test-llama-archs" -a "^$a\$" -s "$PIPE_SEED" -o "$G"
-                m=$(ls "$G/$a"-moe.gguf "$G/$a"-dense.gguf 2> /dev/null | head -n 1)
-                if [ -z "$m" ]; then
+                inbox "$G/gen.log" env LLAMA_TEST_ARCHS_N_VOCAB=$PIPE_VOCAB "$B/bin/test-llama-archs" -a "^$a\$" -s "$PIPE_SEED" -o "$G"
+                pipe_time "$a" gen "$t0"
+                if [ ! -f "$G/$a-moe.gguf" ] && [ ! -f "$G/$a-dense.gguf" ]; then
                     verdict "pipe $a" FAIL "no random model: $(grep -av '^ *$' "$G/gen.log" | tail -n 1 | cut -c1-160)"
                     continue
                 fi
-                md5=$(md5sum < "$m" | cut -c1-12)
-                echo "$md5  $a/$(basename "$m")" >> "$P/models.md5"
-                inbox "$P/$a.log" env BIN="$B/bin" MODEL="$m" CHAT=0 SPEED=0 TIMEOUT="$PIPE_TIMEOUT" PROMPT="$P/rewrite.txt" \
-                    OUT="$P/$a" ARGS="$pargs" N="$PIPE_N" DEPTHS="1 3" MISSES="0 0.5" nice -n 19 bash "$P/check_identity.sh"
-                rc=$?
-                # check_identity's table: one line per run, the verdict last; plain is the reference
-                runs=$(grep -aE ' (same|DIFF)$' "$P/$a.log" | grep -av '^plain ')
-                nr=$(echo "$runs" | grep -acE ' (same|DIFF)$')
-                nd=$(echo "$runs" | grep -ac ' DIFF$')
-                why="pipelined runs differing $nd of $nr"
-                [ "$nd" -gt 0 ] && why="$why: $(echo "$runs" | awk '$NF == "DIFF" {print $1}' | head -n 5 | tr '\n' ' ')"
-                if [ $rc = 0 ]; then v=OK
-                elif grep -aq '^plain ' "$P/$a.log" && [ "$nd" -gt 0 ]; then v=DIFFERS
-                else v=FAIL why="$why; $(grep -av '^ *$' "$P/$a.log" | tail -n 1 | cut -c1-100)"; fi
-                verdict "pipe $a identity" "$v" "check_identity.sh rc=$rc: $why; N=$PIPE_N, depths 1 3, misses 0 0.5; $(basename "$m") md5 $md5"
-                inbox "$P/prc-$a.log" nice -n 19 timeout "$PIPE_TIMEOUT" "$B/bin/llama-pipe-recurrent-check" -m "$m" -f "$P/rewrite.txt" \
-                    -n "$PIPE_N" $pargs
-                rc=$?
-                line=$(grep -a -o 'PIPE-RECURRENT-CHECK.*' "$P/prc-$a.log" | tail -n 1)
-                verdict "pipe $a recurrent" "$(case $rc in 0) echo OK ;; 2) echo DIFFERS ;; *) echo FAIL ;; esac)" \
-                    "llama-pipe-recurrent-check rc=$rc: ${line:-$(grep -av '^ *$' "$P/prc-$a.log" | tail -n 1 | cut -c1-120)}"
+                for m in "$G/$a-moe.gguf" "$G/$a-dense.gguf"; do
+                    [ -f "$m" ] || continue
+                    # the MoE model (or the only one) is <arch>; a dense model beside a MoE one is <arch>-dense
+                    key=$a
+                    [[ "$m" == *-dense.gguf ]] && [ -f "$G/$a-moe.gguf" ] && key=$a-dense
+                    md5=$(md5sum < "$m" | cut -c1-12)
+                    echo "$md5  $a/$(basename "$m")" >> "$P/models.md5"
+                    for arm in $PIPE_ARMS; do pipe_arm "$key" "$arm" "$m" "$md5"; done
+                done
             done
+            pipe_time all total "$t_pipe"
         fi
     fi
 

@@ -1,0 +1,18 @@
+check	before tip	tip	before fix	fix	same
+archs compare	OK	OK	OK	OK	yes
+archs files	OK	OK	OK	OK	yes
+archs plain	OK	OK	OK	OK	yes
+archs write	OK	OK	OK	OK	yes
+build	OK	OK	OK	OK	yes
+ctest	FAIL	FAIL	FAIL	FAIL	yes
+hand bytes-switches	OK	OK	OK	OK	yes
+hand bytes-zero-tail	OK	OK	OK	OK	yes
+hand context-model	OK	OK	OK	OK	yes
+hand eval-callback	OK	OK	OK	OK	yes
+hand hop-cast	OK	OK	OK	OK	yes
+hand moe-ids	OK	OK	OK	OK	yes
+hand route-once-x1	OK	OK	OK	OK	yes
+hand route-once-x30	OK	OK	OK	OK	yes
+hand thread-safety	OK	OK	OK	OK	yes
+ident	-	-	SAME	SAME	yes
+tree	OK	OK	OK	OK	yes
