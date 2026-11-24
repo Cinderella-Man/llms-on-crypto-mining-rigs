@@ -1,5 +1,10 @@
 # R226: which card of the first rig spoils the served model, found by halves (2026-11-20)
 
+**Then the next runs' profiles (Q1760, 2026-11-24).** `run/mem_down.py` now lowers the core offsets too, so the
+next first-rig tests have exact profiles that the kit accepts: the memory alone (every core at stock), the cores one
+and two steps lower (every memory at stock), and memory and core each one step lower
+([below](#the-next-profiles-q1760-2026-11-24)). No rig ran them yet.
+
 **Then the cores alone, in plain words (R235, 2026-11-24).** On a fresh boot every card's memory ran at stock and only
 the core offsets were set. Every card passed its own check, but Ornith gave the stock answer only 4 rounds in a row and
 **differed in round 5, 2.8 minutes after the load** ([below](#the-cores-alone-r235-2026-11-24-1838-to-1859)). So the
@@ -597,6 +602,47 @@ At 18:59:52 the kit's `state` read every offset 0 on all nine cards (and `nvidia
 every card but card 6; no memory offset was set), 3,153 MiB of host memory available. Any further test needs a fresh
 boot: the kit's start check refuses a boot with a lowered offset.
 
+## The next profiles (Q1760, 2026-11-24)
+
+The memory alone and the cores lower need profiles that change the core offsets, which `run/mem_down.py` could not do.
+It now takes `--core-steps N`: N of the kit's core steps (2 driver steps of 12.66 MHz each, `climb.py`'s
+`CORE_STEP_BINS` and `CORE_BIN_MHZ`) off every card's `core_steps`, never below 0, with `core_mhz` set from the new
+step count by the kit's own rule (`climb.py`'s `core_offset()`, the offset the climb sets for that many steps), so the
+two fields agree. `--core-steps all` takes every core offset to 0, `--steps all` every memory offset, and `--steps 0`
+keeps the memory. A profile whose `core_mhz` and `core_steps` already disagree is refused. The calls without
+`--core-steps` give the same bytes as before: rerun from R223's use.json, they give [mem-down.json](mem-down.json)
+(`67d8cb5c…`) and [cores.json](cores.json) (`c12d1573…`) byte for byte. Nothing here ran on a rig.
+
+Each profile below passed the kit's own profile check (`half_profile.py climb.py <profile> --check`, the check
+`climb.py apply` runs before it sets anything: memory cap +1,400 MT/s, core cap +400 MHz, 12.66 MHz a driver step;
+the kit's `env.sh` changes none of these), and each is made from R223's
+[use.json](../2026-11-20_r223_core_soak_rig1/use.json) (`ae91f969c8ddc782698c8fd9d570734d`):
+
+| Profile | For | `mem_down.py` options | md5 |
+|---|---|---|---|
+| [mem-alone.json](mem-alone.json) | the memory alone (Q1795): every core at 0, the memory offsets kept | `--steps 0 --core-steps all` | `52be6a07347964e074478bdd45537fb5` |
+| [cores-down1.json](cores-down1.json) | the cores one step lower, every memory at 0 | `--steps all --core-steps 1` | `37df8e545706e8b9816b47d83fda747c` |
+| [cores-down2.json](cores-down2.json) | the cores two steps lower, every memory at 0 | `--steps all --core-steps 2` | `f3eb02712f4251dd7ace42345056298d` |
+| [mem-core-down1.json](mem-core-down1.json) | Q1640's (c′): memory and core each one step lower | `--core-steps 1` | `8ba42479e24212d150d6eef4e9a8278a` |
+
+Memory MT/s and core MHz (driver steps in brackets) that `apply` would set on each card; card 6 stays at stock in
+every profile:
+
+| Card | use.json | mem-alone.json | cores-down1.json | cores-down2.json | mem-core-down1.json |
+|---|---|---|---|---|---|
+| 0 | +900 / +218 (17) | +900 / 0 | 0 / +193 (15) | 0 / +168 (13) | +800 / +193 (15) |
+| 1 | +1,000 / +256 (20) | +1,000 / 0 | 0 / +231 (18) | 0 / +206 (16) | +900 / +231 (18) |
+| 2 | +1,100 / +256 (20) | +1,100 / 0 | 0 / +231 (18) | 0 / +206 (16) | +1,000 / +231 (18) |
+| 3 | +1,200 / +206 (16) | +1,200 / 0 | 0 / +180 (14) | 0 / +155 (12) | +1,100 / +180 (14) |
+| 4 | +1,100 / +206 (16) | +1,100 / 0 | 0 / +180 (14) | 0 / +155 (12) | +1,000 / +180 (14) |
+| 5 | +1,300 / +231 (18) | +1,300 / 0 | 0 / +206 (16) | 0 / +180 (14) | +1,200 / +206 (16) |
+| 6 | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 |
+| 7 | +1,100 / +282 (22) | +1,100 / 0 | 0 / +256 (20) | 0 / +231 (18) | +1,000 / +256 (20) |
+| 8 | +900 / +231 (18) | +900 / 0 | 0 / +206 (16) | 0 / +180 (14) | +800 / +206 (16) |
+
+Each run repeats the commands below on its own fresh boot with its profile as `PROFILE` and `MINUTES=120`; the commands
+that make and check each profile on the rig are at the end of [Commands](#commands).
+
 ## Files
 
 | File | What it holds |
@@ -618,7 +664,8 @@ boot: the kit's start check refuses a boot with a lowered offset.
 | [run/half_profile.py](run/half_profile.py) | Makes a half's profile from use.json and runs the kit's own profile check on it (the one `apply` runs) |
 | [run/half_check.sh](run/half_check.sh) | One half (or the whole profile) on a fresh boot: start check, trip test, watchdog, `apply`, Ornith for `MINUTES` (30; 90 for `full90`) against the stored stock answer, then every offset to 0 |
 | [run/halves.py](run/halves.py), [run/tables.sh](run/tables.sh) | Build the tables from the folders copied off the rig |
-| [run/mem_down.py](run/mem_down.py) | Q1640's option (c): use.json with every card's memory one step (100 MT/s) lower, core kept; check it with `half_profile.py --check` |
+| [mem-alone.json](mem-alone.json), [cores-down1.json](cores-down1.json), [cores-down2.json](cores-down2.json), [mem-core-down1.json](mem-core-down1.json) | The next runs' profiles from use.json (Q1760): the memory alone, the cores one and two steps lower, memory and core each one step lower ([above](#the-next-profiles-q1760-2026-11-24)) |
+| [run/mem_down.py](run/mem_down.py) | use.json with every card's memory (`--steps`, 100 MT/s each; Q1640's option (c)) and/or core (`--core-steps`, 2 × 12.66 MHz each; Q1760) lower, never below 0, `all` for 0; check it with `half_profile.py --check` |
 | [run/MD5SUMS-a](run/MD5SUMS-a), [run/MD5SUMS-b](run/MD5SUMS-b), [run/MD5SUMS-full90](run/MD5SUMS-full90), [run/MD5SUMS-mem120](run/MD5SUMS-mem120), [run/MD5SUMS-cores120](run/MD5SUMS-cores120) | The md5 sums of the files on the rig for each run, checked there before the start |
 
 ## Commands
@@ -678,9 +725,22 @@ python3 -I $D/run/mem_down.py $CHECKOUT/docs/data/2026-11-20_r223_core_soak_rig1
 cd $K && . ./env.sh && python3 half_profile.py climb.py q1640-cores.json --check
 ```
 
+The next profiles (Q1760): `mem_down.py` finds the kit's `climb.py` beside itself (copied into `$K`) or in the
+checkout, and gives the md5s in [the table above](#the-next-profiles-q1760-2026-11-24):
+
+```bash
+U=$CHECKOUT/docs/data/2026-11-20_r223_core_soak_rig1/use.json
+python3 -I $D/run/mem_down.py $U $K/q1795-mem.json --steps 0 --core-steps all      # the memory alone, 52be6a07…
+python3 -I $D/run/mem_down.py $U $K/q1760-cores1.json --steps all --core-steps 1   # cores one step lower, 37df8e54…
+python3 -I $D/run/mem_down.py $U $K/q1760-cores2.json --steps all --core-steps 2   # cores two steps lower, f3eb0271…
+python3 -I $D/run/mem_down.py $U $K/q1640-c2.json --core-steps 1                   # (c'), 8ba42479…
+cd $K && . ./env.sh && for f in q1795-mem q1760-cores1 q1760-cores2 q1640-c2; do python3 half_profile.py climb.py $f.json --check; done
+```
+
 ## Provenance and licence
 
 Measured on the first rig on 2026-11-20 (half a: 16:40 to 17:31; half b: 17:49 to 18:41; the whole profile for 90 minutes: 19:04 to 20:40) and 2026-11-24 (every memory one step lower: 13:59 to 14:30; the cores alone: 18:38 to 18:59) with the engine builds named above and the kit as published
-on this branch. The check model is IBM's Granite 3.1 3B-A800M Instruct (Apache 2.0) quantized to Q4_K_M; Ornith-1.5-122B
+on this branch. The next runs' four profiles (Q1760) were made and checked on a laptop with the kit as published on
+this branch, without a rig. The check model is IBM's Granite 3.1 3B-A800M Instruct (Apache 2.0) quantized to Q4_K_M; Ornith-1.5-122B
 Pascal N2P GGUF and its licence are described in [release/ornith-v3](../../../release/ornith-v3/README.md). Neither
 model is published here, only the hashes of their answers. The tables are this repository's licence.
