@@ -1,0 +1,7 @@
+check	base_8a9629942	head_7d182f9b0	verdict
+rig build: warning lines (each once, without line numbers)	32	32	none new
+CPU build of every target: warning lines	2	2 (the CMake line names the work folder)	none new
+card code: SASS of llama-server, one SHA-1 per kernel copy	9518	9518	every copy identical
+card code: PTX of llama-server, one SHA-1 per function	9518	9518	every function identical; no module-level line differs
+test-llama-archs -b CPU -s 1 of the rig builds	148 logits files written; 153 of 153 pass	153 of 153 pass, plain and comparing	148 of 148 files bit for bit
+ctest, 75 tests, no network (CPU build)	71 pass; test-kv-cache, test-jinja, test-jinja-py, test-kv-cache-scales fail	71 pass; the same 4 fail	the same, test by test

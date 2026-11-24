@@ -1,0 +1,91 @@
+round	request	kind	device	wait	nowait	basewait	same
+	load	load	0	2	2	2	yes
+	load	load	1	2	2	2	yes
+	load	load	2	2	2	2	yes
+r1	R1	plain	0	449	449	449	yes
+r1	R1	plain	1	449	449	449	yes
+r1	R1	plain	2	449	449	449	yes
+r1	R2	tool	0	24	24	24	yes
+r1	R2	tool	1	24	24	24	yes
+r1	R2	tool	2	24	24	24	yes
+r1	R3	tool t0.7	0	23	23	23	yes
+r1	R3	tool t0.7	1	23	23	23	yes
+r1	R3	tool t0.7	2	23	23	23	yes
+r1	R4	tool turn 2	0	21	21	21	yes
+r1	R4	tool turn 2	1	21	21	21	yes
+r1	R4	tool turn 2	2	21	21	21	yes
+r1	R5	tool turn 3	0	25	25	25	yes
+r1	R5	tool turn 3	1	25	25	25	yes
+r1	R5	tool turn 3	2	25	25	25	yes
+r1	R6	tool turn 4	0	28	28	28	yes
+r1	R6	tool turn 4	1	28	28	28	yes
+r1	R6	tool turn 4	2	28	28	28	yes
+r1	R7	tool turn 5	0	21	21	21	yes
+r1	R7	tool turn 5	1	21	21	21	yes
+r1	R7	tool turn 5	2	21	21	21	yes
+r1	R8	plain turn 6	0	253	253	253	yes
+r1	R8	plain turn 6	1	253	253	253	yes
+r1	R8	plain turn 6	2	253	253	253	yes
+r1	R12	plain turn 7	0	581	581	581	yes
+r1	R12	plain turn 7	1	581	581	581	yes
+r1	R12	plain turn 7	2	581	581	581	yes
+r1	R13	plain turn 8	0	445	445	445	yes
+r1	R13	plain turn 8	1	445	445	445	yes
+r1	R13	plain turn 8	2	445	445	445	yes
+r1	R14	plain turn 9 t0.7	0	297	297	298	no
+r1	R14	plain turn 9 t0.7	1	297	297	298	no
+r1	R14	plain turn 9 t0.7	2	297	297	298	no
+r1	R15	plain turn 10	0	441	441	433	no
+r1	R15	plain turn 10	1	441	441	433	no
+r1	R15	plain turn 10	2	441	441	433	no
+r1	R10	tool 645 tokens	0	27	27	27	yes
+r1	R10	tool 645 tokens	1	27	27	27	yes
+r1	R10	tool 645 tokens	2	27	27	27	yes
+r1	R11	tool 648 tokens	0	27	27	27	yes
+r1	R11	tool 648 tokens	1	27	27	27	yes
+r1	R11	tool 648 tokens	2	27	27	27	yes
+r2	R1	plain	0	449	449	449	yes
+r2	R1	plain	1	449	449	449	yes
+r2	R1	plain	2	449	449	449	yes
+r2	R2	tool	0	24	24	24	yes
+r2	R2	tool	1	24	24	24	yes
+r2	R2	tool	2	24	24	24	yes
+r2	R3	tool t0.7	0	23	23	23	yes
+r2	R3	tool t0.7	1	23	23	23	yes
+r2	R3	tool t0.7	2	23	23	23	yes
+r2	R4	tool turn 2	0	21	21	21	yes
+r2	R4	tool turn 2	1	21	21	21	yes
+r2	R4	tool turn 2	2	21	21	21	yes
+r2	R5	tool turn 3	0	25	25	25	yes
+r2	R5	tool turn 3	1	25	25	25	yes
+r2	R5	tool turn 3	2	25	25	25	yes
+r2	R6	tool turn 4	0	28	28	28	yes
+r2	R6	tool turn 4	1	28	28	28	yes
+r2	R6	tool turn 4	2	28	28	28	yes
+r2	R7	tool turn 5	0	21	21	21	yes
+r2	R7	tool turn 5	1	21	21	21	yes
+r2	R7	tool turn 5	2	21	21	21	yes
+r2	R8	plain turn 6	0	253	253	253	yes
+r2	R8	plain turn 6	1	253	253	253	yes
+r2	R8	plain turn 6	2	253	253	253	yes
+r2	R12	plain turn 7	0	581	581	581	yes
+r2	R12	plain turn 7	1	581	581	581	yes
+r2	R12	plain turn 7	2	581	581	581	yes
+r2	R13	plain turn 8	0	445	445	445	yes
+r2	R13	plain turn 8	1	445	445	445	yes
+r2	R13	plain turn 8	2	445	445	445	yes
+r2	R14	plain turn 9 t0.7	0	297	298	297	no
+r2	R14	plain turn 9 t0.7	1	297	298	297	no
+r2	R14	plain turn 9 t0.7	2	297	298	297	no
+r2	R15	plain turn 10	0	441	433	441	no
+r2	R15	plain turn 10	1	441	433	441	no
+r2	R15	plain turn 10	2	441	433	441	no
+r2	R10	tool 645 tokens	0	27	27	27	yes
+r2	R10	tool 645 tokens	1	27	27	27	yes
+r2	R10	tool 645 tokens	2	27	27	27	yes
+r2	R11	tool 648 tokens	0	27	27	26	no
+r2	R11	tool 648 tokens	1	27	27	26	no
+r2	R11	tool 648 tokens	2	27	27	26	no
+	between	between	0	0	0	0	yes
+	between	between	1	0	0	0	yes
+	between	between	2	0	0	0	yes

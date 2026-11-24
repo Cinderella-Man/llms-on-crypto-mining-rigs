@@ -1,0 +1,28 @@
+arm	device	requests	entries	entries_with_earlier_running	most_at_once	q0	q1	q2	q3	q4	q5_or_more
+wait	0	pipe	2459	31	1	2428	31	0	0	0	0
+wait	0	tool	182	0	0	182	0	0	0	0	0
+wait	0	load	2	0	0	2	0	0	0	0	0
+wait	1	pipe	2459	2232	1	227	2232	0	0	0	0
+wait	1	tool	182	0	0	182	0	0	0	0	0
+wait	1	load	2	0	0	2	0	0	0	0	0
+wait	2	pipe	2459	2290	1	169	2290	0	0	0	0
+wait	2	tool	181	0	0	181	0	0	0	0	0
+wait	2	load	2	0	0	2	0	0	0	0	0
+nowait	0	pipe	2466	1615	6	851	486	653	178	144	154
+nowait	0	tool	176	0	0	176	0	0	0	0	0
+nowait	0	load	2	0	0	2	0	0	0	0	0
+nowait	1	pipe	2466	2283	7	183	104	45	68	1726	340
+nowait	1	tool	176	0	0	176	0	0	0	0	0
+nowait	1	load	2	0	0	2	0	0	0	0	0
+nowait	2	pipe	2466	2293	8	173	59	87	44	1651	452
+nowait	2	tool	176	0	0	176	0	0	0	0	0
+nowait	2	load	2	0	0	2	0	0	0	0	0
+basewait	0	pipe	2459								
+basewait	0	tool	177								
+basewait	0	load	2								
+basewait	1	pipe	2459								
+basewait	1	tool	177								
+basewait	1	load	2								
+basewait	2	pipe	2459								
+basewait	2	tool	176								
+basewait	2	load	2								

@@ -1,0 +1,29 @@
+round	request	kind	off_guesses	off_right	off_wrong	wait_guesses	wait_right	wait_wrong	nowait_guesses	nowait_right	nowait_wrong	basewait_guesses	basewait_right	basewait_wrong	same
+r1	R1	plain	395	267	32	395	267	32	395	267	32	395	267	32	yes
+r1	R2	tool	0	0	0	0	0	0	0	0	0	0	0	0	yes
+r1	R3	tool t0.7	0	0	0	0	0	0	0	0	0	0	0	0	yes
+r1	R4	tool turn 2	0	0	0	0	0	0	0	0	0	0	0	0	yes
+r1	R5	tool turn 3	0	0	0	0	0	0	0	0	0	0	0	0	yes
+r1	R6	tool turn 4	0	0	0	0	0	0	0	0	0	0	0	0	yes
+r1	R7	tool turn 5	0	0	0	0	0	0	0	0	0	0	0	0	yes
+r1	R8	plain turn 6	194	70	31	194	70	31	194	70	31	194	70	31	yes
+r1	R12	plain turn 7	521	325	49	521	325	49	521	325	49	521	325	49	yes
+r1	R13	plain turn 8	427	367	15	427	367	15	427	367	15	427	367	15	yes
+r1	R14	plain turn 9 t0.7	281	241	10	281	241	10	281	241	10	284	243	11	no
+r1	R15	plain turn 10	423	367	14	423	367	14	423	367	14	418	370	12	no
+r1	R10	tool 645 tokens	0	0	0	0	0	0	0	0	0	0	0	0	yes
+r1	R11	tool 648 tokens	0	0	0	0	0	0	0	0	0	0	0	0	yes
+r2	R1	plain	395	267	32	395	267	32	395	267	32	395	267	32	yes
+r2	R2	tool	0	0	0	0	0	0	0	0	0	0	0	0	yes
+r2	R3	tool t0.7	0	0	0	0	0	0	0	0	0	0	0	0	yes
+r2	R4	tool turn 2	0	0	0	0	0	0	0	0	0	0	0	0	yes
+r2	R5	tool turn 3	0	0	0	0	0	0	0	0	0	0	0	0	yes
+r2	R6	tool turn 4	0	0	0	0	0	0	0	0	0	0	0	0	yes
+r2	R7	tool turn 5	0	0	0	0	0	0	0	0	0	0	0	0	yes
+r2	R8	plain turn 6	194	70	31	194	70	31	194	70	31	194	70	31	yes
+r2	R12	plain turn 7	521	325	49	521	325	49	521	325	49	521	325	49	yes
+r2	R13	plain turn 8	427	367	15	427	367	15	427	367	15	427	367	15	yes
+r2	R14	plain turn 9 t0.7	284	243	11	281	241	10	284	243	11	281	241	10	no
+r2	R15	plain turn 10	418	370	12	423	367	14	418	370	12	423	367	14	no
+r2	R10	tool 645 tokens	0	0	0	0	0	0	0	0	0	0	0	0	yes
+r2	R11	tool 648 tokens	0	0	0	0	0	0	0	0	0	0	0	0	yes

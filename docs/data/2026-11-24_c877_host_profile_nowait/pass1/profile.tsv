@@ -1,0 +1,10 @@
+arm	device	lines	first_eval	last_eval	missing_ids	repeated_ids	queued_column	count_line_evals	count_line_written	count_line_queued_entries	count_line_max_queued	count_line_waited
+wait	0	2643	0	2642	0	0	yes					
+wait	1	2643	0	2642	0	0	yes					
+wait	2	2642	0	2641	0	0	yes					
+nowait	0	2644	0	2643	0	0	yes					
+nowait	1	2644	0	2643	0	0	yes					
+nowait	2	2644	0	2643	0	0	yes					
+basewait	0	2638	0	2637	0	0	no					
+basewait	1	2638	0	2637	0	0	no					
+basewait	2	2637	0	2636	0	0	no					
