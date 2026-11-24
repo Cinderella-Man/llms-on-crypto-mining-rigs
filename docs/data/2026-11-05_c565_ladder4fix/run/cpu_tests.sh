@@ -29,7 +29,7 @@
 #           trees' hand logs compare line by line (compare_hand.py); hand/models.md5 lists the models' checksums. Each
 #           test writes its log from inside its container, stdout and stderr into one file: docker would carry them as
 #           two streams and interleave them differently on every run
-#   pipe    pipelined decoding against plain decoding (C935, widened by C1010), which ctest never runs: for each
+#   pipe    pipelined decoding against plain decoding (C935, widened by C1010 and C1020), which ctest never runs: for each
 #           architecture of PIPE_ARCHS (by default every one llama_pipe_init accepts: the delta-net models qwen4exp,
 #           qwen35, qwen35moe and qwen3next, and flint, Flint's architecture, a model without recurrent state), every
 #           random model this tree's test-llama-archs writes with -s PIPE_SEED and a 4,096-token vocabulary (MoE and
@@ -46,12 +46,22 @@
 #                        tokens and logits are compared too
 #             recurrent  llama-pipe-recurrent-check (greedy): the rollbacks the slot rotation rarely makes (the stash,
 #                        dropped guesses, the token in flight dropped and sent again), each hash plain's
+#             streams    bench/pipespec/check_streams.sh, the streams mode (several conversations in one context, one KV
+#                        stream each): PIPE_STREAMS conversations of PIPE_STREAMS_N tokens with seeded sampling (PIPE_SAMPLING,
+#                        conversation c with seed PIPE_SAMPLE_SEED + c), prompts in chunks of PIPE_STREAMS_CHUNK tokens,
+#                        conversation 0 on prompts/chat.txt and 1 on prompts/rewrite.txt (so the long prompt's chunks
+#                        interleave with the first conversation's tokens), PIPE_STREAMS_CTX tokens of context each; its
+#                        seven jobs (all at once, staggered arrivals every PIPE_STREAMS_ARRIVE tokens, guesses in a shared
+#                        budget, a budget of one item, several prompt chunks in flight, with arrivals, and while others
+#                        generate): each conversation's tokens, logits, KV state and probe hashes those of a plain run of
+#                        its prompt and seed alone in its own sequence, and no guess with a budget of one item
 #           Verdicts "pipe <model> <arm>": OK when every hash is plain's, DIFFERS when a pipelined run gives other hashes,
-#           FAIL when a tool stopped before comparing; pipe/times.tsv has each check's seconds. It runs whenever STEPS
+#           FAIL when a tool stopped before comparing (the streams arm also when a job's result is missing or a guess
+#           went out with a budget of one item); pipe/times.tsv has each check's seconds. It runs whenever STEPS
 #           names pipe or hand, so every check that runs the hand step runs it too; PIPE_ARCHS='' leaves it out. It needs
-#           check_identity.sh and prompts/rewrite.txt: PIPESPEC=<bench/pipespec>, by default ./pipespec beside this
-#           script, else bench/pipespec of the repository this script is in; both are copied into the tree's pipe/
-#           folder, so the record holds the script that ran. A tree with ":<targets>" runs it when its targets include
+#           check_identity.sh and prompts/rewrite.txt (the streams arm also check_streams.sh and prompts/chat.txt):
+#           PIPESPEC=<bench/pipespec>, by default ./pipespec beside this script, else bench/pipespec of the repository
+#           this script is in; they are copied into the tree's pipe/ folder, so the record holds the scripts that ran. A tree with ":<targets>" runs it when its targets include
 #           llama-pipespec, llama-pipe-recurrent-check and test-llama-archs
 # TREES: '<tag>=<commit>[+<commit>...][:<targets>][@<base tag>] ...'; a tree with ":<targets>" runs only archs, ident
 #   and pipe.
@@ -59,12 +69,14 @@
 #   [JOBS=8] [SHARED=ON] [CTEST_JOBS=8] [THREADS=8] [LOCK=<flock file>] [DOCKER_ARGS=...] [BASE_IMAGE=ubuntu:24.04]
 #   [IMAGE=pq-c565-cpu:24.04] [PIP='<packages>'] [MODEL15M=<file>] [CTEST_EXCLUDE=<names, a|b>] [NET_TESTS=<names>]
 #   [KEEP_BUILD=1] [HAND_SEED=1] [PIPESPEC=<dir>] [PIPE_ARCHS='qwen4exp qwen35 qwen35moe qwen3next flint'] [PIPE_SEED=1]
-#   [PIPE_N=256] [PIPE_ARMS='identity sampled race recurrent'] [PIPE_SAMPLING='--temp 1 --top-k 20 --top-p 0.95']
-#   [PIPE_SAMPLE_SEED=42] [PIPE_FLOOR=3] [PIPE_RACE=2] [PIPE_RACE_AT=PIPE_N/4] [PIPE_TIMEOUT=900]
+#   [PIPE_N=256] [PIPE_ARMS='identity sampled race recurrent streams'] [PIPE_SAMPLING='--temp 1 --top-k 20 --top-p 0.95']
+#   [PIPE_SAMPLE_SEED=42] [PIPE_FLOOR=3] [PIPE_RACE=2] [PIPE_RACE_AT=PIPE_N/4] [PIPE_STREAMS=2] [PIPE_STREAMS_N=64]
+#   [PIPE_STREAMS_CHUNK=16] [PIPE_STREAMS_ARRIVE=16] [PIPE_STREAMS_CTX=1024] [PIPE_TIMEOUT=900]
 #   [CMAKE_ARGS=<cmake options>] bash cpu_tests.sh
 # Output: $WORK/<tag>/ (tree.txt, build.log, ctest.log, ctest.xml, archs/*.log, ident/*.log, hand/*.log, the logits
-#   in archs/logits/, pipe/: models/<arch>/ with gen.log, models.md5, <model>-<arm>.log check_identity's table and
-#   <model>-<arm>/ its folder, <model>-recurrent.log, times.tsv, the two scripts), $WORK/summary.tsv (tree, check,
+#   in archs/logits/, pipe/: models/<arch>/ with gen.log, models.md5, <model>-<arm>.log check_identity's (or
+#   check_streams') table and <model>-<arm>/ its folder, <model>-recurrent.log, times.tsv, the scripts and prompts that
+#   ran), $WORK/summary.tsv (tree, check,
 #   verdict, detail); done when $WORK/DONE exists
 set -uo pipefail
 WORK=$(realpath "${WORK:?WORK=<work dir>}")
@@ -79,12 +91,17 @@ HAND_SEED=${HAND_SEED:-1}
 PIPE_ARCHS=${PIPE_ARCHS-qwen4exp qwen35 qwen35moe qwen3next flint}
 PIPE_SEED=${PIPE_SEED:-1}
 PIPE_N=${PIPE_N:-256}
-PIPE_ARMS=${PIPE_ARMS-identity sampled race recurrent}
+PIPE_ARMS=${PIPE_ARMS-identity sampled race recurrent streams}
 PIPE_SAMPLING=${PIPE_SAMPLING:---temp 1 --top-k 20 --top-p 0.95}
 PIPE_SAMPLE_SEED=${PIPE_SAMPLE_SEED:-42}
 PIPE_FLOOR=${PIPE_FLOOR-3}
 PIPE_RACE=${PIPE_RACE:-2}
 PIPE_RACE_AT=${PIPE_RACE_AT:-$((PIPE_N / 4))}
+PIPE_STREAMS=${PIPE_STREAMS:-2}
+PIPE_STREAMS_N=${PIPE_STREAMS_N:-64}
+PIPE_STREAMS_CHUNK=${PIPE_STREAMS_CHUNK:-16}
+PIPE_STREAMS_ARRIVE=${PIPE_STREAMS_ARRIVE:-16}
+PIPE_STREAMS_CTX=${PIPE_STREAMS_CTX:-1024}
 PIPE_TIMEOUT=${PIPE_TIMEOUT:-900}
 # the random models' vocabulary; the race's stop text is hashed to a token id modulo this (the dummy tokenizer's rule)
 PIPE_VOCAB=4096
@@ -175,7 +192,36 @@ pipe_arm() {
             verdict "pipe $key recurrent" "$(case $rc in 0) echo OK ;; 2) echo DIFFERS ;; *) echo FAIL ;; esac)" \
                 "llama-pipe-recurrent-check rc=$rc: ${line:-$(grep -av '^ *$' "$P/$key-recurrent.log" | tail -n 1 | cut -c1-120)}"
             return ;;
-        *) verdict "pipe $key $arm" FAIL "unknown arm (PIPE_ARMS: identity, sampled, race, recurrent)"; return ;;
+        streams)
+            if [ ! -f "$P/check_streams.sh" ] || [ ! -f "$P/chat.txt" ]; then
+                verdict "pipe $key streams" FAIL "no check_streams.sh and prompts/chat.txt in PIPESPEC ('${PIPESPEC}')"
+                return
+            fi
+            desc="$PIPE_STREAMS conversations, $PIPE_SAMPLING --seed $PIPE_SAMPLE_SEED (+ c), NTOK=$PIPE_STREAMS_N,"
+            desc="$desc chunks of $PIPE_STREAMS_CHUNK, arrivals every $PIPE_STREAMS_ARRIVE, CTX=$PIPE_STREAMS_CTX each"
+            # check_streams.sh sets the context (-c N * CTX) and the slots (-np N) itself
+            inbox "$P/$key-streams.log" env BIN="$B/bin" MODEL="$m" ARGS="-ngl 0 -t $THREADS -fa on" N="$PIPE_STREAMS" \
+                CTX="$PIPE_STREAMS_CTX" NTOK="$PIPE_STREAMS_N" CHUNK="$PIPE_STREAMS_CHUNK" ARRIVE="$PIPE_STREAMS_ARRIVE" \
+                SAMPLING="$PIPE_SAMPLING --seed $PIPE_SAMPLE_SEED" PROMPTS="$P/chat.txt,$P/rewrite.txt" SPEED=0 \
+                TIMEOUT="$PIPE_TIMEOUT" OUT="$P/$key-streams" nice -n 19 bash "$P/check_streams.sh"
+            rc=$?
+            pipe_time "$key" "$arm" "$t0"
+            # check_streams' table: one line per job and conversation, the four hash columns and the verdict last
+            runs=$(grep -aE '^[a-z]+(-[a-z]+)*-c[0-9]+ .* (same|DIFF)$' "$P/$key-streams.log")
+            nr=$(echo "$runs" | grep -acE ' (same|DIFF)$')
+            nd=$(echo "$runs" | grep -ac ' DIFF$')
+            line=$(grep -ao 'guesses with a budget of one item: [^ ]*' "$P/$key-streams.log" | awk '{print $NF}')
+            why="conversations differing $nd of $nr"
+            [ "$nd" -gt 0 ] && why="$why ($(echo "$runs" | awk '$NF == "DIFF" { for (i = 0; i < 4; i++) if ($(NF - 4 + i) == "DIFF") d[i]++ }
+                END { printf "tokens %d, logits %d, state %d, probe %d", d[0], d[1], d[2], d[3] }')): $(echo "$runs" \
+                | awk '$NF == "DIFF" {print $1}' | head -n 6 | tr '\n' ' ')"
+            why="$why; guesses with a budget of one item: ${line:-?}"
+            if [ $rc = 0 ]; then v=OK
+            elif [ "$nd" -gt 0 ] && [ "$line" = 0 ] && ! grep -aqE ': missing$|^TIMEOUT |^llama-pipespec exit ' "$P/$key-streams.log"; then v=DIFFERS
+            else v=FAIL why="$why; $(grep -aE ': missing$|^TIMEOUT |^llama-pipespec exit |must be 0' "$P/$key-streams.log" | head -n 2 | tr '\n' ' ' | cut -c1-120)"; fi
+            verdict "pipe $key streams" "$v" "check_streams.sh rc=$rc: $why; $desc; $(basename "$m") md5 $md5"
+            return ;;
+        *) verdict "pipe $key $arm" FAIL "unknown arm (PIPE_ARMS: identity, sampled, race, recurrent, streams)"; return ;;
     esac
     [ -n "$PIPE_FLOOR" ] && { env+=(FLOOR="$PIPE_FLOOR"); desc="$desc, floor $PIPE_FLOOR"; }
     inbox "$P/$key-$arm.log" env "${env[@]}" BIN="$B/bin" MODEL="$m" CHAT=0 SPEED=0 TIMEOUT="$PIPE_TIMEOUT" \
@@ -348,6 +394,8 @@ for spec in $TREES; do
         else
             rm -rf "$P" && mkdir -p "$P/models"
             cp "$PIPESPEC/check_identity.sh" "$PIPESPEC/prompts/rewrite.txt" "$P/"
+            # the streams arm's script and its first conversation's prompt (the arm says FAIL without them)
+            for f in "$PIPESPEC/check_streams.sh" "$PIPESPEC/prompts/chat.txt"; do [ -f "$f" ] && cp "$f" "$P/"; done
             printf 'model\tarm\tseconds\n' > "$P/times.tsv"
             pargs="-ngl 0 -t $THREADS -c 2048 -fa on"
             t_pipe=$(date +%s.%N)

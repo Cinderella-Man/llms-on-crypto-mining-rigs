@@ -1,0 +1,11 @@
+tree	model file	md5 (first 12)
+base	qwen4exp/qwen4exp-moe.gguf	3c1f8f2cc6bd
+base	qwen35/qwen35-dense.gguf	ab091bd4f8e9
+base	qwen35moe/qwen35moe-moe.gguf	30b2bfd6a845
+base	qwen3next/qwen3next-moe.gguf	758bb4d68e8e
+base	flint/flint-moe.gguf	8a91d5448c65
+land	qwen4exp/qwen4exp-moe.gguf	3c1f8f2cc6bd
+land	qwen35/qwen35-dense.gguf	ab091bd4f8e9
+land	qwen35moe/qwen35moe-moe.gguf	30b2bfd6a845
+land	qwen3next/qwen3next-moe.gguf	758bb4d68e8e
+land	flint/flint-moe.gguf	8a91d5448c65
