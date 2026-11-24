@@ -1,0 +1,9 @@
+order	run	Pascal kernel paths that logged
+1	perf-ornith-base-r1	prompt: head 256, q8_0 K/V, plain scores; prompt: head 256, f16 K/V, plain scores
+2	perf-ornith-min1-r1	prompt: head 256, q8_0 K/V, plain scores; prompt: head 256, f16 K/V, plain scores
+3	perf-ornith-dec4-r1	decode: head 256, q8_0 K/V, up to 4 rows; prompt: head 256, q8_0 K/V, plain scores; prompt: head 256, f16 K/V, plain scores
+4	perf-ornith-both-r1	decode: head 256, q8_0 K/V, up to 4 rows; prompt: head 256, q8_0 K/V, plain scores; prompt: head 256, f16 K/V, plain scores
+5	perf-ornith-both-r2	decode: head 256, q8_0 K/V, up to 4 rows; prompt: head 256, q8_0 K/V, plain scores; prompt: head 256, f16 K/V, plain scores
+6	perf-ornith-dec4-r2	decode: head 256, q8_0 K/V, up to 4 rows; prompt: head 256, q8_0 K/V, plain scores; prompt: head 256, f16 K/V, plain scores
+7	perf-ornith-min1-r2	prompt: head 256, q8_0 K/V, plain scores; prompt: head 256, f16 K/V, plain scores
+8	perf-ornith-base-r2	prompt: head 256, q8_0 K/V, plain scores; prompt: head 256, f16 K/V, plain scores

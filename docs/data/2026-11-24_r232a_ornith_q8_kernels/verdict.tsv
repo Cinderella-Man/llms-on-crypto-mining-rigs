@@ -1,0 +1,187 @@
+K/V type	n_kv	query tokens	arm	kernel, base	kernel, arm	base mean us	arm mean us	arm - base us	arm / base	larger repeat spread us	class by the repeat rule	class (also beyond the 1.71 % same-kernel floor)
+q8_0	256	1	min1	stock vector kernel	Pascal tile kernel	78.39	45.78	-32.61	0.5840	0.35	gain	gain
+q8_0	256	1	dec4	stock vector kernel	stock vector kernel	78.39	78.62	+0.22	1.0028	0.35	negligible	same kernel
+q8_0	256	1	both	stock vector kernel	Pascal decode kernel	78.39	23.06	-55.33	0.2942	0.35	gain	gain
+q8_0	4096	1	min1	stock vector kernel	Pascal tile kernel	813.21	398.74	-414.47	0.4903	3.43	gain	gain
+q8_0	4096	1	dec4	stock vector kernel	stock vector kernel	813.21	814.95	+1.74	1.0021	3.43	negligible	same kernel
+q8_0	4096	1	both	stock vector kernel	Pascal decode kernel	813.21	179.38	-633.83	0.2206	3.43	gain	gain
+q8_0	8192	1	min1	stock vector kernel	Pascal tile kernel	1455.49	780.40	-675.08	0.5362	0.79	gain	gain
+q8_0	8192	1	dec4	stock vector kernel	stock vector kernel	1455.49	1458.74	+3.26	1.0022	0.79	loss	same kernel
+q8_0	8192	1	both	stock vector kernel	Pascal decode kernel	1455.49	335.11	-1120.38	0.2302	0.79	gain	gain
+q8_0	16384	1	min1	stock vector kernel	Pascal tile kernel	2721.16	1536.62	-1184.54	0.5647	1.39	gain	gain
+q8_0	16384	1	dec4	stock vector kernel	stock vector kernel	2721.16	2725.64	+4.47	1.0016	1.09	loss	same kernel
+q8_0	16384	1	both	stock vector kernel	Pascal decode kernel	2721.16	642.92	-2078.24	0.2363	1.09	gain	gain
+q8_0	32768	1	min1	stock vector kernel	Pascal tile kernel	5291.10	3011.53	-2279.57	0.5692	6.06	gain	gain
+q8_0	32768	1	dec4	stock vector kernel	stock vector kernel	5291.10	5297.97	+6.86	1.0013	6.06	loss	same kernel
+q8_0	32768	1	both	stock vector kernel	Pascal decode kernel	5291.10	1266.32	-4024.78	0.2393	6.06	gain	gain
+q8_0	49152	1	min1	stock vector kernel	Pascal tile kernel	7455.99	4495.13	-2960.86	0.6029	17.69	gain	gain
+q8_0	49152	1	dec4	stock vector kernel	stock vector kernel	7455.99	7443.68	-12.32	0.9983	17.69	negligible	same kernel
+q8_0	49152	1	both	stock vector kernel	Pascal decode kernel	7455.99	1894.97	-5561.02	0.2542	17.69	gain	gain
+q8_0	256	2	min1	stock vector kernel	Pascal tile kernel	141.01	47.08	-93.93	0.3339	0.58	gain	gain
+q8_0	256	2	dec4	stock vector kernel	stock vector kernel	141.01	141.36	+0.35	1.0025	0.58	negligible	same kernel
+q8_0	256	2	both	stock vector kernel	Pascal decode kernel	141.01	39.09	-101.91	0.2772	0.58	gain	gain
+q8_0	4096	2	min1	stock vector kernel	Pascal tile kernel	1678.18	405.74	-1272.44	0.2418	8.01	gain	gain
+q8_0	4096	2	dec4	stock vector kernel	stock vector kernel	1678.18	1682.96	+4.79	1.0029	8.01	negligible	same kernel
+q8_0	4096	2	both	stock vector kernel	Pascal decode kernel	1678.18	337.58	-1340.60	0.2012	8.01	gain	gain
+q8_0	8192	2	min1	stock vector kernel	Pascal tile kernel	3393.84	786.84	-2607.01	0.2318	19.18	gain	gain
+q8_0	8192	2	dec4	stock vector kernel	stock vector kernel	3393.84	3386.03	-7.81	0.9977	19.18	negligible	same kernel
+q8_0	8192	2	both	stock vector kernel	Pascal decode kernel	3393.84	631.22	-2762.62	0.1860	19.18	gain	gain
+q8_0	16384	2	min1	stock vector kernel	Pascal tile kernel	6693.62	1543.27	-5150.35	0.2306	21.86	gain	gain
+q8_0	16384	2	dec4	stock vector kernel	stock vector kernel	6693.62	6684.16	-9.46	0.9986	21.86	negligible	same kernel
+q8_0	16384	2	both	stock vector kernel	Pascal decode kernel	6693.62	1236.24	-5457.39	0.1847	21.86	gain	gain
+q8_0	32768	2	min1	stock vector kernel	Pascal tile kernel	13575.90	3018.36	-10557.55	0.2223	47.82	gain	gain
+q8_0	32768	2	dec4	stock vector kernel	stock vector kernel	13575.90	13537.90	-38.00	0.9972	47.82	negligible	same kernel
+q8_0	32768	2	both	stock vector kernel	Pascal decode kernel	13575.90	2471.45	-11104.45	0.1820	47.82	gain	gain
+q8_0	49152	2	min1	stock vector kernel	Pascal tile kernel	19973.03	4502.08	-15470.95	0.2254	140.24	gain	gain
+q8_0	49152	2	dec4	stock vector kernel	stock vector kernel	19973.03	19941.48	-31.55	0.9984	140.24	negligible	same kernel
+q8_0	49152	2	both	stock vector kernel	Pascal decode kernel	19973.03	3716.57	-16256.46	0.1861	140.24	gain	gain
+q8_0	256	3	min1	Pascal tile kernel	Pascal tile kernel	79.54	80.12	+0.58	1.0073	0.22	loss	same kernel
+q8_0	256	3	dec4	Pascal tile kernel	Pascal decode kernel	79.54	44.32	-35.22	0.5572	0.22	gain	gain
+q8_0	256	3	both	Pascal tile kernel	Pascal decode kernel	79.54	44.47	-35.07	0.5591	0.22	gain	gain
+q8_0	4096	3	min1	Pascal tile kernel	Pascal tile kernel	802.38	804.20	+1.82	1.0023	3.11	negligible	same kernel
+q8_0	4096	3	dec4	Pascal tile kernel	Pascal decode kernel	802.38	462.81	-339.57	0.5768	3.11	gain	gain
+q8_0	4096	3	both	Pascal tile kernel	Pascal decode kernel	802.38	462.54	-339.85	0.5765	3.11	gain	gain
+q8_0	8192	3	min1	Pascal tile kernel	Pascal tile kernel	1520.17	1519.49	-0.68	0.9996	4.06	negligible	same kernel
+q8_0	8192	3	dec4	Pascal tile kernel	Pascal decode kernel	1520.17	895.24	-624.93	0.5889	4.06	gain	gain
+q8_0	8192	3	both	Pascal tile kernel	Pascal decode kernel	1520.17	897.74	-622.43	0.5906	4.06	gain	gain
+q8_0	16384	3	min1	Pascal tile kernel	Pascal tile kernel	3012.97	3011.98	-0.99	0.9997	6.99	negligible	same kernel
+q8_0	16384	3	dec4	Pascal tile kernel	Pascal decode kernel	3012.97	1785.66	-1227.31	0.5927	6.99	gain	gain
+q8_0	16384	3	both	Pascal tile kernel	Pascal decode kernel	3012.97	1783.80	-1229.17	0.5920	6.99	gain	gain
+q8_0	32768	3	min1	Pascal tile kernel	Pascal tile kernel	5987.73	5986.24	-1.49	0.9998	20.25	negligible	same kernel
+q8_0	32768	3	dec4	Pascal tile kernel	Pascal decode kernel	5987.73	3644.20	-2343.53	0.6086	20.25	gain	gain
+q8_0	32768	3	both	Pascal tile kernel	Pascal decode kernel	5987.73	3657.44	-2330.29	0.6108	20.25	gain	gain
+q8_0	49152	3	min1	Pascal tile kernel	Pascal tile kernel	8948.83	8952.26	+3.43	1.0004	34.80	negligible	same kernel
+q8_0	49152	3	dec4	Pascal tile kernel	Pascal decode kernel	8948.83	5495.07	-3453.76	0.6141	34.80	gain	gain
+q8_0	49152	3	both	Pascal tile kernel	Pascal decode kernel	8948.83	5506.67	-3442.16	0.6154	34.80	gain	gain
+q8_0	256	4	min1	Pascal tile kernel	Pascal tile kernel	81.06	81.47	+0.41	1.0051	0.29	loss	same kernel
+q8_0	256	4	dec4	Pascal tile kernel	Pascal decode kernel	81.06	61.31	-19.75	0.7564	0.29	gain	gain
+q8_0	256	4	both	Pascal tile kernel	Pascal decode kernel	81.06	61.33	-19.74	0.7565	0.29	gain	gain
+q8_0	4096	4	min1	Pascal tile kernel	Pascal tile kernel	809.35	809.26	-0.08	0.9999	1.83	negligible	same kernel
+q8_0	4096	4	dec4	Pascal tile kernel	Pascal decode kernel	809.35	637.76	-171.59	0.7880	1.83	gain	gain
+q8_0	4096	4	both	Pascal tile kernel	Pascal decode kernel	809.35	637.00	-172.35	0.7871	1.83	gain	gain
+q8_0	8192	4	min1	Pascal tile kernel	Pascal tile kernel	1525.01	1524.53	-0.48	0.9997	4.17	negligible	same kernel
+q8_0	8192	4	dec4	Pascal tile kernel	Pascal decode kernel	1525.01	1212.28	-312.74	0.7949	4.17	gain	gain
+q8_0	8192	4	both	Pascal tile kernel	Pascal decode kernel	1525.01	1213.42	-311.59	0.7957	4.17	gain	gain
+q8_0	16384	4	min1	Pascal tile kernel	Pascal tile kernel	3019.52	3017.63	-1.89	0.9994	7.97	negligible	same kernel
+q8_0	16384	4	dec4	Pascal tile kernel	Pascal decode kernel	3019.52	2395.52	-623.99	0.7933	7.97	gain	gain
+q8_0	16384	4	both	Pascal tile kernel	Pascal decode kernel	3019.52	2396.02	-623.50	0.7935	7.97	gain	gain
+q8_0	32768	4	min1	Pascal tile kernel	Pascal tile kernel	5996.95	5993.58	-3.37	0.9994	14.94	negligible	same kernel
+q8_0	32768	4	dec4	Pascal tile kernel	Pascal decode kernel	5996.95	4830.05	-1166.90	0.8054	14.94	gain	gain
+q8_0	32768	4	both	Pascal tile kernel	Pascal decode kernel	5996.95	4829.27	-1167.68	0.8053	14.94	gain	gain
+q8_0	49152	4	min1	Pascal tile kernel	Pascal tile kernel	8960.22	8960.17	-0.05	1.0000	27.83	negligible	same kernel
+q8_0	49152	4	dec4	Pascal tile kernel	Pascal decode kernel	8960.22	7291.63	-1668.59	0.8138	27.83	gain	gain
+q8_0	49152	4	both	Pascal tile kernel	Pascal decode kernel	8960.22	7303.47	-1656.76	0.8151	27.83	gain	gain
+q8_0	256	8	min1	Pascal tile kernel	Pascal tile kernel	124.25	124.41	+0.16	1.0012	0.33	negligible	same kernel
+q8_0	256	8	dec4	Pascal tile kernel	Pascal tile kernel	124.25	124.07	-0.19	0.9985	0.33	negligible	same kernel
+q8_0	256	8	both	Pascal tile kernel	Pascal tile kernel	124.25	124.13	-0.12	0.9990	0.33	negligible	same kernel
+q8_0	4096	8	min1	Pascal tile kernel	Pascal tile kernel	1498.97	1498.09	-0.88	0.9994	3.36	negligible	same kernel
+q8_0	4096	8	dec4	Pascal tile kernel	Pascal tile kernel	1498.97	1496.39	-2.58	0.9983	3.36	negligible	same kernel
+q8_0	4096	8	both	Pascal tile kernel	Pascal tile kernel	1498.97	1497.13	-1.84	0.9988	3.36	negligible	same kernel
+q8_0	8192	8	min1	Pascal tile kernel	Pascal tile kernel	2964.62	2962.77	-1.85	0.9994	7.60	negligible	same kernel
+q8_0	8192	8	dec4	Pascal tile kernel	Pascal tile kernel	2964.62	2961.92	-2.70	0.9991	7.60	negligible	same kernel
+q8_0	8192	8	both	Pascal tile kernel	Pascal tile kernel	2964.62	2961.77	-2.85	0.9990	7.60	negligible	same kernel
+q8_0	16384	8	min1	Pascal tile kernel	Pascal tile kernel	5872.20	5869.41	-2.79	0.9995	14.99	negligible	same kernel
+q8_0	16384	8	dec4	Pascal tile kernel	Pascal tile kernel	5872.20	5866.90	-5.31	0.9991	14.99	negligible	same kernel
+q8_0	16384	8	both	Pascal tile kernel	Pascal tile kernel	5872.20	5868.96	-3.24	0.9994	14.99	negligible	same kernel
+q8_0	32768	8	min1	Pascal tile kernel	Pascal tile kernel	11704.81	11721.65	+16.84	1.0014	78.19	negligible	same kernel
+q8_0	32768	8	dec4	Pascal tile kernel	Pascal tile kernel	11704.81	11717.60	+12.80	1.0011	78.19	negligible	same kernel
+q8_0	32768	8	both	Pascal tile kernel	Pascal tile kernel	11704.81	11716.71	+11.90	1.0010	78.19	negligible	same kernel
+q8_0	49152	8	min1	Pascal tile kernel	Pascal tile kernel	17567.82	17561.35	-6.48	0.9996	53.81	negligible	same kernel
+q8_0	49152	8	dec4	Pascal tile kernel	Pascal tile kernel	17567.82	17546.14	-21.68	0.9988	53.81	negligible	same kernel
+q8_0	49152	8	both	Pascal tile kernel	Pascal tile kernel	17567.82	17558.98	-8.84	0.9995	53.81	negligible	same kernel
+q8_0	256	512	min1	Pascal tile kernel	Pascal tile kernel	6511.49	6507.86	-3.63	0.9994	12.27	negligible	same kernel
+q8_0	256	512	dec4	Pascal tile kernel	Pascal tile kernel	6511.49	6336.52	-174.98	0.9731	328.83	negligible	same kernel
+q8_0	256	512	both	Pascal tile kernel	Pascal tile kernel	6511.49	6459.61	-51.88	0.9920	80.36	negligible	same kernel
+f16	256	1	min1	stock kernel	Pascal tile kernel	31.80	34.95	+3.16	1.0994	0.07	loss	loss
+f16	256	1	dec4	stock kernel	stock kernel	31.80	31.68	-0.12	0.9964	0.07	gain	same kernel
+f16	256	1	both	stock kernel	Pascal tile kernel	31.80	34.87	+3.08	1.0967	0.07	loss	loss
+f16	4096	1	min1	stock kernel	Pascal tile kernel	317.13	293.07	-24.06	0.9241	0.47	gain	gain
+f16	4096	1	dec4	stock kernel	stock kernel	317.13	317.49	+0.36	1.0011	0.47	negligible	same kernel
+f16	4096	1	both	stock kernel	Pascal tile kernel	317.13	292.40	-24.73	0.9220	0.47	gain	gain
+f16	8192	1	min1	stock kernel	Pascal tile kernel	619.74	571.57	-48.17	0.9223	1.24	gain	gain
+f16	8192	1	dec4	stock kernel	stock kernel	619.74	620.59	+0.85	1.0014	0.30	loss	same kernel
+f16	8192	1	both	stock kernel	Pascal tile kernel	619.74	570.72	-49.02	0.9209	0.42	gain	gain
+f16	16384	1	min1	stock kernel	Pascal tile kernel	1226.02	1123.16	-102.86	0.9161	2.00	gain	gain
+f16	16384	1	dec4	stock kernel	stock kernel	1226.02	1227.90	+1.88	1.0015	2.00	negligible	same kernel
+f16	16384	1	both	stock kernel	Pascal tile kernel	1226.02	1121.35	-104.67	0.9146	2.00	gain	gain
+f16	32768	1	min1	stock kernel	Pascal tile kernel	2439.66	2205.61	-234.04	0.9041	9.25	gain	gain
+f16	32768	1	dec4	stock kernel	stock kernel	2439.66	2437.70	-1.95	0.9992	9.25	negligible	same kernel
+f16	32768	1	both	stock kernel	Pascal tile kernel	2439.66	2206.51	-233.14	0.9044	9.25	gain	gain
+f16	49152	1	min1	stock kernel	Pascal tile kernel	3644.80	3292.10	-352.70	0.9032	30.60	gain	gain
+f16	49152	1	dec4	stock kernel	stock kernel	3644.80	3651.76	+6.95	1.0019	30.60	negligible	same kernel
+f16	49152	1	both	stock kernel	Pascal tile kernel	3644.80	3291.37	-353.43	0.9030	30.60	gain	gain
+f16	256	2	min1	stock kernel	Pascal tile kernel	41.71	36.01	-5.70	0.8633	0.48	gain	gain
+f16	256	2	dec4	stock kernel	stock kernel	41.71	41.45	-0.26	0.9936	0.10	gain	same kernel
+f16	256	2	both	stock kernel	Pascal tile kernel	41.71	36.17	-5.53	0.8673	0.10	gain	gain
+f16	4096	2	min1	stock kernel	Pascal tile kernel	422.36	299.27	-123.09	0.7086	0.92	gain	gain
+f16	4096	2	dec4	stock kernel	stock kernel	422.36	418.52	-3.84	0.9909	0.92	gain	same kernel
+f16	4096	2	both	stock kernel	Pascal tile kernel	422.36	298.81	-123.56	0.7075	0.92	gain	gain
+f16	8192	2	min1	stock kernel	Pascal tile kernel	829.18	577.47	-251.72	0.6964	0.86	gain	gain
+f16	8192	2	dec4	stock kernel	stock kernel	829.18	823.12	-6.07	0.9927	0.86	gain	same kernel
+f16	8192	2	both	stock kernel	Pascal tile kernel	829.18	577.11	-252.08	0.6960	0.86	gain	gain
+f16	16384	2	min1	stock kernel	Pascal tile kernel	1640.25	1127.70	-512.55	0.6875	1.58	gain	gain
+f16	16384	2	dec4	stock kernel	stock kernel	1640.25	1617.75	-22.50	0.9863	1.58	gain	same kernel
+f16	16384	2	both	stock kernel	Pascal tile kernel	1640.25	1127.59	-512.66	0.6875	1.58	gain	gain
+f16	32768	2	min1	stock kernel	Pascal tile kernel	3246.38	2211.84	-1034.53	0.6813	5.89	gain	gain
+f16	32768	2	dec4	stock kernel	stock kernel	3246.38	3197.50	-48.88	0.9849	5.89	gain	same kernel
+f16	32768	2	both	stock kernel	Pascal tile kernel	3246.38	2212.09	-1034.28	0.6814	5.89	gain	gain
+f16	49152	2	min1	stock kernel	Pascal tile kernel	4847.19	3297.57	-1549.63	0.6803	14.23	gain	gain
+f16	49152	2	dec4	stock kernel	stock kernel	4847.19	4774.43	-72.76	0.9850	14.23	gain	same kernel
+f16	49152	2	both	stock kernel	Pascal tile kernel	4847.19	3297.38	-1549.81	0.6803	14.23	gain	gain
+f16	256	3	min1	stock kernel	Pascal tile kernel	62.58	60.92	-1.65	0.9736	1.35	gain	gain
+f16	256	3	dec4	stock kernel	stock kernel	62.58	62.11	-0.47	0.9925	0.13	gain	same kernel
+f16	256	3	both	stock kernel	Pascal tile kernel	62.58	61.54	-1.04	0.9835	0.13	gain	negligible
+f16	4096	3	min1	stock kernel	Pascal tile kernel	580.09	579.50	-0.60	0.9990	1.28	negligible	negligible
+f16	4096	3	dec4	stock kernel	stock kernel	580.09	581.98	+1.88	1.0032	1.28	loss	same kernel
+f16	4096	3	both	stock kernel	Pascal tile kernel	580.09	579.74	-0.35	0.9994	1.28	negligible	negligible
+f16	8192	3	min1	stock kernel	Pascal tile kernel	1128.55	1104.01	-24.54	0.9783	5.63	gain	gain
+f16	8192	3	dec4	stock kernel	stock kernel	1128.55	1130.95	+2.40	1.0021	4.86	negligible	same kernel
+f16	8192	3	both	stock kernel	Pascal tile kernel	1128.55	1101.66	-26.88	0.9762	4.86	gain	gain
+f16	16384	3	min1	stock kernel	Pascal tile kernel	2220.87	2188.05	-32.82	0.9852	8.67	gain	negligible
+f16	16384	3	dec4	stock kernel	stock kernel	2220.87	2225.40	+4.53	1.0020	5.02	negligible	same kernel
+f16	16384	3	both	stock kernel	Pascal tile kernel	2220.87	2185.26	-35.61	0.9840	5.02	gain	negligible
+f16	32768	3	min1	stock kernel	Pascal tile kernel	4395.78	4352.98	-42.80	0.9903	12.59	gain	negligible
+f16	32768	3	dec4	stock kernel	stock kernel	4395.78	4414.54	+18.76	1.0043	11.28	loss	same kernel
+f16	32768	3	both	stock kernel	Pascal tile kernel	4395.78	4352.02	-43.76	0.9900	6.12	gain	negligible
+f16	49152	3	min1	stock kernel	Pascal tile kernel	6598.82	6494.73	-104.10	0.9842	12.20	gain	negligible
+f16	49152	3	dec4	stock kernel	stock kernel	6598.82	6623.60	+24.78	1.0038	9.36	loss	same kernel
+f16	49152	3	both	stock kernel	Pascal tile kernel	6598.82	6490.84	-107.98	0.9836	5.57	gain	negligible
+f16	256	4	min1	stock kernel	Pascal tile kernel	67.34	62.22	-5.12	0.9240	1.01	gain	gain
+f16	256	4	dec4	stock kernel	stock kernel	67.34	66.19	-1.15	0.9829	0.13	gain	same kernel
+f16	256	4	both	stock kernel	Pascal tile kernel	67.34	62.67	-4.67	0.9306	0.13	gain	gain
+f16	4096	4	min1	stock kernel	Pascal tile kernel	582.33	583.76	+1.44	1.0025	1.38	loss	negligible
+f16	4096	4	dec4	stock kernel	stock kernel	582.33	583.77	+1.44	1.0025	1.38	loss	same kernel
+f16	4096	4	both	stock kernel	Pascal tile kernel	582.33	584.25	+1.92	1.0033	1.38	loss	negligible
+f16	8192	4	min1	stock kernel	Pascal tile kernel	1132.51	1107.57	-24.94	0.9780	4.26	gain	gain
+f16	8192	4	dec4	stock kernel	stock kernel	1132.51	1134.18	+1.67	1.0015	4.03	negligible	same kernel
+f16	8192	4	both	stock kernel	Pascal tile kernel	1132.51	1105.80	-26.71	0.9764	4.03	gain	gain
+f16	16384	4	min1	stock kernel	Pascal tile kernel	2223.30	2193.10	-30.20	0.9864	8.66	gain	negligible
+f16	16384	4	dec4	stock kernel	stock kernel	2223.30	2228.01	+4.71	1.0021	5.29	negligible	same kernel
+f16	16384	4	both	stock kernel	Pascal tile kernel	2223.30	2188.25	-35.05	0.9842	5.29	gain	negligible
+f16	32768	4	min1	stock kernel	Pascal tile kernel	4398.19	4355.25	-42.94	0.9902	12.13	gain	negligible
+f16	32768	4	dec4	stock kernel	stock kernel	4398.19	4416.44	+18.25	1.0041	3.54	loss	same kernel
+f16	32768	4	both	stock kernel	Pascal tile kernel	4398.19	4355.76	-42.43	0.9904	8.77	gain	negligible
+f16	49152	4	min1	stock kernel	Pascal tile kernel	6607.65	6498.23	-109.42	0.9834	15.96	gain	negligible
+f16	49152	4	dec4	stock kernel	stock kernel	6607.65	6629.20	+21.55	1.0033	3.98	loss	same kernel
+f16	49152	4	both	stock kernel	Pascal tile kernel	6607.65	6493.11	-114.53	0.9827	2.75	gain	gain
+f16	256	8	min1	stock kernel	Pascal tile kernel	129.34	100.66	-28.69	0.7782	1.85	gain	gain
+f16	256	8	dec4	stock kernel	stock kernel	129.34	129.76	+0.42	1.0032	0.23	loss	same kernel
+f16	256	8	both	stock kernel	Pascal tile kernel	129.34	100.83	-28.52	0.7795	0.23	gain	gain
+f16	4096	8	min1	stock kernel	Pascal tile kernel	1161.55	1109.43	-52.12	0.9551	4.21	gain	gain
+f16	4096	8	dec4	stock kernel	stock kernel	1161.55	1165.54	+3.99	1.0034	2.38	loss	same kernel
+f16	4096	8	both	stock kernel	Pascal tile kernel	1161.55	1107.15	-54.40	0.9532	1.07	gain	gain
+f16	8192	8	min1	stock kernel	Pascal tile kernel	2252.01	2174.76	-77.25	0.9657	8.75	gain	gain
+f16	8192	8	dec4	stock kernel	stock kernel	2252.01	2258.34	+6.33	1.0028	4.42	loss	same kernel
+f16	8192	8	both	stock kernel	Pascal tile kernel	2252.01	2171.22	-80.79	0.9641	4.42	gain	gain
+f16	16384	8	min1	stock kernel	Pascal tile kernel	4415.09	4309.01	-106.08	0.9760	18.91	gain	gain
+f16	16384	8	dec4	stock kernel	stock kernel	4415.09	4429.69	+14.61	1.0033	18.91	negligible	same kernel
+f16	16384	8	both	stock kernel	Pascal tile kernel	4415.09	4303.44	-111.65	0.9747	18.91	gain	gain
+f16	32768	8	min1	stock kernel	Pascal tile kernel	8782.19	8566.42	-215.77	0.9754	27.34	gain	gain
+f16	32768	8	dec4	stock kernel	stock kernel	8782.19	8816.83	+34.65	1.0039	13.62	loss	same kernel
+f16	32768	8	both	stock kernel	Pascal tile kernel	8782.19	8563.75	-218.44	0.9751	13.62	gain	gain
+f16	49152	8	min1	stock kernel	Pascal tile kernel	13142.26	12807.65	-334.61	0.9745	24.32	gain	gain
+f16	49152	8	dec4	stock kernel	stock kernel	13142.26	13138.53	-3.73	0.9997	5.18	negligible	same kernel
+f16	49152	8	both	stock kernel	Pascal tile kernel	13142.26	12803.72	-338.54	0.9742	13.08	gain	gain
+f16	256	512	min1	Pascal tile kernel	Pascal tile kernel	5276.31	5277.22	+0.91	1.0002	7.71	negligible	same kernel
+f16	256	512	dec4	Pascal tile kernel	Pascal tile kernel	5276.31	5273.15	-3.16	0.9994	4.06	negligible	same kernel
+f16	256	512	both	Pascal tile kernel	Pascal tile kernel	5276.31	5274.05	-2.26	0.9996	4.06	negligible	same kernel

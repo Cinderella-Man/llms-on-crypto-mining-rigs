@@ -1,0 +1,145 @@
+K/V type	n_kv	query tokens	arm	against	kernel (both)	arm / against - 1
+q8_0	256	512	dec4	base	Pascal tile kernel	-2.69 %
+q8_0	256	512	dec4	min1	Pascal tile kernel	-2.63 %
+q8_0	256	512	both	dec4	Pascal tile kernel	+1.94 %
+f16	256	4	dec4	base	stock kernel	-1.71 %
+f16	32768	2	dec4	base	stock kernel	-1.51 %
+f16	49152	2	dec4	base	stock kernel	-1.50 %
+f16	16384	2	dec4	base	stock kernel	-1.37 %
+f16	256	3	both	min1	Pascal tile kernel	+1.01 %
+f16	4096	2	dec4	base	stock kernel	-0.91 %
+q8_0	256	512	both	base	Pascal tile kernel	-0.80 %
+f16	256	3	dec4	base	stock kernel	-0.75 %
+q8_0	256	512	both	min1	Pascal tile kernel	-0.74 %
+f16	8192	2	dec4	base	stock kernel	-0.73 %
+q8_0	256	3	min1	base	Pascal tile kernel	+0.73 %
+f16	256	4	both	min1	Pascal tile kernel	+0.72 %
+f16	256	2	dec4	base	stock kernel	-0.64 %
+q8_0	256	4	min1	base	Pascal tile kernel	+0.51 %
+f16	256	2	both	min1	Pascal tile kernel	+0.46 %
+f16	32768	3	dec4	base	stock kernel	+0.43 %
+f16	32768	4	dec4	base	stock kernel	+0.41 %
+f16	32768	8	dec4	base	stock kernel	+0.39 %
+f16	49152	3	dec4	base	stock kernel	+0.38 %
+q8_0	32768	3	both	dec4	Pascal decode kernel	+0.36 %
+f16	256	1	dec4	base	stock kernel	-0.36 %
+f16	4096	8	dec4	base	stock kernel	+0.34 %
+q8_0	256	3	both	dec4	Pascal decode kernel	+0.34 %
+f16	16384	8	dec4	base	stock kernel	+0.33 %
+f16	49152	4	dec4	base	stock kernel	+0.33 %
+f16	4096	3	dec4	base	stock kernel	+0.32 %
+f16	256	8	dec4	base	stock kernel	+0.32 %
+q8_0	4096	2	dec4	base	stock vector kernel	+0.29 %
+f16	8192	8	dec4	base	stock kernel	+0.28 %
+q8_0	256	1	dec4	base	stock vector kernel	+0.28 %
+q8_0	32768	2	dec4	base	stock vector kernel	-0.28 %
+q8_0	8192	3	both	dec4	Pascal decode kernel	+0.28 %
+q8_0	256	8	dec4	min1	Pascal tile kernel	-0.27 %
+q8_0	256	2	dec4	base	stock vector kernel	+0.25 %
+f16	4096	4	dec4	base	stock kernel	+0.25 %
+f16	256	1	both	min1	Pascal tile kernel	-0.24 %
+q8_0	8192	2	dec4	base	stock vector kernel	-0.23 %
+f16	4096	1	both	min1	Pascal tile kernel	-0.23 %
+q8_0	4096	3	min1	base	Pascal tile kernel	+0.23 %
+q8_0	256	8	both	min1	Pascal tile kernel	-0.23 %
+q8_0	8192	1	dec4	base	stock vector kernel	+0.22 %
+f16	16384	4	both	min1	Pascal tile kernel	-0.22 %
+q8_0	4096	1	dec4	base	stock vector kernel	+0.21 %
+f16	8192	3	dec4	base	stock kernel	+0.21 %
+f16	8192	3	both	min1	Pascal tile kernel	-0.21 %
+f16	16384	4	dec4	base	stock kernel	+0.21 %
+q8_0	49152	3	both	dec4	Pascal decode kernel	+0.21 %
+f16	4096	8	both	min1	Pascal tile kernel	-0.21 %
+f16	16384	3	dec4	base	stock kernel	+0.20 %
+f16	49152	1	dec4	base	stock kernel	+0.19 %
+q8_0	4096	8	dec4	base	Pascal tile kernel	-0.17 %
+f16	256	8	both	min1	Pascal tile kernel	+0.17 %
+q8_0	49152	1	dec4	base	stock vector kernel	-0.17 %
+q8_0	16384	1	dec4	base	stock vector kernel	+0.16 %
+f16	8192	8	both	min1	Pascal tile kernel	-0.16 %
+q8_0	49152	4	both	dec4	Pascal decode kernel	+0.16 %
+f16	16384	1	both	min1	Pascal tile kernel	-0.16 %
+f16	8192	4	both	min1	Pascal tile kernel	-0.16 %
+q8_0	49152	2	dec4	base	stock vector kernel	-0.16 %
+f16	4096	2	both	min1	Pascal tile kernel	-0.16 %
+f16	16384	1	dec4	base	stock kernel	+0.15 %
+q8_0	256	8	dec4	base	Pascal tile kernel	-0.15 %
+f16	8192	1	both	min1	Pascal tile kernel	-0.15 %
+f16	8192	4	dec4	base	stock kernel	+0.15 %
+q8_0	32768	8	min1	base	Pascal tile kernel	+0.14 %
+q8_0	16384	2	dec4	base	stock vector kernel	-0.14 %
+f16	8192	1	dec4	base	stock kernel	+0.14 %
+q8_0	32768	1	dec4	base	stock vector kernel	+0.13 %
+f16	16384	8	both	min1	Pascal tile kernel	-0.13 %
+f16	16384	3	both	min1	Pascal tile kernel	-0.13 %
+q8_0	256	8	min1	base	Pascal tile kernel	+0.12 %
+q8_0	49152	8	dec4	base	Pascal tile kernel	-0.12 %
+q8_0	4096	8	both	base	Pascal tile kernel	-0.12 %
+q8_0	4096	4	both	dec4	Pascal decode kernel	-0.12 %
+q8_0	4096	8	dec4	min1	Pascal tile kernel	-0.11 %
+f16	4096	1	dec4	base	stock kernel	+0.11 %
+q8_0	32768	8	dec4	base	Pascal tile kernel	+0.11 %
+q8_0	16384	3	both	dec4	Pascal decode kernel	-0.10 %
+q8_0	32768	8	both	base	Pascal tile kernel	+0.10 %
+q8_0	256	8	both	base	Pascal tile kernel	-0.10 %
+q8_0	8192	8	both	base	Pascal tile kernel	-0.10 %
+q8_0	8192	4	both	dec4	Pascal decode kernel	+0.09 %
+q8_0	8192	8	dec4	base	Pascal tile kernel	-0.09 %
+q8_0	16384	8	dec4	base	Pascal tile kernel	-0.09 %
+q8_0	49152	8	dec4	min1	Pascal tile kernel	-0.09 %
+f16	4096	4	both	min1	Pascal tile kernel	+0.08 %
+f16	32768	1	dec4	base	stock kernel	-0.08 %
+f16	49152	4	both	min1	Pascal tile kernel	-0.08 %
+f16	256	512	dec4	min1	Pascal tile kernel	-0.08 %
+q8_0	49152	8	both	dec4	Pascal tile kernel	+0.07 %
+q8_0	4096	8	both	min1	Pascal tile kernel	-0.06 %
+q8_0	16384	4	min1	base	Pascal tile kernel	-0.06 %
+q8_0	8192	8	min1	base	Pascal tile kernel	-0.06 %
+f16	8192	2	both	min1	Pascal tile kernel	-0.06 %
+f16	256	512	both	min1	Pascal tile kernel	-0.06 %
+f16	256	512	dec4	base	Pascal tile kernel	-0.06 %
+f16	49152	3	both	min1	Pascal tile kernel	-0.06 %
+q8_0	4096	3	both	dec4	Pascal decode kernel	-0.06 %
+q8_0	4096	8	min1	base	Pascal tile kernel	-0.06 %
+q8_0	32768	4	min1	base	Pascal tile kernel	-0.06 %
+q8_0	256	512	min1	base	Pascal tile kernel	-0.06 %
+q8_0	16384	8	both	base	Pascal tile kernel	-0.06 %
+q8_0	49152	8	both	base	Pascal tile kernel	-0.05 %
+q8_0	4096	8	both	dec4	Pascal tile kernel	+0.05 %
+q8_0	256	8	both	dec4	Pascal tile kernel	+0.05 %
+q8_0	16384	8	min1	base	Pascal tile kernel	-0.05 %
+q8_0	8192	3	min1	base	Pascal tile kernel	-0.04 %
+q8_0	16384	8	dec4	min1	Pascal tile kernel	-0.04 %
+f16	256	512	both	base	Pascal tile kernel	-0.04 %
+f16	4096	3	both	min1	Pascal tile kernel	+0.04 %
+q8_0	32768	8	both	min1	Pascal tile kernel	-0.04 %
+f16	32768	1	both	min1	Pascal tile kernel	+0.04 %
+q8_0	49152	3	min1	base	Pascal tile kernel	+0.04 %
+q8_0	49152	8	min1	base	Pascal tile kernel	-0.04 %
+q8_0	16384	8	both	dec4	Pascal tile kernel	+0.04 %
+q8_0	32768	8	dec4	min1	Pascal tile kernel	-0.03 %
+q8_0	8192	8	both	min1	Pascal tile kernel	-0.03 %
+q8_0	16384	3	min1	base	Pascal tile kernel	-0.03 %
+q8_0	8192	4	min1	base	Pascal tile kernel	-0.03 %
+f16	32768	8	both	min1	Pascal tile kernel	-0.03 %
+f16	49152	8	both	min1	Pascal tile kernel	-0.03 %
+q8_0	8192	8	dec4	min1	Pascal tile kernel	-0.03 %
+f16	49152	8	dec4	base	stock kernel	-0.03 %
+q8_0	32768	3	min1	base	Pascal tile kernel	-0.02 %
+f16	32768	3	both	min1	Pascal tile kernel	-0.02 %
+f16	49152	1	both	min1	Pascal tile kernel	-0.02 %
+q8_0	16384	4	both	dec4	Pascal decode kernel	+0.02 %
+f16	256	512	min1	base	Pascal tile kernel	+0.02 %
+f16	256	512	both	dec4	Pascal tile kernel	+0.02 %
+q8_0	256	4	both	dec4	Pascal decode kernel	+0.02 %
+q8_0	32768	4	both	dec4	Pascal decode kernel	-0.02 %
+q8_0	49152	8	both	min1	Pascal tile kernel	-0.01 %
+f16	32768	4	both	min1	Pascal tile kernel	+0.01 %
+f16	32768	2	both	min1	Pascal tile kernel	+0.01 %
+q8_0	4096	4	min1	base	Pascal tile kernel	-0.01 %
+f16	16384	2	both	min1	Pascal tile kernel	-0.01 %
+q8_0	16384	8	both	min1	Pascal tile kernel	-0.01 %
+q8_0	32768	8	both	dec4	Pascal tile kernel	-0.01 %
+f16	49152	2	both	min1	Pascal tile kernel	-0.01 %
+q8_0	8192	8	both	dec4	Pascal tile kernel	-0.01 %
+q8_0	49152	4	min1	base	Pascal tile kernel	-0.00 %
