@@ -1,0 +1,8 @@
+arm	against	what it shows	cases in both	the same error	different error	the same verdict
+base-unset	head-unset	the switch unset: the head as the base	367	367	0	367
+base-f1	head-f1	_FAULT=1 alone: the head's x 1.05 as the base's	367	367	0	367
+head-f1	head-s1.05	_FAULT_SCALE=1.05: the default	367	367	0	367
+head-f1	head-sbad	_FAULT_SCALE=x1.03 (not a number): the default	367	367	0	367
+head-unset	head-s1.00	_FAULT_SCALE=1.0: no error	367	367	0	367
+head-unset	head-snof	_FAULT_SCALE=1.03 without _FAULT: nothing	367	367	0	367
+base-dec-unset	head-dec-unset	decode kernel on, the switch unset: the head as the base	367	367	0	367

@@ -1,0 +1,3 @@
+arm	cases checked live	live OK	live FAIL	references identical	references differ	live and replayed verdicts differ
+head-unset	309	309	0	309	0	0
+head-s1.03	309	227	82	309	0	0

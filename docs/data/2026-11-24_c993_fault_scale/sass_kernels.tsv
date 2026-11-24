@@ -1,0 +1,12 @@
+kernel	copy	instructions base	instructions head	lines that differ
+(anonymous namespace)::flash_attn_dec_pascal<256>	0	2888	2888	1
+(anonymous namespace)::flash_attn_tile_pascal<128, (ggml_type)1, (ggml_type)1, false, false, false>	0	2330	2330	36
+(anonymous namespace)::flash_attn_tile_pascal<128, (ggml_type)1, (ggml_type)1, true, false, false>	0	2408	2408	36
+(anonymous namespace)::flash_attn_tile_pascal<128, (ggml_type)8, (ggml_type)8, false, false, false>	0	2510	2510	36
+(anonymous namespace)::flash_attn_tile_pascal<128, (ggml_type)8, (ggml_type)8, false, true, false>	0	2504	2504	36
+(anonymous namespace)::flash_attn_tile_pascal<128, (ggml_type)8, (ggml_type)8, true, false, false>	0	2606	2606	36
+(anonymous namespace)::flash_attn_tile_pascal<128, (ggml_type)8, (ggml_type)8, true, true, false>	0	2618	2618	36
+(anonymous namespace)::flash_attn_tile_pascal<256, (ggml_type)1, (ggml_type)1, false, false, false>	0	2072	2072	36
+(anonymous namespace)::flash_attn_tile_pascal<256, (ggml_type)8, (ggml_type)8, false, false, false>	0	2258	2258	36
+(anonymous namespace)::flash_attn_tile_pascal<256, (ggml_type)8, (ggml_type)8, false, true, false>	0	2258	2258	36
+(anonymous namespace)::flash_attn_tile_pascal<256, (ggml_type)8, (ggml_type)8, false, true, true>	0	1910	1910	36
