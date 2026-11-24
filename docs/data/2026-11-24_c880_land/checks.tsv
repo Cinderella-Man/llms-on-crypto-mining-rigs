@@ -1,0 +1,14 @@
+check	base 14d679604	head 8a9629942	verdict
+merge: files changed against the base	-	8 (examples/ 3, tests/ 5); 0 in src, ggml, include, common, tools	the branch's own diff, line for line
+rig build (CUDA 12.9, sm_61, TESTS=1, test-llama-archs and test-cuda-keepalive added): warning lines	38, of them 6 deprecated batch calls	32, of them 0	none new
+CPU build of every target: warning lines	26, of them 24 deprecated batch calls	2, of them 0	none new
+rig tarball	llama.cpp-20261123-14d679604-pascal-p106-v5-dec-mask.tar.gz, md5 d8dd415dea36f9d064ce67e65840c218	llama.cpp-20261124-8a9629942-pascal-p106-v5-land-batch-api.tar.gz, 842,627,482 bytes, md5 fd50fb9c9a4634b9d20ce9d14b6c6185	-
+rig binaries other than llama-pipespec and llama-screen-check	-	the base's size; 28 bytes differ in 4, 29 in 5, 38 in llama-pipe-drafter-check, 39 in test-llama-archs (binaries.tsv)	only what the build stamps in: the build ID (20 bytes), the commit id (8 of its 10 characters differ), the build number; in the two with 38 and 39, also the references to a one-letter string "a" that the linker now takes from the end of the new commit id 8a9629942a
+card code: cuobjdump -sass of llama-server	12,473,975 lines	12,473,975 lines	identical, byte for byte
+card code: cuobjdump -ptx of llama-server	11,366,980 lines	11,366,980 lines	identical, byte for byte
+card code: one SHA-1 per kernel copy	9,518 copies	9,518 copies	identical
+test-llama-archs -b CPU -s 1 of the rig builds: plain, write, compare	153 of 153	153 of 153 (plain, compare)	148 of 148 logits files the base's, bit for bit
+ctest, 75 tests, no network (CPU build)	71 pass; fail: test-kv-cache (aborted), test-jinja, test-jinja-py, test-kv-cache-scales	the same	the same, test by test (ctest.tsv); also the same as the review build 82d9eb5ef's
+test-llama-archs -b CPU -s 1 of the CPU builds: plain, write, compare	153 of 153 each; 148 files	153 of 153 each; 148 files	148 of 148 files the base's, bit for bit
+hand-run tests (9)	9 pass	9 pass	the same verdicts
+the eight changed tools and tests (tools.sh, the same random models)	-	-	129 of 129 comparisons the same (tools.tsv)

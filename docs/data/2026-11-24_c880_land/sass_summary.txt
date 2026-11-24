@@ -1,0 +1,5 @@
+SASS dump: base 12473975 lines, head 12473975; whole dumps identical
+PTX dump: base 11366980 lines, head 11366980; whole dumps identical
+kernel copies hashed: base 9518, head 9518; distinct names: base 9017, head 9017
+per-kernel SHA-1 tables, sorted: identical
+base kernels (names): 8841; identical in new with kq_fp32 off: 8665; different: 176; missing in new: 0; names only in new (kq_fp32 off): 0; kq_fp32 on kernels: 176
