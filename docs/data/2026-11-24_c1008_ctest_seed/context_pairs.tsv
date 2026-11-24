@@ -1,0 +1,5 @@
+pair	a	b	same in order	same sorted	lines in one only
+base twice	run1-base	run2-base	yes	yes	0
+head twice	run1-head	run2-head	yes	yes	0
+base-head run1	run1-base	run1-head	yes	yes	0
+base-head run2	run2-base	run2-head	yes	yes	0

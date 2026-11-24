@@ -1,0 +1,13 @@
+tree	test	seed	command
+run1-base	test-generate-fp8-models	1	test-llama-archs -a llama -s 1 -o <tests>/test-models-fp8
+run1-head	test-generate-fp8-models	1	test-llama-archs -a llama -s 1 -o <tests>/test-models-fp8
+run2-base	test-generate-fp8-models	1	test-llama-archs -a llama -s 1 -o <tests>/test-models-fp8
+run2-head	test-generate-fp8-models	1	test-llama-archs -a llama -s 1 -o <tests>/test-models-fp8
+run1-base	test-generate-models	2960570594	test-llama-archs -o <tests>/test-models/
+run1-head	test-generate-models	1	test-llama-archs -s 1 -o <tests>/test-models/
+run2-base	test-generate-models	1120871947	test-llama-archs -o <tests>/test-models/
+run2-head	test-generate-models	1	test-llama-archs -s 1 -o <tests>/test-models/
+run1-base	test-generate-speculative-target	999	test-llama-archs -a llama -s 999 -o <tests>/test-speculative-models/target
+run1-head	test-generate-speculative-target	999	test-llama-archs -a llama -s 999 -o <tests>/test-speculative-models/target
+run2-base	test-generate-speculative-target	999	test-llama-archs -a llama -s 999 -o <tests>/test-speculative-models/target
+run2-head	test-generate-speculative-target	999	test-llama-archs -a llama -s 999 -o <tests>/test-speculative-models/target
