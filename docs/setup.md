@@ -98,7 +98,8 @@ only needs the rig's CUDA 12.9 runtime libraries. It produces a ~160 MB tarball 
 CUDA graphs on Pascal and speeds up generation by 7–16 % in the benchmarks here. New model architectures need a recent
 build: Flint, for example, is supported only from 2026-10-21. Recent versions download llama-server's web page (its
 built-in chat UI) during the build; the script asks for the page of the upstream llama.cpp release the tree is based
-on, also for Miner Llama's branches, and prints which one the build took.
+on, also for Miner Llama's branches, or of the newest release below it when upstream has no page for that one, and
+prints which one the build took.
 
 ## Running llama-server on a 4 GB host
 

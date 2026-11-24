@@ -132,8 +132,8 @@ and a PC to connect from.
 What each preset sets and why: the [Qwen3.8-Flash-Next](release/flash-next-v4/README.md),
 [Flint](release/flint-v4/README.md) and [Ornith-1.5-122B](release/ornith-v4/README.md) pages. To build the engine
 yourself: `TESTS=1 scripts/build_llamacpp_docker.sh miner-llama-v4.0`
-([reproduce/engine.md](release/flint-v2/reproduce/engine.md) walks through it for v2.0). v3.0 and its presets
-(`release/<model>-v3/`) keep working as they are.
+([reproduce/engine.md](release/flint-v2/reproduce/engine.md) walks through it for v2.0, and names the web page each
+release shipped with). v3.0 and its presets (`release/<model>-v3/`) keep working as they are.
 
 ## Models
 

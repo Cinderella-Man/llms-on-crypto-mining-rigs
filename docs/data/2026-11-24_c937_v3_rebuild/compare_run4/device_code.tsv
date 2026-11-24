@@ -1,0 +1,10 @@
+file	cubins	cubins same	ptx	ptx same
+llama-batched-bench	147	147	147	144
+llama-bench	147	147	147	144
+llama-cli	147	147	147	144
+llama-completion	147	147	147	144
+llama-perplexity	147	147	147	144
+llama-pipe-drafter-check	147	147	147	144
+llama-pipespec	147	147	147	144
+llama-screen-check	147	147	147	144
+llama-server	147	147	147	144

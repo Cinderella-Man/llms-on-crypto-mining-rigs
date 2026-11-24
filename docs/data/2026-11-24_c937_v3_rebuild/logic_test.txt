@@ -1,0 +1,41 @@
+== 1. host side
+ok   nothing set: 
+ok   environment: HF_UI_VERSION=b111
+ok   DOCKER_ARGS: 1
+ok   both: DOCKER_ARGS only: HF_UI_VERSION=b222
+== 2. the container script parses
+ok   bash -n: 0
+== 3. the version choice in the container
+ok   block ends with the echo: 1
+ok   no tags: result=unset exported=0
+ok   no tags: warning: 1
+ok   no tags: no request: 
+ok   only a non-matching tag: result=unset exported=0
+ok   a tree that does not download by release: own release: result=b12092 exported=1
+ok     no request: 
+ok   own release has an archive: result=b12092 exported=1
+ok     printed: web page: HF_UI_VERSION=b12092 (the upstream release this tree sits on)
+ok     one request: b12092
+ok     no warning: 0
+ok   own release 404: walks down: result=b12091 exported=1
+ok     printed: web page: HF_UI_VERSION=b12091 (the newest upstream release with an archive at or below b12092, the one this tree sits on)
+ok     requests (b12100 is not in the tree): b12092 b12091
+ok     no warning: 0
+ok   two 404s: result=b12090 exported=1
+ok     requests: b12092 b12091 b12090
+ok   a 500 asked twice, then 200: result=b12091 exported=1
+ok     requests: b12092 b12091 b12091
+ok   no answer twice: stops, own release: result=b12092 exported=1
+ok     requests: b12092 b12091 b12091
+ok     warning: 1
+ok   no archive at all: own release: result=b12092 exported=1
+ok     requests: b12092 b12091 b12090
+ok     warning: 1
+ok   given: result=b12128 exported=1
+ok     printed: web page: HF_UI_VERSION=b12128 (given)
+ok     no request: 
+== 4. the took parser
+ok   pinned: b12091
+ok   fell back: latest
+ok   failed: 
+== all passed

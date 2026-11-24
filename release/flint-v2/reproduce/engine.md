@@ -33,8 +33,29 @@ git -C ~/llama-builds/src remote add fork https://github.com/Cinderella-Man/llam
 TESTS=1 scripts/build_llamacpp_docker.sh miner-llama-v2.0
 ```
 
-It writes `llama.cpp-<date>-<commit>-miner-llama-v2.0.tar.gz` with `bin/` and `BUILDINFO.txt` (commit, image, AVX
-count, highest glibc symbol). `SCHED_COPIES=8` builds the variant with eight scheduler copies for prefill.
+It writes `llama.cpp-<date>-<commit>.tar.gz` with `bin/` and `BUILDINFO.txt` (commit, image, AVX count, highest
+glibc symbol, the web page). `SCHED_COPIES=8` builds the variant with eight scheduler copies for prefill.
+
+**The web page.** The build downloads llama-server's chat page from upstream's archive by upstream release. Upstream
+has no archive for b11820, the release v2.0 sits on, nor for v3.0's b12092, and its newest archive lacks files these
+trees require, so the script takes the newest release below that has one. Each release shipped the page that was
+upstream's newest on its build day; to embed that page instead, pass it as `HF_UI_VERSION`:
+
+| Release | Upstream release under it | Page the script takes | Page the release shipped |
+|---|---|---|---|
+| v2.0 (`miner-llama-v2.0`) | b11820, no archive | b11819 | b11887 |
+| v3.0 (`miner-llama-v3.0`) | b12092, no archive | b12091 | b12128 |
+| v4.0 (`miner-llama-v4.0`) | b12360 | b12360 | b12359 |
+
+```bash
+HF_UI_VERSION=b11887 TESTS=1 scripts/build_llamacpp_docker.sh miner-llama-v2.0
+```
+
+The released binaries also hold the commit id as git printed it then, 9 characters for v2.0 and v3.0 (10 for v4.0);
+`git -C ~/llama-builds/src config core.abbrev 9` gives the same. Rebuilt this way on 2026-11-24, v2.0 and v3.0 have
+their released builds' host code and data and every compute 6.1 kernel image (cubin) the P106 runs. The files still
+differ: nvcc names one function-local shared variable differently in every build, in 3 of the device code objects'
+PTX ([the rebuilds](../../../docs/data/2026-11-24_c937_v3_rebuild/README.md)).
 
 On the rig itself (slow on two cores):
 

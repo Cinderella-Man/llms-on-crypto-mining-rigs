@@ -14,9 +14,13 @@
 # upstream's archive on Hugging Face by release number (b<N>) and, when that release has no archive, takes the newest
 # one, which need not fit an older tree. A fork's own commit count is no upstream release, so the script asks for the
 # upstream release the tree sits on (git describe --tags --abbrev=0 --match 'b[0-9]*' on the checked-out tree) and
-# prints which one it asked for and which one the build took. A tree whose clone lacks upstream's b<N> tags gets a
-# warning and the unpinned behaviour; fetch them with git -C $WORK/src fetch --tags origin. Trees that carry their own
-# web page download nothing and are not affected.
+# prints which one it asked for and which one the build took. Upstream has no archive for some releases (b11820 and
+# b12092, which Miner Llama v2.0 and v3.0 sit on, among them): then the script asks for the newest release below the
+# tree's that has one (b11819, b12091), checking up to 40 of the tree's b<N> tags, one request each. A tree whose
+# clone lacks upstream's b<N> tags gets a warning and the unpinned behaviour; fetch them with
+# git -C $WORK/src fetch --tags origin. Trees that carry their own web page download nothing and are not affected.
+# A released build embeds the page that was upstream's newest on its build day; to rebuild a release's llama-server
+# byte for byte, pass that page as HF_UI_VERSION (the release's build page names it).
 #
 # Usage: scripts/build_llamacpp_docker.sh [git-ref] [--cuda-graphs-pascal]
 #   git-ref               llama.cpp branch, tag or commit (default: master); a branch of a fork as <remote>/<branch>,
@@ -32,8 +36,8 @@
 #     JOBS=N: parallel compile jobs (default: all cores), e.g. on a shared build machine
 #     RPC=1: also build ggml-rpc-server with -DGGML_RPC=ON, so llama-server can use the cards of other rigs (--rpc);
 #     the fork needs its Q743 branch or later for this
-#     HF_UI_VERSION=b<N>: the upstream release whose web page the build embeds, instead of the one the tree sits on;
-#     a -e HF_UI_VERSION=... in DOCKER_ARGS wins over this
+#     HF_UI_VERSION=b<N>: the upstream release whose web page the build embeds, instead of the one the script picks
+#     (see above); a -e HF_UI_VERSION=... in DOCKER_ARGS wins over this
 #     DOCKER_ARGS: extra `docker run` arguments, e.g. a label the build machine's policy asks for
 # Output: $WORK/llama.cpp-<date>-<sha>[-graphs61][-<patch>].tar.gz with bin/ and BUILDINFO.txt (WORK defaults to
 # ~/llama-builds); BUILDINFO.txt names the web page's release.
@@ -68,11 +72,33 @@ docker run --rm ${DOCKER_ARGS:-} ${UI_ENV[@]+"${UI_ENV[@]}"} -e REF="$REF" -e PA
     name=llama.cpp-$(date +%Y%m%d)-$sha
     case "$REF" in */*) name=$name-${REF##*/} ;; esac
 
-    # the web page: the release given, else the upstream release this tree sits on (see the header)
+    # the web page: the release given, else the upstream release this tree sits on or, when upstream has no archive
+    # for it, the newest release below it that has one (see the header)
+    ui_code() { curl -s -o /dev/null -w "%{http_code}" -L --max-time 30 \
+        "https://huggingface.co/buckets/ggml-org/llama-ui/resolve/$1/dist.tar.gz.sha256?download=true" || true; }
     if [ -n "${HF_UI_VERSION:-}" ]; then
         ui_from="given"
-    elif HF_UI_VERSION=$(git describe --tags --abbrev=0 --match "b[0-9]*" HEAD 2>/dev/null); then
+    elif ui_own=$(git describe --tags --abbrev=0 --match "b[0-9]*" HEAD 2>/dev/null); then
+        HF_UI_VERSION=$ui_own
         ui_from="the upstream release this tree sits on"
+        # only trees that download their web page by release; 200: an archive, 404: none, anything else asked twice
+        if git grep -q HF_UI_VERSION -- "*.cmake" "*CMakeLists.txt"; then
+            ui_pick= ui_last=
+            for n in $(git tag -l "b[0-9]*" --merged HEAD | grep -E "^b[0-9]+$" | sed "s/^b//" | sort -rn \
+                    | awk -v top="${ui_own#b}" "\$1 <= top" | head -n 40); do
+                ui_last=$(ui_code "b$n")
+                case "$ui_last" in 200|404) ;; *) ui_last=$(ui_code "b$n") ;; esac
+                case "$ui_last" in 200) ui_pick=b$n; break ;; 404) ;; *) break ;; esac
+            done
+            if [ -z "$ui_pick" ]; then
+                echo "WARNING: no web page archive found for $ui_own or below (last answer: HTTP ${ui_last:-none}), so" \
+                    "the build asks for $ui_own and then takes the newest archive, which may not fit this tree. Pass" \
+                    "HF_UI_VERSION=b<N>." >&2
+            elif [ "$ui_pick" != "$ui_own" ]; then
+                HF_UI_VERSION=$ui_pick
+                ui_from="the newest upstream release with an archive at or below $ui_own, the one this tree sits on"
+            fi
+        fi
     else
         HF_UI_VERSION=
         ui_from="no b<N> tag in this tree"
