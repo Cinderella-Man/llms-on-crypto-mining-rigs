@@ -1,0 +1,7 @@
+check	base af00bb13b	head d49b92251 (pass 1)	head cad303eb9 (passes 2 and 3)	verdict
+rig build (TESTS=1, the base's extra targets): warning lines	32	32, none new	32, none new	none new
+rig build: binaries	21	the same 21 names	the same 21 names	same set
+card code: SASS of llama-server, one SHA-1 per kernel copy	9519	9519, every copy identical	9519, every copy identical	identical
+card code: PTX of llama-server, one SHA-1 per function	9519	9519, every function identical	9519, every function identical, no module-level line differs	identical
+rig tarball	llama.cpp-20261124-af00bb13b-pascal-p106-v5-land-batch2.tar.gz, md5 b51ad2740d5822e7e14af656c413ec22	llama.cpp-20261124-d49b92251-pascal-p106-v5-profile-anchors.tar.gz, 1385325790 B, md5 c72f32091d07bdf3cd4e5b6ed6d173e1 (superseded, deleted)	llama.cpp-20261124-cad303eb9-pascal-p106-v5-profile-anchors.tar.gz, 1385344730 B, md5 6fd1ee546ae2122b6ed445be66cbcfa0; llama-server md5 7a4521100e8387471486802298773aa8	
+cudaEventElapsedTime with the second event first, and across two streams of one card (run/negtest.cu, one RTX 3090)	-	-	-131.0812 ms for the reverse of +131.0812 ms; -111.1020 ms for the reverse of +111.1020 ms across streams; no error	a negative time is exact

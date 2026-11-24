@@ -1,0 +1,25 @@
+pass	arm	card	columns	lines	first_eval	last_eval	missing	repeated	log_evaluations	log_written	log_entered_with_earlier	log_most_at_once	log_host_waited	log_anchors	log_farthest_from_anchor_ms	log_checks	log_max_clock_diff_us	log_over_ms	log_drift_ppm
+1	wait	0	device eval host_enter_ms host_exit_ms gpu_us queued	4014	0	4013	0	0	4014	4014	155	1	155						
+1	wait	1	device eval host_enter_ms host_exit_ms gpu_us queued	4014	0	4013	0	0	4014	4014	3505	1	3505						
+1	waitanc	0	device eval host_enter_ms host_exit_ms gpu_us queued gpu_start_ms gpu_end_ms	3725	0	3724	0	0	3725	3725	124	1	124						
+1	waitanc	1	device eval host_enter_ms host_exit_ms gpu_us queued gpu_start_ms gpu_end_ms	3725	0	3724	0	0	3725	3725	3254	1	3254						
+1	nowait	0	device eval host_enter_ms host_exit_ms gpu_us queued gpu_start_ms gpu_end_ms	4014	0	4013	0	0	4014	4014	3268	7	0						
+1	nowait	1	device eval host_enter_ms host_exit_ms gpu_us queued gpu_start_ms gpu_end_ms	4014	0	4013	0	0	4014	4014	3512	8	0						
+1	nowait0	0	device eval host_enter_ms host_exit_ms gpu_us queued	4374	0	4373	0	0	4374	4374	3630	7	0						
+1	nowait0	1	device eval host_enter_ms host_exit_ms gpu_us queued	4374	0	4373	0	0	4374	4374	3854	8	0						
+2	wait	0	device eval host_enter_ms host_exit_ms gpu_us queued	3873	0	3872	0	0	3873	3873	172	1	172						
+2	wait	1	device eval host_enter_ms host_exit_ms gpu_us queued	3873	0	3872	0	0	3873	3873	3363	1	3363						
+2	waitanc	0	device eval host_enter_ms host_exit_ms gpu_us queued gpu_start_ms gpu_end_ms	3717	0	3716	0	0	3717	3717	143	1	143	173	222.695	172	-69.8	5123.723	-13.99
+2	waitanc	1	device eval host_enter_ms host_exit_ms gpu_us queued gpu_start_ms gpu_end_ms	3717	0	3716	0	0	3717	3717	3244	1	3244	175	130.605	174	-68.1	5338.977	-12.94
+2	nowait	0	device eval host_enter_ms host_exit_ms gpu_us queued gpu_start_ms gpu_end_ms	4374	0	4373	0	0	4374	4374	3646	7	0	190	263.054	189	-8.5	585.613	-14.41
+2	nowait	1	device eval host_enter_ms host_exit_ms gpu_us queued gpu_start_ms gpu_end_ms	4374	0	4373	0	0	4374	4374	3855	8	0	190	142.280	189	-8.7	105.922	-13.02
+2	nowait0	0	device eval host_enter_ms host_exit_ms gpu_us queued	3897	0	3896	0	0	3897	3897	3171	7	0						
+2	nowait0	1	device eval host_enter_ms host_exit_ms gpu_us queued	3897	0	3896	0	0	3897	3897	3405	8	0						
+3	wait	0	device eval host_enter_ms host_exit_ms gpu_us queued	3733	0	3732	0	0	3733	3733	155	1	155						
+3	wait	1	device eval host_enter_ms host_exit_ms gpu_us queued	3733	0	3732	0	0	3733	3733	3260	1	3260						
+3	waitanc	0	device eval host_enter_ms host_exit_ms gpu_us queued gpu_start_ms gpu_end_ms	3733	0	3732	0	0	3733	3733	158	1	158	175	227.238	174	-65.5	4909.317	-13.14
+3	waitanc	1	device eval host_enter_ms host_exit_ms gpu_us queued gpu_start_ms gpu_end_ms	3733	0	3732	0	0	3733	3733	3260	1	3260	176	130.024	175	-60.2	5127.923	-11.66
+3	nowait	0	device eval host_enter_ms host_exit_ms gpu_us queued gpu_start_ms gpu_end_ms	3733	0	3732	0	0	3733	3733	2948	7	0	168	228.646	167	-64.0	4925.214	-12.96
+3	nowait	1	device eval host_enter_ms host_exit_ms gpu_us queued gpu_start_ms gpu_end_ms	3733	0	3732	0	0	3733	3733	3260	8	0	169	139.721	168	-60.6	5140.849	-11.48
+3	nowait0	0	device eval host_enter_ms host_exit_ms gpu_us queued	3733	0	3732	0	0	3733	3733	2936	7	0						
+3	nowait0	1	device eval host_enter_ms host_exit_ms gpu_us queued	3733	0	3732	0	0	3733	3733	3260	8	0						
