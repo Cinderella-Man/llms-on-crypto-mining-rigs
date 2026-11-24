@@ -480,6 +480,11 @@ Validate it on experiments 2 and 3, then use it to pick the split, B and the pol
   multi-conversation ceiling by ~15–20 % on six cards (est.; they overlap, so the gains do not add up).
 - **llama-server settings today:** explicit `-np 2` at most (one stream per slot), not `-np auto`, which unifies the KV
   cache; `--ctx-checkpoints` 1–2 per slot on the 4 GB host.
+- **Several agents that need reproducible replies run without `-kvu`.** In a unified cache one slot's greedy reply
+  changes with what the other slots did before it, because its cells land wherever they left room and attention sums
+  them in another order; with one stream per slot it does not. Ornith-1.5-122B Pascal N2P GGUF gave one fixed prompt
+  three different replies after three histories on the other slot under `-kvu`, and the one-slot reply after every
+  history with separate streams ([C987](../../data/2026-11-24_c987_slot_cells_gpu/README.md), Q1720).
 
 ## Already covered
 

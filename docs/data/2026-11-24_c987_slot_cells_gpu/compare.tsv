@@ -1,0 +1,15 @@
+load	fix1_tokens	fix1_md5	same_as_reference	first_diff_token	fix2_same_as_fix1	fixp_same_as_fix1	same_as_other_load
+one-none-r1	256	950183f1880a	yes		yes	yes	yes
+one-none-r2	256	950183f1880a	yes		yes	yes	yes
+kvu-none-r1	256	950183f1880a	yes		yes	yes	yes
+kvu-none-r2	256	950183f1880a	yes		yes	yes	yes
+kvu-long-r1	256	661f3c84af9b	no	9	yes	yes	yes
+kvu-long-r2	256	661f3c84af9b	no	9	yes	yes	yes
+kvu-short-r1	256	c4a5d269cdf0	no	9	yes	yes	yes
+kvu-short-r2	256	c4a5d269cdf0	no	9	yes	yes	yes
+streams-none-r1	256	950183f1880a	yes		yes	yes	yes
+streams-none-r2	256	950183f1880a	yes		yes	yes	yes
+streams-long-r1	256	950183f1880a	yes		yes	yes	yes
+streams-long-r2	256	950183f1880a	yes		yes	yes	yes
+streams-short-r1	256	950183f1880a	yes		yes	yes	yes
+streams-short-r2	256	950183f1880a	yes		yes	yes	yes

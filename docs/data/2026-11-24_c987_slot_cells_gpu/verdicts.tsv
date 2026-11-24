@@ -1,0 +1,4 @@
+mode	loads	distinct_fix1_replies	loads_same_as_reference	histories_that_change_it	repeats_in_load_same	loads_repeat_each_other
+one	2	1	2	none	2 of 2	1 of 1
+kvu	6	3	2	long short	6 of 6	3 of 3
+streams	6	1	6	none	6 of 6	3 of 3

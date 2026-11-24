@@ -1,0 +1,15 @@
+load	steps	first_token_diff	steps_compared	steps_logprob_differs	largest_abs_diff	first_step_differs	smallest_top2_gap_compared
+one-none-r1	256		256	0	0		0.01416
+one-none-r2	256		256	0	0		0.01416
+kvu-none-r1	256		256	0	0		0.01416
+kvu-none-r2	256		256	0	0		0.01416
+kvu-long-r1	256	9	9	9	0.193	0	0.9536
+kvu-long-r2	256	9	9	9	0.193	0	0.9536
+kvu-short-r1	256	9	9	9	0.0815	0	0.995
+kvu-short-r2	256	9	9	9	0.0815	0	0.995
+streams-none-r1	256		256	0	0		0.01416
+streams-none-r2	256		256	0	0		0.01416
+streams-long-r1	256		256	0	0		0.01416
+streams-long-r2	256		256	0	0		0.01416
+streams-short-r1	256		256	0	0		0.01416
+streams-short-r2	256		256	0	0		0.01416

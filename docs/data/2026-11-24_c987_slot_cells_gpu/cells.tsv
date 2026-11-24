@@ -1,0 +1,15 @@
+load	stream	fix1_first_cell	fix1_top_cell_plus1	other_slot_cells	fix2_first_cell	fixp_first_cell	same_cells_in_load
+one-none-r1	0	0	5061	0	0	0	yes
+one-none-r2	0	0	5061	0	0	0	yes
+kvu-none-r1	0	0	5061	0	0	0	yes
+kvu-none-r2	0	0	5061	0	0	0	yes
+kvu-long-r1	0	6227	11288	6227	6227	6227	yes
+kvu-long-r2	0	6227	11288	6227	6227	6227	yes
+kvu-short-r1	0	1268	6329	1268	1268	1268	yes
+kvu-short-r2	0	1268	6329	1268	1268	1268	yes
+streams-none-r1	1	0	5061	0	0	0	yes
+streams-none-r2	1	0	5061	0	0	0	yes
+streams-long-r1	1	0	5061	0	0	0	yes
+streams-long-r2	1	0	5061	0	0	0	yes
+streams-short-r1	1	0	5061	0	0	0	yes
+streams-short-r2	1	0	5061	0	0	0	yes

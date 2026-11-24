@@ -1,0 +1,15 @@
+load	mode	history	rep	kv_cache	MMVQ_PASCAL	MMVF_PASCAL	COMPUTE_6_1	asserts	requests	tasks_logged
+one-none-r1	one	none	1	49152 cells, 1/1 seqs/streams	1	1		0	3	3
+one-none-r2	one	none	2	49152 cells, 1/1 seqs/streams	1	1		0	3	3
+kvu-none-r1	kvu	none	1	49152 cells, 2/1 seqs/streams	1	1		0	3	3
+kvu-none-r2	kvu	none	2	49152 cells, 2/1 seqs/streams	1	1		0	3	3
+kvu-long-r1	kvu	long	1	49152 cells, 2/1 seqs/streams	1	1		0	5	5
+kvu-long-r2	kvu	long	2	49152 cells, 2/1 seqs/streams	1	1		0	5	5
+kvu-short-r1	kvu	short	1	49152 cells, 2/1 seqs/streams	1	1		0	6	6
+kvu-short-r2	kvu	short	2	49152 cells, 2/1 seqs/streams	1	1		0	6	6
+streams-none-r1	streams	none	1	24576 cells, 2/2 seqs/streams	1	1		0	3	3
+streams-none-r2	streams	none	2	24576 cells, 2/2 seqs/streams	1	1		0	3	3
+streams-long-r1	streams	long	1	24576 cells, 2/2 seqs/streams	1	1		0	5	5
+streams-long-r2	streams	long	2	24576 cells, 2/2 seqs/streams	1	1		0	5	5
+streams-short-r1	streams	short	1	24576 cells, 2/2 seqs/streams	1	1		0	6	6
+streams-short-r2	streams	short	2	24576 cells, 2/2 seqs/streams	1	1		0	6	6
