@@ -1,0 +1,16 @@
+tree	check	verdict	detail
+base	tree	OK	commit 9320d0e054729ef041a894c25e848c340b902756 
+base	build	OK	rc=0; BUILD_SHARED_LIBS=OFF; all targets; 0 error lines
+base	ctest	FAIL	96% tests passed, 3 tests failed out of 76; failed: test-kv-cache test-quantize-default-rules test-kv-cache-scales ; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+base	archs plain	OK	Summary: all 153 test(s) passed; plain rc=0
+base	archs write	OK	Summary: all 153 test(s) passed; write rc=0
+base	archs compare	OK	Summary: all 153 test(s) passed; compare rc=0
+base	archs files	OK	148 files written; 148 compared, differ: none; compared while writing (a shared file): none
+head	tree	OK	commit 91eead67a09aa961689cd86c4f865ed9a6c132e0 
+head	build	OK	rc=0; BUILD_SHARED_LIBS=OFF; all targets; 0 error lines
+head	ctest	FAIL	97% tests passed, 2 tests failed out of 76; failed: test-kv-cache test-kv-cache-scales ; not run: ^(test-conversion-fp8|test-download-model|test-eval-callback-download-model|test-llama-context-model|test-thread-safety|test-eval-callback|test-arg-parser)$
+head	archs plain	OK	Summary: all 153 test(s) passed; plain rc=0
+head	archs write	OK	Summary: all 153 test(s) passed; write rc=0
+head	archs compare	OK	Summary: all 153 test(s) passed; compare rc=0
+head	archs files	OK	148 files written; 148 compared, differ: none; compared while writing (a shared file): none
+head	ident vs base	SAME	base wrote 148 files; 148 compared, differ: none; written by head only: 0; Summary: all 153 test(s) passed

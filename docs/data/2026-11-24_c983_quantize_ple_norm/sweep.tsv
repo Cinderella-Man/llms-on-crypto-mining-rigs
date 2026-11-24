@@ -1,0 +1,175 @@
+arch	rc_base	rc_head	base	head
+afmoe	0	0	|afmoe|MoE|21/84|OK	|afmoe|MoE|21/84|OK
+apertus	0	0		
+arcee	0	0	|arcee|Dense|14/54|OK	|arcee|Dense|14/54|OK
+arctic	0	0	|arctic|MoE|22/81|OK	|arctic|MoE|22/81|OK
+arwkv7	0	0		
+baichuan	0	0	|baichuan|Dense|16/59|OK	|baichuan|Dense|16/59|OK
+bailingmoe	0	0	|bailingmoe|MoE|22/79|OK	|bailingmoe|MoE|22/79|OK
+bailingmoe2	0	0	|bailingmoe2|MoE|15/56|OK	|bailingmoe2|MoE|15/56|OK
+bailingmoe3	0	0	|bailingmoe3|MoE|23/79|OK	|bailingmoe3|MoE|23/79|OK
+beam	0	0	|beam|MoE|34/153|OK	|beam|MoE|34/153|OK
+bert	0	0		
+bitnet	0	0		
+bloom	0	0	|bloom|Dense|10/50|OK	|bloom|Dense|10/50|OK
+chameleon	0	0		
+chatglm	0	0	|chatglm|Dense|14/53|OK	|chatglm|Dense|14/53|OK
+clef	0	0		
+clip	0	0		
+clover_moe	0	0	|clover_moe|MoE|21/77|OK	|clover_moe|MoE|21/77|OK
+codeshell	0	0	|codeshell|Dense|14/64|OK	|codeshell|Dense|14/64|OK
+cogvlm	0	0	|cogvlm|Dense|22/52|OK	|cogvlm|Dense|22/52|OK
+cohere2	0	0	|cohere2|Dense|15/56|OK	|cohere2|Dense|15/56|OK
+cohere2moe	0	0	|cohere2moe|MoE|18/62|OK	|cohere2moe|MoE|18/62|OK
+command-r	0	0	|command-r|Dense|15/56|OK	|command-r|Dense|15/56|OK
+dbrx	0	0	|dbrx|MoE|12/43|OK	|dbrx|MoE|12/43|OK
+deci	0	0	|deci|Dense|16/68|OK	|deci|Dense|16/68|OK
+deepseek	0	0	|deepseek|MoE|19/69|OK	|deepseek|MoE|19/69|OK
+deepseek2	0	0	|deepseek2|MoE|22/55|OK	|deepseek2|MoE|22/55|OK
+deepseek2-ocr	0	0		
+deepseek32	0	0	|deepseek32|MoE|29/70|OK	|deepseek32|MoE|29/70|OK
+deepseek4	0	0	|deepseek4|MoE|66/176|OK	|deepseek4|MoE|66/176|OK
+deepseek41	0	0	|deepseek41|MoE|94/257|OK	|deepseek41|MoE|94/257|OK
+dflash	0	0		
+dots1	0	0	|dots1|MoE|19/74|OK	|dots1|MoE|19/74|OK
+dots3note	0	0	|dots3note|MoE|26/73|OK	|dots3note|MoE|26/73|OK
+dream	0	0		
+eagle3	0	0		
+ernie4_5	0	0	|ernie4_5|MoE|16/61|OK	|ernie4_5|MoE|16/61|OK
+ernie4_5-moe	0	0	|ernie4_5-moe|MoE|19/72|OK	|ernie4_5-moe|MoE|19/72|OK
+eurobert	0	0		
+exaone	0	0	|exaone|Dense|16/60|OK	|exaone|Dense|16/60|OK
+exaone-moe	0	0	|exaone-moe|MoE|19/75|OK	|exaone-moe|MoE|19/75|OK
+exaone4	0	0	|exaone4|Dense|16/64|OK	|exaone4|Dense|16/64|OK
+falcon	0	0	|falcon|Dense|10/40|OK	|falcon|Dense|10/40|OK
+falcon-h1	0	0	|falcon-h1|Dense|20/92|OK	|falcon-h1|Dense|20/92|OK
+flint	0	0	|flint|MoE|19/76|OK	|flint|MoE|19/76|OK
+gemma	0	0	|gemma|Dense|15/58|OK	|gemma|Dense|15/58|OK
+gemma-embedding	0	0		
+gemma-embedding2	0	0		
+gemma2	0	0	|gemma2|Dense|15/62|OK	|gemma2|Dense|15/62|OK
+gemma3	0	0	|gemma3|Dense|16/67|OK	|gemma3|Dense|16/67|OK
+gemma3n	0	0		
+gemma4	0	0	|gemma4|Dense|93/327|OK	|gemma4|Dense|93/327|OK
+gemma4-assistant	0	0		
+glm-dsa	0	0	|glm-dsa|MoE|29/70|OK	|glm-dsa|MoE|29/70|OK
+glm4	0	0	|glm4|Dense|14/57|OK	|glm4|Dense|14/57|OK
+glm4moe	0	0	|glm4moe|MoE|19/74|OK	|glm4moe|MoE|19/74|OK
+glm5-next	0	0	|glm5-next|MoE|18/97|OK	|glm5-next|MoE|18/97|OK
+gpt-oss	0	0	|gpt-oss|MoE|16/73|OK	|gpt-oss|MoE|16/73|OK
+gpt2	0	0	|gpt2|Dense|10/50|OK	|gpt2|Dense|10/50|OK
+gptj	0	0		
+gptneox	0	0	|gptneox|Dense|10/48|OK	|gptneox|Dense|10/48|OK
+granite	0	0	|granite|Dense|16/68|OK |granite|MoE|22/82|OK	|granite|Dense|16/68|OK |granite|MoE|22/82|OK
+granite_swa	0	0	|granite_swa|Dense|16/70|OK	|granite_swa|Dense|16/70|OK
+granitehybrid	0	0	|granitehybrid|Dense|14/64|OK	|granitehybrid|Dense|14/64|OK
+granitemoe	0	0	|granitemoe|Dense|16/68|OK |granitemoe|MoE|22/82|OK	|granitemoe|Dense|16/68|OK |granitemoe|MoE|22/82|OK
+graniteswitch	0	0		
+grok	0	0	|grok|MoE|22/83|OK	|grok|MoE|22/83|OK
+grovemoe	0	0	|grovemoe|MoE|22/71|OK	|grovemoe|MoE|22/71|OK
+hrm_text	0	0	|hrm_text|Dense|18/133|OK	|hrm_text|Dense|18/133|OK
+hunyuan-dense	0	0	|hunyuan-dense|Dense|16/63|OK	|hunyuan-dense|Dense|16/63|OK
+hunyuan-moe	0	0	|hunyuan-moe|MoE|22/83|OK	|hunyuan-moe|MoE|22/83|OK
+hunyuan_vl	0	0	|hunyuan_vl|Dense|16/63|OK	|hunyuan_vl|Dense|16/63|OK
+hy_v3	0	0	|hy_v3|MoE|26/93|OK	|hy_v3|MoE|26/93|OK
+hy_v4	0	0	|hy_v4|MoE|33/88|OK	|hy_v4|MoE|33/88|OK
+inkling2	0	0	|inkling2|MoE|28/116|OK	|inkling2|MoE|28/116|OK
+internlm2	0	0	|internlm2|Dense|16/59|OK	|internlm2|Dense|16/59|OK
+jais	0	0	|jais|Dense|12/56|OK	|jais|Dense|12/56|OK
+jais2	0	0	|jais2|Dense|14/64|OK	|jais2|Dense|14/64|OK
+jamba	0	0	|jamba|Dense|15/60|OK	|jamba|Dense|15/60|OK
+jina-bert-v2	0	0		
+jina-bert-v3	0	0		
+k2-horizon	0	0	|k2-horizon|Dense|18/63|OK |k2-horizon|MoE|22/74|OK	|k2-horizon|Dense|18/63|OK |k2-horizon|MoE|22/74|OK
+kimi-k3	0	0	|kimi-k3|MoE|27/88|OK	|kimi-k3|MoE|27/88|OK
+kimi-k31	0	0	|kimi-k31|MoE|27/93|OK	|kimi-k31|MoE|27/93|OK
+kimi-linear	0	0	|kimi-linear|MoE|24/78|OK	|kimi-linear|MoE|24/78|OK
+kolibri1	0	0	|kolibri1|MoE|22/89|OK	|kolibri1|MoE|22/89|OK
+laguna	0	0	|laguna|MoE|21/80|OK	|laguna|MoE|21/80|OK
+lfm2	0	0	|lfm2|Dense|14/49|OK	|lfm2|Dense|14/49|OK
+lfm2moe	0	0	|lfm2moe|MoE|14/51|OK	|lfm2moe|MoE|14/51|OK
+lfm3	0	0	|lfm3|Dense|23/92|OK	|lfm3|Dense|23/92|OK
+limite	0	0	|limite|Dense|31/141|OK	|limite|Dense|31/141|OK
+llada	0	0		
+llada-moe	0	0		
+llama	0	0	|llama|Dense|16/68|OK |llama|MoE|16/64|OK	|llama|Dense|16/68|OK |llama|MoE|16/64|OK
+llama-embed	0	0		
+llama4	0	0	|llama4|MoE|36/136|OK	|llama4|MoE|36/136|OK
+maincoder	0	0	|maincoder|Dense|16/63|OK	|maincoder|Dense|16/63|OK
+maion-coder	0	0	|maion-coder|MoE|34/137|OK	|maion-coder|MoE|34/137|OK
+mamba	0	0	|mamba|Dense|8/35|OK	|mamba|Dense|8/35|OK
+mamba2	0	0	|mamba2|Dense|6/33|OK	|mamba2|Dense|6/33|OK
+maple	0	0	|maple|MoE|16/65|OK	|maple|MoE|16/65|OK
+mellum	0	0	|mellum|MoE|16/65|OK	|mellum|MoE|16/65|OK
+metis16	0	0	|metis16|MoE|20/136|OK	|metis16|MoE|20/136|OK
+mimo2	0	0	|mimo2|MoE|22/83|OK	|mimo2|MoE|22/83|OK
+minicpm	0	0	|minicpm|Dense|16/68|OK |minicpm|MoE|16/64|OK	|minicpm|Dense|16/68|OK |minicpm|MoE|16/64|OK
+minicpm3	0	0	|minicpm3|Dense|18/49|OK	|minicpm3|Dense|18/49|OK
+minimax-01	0	0	|minimax-01|MoE|15/54|OK	|minimax-01|MoE|15/54|OK
+minimax-m2	0	0	|minimax-m2|MoE|16/67|OK	|minimax-m2|MoE|16/67|OK
+minimax-m3	0	0	|minimax-m3|MoE|19/78|OK	|minimax-m3|MoE|19/78|OK
+mistral-large4	0	0	|mistral-large4|MoE|51/157|OK	|mistral-large4|MoE|51/157|OK
+mistral3	0	0	|mistral3|Dense|16/68|OK |mistral3|MoE|16/64|OK	|mistral3|Dense|16/68|OK |mistral3|MoE|16/64|OK
+mistral4	0	0	|mistral4|MoE|22/55|OK	|mistral4|MoE|22/55|OK
+modern-bert	0	0		
+mpt	0	0	|mpt|Dense|10/55|OK	|mpt|Dense|10/55|OK
+muse-glimmer	0	0	|muse-glimmer|Dense|18/73|OK	|muse-glimmer|Dense|18/73|OK
+muse-spark	0	0	|muse-spark|MoE|22/91|OK	|muse-spark|MoE|22/91|OK
+nanbeige	0	0	|nanbeige|Dense|16/60|OK	|nanbeige|Dense|16/60|OK
+nemotron	0	0	|nemotron|Dense|14/64|OK	|nemotron|Dense|14/64|OK
+nemotron_h	0	0	|nemotron_h|Dense|10/48|OK	|nemotron_h|Dense|10/48|OK
+nemotron_h_moe	0	0	|nemotron_h_moe|Dense|10/48|OK	|nemotron_h_moe|Dense|10/48|OK
+neo-bert	0	0		
+nomic-bert	0	0		
+nomic-bert-moe	0	0		
+olmo	0	0	|olmo|Dense|16/54|OK	|olmo|Dense|16/54|OK
+olmo2	0	0	|olmo2|Dense|16/63|OK	|olmo2|Dense|16/63|OK
+olmoe	0	0	|olmoe|MoE|16/65|OK	|olmoe|MoE|16/65|OK
+openelm	0	0	|openelm|Dense|11/44|OK	|openelm|Dense|11/44|OK
+orion	0	0	|orion|Dense|16/64|OK	|orion|Dense|16/64|OK
+paddleocr	0	0	|paddleocr|MoE|16/61|OK	|paddleocr|MoE|16/61|OK
+pangu-embedded	0	0	|pangu-embedded|Dense|16/62|OK	|pangu-embedded|Dense|16/62|OK
+phi2	0	0	|phi2|Dense|14/61|OK	|phi2|Dense|14/61|OK
+phi3	0	0	|phi3|Dense|14/55|OK	|phi3|Dense|14/55|OK
+phimoe	0	0	|phimoe|MoE|16/71|OK	|phimoe|MoE|16/71|OK
+plamo	0	0	|plamo|Dense|16/57|OK	|plamo|Dense|16/57|OK
+plamo2	0	0	|plamo2|Dense|12/50|OK	|plamo2|Dense|12/50|OK
+plamo3	0	0	|plamo3|Dense|10/43|OK	|plamo3|Dense|10/43|OK
+plm	0	0		
+pockettts	0	0	|pockettts|Dense|13/57|OK	|pockettts|Dense|13/57|OK
+qwen	0	0	|qwen|Dense|12/43|OK	|qwen|Dense|12/43|OK
+qwen2	0	0	|qwen2|Dense|16/60|OK	|qwen2|Dense|16/60|OK
+qwen2moe	0	0	|qwen2moe|MoE|22/81|OK	|qwen2moe|MoE|22/81|OK
+qwen2vl	0	0	|qwen2vl|Dense|16/60|OK	|qwen2vl|Dense|16/60|OK
+qwen3	0	0	|qwen3|Dense|16/64|OK	|qwen3|Dense|16/64|OK
+qwen35	0	0	|qwen35|Dense|18/67|OK	|qwen35|Dense|18/67|OK
+qwen35moe	0	0	|qwen35moe|MoE|21/77|OK	|qwen35moe|MoE|21/77|OK
+qwen3moe	0	0	|qwen3moe|MoE|16/65|OK	|qwen3moe|MoE|16/65|OK
+qwen3next	0	0	|qwen3next|MoE|21/75|OK	|qwen3next|MoE|21/75|OK
+qwen3tts	0	0	|qwen3tts|Dense|16/64|OK	|qwen3tts|Dense|16/64|OK
+qwen3vl	0	0	|qwen3vl|Dense|16/64|OK	|qwen3vl|Dense|16/64|OK
+qwen3vlmoe	0	0	|qwen3vlmoe|MoE|16/65|OK	|qwen3vlmoe|MoE|16/65|OK
+qwen4exp	134	0	|qwen4exp|MoE|../../../src/ggml/src/ggml-cpu/binary-ops.cpp:135: binary_op: unsupported types: dst: f32, src0: f32, src1: q8_0 ABORT: binary_op: unsupported types: dst: f32, src0: f32, src1: q8_0	|qwen4exp|MoE|33/103|OK
+refact	0	0	|refact|Dense|16/68|OK |refact|MoE|16/64|OK	|refact|Dense|16/68|OK |refact|MoE|16/64|OK
+ricursive	0	0	|ricursive|Dense|18/69|OK	|ricursive|Dense|18/69|OK
+rnd1	0	0		
+rwkv6	0	0		
+rwkv6qwen2	0	0		
+rwkv7	0	0		
+seed_oss	0	0	|seed_oss|Dense|16/59|OK	|seed_oss|Dense|16/59|OK
+sensenova_u1	0	0		
+smallthinker	0	0	|smallthinker|MoE|16/61|OK	|smallthinker|MoE|16/61|OK
+smollm3	0	0	|smollm3|Dense|16/59|OK	|smollm3|Dense|16/59|OK
+spark2_5	0	0	|spark2_5|Dense|18/65|OK	|spark2_5|Dense|18/65|OK
+stablelm	0	0	|stablelm|Dense|16/68|OK	|stablelm|Dense|16/68|OK
+starcoder	0	0	|starcoder|Dense|10/49|OK	|starcoder|Dense|10/49|OK
+starcoder2	0	0	|starcoder2|Dense|14/64|OK	|starcoder2|Dense|14/64|OK
+step35	0	0		
+t5	0	0		
+t5encoder	0	0		
+talkie	0	0	|talkie|Dense|16/58|OK	|talkie|Dense|16/58|OK
+vllm-decision2	0	0		
+wavtokenizer-dec	0	0		
+xing4_0	0	0	|xing4_0|MoE|22/67|OK	|xing4_0|MoE|22/67|OK
+xverse	0	0	|xverse|Dense|16/59|OK	|xverse|Dense|16/59|OK
+zonos3	0	0	|zonos3|MoE|19/75|OK	|zonos3|MoE|19/75|OK

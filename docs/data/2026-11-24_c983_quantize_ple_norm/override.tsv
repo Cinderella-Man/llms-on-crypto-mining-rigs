@@ -1,0 +1,4 @@
+model	rc_override	md5_base_override	md5_head_default	same
+flint-moe	0	7e3ed050c9f8535003bdfc27c95cf29b	7e3ed050c9f8535003bdfc27c95cf29b	yes
+qwen35moe-moe	0	8a330240f6b6d5d7ce45d0a96ea0cfe7	8a330240f6b6d5d7ce45d0a96ea0cfe7	yes
+qwen4exp-moe	0	ada47459e220077dd206840a6ccbf5bf	ada47459e220077dd206840a6ccbf5bf	yes

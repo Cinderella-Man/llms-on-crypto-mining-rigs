@@ -1,0 +1,7 @@
+build	model	rc	first error line
+base	flint-moe	0	
+base	qwen35moe-moe	0	
+base	qwen4exp-moe	134	binary_op: unsupported types: dst: f32, src0: f32, src1: q8_0
+head	flint-moe	0	
+head	qwen35moe-moe	0	
+head	qwen4exp-moe	0	
