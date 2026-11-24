@@ -10,8 +10,9 @@
 #           users test-llama-context-model, test-thread-safety, test-eval-callback: the hand step runs them on a
 #           generated model instead), test-conversion-fp8 (Python with torch and safetensors) and NET_TESTS;
 #           MODEL15M=<stories15M-q4_0.gguf> puts the model where the download tests find it, PIP='<packages>' adds them
-#           to the image, and an empty CTEST_EXCLUDE runs everything but NET_TESTS
-#   net     NET_TESTS (default test-arg-parser, whose last case requests http://ggml.ai/ and a missing page there)
+#           to the image, and an empty CTEST_EXCLUDE runs everything but NET_TESTS; the link $WORK/src -> tree/src lets
+#           the tests that open files beside their own source (test-jinja, test-jinja-py) find them (see the link below)
+#   net    NET_TESTS (default test-arg-parser, whose last case requests http://ggml.ai/ and a missing page there)
 #           through ctest in a container with network
 #   archs   test-llama-archs -b CPU -s 1 without LLAMA_ARCHS_LOGITS, then with it twice: the first run writes every
 #           model's logits, the second compares against them; every case passes and every file is the same
@@ -50,6 +51,11 @@ DN="--cpu-shares=256 ${DOCKER_ARGS:-}"
 D="$DN --network none"
 T=$WORK/tree
 mkdir -p "$WORK" "$T" "$WORK/ccache"
+# ccache's base folder ($T, which keeps a ccache copied from another work folder valid) makes each source path relative
+# to its compile folder, so __FILE__ in tests/ reads ../../src/tests/<file>.cpp. test-jinja and test-jinja-py open two
+# TTS chat templates and scripts/chat_tts_norm.py beside that path, from ctest's folder $B, where ../../src is
+# $WORK/src (C914): this link makes those paths resolve, and the build stays as it was
+[ -e "$WORK/src" ] || [ -L "$WORK/src" ] || ln -s tree/src "$WORK/src"
 rm -f "$WORK/DONE"
 [ -f "$WORK/summary.tsv" ] || printf 'tree\tcheck\tverdict\tdetail\n' > "$WORK/summary.tsv"
 verdict() { printf '%s\t%s\t%s\t%s\n' "$tag" "$1" "$2" "$3" | tee -a "$WORK/summary.tsv"; }
@@ -71,6 +77,7 @@ for spec in $TREES; do
     base=""; [[ "$rest" == *@* ]] && base=${rest##*@} rest=${rest%@*}
     targets=""; [[ "$rest" == *:* ]] && targets=${rest##*:} rest=${rest%:*}
     commit=${rest%%+*} patches=""; [[ "$rest" == *+* ]] && patches=${rest#*+}
+    case $tag in src|tree|ccache) echo "=== $tag: a reserved name (a folder of the script's own), skipped"; continue ;; esac
     R=$WORK/$tag
     mkdir -p "$R"
     B=$T/build

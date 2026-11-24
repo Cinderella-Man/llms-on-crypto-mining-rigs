@@ -1,0 +1,16 @@
+check	before	after	same
+archs compare	OK	OK	yes
+archs files	OK	OK	yes
+archs plain	OK	OK	yes
+archs write	OK	OK	yes
+build	OK	OK	yes
+hand bytes-switches	OK	OK	yes
+hand bytes-zero-tail	OK	OK	yes
+hand context-model	OK	OK	yes
+hand eval-callback	OK	OK	yes
+hand hop-cast	OK	OK	yes
+hand moe-ids	OK	OK	yes
+hand route-once-x1	OK	OK	yes
+hand route-once-x30	OK	OK	yes
+hand thread-safety	OK	OK	yes
+tree	OK	OK	yes

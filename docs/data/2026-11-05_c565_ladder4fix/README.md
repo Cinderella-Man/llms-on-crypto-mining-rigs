@@ -83,7 +83,7 @@ An identity check across an upstream merge expects these three on random models.
 
 | File | What |
 |---|---|
-| [run/cpu_tests.sh](run/cpu_tests.sh) | the whole set per tree: `tree`, `build`, `ctest`, `net`, `archs`, `ident`, `hand` (usage in its header) |
+| [run/cpu_tests.sh](run/cpu_tests.sh) | the whole set per tree: `tree`, `build`, `ctest`, `net`, `archs`, `ident`, `hand` (usage in its header); since 2026-11-24 it links `$WORK/src` to the tree's sources, so `test-jinja` and `test-jinja-py` find the files beside their source ([C914](../2026-11-24_c914_test_jinja/README.md)) |
 | [results.tsv](results.tsv) | every verdict (pass, tree, check, verdict, detail): pass 1 `-kshape` without and with the fix, and `-ladder3`'s existing CPU build by hand; pass 2 the unfixed `-ladder4` and `-b12127-ladder4`; pass 3 the fixed tips, shared and static |
 | [ctest_tests.tsv](ctest_tests.tsv) | each of the 72 registered tests' status per tree (`test-arg-parser` from the `net` step on the fixed trees) |
 

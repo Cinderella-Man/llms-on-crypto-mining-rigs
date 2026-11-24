@@ -1,0 +1,5 @@
+test	run	tests	assertions	failures	exceptions
+test-jinja	before (ctest, 8a9629942, script before the change)	505	1640	2	0
+test-jinja	after (by hand from the build folder, link in place)	535	1670	0	0
+test-jinja-py	before (ctest, 8a9629942, script before the change)	442	425	24	0
+test-jinja-py	after (by hand from the build folder, link in place)	472	455	0	0
