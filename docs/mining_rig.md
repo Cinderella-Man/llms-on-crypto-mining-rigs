@@ -90,8 +90,13 @@ Host↔GPU bandwidth (pinned memory, 64 MB transfers):
 PCIe 1.0 x1 carries 250 MB/s per direction before protocol overhead, and PCIe 2.0 x1 carries 500 MB/s.
 Each switch uplink is shared by four GPUs.
 
-The GPUs have no peer-to-peer access, so all GPU-to-GPU traffic passes through host memory. In
+The GPUs have no peer-to-peer access, so all GPU-to-GPU traffic passes through host memory. The driver reports
+"chipset not supported" (`CNS` in `nvidia-smi topo -p2p r`) for every pair, the pairs behind one switch included:
+neither the chipset nor ASMedia's switches are on NVIDIA's lists. In
 `nvidia-smi topo -m`, GPUs behind the same switch show as `PIX` and all other pairs as `PHB`.
+
+The Intel IOMMU (VT-d) is on by default in Ubuntu's kernel, in translated mode, and the kernel turns on ACS redirect
+on the chipset's four root ports; the switches have no ACS.
 
 PCIe power saving (ASPM) is disabled on every GPU link, every switch port and every root port; the root ports don't
 support ASPM at all. The network controller's root port runs at PCIe 1.0 x1 (250 MB/s), still twice what Gigabit

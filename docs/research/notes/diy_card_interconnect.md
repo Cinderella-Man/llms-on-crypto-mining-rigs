@@ -40,7 +40,8 @@ Conventions:
 - **Peer-to-peer may be one driver option away.** The driver refuses it by policy, not for want of silicon: Pascal
   GeForce cards did PCIe peer-to-peer (two GTX 1080 Ti, 2019), the rig's mobile chipset is simply missing from NVIDIA's
   table, and NVIDIA's own test key `ForceP2P=0x11` skips every check. It gave verified peer copies on a CMP 170HX
-  mining card that reported "GPU not supported". On the rig it needs a reload of the NVIDIA modules (the owner's
+  mining card that reported "GPU not supported". On the rig (CNS on every pair, the IOMMU on) it needs a reload of the
+  NVIDIA modules (the owner's
   decision) and checksummed tests, since forced P2P has written to the wrong place on other cards.
 - **The one change that raises the physical ceiling is the card's own link speed, and it may be a volatile register,
   not hardware.** The cards advertise only 2.5 GT/s (Gen1) in `LnkCap` while the switches' downstream ports and the
@@ -68,7 +69,7 @@ Conventions:
 | Rank | Idea | Decode hop (est.) | Prompt hops (est.) | Cost, risk | As sold? | Decides it | Row |
 |---|---|---|---|---|---|---|---|
 | 1 | **Legs overlapped through host memory** (the streamed mailbox in 4–16 chunks; the persistent pipeline) | 127 → 75–85 µs (−0.3 to −0.4 ms a token) | ~147 → ~185 MB/s | software; in progress | yes | the hop bench's streamed-mailbox columns | Q682, Q684 |
-| 2 | **Read-only facts**: `nvidia-smi topo -p2p r` / `w` reason codes; whether the installed `nvidia.ko` holds the `ForceP2P` key; whether an IOMMU is active (the `lspci` facts are in: section 2) | — | — | none, a minute on an idle rig | yes | the outputs themselves | Q991 (Q990 done) |
+| 2 | **Read-only facts**: `nvidia-smi topo -p2p r` / `w` reason codes; whether the installed `nvidia.ko` holds the `ForceP2P` key; whether an IOMMU is active (the `lspci` facts are in: section 2) | — | — | none; **done 2026-11-25**: CNS on every pair, the `ForceP2P` key present, the IOMMU on (sections 2, 4.1) | yes | — | Q991 (Q990 done) |
 | 3 | **`ForceP2P=0x11`**: NVIDIA's own override of the peer-to-peer checks, then checksummed peer copies on one pair behind a switch | 127 → ~55 µs (−0.57 ms a token) | one link's rate instead of two legs, off the shared uplink: est. +3–5 % prompts | no money; a module reload, and a hang or wrong copies are possible: **owner's decision** | hardware and files as sold, a driver option | checksums, then the hop bench's peer column | Q992 |
 | 4 | **Two numbers for tensor/expert parallelism**: a 9-card star all-reduce through host memory (cards write partials, the CPU sums, cards read) and the 9-way compute speedup of one Flash-Next layer | — | — | software, a bench, ~1 h on a rig | yes | a ≤ 50 µs all-reduce and S ≥ 1.3× reopen the fork project | Q996 |
 | 5 | **Gen2 on the cards' own links** (volatile BAR0 register writes, then a retrain from the switch port; possibly a 2-byte driver patch) | 127 → 45–65 µs (−0.5 to −0.65 ms); ~30 µs with peer-to-peer | hop time halved where one card per switch transfers: est. +4–6 % prompts | no money; risk: a card off the bus, which here needs a reboot at the console | hardware as sold, firmware state not: **owner's decision** | `LnkSta 5GT/s` on card 4 (its own root port), then the hop bench | Q994 |
@@ -171,8 +172,11 @@ The rest of the path (rig 1, `run/pcie_facts.sh` in the data folder, Q990):
   the whole story; the switch ports and root ports already target 5 GT/s.
 - **Payloads are 256 B on every card's path** (cards, switch ports and root ports capable of and set to 256 B; only the
   network controller's port runs 128 B); the cards' read requests are 512 B, completions on a 64 B boundary.
-- **No ACS stands in the way of peer traffic:** the ASM1184e ports have no ACS capability, and the root ports have it
-  with every control bit off.
+- **The switches can't redirect peer traffic; the root ports do.** The ASM1184e ports have no ACS capability. The root
+  ports have it, and `lspci` shows every control bit off, but this PCH keeps those registers at non-standard offsets
+  and the kernel turns redirect on through its own workaround (`Intel SPT PCH root port ACS workaround enabled` in the
+  boot log). The IOMMU is on, in translated mode (Ubuntu's kernel sets `CONFIG_INTEL_IOMMU_DEFAULT_ON=y`), with nine
+  groups for nine cards (rig 1, 2026-11-25, [data](../../data/2026-11-25_p2p_verdict/README.md)).
 - **Each card's BAR1 is 256 MB** (64-bit, prefetchable; no resizable BAR).
 - **Four root ports are enabled, all in use** (switch, card 4, network controller, switch); the SSD sits on the PCH's
   SATA controller.
@@ -266,11 +270,19 @@ The rest of the path (rig 1, `run/pcie_facts.sh` in the data folder, Q990):
   in [pcie_switch_ref.h](https://github.com/NVIDIA/open-gpu-kernel-modules/blob/main/src/common/inc/swref/published/pcie_switch/pcie_switch_ref.h),
   the same in the 580.196.11 release) holds NVIDIA's own BR03 and BR04 bridges, PLX 87xx and 97xx, PMC-Sierra 85xx
   and 40xx, and one Mellanox bridge (`0x1976`). ASMedia isn't on it, so pairs behind one ASM1184e get CNS as well.
-  Expected: CNS for every pair, possibly GNS for the SKU (est.).
+  Measured on rig 1 (2026-11-25, driver 580.178.04): `nvidia-smi topo -p2p r` and `-p2p w` report CNS for every
+  pair, the PIX pairs included, and no GNS, so the cards themselves aren't blocked
+  ([data](../../data/2026-11-25_p2p_verdict/README.md)).
 - **The hardware path exists inside each switch.** A PCIe switch forwards a memory write from one downstream port to
   another unless ACS redirect sends it upstream; Linux sets the redirect bits only when an IOMMU asked for them
   ([p2pdma](https://docs.kernel.org/driver-api/pci/p2pdma.html), `pci_enable_acs` in `drivers/pci/pci.c`). On the rig
-  nothing redirects: the ASM1184e ports have no ACS capability and the root ports' redirect bits are off (section 2).
+  the switches can't redirect (no ACS capability), but the IOMMU is on and the root ports redirect (section 2). With
+  the IOMMU translating, the driver maps a peer's memory window through it (`nv_dma_map_peer` calls `dma_map_resource`,
+  [nv-dma.c](https://github.com/NVIDIA/open-gpu-kernel-modules/blob/580.196.11/kernel-open/nvidia/nv-dma.c)), so a card
+  would write to an IOMMU address that no switch port claims, and even a pair behind one switch would go up to the
+  PCH. Two settings keep such a pair inside its switch. One is the driver's key `DmaRemapPeerMmio=0`: plain bus
+  addresses and no IOMMU mapping, so pairs across the PCH would fault and it suits the six in-switch boundaries only.
+  The other is `iommu=pt` on the kernel line (passthrough; a reboot at the console).
   Across the two switches a peer write would pass the PCH's root ports, where forwarding between ports is not
   guaranteed on client chipsets. Linux's own list of host bridges that route peer traffic (`pci_p2pdma_whitelist` in
   [p2pdma.c](https://github.com/torvalds/linux/blob/master/drivers/pci/p2pdma.c)) has Intel server parts and one
@@ -287,14 +299,16 @@ The rest of the path (rig 1, `run/pcie_facts.sh` in the data folder, Q990):
   ([Level1Techs, 2026](https://forum.level1techs.com/t/couldnt-resist-grabbing-a-cmp-170hx-and-now-im-in-a-sticky-position/253947?page=3));
   two RTX A5000 on Ice Lake went from CNS to OK on driver 515
   ([NVIDIA forum](https://forums.developer.nvidia.com/t/p2p-device-couldnt-access-another-one-with-p2pbandwidthlatencytest/220183)).
-  Whether the closed 580 driver for Pascal reads the key is not shown anywhere (est. likely: the key and the early
-  return sit in common code); `grep -a -c ForceP2P` on the installed `nvidia.ko` answers it without loading anything.
+  The installed 580.178.04 `nvidia.ko` holds the key's name (`ForceP2P`), as well as `RMForceP2PType`,
+  `RMPcieP2PType` and `DmaRemapPeerMmio` (rig 1, 2026-11-25). Whether it acts on the key shows only when it is loaded
+  with it.
 - **Failure modes to guard against:** forced P2P on hardware whose mailbox path does not work wrote to the wrong place on
   RTX 4090s ([tinygrad](https://raw.githubusercontent.com/tinygrad/open-gpu-kernel-modules/550.54.15-p2p/README.md)), and
   GeForce Pascal peer tests hung machines in 2018 ([NVIDIA forum](https://forums.developer.nvidia.com/t/simplep2p-and-p2pbandwidth-latencytest-hangs-ubuntu/62010)).
   Every test checksums the data, watches `dmesg` for Xid and AER errors, and starts on one pair behind one switch.
 - **Setting it means reloading the NVIDIA modules or rebooting** (the option is read at load): the owner's decision on
-  this rig (Q992). The order: the read-only checks (Q991); the option with someone at the machine and no task on
+  this rig (Q992). The order: the read-only checks (Q991, done); the option (with `DmaRemapPeerMmio=0`, 4.1) with
+  someone at the machine and no task on
   the rig; checksummed `cudaMemcpyPeer` and peer stores on one pair behind a switch; then the hop bench's peer column
   and llama.cpp's own peer path (`GGML_CUDA_P2P`).
 - **What it would give** (est., section 1.3): a decode hop of ~55 µs instead of 127 µs (−0.57 ms a token), prompt hops
@@ -441,7 +455,7 @@ Every value est. unless the row says measured.
 |---|---|---|---|---|---|---|---|
 | Legs overlapped through host memory (streamed mailbox, persistent pipeline) | 75–85 µs | ~185 MB/s (the slower leg) | none | code, in progress; a waiting kernel needs a timeout | yes | the hop bench's streamed-mailbox columns at 10,880 B and 5.57 MB | Q682, Q684 |
 | The rig's PCIe facts in full (`lspci -vv`: `LnkCap2`, `LnkCtl2`, ACS, MPS, BARs) | — | — | none | none (read-only) | yes | done: section 2 | Q990 |
-| The driver's peer verdict per pair (`nvidia-smi topo -p2p r` / `w`), the `ForceP2P` string in `nvidia.ko`, IOMMU on or off | — | — | none | none (read-only) | yes | the outputs | Q991 |
+| The driver's peer verdict per pair (`nvidia-smi topo -p2p r` / `w`), the `ForceP2P` string in `nvidia.ko`, IOMMU on or off | — | — | none | none (read-only) | yes | done 2026-11-25: CNS on every pair, the key present, the IOMMU on | Q991 |
 | `ForceP2P=0x11`: forced peer-to-peer | ~55 µs | ~211 MB/s, one link | none | a module reload; possible hang or wrong copies | a driver option | checksummed `cudaMemcpyPeer` and peer stores on one pair behind a switch | Q992 |
 | A peer window by I/O-memory registration of card B's Vulkan BAR1 buffer | ~55 µs | ~211 MB/s | none | untested; a freeze is possible | yes | one checksummed write from A into B's window | Q993 |
 | Gen2 on the cards' links (volatile BAR0 writes, retrain; maybe a 2-byte driver patch) | 45–65 µs (~30 with peer-to-peer) | ~386 / 427 MB/s per card; ~400 per switch uplink when shared | none | a card off the bus needs a reboot; the P106 sequence is unverified | firmware state changed | `LnkSta` 5 GT/s on card 4, then the hop bench | Q994 |

@@ -35,7 +35,7 @@ What it shows:
 | Max Payload Size, capable / set | 256 / 256 B | 256 / 256 B | 256 / 256 B on the three card ports; 256 / 128 B on the network controller's |
 | Max Read Request | 512 B | 512 B | 128 B (the ports' own) |
 | Read completion boundary | 64 B | — | 64 B |
-| ACS | — | no ACS capability | ACS capable (source validation, translation blocking, request and completion redirect), every control bit off |
+| ACS | — | no ACS capability | ACS capable (source validation, translation blocking, request and completion redirect); `lspci` shows every control bit off, but the kernel enables redirect at this PCH's non-standard offsets ([2026-11-25_p2p_verdict](../2026-11-25_p2p_verdict/README.md)) |
 | BARs | BAR0 16 MB, BAR1 256 MB (64-bit, prefetchable), BAR3 32 MB | — | — |
 
 The tree: four root ports are enabled (`00:1c.0` to the first switch and cards 0–3, `00:1c.3` to card 4, `00:1c.4` to
@@ -45,8 +45,10 @@ USB 3 on its xHCI controller. No other PCIe port is enabled.
 What it adds:
 - **Packets are already as large as the path allows:** 256 B payloads on every card's path, so raising MPS gains
   nothing.
-- **Nothing redirects peer traffic:** the switches have no ACS and the root ports' redirect bits are off, so a memory
-  write from one card to another behind the same switch would be forwarded inside the switch.
+- **The switches can't redirect peer traffic:** they have no ACS, so a memory
+  write from one card to another behind the same switch, sent to the other card's bus address, is forwarded inside
+  the switch. The root ports do redirect: the kernel sets their ACS through a workaround
+  ([2026-11-25_p2p_verdict](../2026-11-25_p2p_verdict/README.md)).
 - **Each card's BAR1 window is 256 MB** (no resizable BAR).
 - **No spare PCIe port** is enabled for the M.2 slot.
 
