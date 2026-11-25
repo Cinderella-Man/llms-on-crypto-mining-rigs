@@ -22,7 +22,10 @@ Four runs, alternated, on one rig, engine and boot, all 12 of 12 tasks:
 
 By the project's rule (negligible and not measurably slower) `…,1` can join Flash-Next's v5 preset, as the sparse ratio
 0.75 (R220) and the 1,400-token taper (R227) did with the same class; `release/flash-next-v5/settings.env` keeps `…,2`
-until the owner's word. Until then it is listed with the negligible gains, which are tested as a group (C534).
+until the owner's word. Until then it is listed with the negligible gains, which are tested as a group (C534). One
+round is also the fewest that works: on the same day R230 dropped the round too (`…,0`), and on the deep lane that was
+a loss against one round, since the draft then cannot guess the second piece of a rare word
+([2026-11-25_r230_flash_shortlist0](../2026-11-25_r230_flash_shortlist0/README.md)).
 
 ## What runs
 
