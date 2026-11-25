@@ -3,7 +3,10 @@
 // (`NVreg_RegistryDwords="ForceP2P=0x11"`), where a wrong copy or a hang is possible, so every test checks the data
 // and prints before it starts.
 //
-// Usage: p2p_check [--pairs A:B,...] [--tests copy,store,load,time] [--mb N] [--rounds N] [--reps N]
+// Usage: p2p_check [--pairs A:B,...|none] [--tests copy,store,load,time] [--mb N] [--rounds N] [--reps N]
+//                  [--host-cards C,...]
+//   --host-cards  host -> card and card -> host through pinned memory on each listed card, every word checked;
+//                 timed too when --tests has time (no peer access needed)
 //   --pairs   ordered card pairs, A sends to B (default 0:1)
 //   --tests   control: a copy staged through host memory, counted on B (proves the checker)
 //             copy:  cudaMemcpyPeer A -> B of a pattern, counted on B
@@ -131,7 +134,7 @@ static double pctl(std::vector<double> v, double q) {
 }
 
 int main(int argc, char ** argv) {
-    std::string pairs_arg = "0:1", tests_arg = "copy,store,load,time";
+    std::string pairs_arg = "0:1", tests_arg = "copy,store,load,time", host_cards_arg;
     int mb = 64, rounds = 3, reps = 200;
     for (int i = 1; i + 1 < argc; i += 2) {
         std::string k = argv[i], v = argv[i + 1];
@@ -145,6 +148,8 @@ int main(int argc, char ** argv) {
             rounds = atoi(v.c_str());
         } else if (k == "--reps") {
             reps = atoi(v.c_str());
+        } else if (k == "--host-cards") {
+            host_cards_arg = v;
         } else {
             printf("unknown option %s\n", k.c_str());
             return 2;
@@ -178,7 +183,75 @@ int main(int argc, char ** argv) {
     const size_t n = (size_t) mb * 1024 * 1024 / sizeof(unsigned);
     const size_t bytes = n * sizeof(unsigned);
     int any_bad = 0;
-    for (const auto & ps : split(pairs_arg, ',')) {
+
+    // --host-cards: host <-> card copies through pinned memory on each listed card, every word checked, then timed
+    for (const auto & cs : split(host_cards_arg, ',')) {
+        const int c = atoi(cs.c_str());
+        if (c < 0 || c >= n_dev) {
+            printf("bad card %s\n", cs.c_str());
+            return 2;
+        }
+        printf("\n== card %d: host <-> card through pinned memory\n", c);
+        CK(cudaSetDevice(c));
+        unsigned *d, *h_in, *h_out;
+        CK(cudaMalloc(&d, bytes));
+        CK(cudaHostAlloc(&h_in, bytes, cudaHostAllocPortable));
+        CK(cudaHostAlloc(&h_out, bytes, cudaHostAllocPortable));
+        for (int r = 0; r < rounds; ++r) {
+            const unsigned seed = 0xc2b2ae35u * (unsigned) (r + 1) + (unsigned) c;
+            for (size_t i = 0; i < n; ++i) {
+                h_in[i] = pattern((unsigned) i, seed);
+            }
+            CK(cudaMemset(d, 0, bytes));
+            CK(cudaMemcpy(d, h_in, bytes, cudaMemcpyHostToDevice));
+            const unsigned long long bad_in = count_bad(c, d, n, seed);
+            printf("  round %d host -> card %d MiB ... %s (%llu of %zu words wrong, %llu of them still 0)\n", r, mb,
+                   bad_in ? "WRONG" : "ok", bad_in, n, g_last_zero);
+            any_bad |= bad_in != 0;
+            k_fill<<<kBlocks, kThreads>>>(d, n, seed ^ 0x165667b1u);
+            CK(cudaDeviceSynchronize());
+            memset(h_out, 0, bytes);
+            CK(cudaMemcpy(h_out, d, bytes, cudaMemcpyDeviceToHost));
+            unsigned long long bad_out = 0;
+            for (size_t i = 0; i < n; ++i) {
+                bad_out += h_out[i] != pattern((unsigned) i, seed ^ 0x165667b1u);
+            }
+            printf("  round %d card -> host %d MiB ... %s (%llu of %zu words wrong)\n", r, mb, bad_out ? "WRONG" : "ok",
+                   bad_out, n);
+            any_bad |= bad_out != 0;
+        }
+        if (has("time")) {
+            printf("  timing, host clock, median [p10, p90] of %d (microseconds; MB/s from the median):\n", reps);
+            printf("  %10s %26s %26s\n", "bytes", "host -> card", "card -> host");
+            const size_t sizes[] = { 10240, 163840, 1 << 20, 16 << 20, 64 << 20 };
+            for (size_t sz : sizes) {
+                if (sz > bytes) {
+                    continue;
+                }
+                const int rp = sz >= (16u << 20) ? std::max(5, reps / 20) : reps;
+                std::vector<double> t_in, t_out;
+                for (int i = 0; i < rp + 3; ++i) {
+                    auto t0 = std::chrono::steady_clock::now();
+                    CK(cudaMemcpy(d, h_in, sz, cudaMemcpyHostToDevice));
+                    auto t1 = std::chrono::steady_clock::now();
+                    CK(cudaMemcpy(h_out, d, sz, cudaMemcpyDeviceToHost));
+                    auto t2 = std::chrono::steady_clock::now();
+                    if (i >= 3) {
+                        t_in.push_back(std::chrono::duration<double, std::micro>(t1 - t0).count());
+                        t_out.push_back(std::chrono::duration<double, std::micro>(t2 - t1).count());
+                    }
+                }
+                const double mi = median(t_in), mo = median(t_out);
+                printf("  %10zu %9.1f [%7.1f, %7.1f] %5.0f %9.1f [%7.1f, %7.1f] %5.0f\n", sz, mi, pctl(t_in, 0.1),
+                       pctl(t_in, 0.9), sz / mi, mo, pctl(t_out, 0.1), pctl(t_out, 0.9), sz / mo);
+            }
+        }
+        CK(cudaFree(d));
+        CK(cudaFreeHost(h_in));
+        CK(cudaFreeHost(h_out));
+    }
+
+    for (const auto & ps : split(pairs_arg == "none" ? std::string() : pairs_arg, ',')) {
         auto ab = split(ps, ':');
         if (ab.size() != 2) {
             printf("bad pair %s\n", ps.c_str());

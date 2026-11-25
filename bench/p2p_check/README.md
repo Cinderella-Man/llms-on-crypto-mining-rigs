@@ -18,6 +18,7 @@ p2p_check --pairs 0:1 --tests control,copy,store,load,time
 | `store` | a kernel on A writes into B's memory through the peer pointer | B |
 | `load` | a kernel on A reads B's memory through the peer pointer | A (a read that gets no answer can hang the kernel: run it last, under `timeout`) |
 | `time` | host-timed `cudaMemcpyPeerAsync` against the copy staged through host memory, 10 KB to 16 MiB | — |
+| `--host-cards C,...` | per listed card: host → card and card → host through pinned memory, 64 MiB checked word for word, then timed 10 KB to 64 MiB with `time` (no peer access needed; `--pairs none` skips the pairs) | the card, the host |
 
 Each wrong count also says how many of the wrong words are still 0, the value the target had before the test: all of
 them still 0 means nothing arrived; other values mean the data went somewhere, or came from somewhere, else.

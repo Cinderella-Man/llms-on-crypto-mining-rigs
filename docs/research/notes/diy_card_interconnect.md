@@ -70,7 +70,7 @@ Conventions:
 | 2 | **Read-only facts**: `nvidia-smi topo -p2p r` / `w` reason codes; whether the installed `nvidia.ko` holds the `ForceP2P` key; whether an IOMMU is active (the `lspci` facts are in: section 2) | — | — | none; **done 2026-11-25**: CNS on every pair, the `ForceP2P` key present, the IOMMU on (sections 2, 4.1) | yes | — | Q991 (Q990 done) |
 | 3 | **`ForceP2P=0x11`**: NVIDIA's own override of the peer-to-peer checks, then checksummed peer copies on one pair behind a switch | 127 → ~55 µs (−0.57 ms a token) | one link's rate instead of two legs, off the shared uplink: est. +3–5 % prompts | **done 2026-11-25: fails**: the driver says OK, nothing arrives on any path | hardware and files as sold, a driver option | — | Q992 |
 | 4 | **Two numbers for tensor/expert parallelism**: a 9-card star all-reduce through host memory (cards write partials, the CPU sums, cards read) and the 9-way compute speedup of one Flash-Next layer | — | — | software, a bench, ~1 h on a rig | yes | a ≤ 50 µs all-reduce and S ≥ 1.3× reopen the fork project | Q996 |
-| 5 | **Gen2 on the cards' own links** (volatile BAR0 register writes, then a retrain from the switch port; possibly a 2-byte driver patch) | 127 → 45–65 µs (−0.5 to −0.65 ms); ~30 µs with peer-to-peer | hop time halved where one card per switch transfers: est. +4–6 % prompts | no money; risk: a card off the bus, which here needs a reboot at the console | hardware as sold, firmware state not: **owner's decision** | `LnkSta 5GT/s` on card 4 (its own root port), then the hop bench | Q994 |
+| 5 | **Gen2 on the cards' own links** (volatile BAR0 register writes, then a retrain from the switch port; possibly a 2-byte driver patch) | 127 → 45–65 µs (−0.5 to −0.65 ms); ~30 µs with peer-to-peer | hop time halved where one card per switch transfers: est. +4–6 % prompts | no money; risk: a card off the bus, which here needs a reboot at the console: **tried 2026-11-25, card 4 dropped** (section 3.3) | hardware as sold, firmware state not: **owner's decision** | a fresh-boot try: the push before the driver first initializes the card | Q994 |
 | 6 | **USB 3 → 2.5/5 GbE adapters between two rigs** (the two-rig split, Q505) | rig-to-rig crossing: ~same (USB adds ~0.6 ms round trip) | rig-to-rig prompt crossing 2.5–3.7× faster than gigabit | ~€15–40 per adapter: **owner's purchase** | adds parts | iperf3 and ping between the rigs, then Q505's prompt speed | Q998 |
 | 7 | **A peer window through I/O-memory registration** (card A's kernels write into card B's Vulkan-mapped BAR1 window) | as rank 3, without the driver's peer permission | as rank 3 | **parked**: the same path as rank 3, which carries nothing on this board | yes | — | Q993 |
 
@@ -246,6 +246,15 @@ The rest of the path (rig 1, `run/pcie_facts.sh` in the data folder, Q990):
 - **A trial (the owner's decision; Q994):** card 4 first (its own root port, no switch, no neighbour to disturb),
   with someone at the machine, no model loaded and no timed task on the rig; read the card's `LnkCap` and `LnkSta` (it
   has no `LnkCap2`) before and after; if it holds at 5 GT/s, the hop bench with card 4 as one end, then a decode and prompt line.
+- **Tried on card 4, 2026-11-25: no Gen2, and the card fell off the bus** ([data](../../data/2026-11-25_p106_gen2/README.md)).
+  - The P104-100's register map holds on the P106-090: BAR0's link-register mirror equals config space.
+  - With a 2-byte copy of the driver loaded (its Gen1 request made a no-op) and the P104 push done before the card
+    was opened, every write landed, but the card's Gen2 declaration never latched. Card 4 had already been
+    initialized four times that day, and the P104 project calls this the stuck state: only a reboot clears it.
+  - A retry that wrote 0 and then 6 to the training trigger, and polled the card while its link changed, broke the
+    link. No retrain, bus reset, link disable or 2.5 GT/s target brought it back, and the slot has no power control.
+  - Card 4 needs a reboot. A next try needs a fresh boot with the NVIDIA modules held back, and the exact P104
+    sequence before the driver first initializes the card.
 
 ## 4. Peer-to-peer without NVLink
 
@@ -466,7 +475,7 @@ Every value est. unless the row says measured.
 | The driver's peer verdict per pair (`nvidia-smi topo -p2p r` / `w`), the `ForceP2P` string in `nvidia.ko`, IOMMU on or off | — | — | none | none (read-only) | yes | done 2026-11-25: CNS on every pair, the key present, the IOMMU on | Q991 |
 | `ForceP2P=0x11`: forced peer-to-peer | ~55 µs | ~211 MB/s, one link | none | a module reload | a driver option | done 2026-11-25: fails, nothing arrives on any path | Q992 |
 | A peer window by I/O-memory registration of card B's Vulkan BAR1 buffer | ~55 µs | ~211 MB/s | none | parked: the same path | yes | — | Q993 |
-| Gen2 on the cards' links (volatile BAR0 writes, retrain; maybe a 2-byte driver patch) | 45–65 µs (~30 with peer-to-peer) | ~386 / 427 MB/s per card; ~400 per switch uplink when shared | none | a card off the bus needs a reboot; the P106 sequence is unverified | firmware state changed | `LnkSta` 5 GT/s on card 4, then the hop bench | Q994 |
+| Gen2 on the cards' links (volatile BAR0 writes, retrain; maybe a 2-byte driver patch) | 45–65 µs (~30 with peer-to-peer) | ~386 / 427 MB/s per card; ~400 per switch uplink when shared | none | a card off the bus needs a reboot; the P106 sequence is unverified | firmware state changed | tried 2026-11-25: no latch, card 4 dropped; next a fresh-boot try | Q994 |
 | MPS 256 B on every card's path | 0: already 256 B (measured) | — | none | — | yes | done: the `lspci` (section 2) | Q995 |
 | A 9-card star all-reduce through host memory, and S for one layer split nine ways | (tensor split: 96 × ~70 µs a token) | — | none | a bench | yes | all-reduce median and p99 at 2,720 and 5,120 B; S on one card | Q996 |
 | Tensor or expert parallel decode of Flash-Next on nine cards | token est. ≥ 20–30 ms if S is high, a loss if low | prompts link-capped at est. ~200–400 tok/s | none | weeks of fork work; no compute 6.1 all-reduce today | yes | Q996 first | Q997 |
