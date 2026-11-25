@@ -1,0 +1,20 @@
+comparison	architecture	nmse	max abs diff	logits differing
+rig builds, head against base	mamba	4.736e-16	5.960e-08	2368 of 32768
+rig builds, head against base	mamba2	5.141e-15	8.941e-08	15302 of 32768
+rig builds, head against base	jamba	1.006e-17	2.980e-08	53 of 32768
+rig builds, head against base	falcon-h1	1.417e-14	1.192e-07	19516 of 32768
+rig builds, head against base	nemotron_h	4.838e-17	5.960e-08	230 of 32768
+rig builds, head against base	nemotron_h_moe	4.838e-17	5.960e-08	230 of 32768
+rig builds, head against base	metis16	8.026e-16	5.960e-08	1605 of 32768
+rig builds, head against base	granitehybrid	1.093e-17	2.980e-08	72 of 32768
+CPU trees, head against base	mamba	-	-	differ
+CPU trees, head against base	mamba2	-	-	differ
+CPU trees, head against base	jamba	-	-	differ
+CPU trees, head against base	falcon-h1	-	-	differ
+CPU trees, head against base	nemotron_h	-	-	differ
+CPU trees, head against base	nemotron_h_moe	-	-	differ
+CPU trees, head against base	metis16	-	-	differ
+CPU trees, head against base	granitehybrid	-	-	differ
+CPU trees, head against base	inkling2	-	-	differ
+CPU trees, head against base	inkling2_loop	-	-	differ
+CPU trees, trace (softplus helper and inkling2 graph as b12674) against base	all 152 files	-	-	SAME: none

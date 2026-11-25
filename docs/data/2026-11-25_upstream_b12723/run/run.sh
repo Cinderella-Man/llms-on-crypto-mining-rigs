@@ -34,7 +34,7 @@
 #            Ornith-1.5-122B Pascal N2P GGUF with their v5 presets (release/*-v5/settings.env), every switch the preset
 #            does not set at its default, the layer split changed to the three cards (-ts 1,1,1), the fork's
 #            compute-6.1-only paths forced as on a P106 (env $PRESET_ENV $(pascal_force_preset "$PRESET_ENV"),
-#            scripts/pascal_forced.sh): one llama-server per build (head, base, then head with UP_ENV), two greedy
+#            scripts/pascal_forced.sh; with two cards -ts 1,1, or TS): one llama-server per build (head, base, then head with UP_ENV), two greedy
 #            requests (/completion, temperature 0, top-k 1, 256 tokens, no prompt cache, the tokens returned: C947's
 #            coding request and C912's prose one), memory per card after the load and after the requests; token lists
 #            compared head against base, and head with UP_ENV against head
@@ -50,7 +50,8 @@
 #            the third card: FLASH_ATTN_EXT unset, with GGML_CUDA_FATTN_TILE_PASCAL=2, and with every Pascal attention switch
 #              (as the pull request 9 review ran it); then the operators OPS_RE (the gated delta net and its fusions, the
 #              fused norm and RoPE, RoPE, softmax, the broadcast binary ops, fill, softplus) with P106_ENV on the head, the
-#              base and the head with UP_ENV, each case's verdict compared between builds
+#              base and the head with UP_ENV, each case's verdict compared between builds;
+#            with two cards in GPUS the third card's arms run on the first card after its own
 # Usage: W=<work dir> CLONE=<llama.cpp clone with the base commit> BASE_TGZ=<base TESTS=1 tarball> BASE_MD5=<its md5>
 #   BASE_RIG_LOG=<its build log> REPO=<folder with build_llamacpp_docker.sh cpu_tests.sh compare_hand.py
 #   pascal_forced.sh suite_record.sh, pipespec/ (bench/pipespec with gpu_pipe_check.sh) and
@@ -58,9 +59,10 @@
 #   [QUANT=<llama-quantize>, for a base tarball without one] [RIG_CCACHE=<dir>] [CPU_CCACHE=<dir>]
 #   [JIT_SEED=<a PTX JIT cache to copy>] [LOCK=<flock file>] [PREFLIGHT=<cuda_preflight.sh>]
 #   [MOUNTS='<folders the GPU containers mount at the same paths>'] [GPUS=0,1,2] [STEPS=...] [GPU_STEPS=...]
-#   [PIPE_SEED=1] [RECORD_NEW=1] [JOBS=8] [THREADS=6] HEAD_SHA=<the candidate commit> FN=<file> DRAFT=<file>
-#   bash run.sh (STEPS=none runs the GPU steps alone)
-# Every container: labels pascal-quants=1 and cand12723=1, --cpu-shares=256; every CPU container --memory=16g and
+#   [PIPE_SEED=1] [RECORD_NEW=1] [JOBS=8] [THREADS=6] [TS=<the load's -ts>] [RUN_TAG=<name>]
+#   HEAD_SHA=<the candidate commit> FN=<file> DRAFT=<file> bash run.sh (STEPS=none runs the GPU steps alone)
+# Every container: labels pascal-quants=1 and cand12723=1 (and cand12723run=RUN_TAG when set, so that two runs side by
+# side each stop only their own containers at the end), --cpu-shares=256; every CPU container --memory=16g and
 # without network. Done when $W/DONE exists (it holds the exit code).
 set -uo pipefail
 W=${W:?W=<work dir>}
@@ -90,10 +92,13 @@ P106_ENV=${P106_ENV:-$PASCAL_FORCED_MMV} # the fork's matrix-vector kernels at a
 UP_ENV=${UP_ENV:-LLAMA_RS_REPLAY=1 GGML_CUDA_NORM_ROPE_MROPE=1 GGML_CUDA_NORM_ROPE_BS=1}
 # the operators b12723 changed or that sit next to its changes, for test-backend-ops -o
 OPS_RE=${OPS_RE:-GATED_DELTA_NET,GATED_DELTA_NET_CACHE_FUSION,GATED_DELTA_NET_STATE_ROWS,GDN_CONV,GDN_CONV_CACHE_FUSION,GATED_RMS_NORM,RMS_NORM,RMS_NORM_MUL_ROPE,ROPE,ROPE_SET_ROWS,SOFT_MAX,ADD,SUB,MUL,DIV,FILL,SOFTPLUS,SSM_CONV,SSM_SCAN,SSM_SCAN_ROLLBACK}
-LBL="--label pascal-quants=1 --label cand12723=1"
+RUN_TAG=${RUN_TAG:-}
+LBL="--label pascal-quants=1 --label cand12723=1${RUN_TAG:+ --label cand12723run=$RUN_TAG}"
+OWN="--filter label=cand12723=1${RUN_TAG:+ --filter label=cand12723run=$RUN_TAG}" # this run's containers
 MEM="--memory=16g --memory-swap=16g"
 G="-e CUDA_VISIBLE_DEVICES= -e NVIDIA_VISIBLE_DEVICES=void"
 IFS=, read -ra GA <<< "$GPUS"
+TS=${TS:-$(printf '1,%.0s' "${GA[@]}")}; TS=${TS%,} # the load's layer split: one share a card
 mkdir -p "$W/cpu" "$W/rig" "$W/base" "$W/logs" "$W/checks"
 rm -f "$W/DONE"
 step()  { [[ " $STEPS " == *" $1 "* ]]; }
@@ -102,7 +107,8 @@ locked() { if [ -n "${LOCK:-}" ]; then flock -w 21600 "$LOCK" "$@"; else "$@"; f
 say() { echo "$(date +%H:%M:%S) $*"; }
 finish() {
     wait
-    docker ps -q --filter label=cand12723=1 | xargs -r docker stop > /dev/null
+    # shellcheck disable=SC2086
+    docker ps -q $OWN | xargs -r docker stop > /dev/null
     echo "=== end $(date -Is) rc=$1"; echo "$1" > "$W/DONE"; exit "$1"
 }
 export LC_ALL=C # sort and comm in one collation
@@ -172,8 +178,9 @@ if step base; then
 fi
 
 if step sass; then
-    # MOUNTS first: a command's prefix assignments are expanded in order, so W="$W/sass" before it would mount sass twice
-    MOUNTS="$W" W="$W/sass" BASE="$(base_rig)/bin" HEAD="$(head_rig)/bin" DOCKER_ARGS="$LBL --cpu-shares=256 $MEM" \
+    # W last: a command's prefix assignments are expanded in order, and MOUNTS, base_rig and head_rig read W, so with
+    # W="$W/sass" before them sass would be mounted twice and both builds looked for under it
+    MOUNTS="$W" BASE="$(base_rig)/bin" HEAD="$(head_rig)/bin" W="$W/sass" DOCKER_ARGS="$LBL --cpu-shares=256 $MEM" \
         bash "$REPO/sass_compare.sh" > "$W/logs/sass.log" 2>&1
     echo "sass rc=$?"; tail -n 12 "$W/logs/sass.log"
     echo "=== sass done $(date -Is)"
@@ -206,7 +213,7 @@ gpu_chain() {
         [ -n "${PREFLIGHT:-}" ] && { $PREFLIGHT -g "$GPUS" > "$W/checks/load-preflight.txt" 2>&1; say "load preflight rc=$?"; }
         P_CODE='Write a Python function that parses an ISO 8601 date string into a datetime object, then three pytest tests for it.'
         P_PROSE='Explain in one paragraph how a hash map handles collisions, then give one example in Python.'
-        model() {  # <name>: sets M_FILE M_EXTRA M_ENV M_ARGS from the model's v5 preset, the split changed to the three cards
+        model() {  # <name>: sets M_FILE M_EXTRA M_ENV M_ARGS from the model's v5 preset, the split changed to the cards (TS)
             unset PRESET_MODEL PRESET_DRAFT PRESET_ENV PRESET_ARGS
             case $1 in
                 # shellcheck disable=SC1091
@@ -218,8 +225,8 @@ gpu_chain() {
                 *) say "unknown model $1"; return 1 ;;
             esac
             M_ENV="$PRESET_ENV $(pascal_force_preset "$PRESET_ENV")"
-            M_ARGS=$(sed -E "s/-ts [0-9,]+/-ts 1,1,1/" <<< "$PRESET_ARGS")
-            [[ "$M_ARGS" == *"-ts 1,1,1"* ]] || { say "$1: no -ts in the preset to change"; return 1; }
+            M_ARGS=$(sed -E "s/-ts [0-9,]+/-ts $TS/" <<< "$PRESET_ARGS")
+            [[ "$M_ARGS" == *"-ts $TS"* ]] || { say "$1: no -ts in the preset to change"; return 1; }
         }
         load() {  # <model> <label> <bin folder> [<extra environment>]
             local o=$W/load/$1-$2 c=c1118-$1-$2 up=0 t0 p body env_all="$M_ENV ${4:-}"
@@ -336,16 +343,26 @@ EOF
             [ "$live" = 1 ] && run_bops "${GA[1]}" mul_mat_id-p106 MUL_MAT_ID "$P106_ENV"
             return 0
         }
-        ( run_bops "${GA[0]}" mul_mat-p106 MUL_MAT "$P106_ENV"
-          run_bops "${GA[0]}" mul_mat-p106-mt2 MUL_MAT "$P106_ENV GGML_CUDA_MMVQ_PASCAL_MT=2"
-          run_bops "${GA[0]}" mul_mat-p106-j64 MUL_MAT "$P106_ENV GGML_CUDA_MMQ_J64_I64=2" ) &
+        lane1() {
+            run_bops "${GA[0]}" mul_mat-p106 MUL_MAT "$P106_ENV"
+            run_bops "${GA[0]}" mul_mat-p106-mt2 MUL_MAT "$P106_ENV GGML_CUDA_MMVQ_PASCAL_MT=2"
+            run_bops "${GA[0]}" mul_mat-p106-j64 MUL_MAT "$P106_ENV GGML_CUDA_MMQ_J64_I64=2"
+        }
+        lane3() {  # <card>
+            run_bops "$1" fa-plain FLASH_ATTN_EXT "X=1"
+            run_bops "$1" fa-forced FLASH_ATTN_EXT "$P=2"
+            run_bops "$1" fa-all FLASH_ATTN_EXT "$P=2 ${P}_LDS=1 ${P}_KDP=1 ${P}_MIN=1 GGML_CUDA_FATTN_DEC_PASCAL=4"
+            run_bops "$1" ops-head "$OPS_RE" "$P106_ENV"
+            run_bops "$1" ops-base "$OPS_RE" "$P106_ENV" "$B0/bin"
+            run_bops "$1" ops-headup "$OPS_RE" "$P106_ENV $UP_ENV"
+        }
         ( replay_chain ) &
-        ( run_bops "${GA[2]}" fa-plain FLASH_ATTN_EXT "X=1"
-          run_bops "${GA[2]}" fa-forced FLASH_ATTN_EXT "$P=2"
-          run_bops "${GA[2]}" fa-all FLASH_ATTN_EXT "$P=2 ${P}_LDS=1 ${P}_KDP=1 ${P}_MIN=1 GGML_CUDA_FATTN_DEC_PASCAL=4"
-          run_bops "${GA[2]}" ops-head "$OPS_RE" "$P106_ENV"
-          run_bops "${GA[2]}" ops-base "$OPS_RE" "$P106_ENV" "$B0/bin"
-          run_bops "${GA[2]}" ops-headup "$OPS_RE" "$P106_ENV $UP_ENV" ) &
+        if [ -n "${GA[2]:-}" ]; then
+            ( lane1 ) &
+            ( lane3 "${GA[2]}" ) &
+        else  # two cards: the third card's arms after the first card's
+            ( lane1; lane3 "${GA[0]}" ) &
+        fi
         wait
         printf 'arm\trc\tpassed\tOK\tFAIL\tnot supported\tillegal access\n' > "$o/summary.tsv"
         for t in mul_mat-p106 mul_mat-p106-mt2 mul_mat-p106-j64 mul_mat_id-p106 fa-plain fa-forced fa-all ops-head ops-base ops-headup; do
@@ -372,7 +389,8 @@ EOF
         echo "ops, head with UP_ENV against head: $(awk -F'\t' '$2 == $3' "$o/ops-headup-head.tsv" | wc -l) of $(wc -l < "$o/ops-headup-head.tsv") the same verdict"
         awk -F'\t' '$2 != $3' "$o/ops-headup-head.tsv" | head -n 20
     fi
-    say "gpu done: cand12723 containers left: $(docker ps -q --filter label=cand12723=1 | wc -l); card MiB: $(nvidia-smi --query-gpu=memory.used --format=csv,noheader,nounits -i "$GPUS" | paste -sd' ')"
+    # shellcheck disable=SC2086
+    say "gpu done: this run's containers left: $(docker ps -q $OWN | wc -l); card MiB: $(nvidia-smi --query-gpu=memory.used --format=csv,noheader,nounits -i "$GPUS" | paste -sd' ')"
 }
 
 if [ -n "$GPU_STEPS" ]; then

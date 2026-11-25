@@ -1,0 +1,25 @@
+program	size first	size second	bytes differ	symbols first	symbols second	symbols whose size differs	which
+llama-batched-bench	111472120	111472120	22736766	39601	39601	1	llama_model_qwen4exp::graph::build_layer_attn_linear(llm_graph_input_rs*, ggml_tensor*, int)
+llama-bench	111663400	111663400	22745007	39766	39766	1	llama_model_qwen4exp::graph::build_layer_attn_linear(llm_graph_input_rs*, ggml_tensor*, int)
+llama-cli	120215224	120215224	22914369	46144	46144	1	llama_model_qwen4exp::graph::build_layer_attn_linear(llm_graph_input_rs*, ggml_tensor*, int)
+llama-completion	111518464	111518464	22738777	39657	39657	1	llama_model_qwen4exp::graph::build_layer_attn_linear(llm_graph_input_rs*, ggml_tensor*, int)
+llama-gguf	1056400	1056400	29	1185	1185	0	
+llama-perplexity	111563704	111563704	22740140	39669	39669	1	llama_model_qwen4exp::graph::build_layer_attn_linear(llm_graph_input_rs*, ggml_tensor*, int)
+llama-pipe-drafter-check	105456392	105456392	22679607	31497	31497	1	llama_model_qwen4exp::graph::build_layer_attn_linear(llm_graph_input_rs*, ggml_tensor*, int)
+llama-pipe-recurrent-check	111468384	111468384	23237586	39608	39608	1	llama_model_qwen4exp::graph::build_layer_attn_linear(llm_graph_input_rs*, ggml_tensor*, int)
+llama-pipespec	111597200	111597200	23241303	39724	39724	1	llama_model_qwen4exp::graph::build_layer_attn_linear(llm_graph_input_rs*, ggml_tensor*, int)
+llama-quantize	106835064	106835064	22603620	32898	32898	1	llama_model_qwen4exp::graph::build_layer_attn_linear(llm_graph_input_rs*, ggml_tensor*, int)
+llama-screen-check	111472616	111472616	23238282	39605	39605	1	llama_model_qwen4exp::graph::build_layer_attn_linear(llm_graph_input_rs*, ggml_tensor*, int)
+llama-server	120034848	120034848	23407318	45996	45996	1	llama_model_qwen4exp::graph::build_layer_attn_linear(llm_graph_input_rs*, ggml_tensor*, int)
+test-backend-ops	101875272	101875272	29	25076	25076	0	
+test-bytes-switches	106513256	106513256	22596796	32683	32683	1	llama_model_qwen4exp::graph::build_layer_attn_linear(llm_graph_input_rs*, ggml_tensor*, int)
+test-cuda-keepalive	99894600	99894600	29	22990	22990	0	
+test-hop-cast	105482784	105486880	96891292	31511	31511	1	llama_model_qwen4exp::graph::build_layer_attn_linear(llm_graph_input_rs*, ggml_tensor*, int)
+test-hop-mailbox	99767104	99767104	29	22821	22821	0	
+test-kpool-dev	105460888	105460888	22607998	31502	31502	1	llama_model_qwen4exp::graph::build_layer_attn_linear(llm_graph_input_rs*, ggml_tensor*, int)
+test-kpool-stage	105469448	105469448	22608116	31506	31506	1	llama_model_qwen4exp::graph::build_layer_attn_linear(llm_graph_input_rs*, ggml_tensor*, int)
+test-llama-archs	107125392	107125392	22613554	33131	33131	1	llama_model_qwen4exp::graph::build_layer_attn_linear(llm_graph_input_rs*, ggml_tensor*, int)
+test-moe-ids	105442752	105442752	22608229	31488	31488	1	llama_model_qwen4exp::graph::build_layer_attn_linear(llm_graph_input_rs*, ggml_tensor*, int)
+test-pool-mask-dev	105465312	105465312	22608386	31505	31505	1	llama_model_qwen4exp::graph::build_layer_attn_linear(llm_graph_input_rs*, ggml_tensor*, int)
+test-route-once	106509632	106509632	22597208	32688	32688	1	llama_model_qwen4exp::graph::build_layer_attn_linear(llm_graph_input_rs*, ggml_tensor*, int)
+test-top-k-sort	99786152	99786152	29	22832	22832	0	

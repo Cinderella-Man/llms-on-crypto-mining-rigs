@@ -1,0 +1,60 @@
+check	base 2d839da1d	head 0a6a04e22 (final: caf27fdae)	verdict	detail
+rig build (TESTS=1)	-	llama.cpp-20261125-0a6a04e22-pascal-p106-v5-cand-b12723.tar.gz	OK	md5 1e6424f42700d187b9f9642d36388c6a, 1630388925 bytes
+rig build warnings	32	32	OK	only in head: 0; only in base: 0
+CPU build warnings	2	2	OK	only in head: 0; only in base: 0
+test-llama-archs -b CPU -s 1, rig builds: logits files	152 written	152 compared	DIFFERENT	differ: 8; head Summary: all 157 test(s) passed; head against base Summary: all 157 test(s) passed
+CPU tree: build	OK	OK	OK	rc=0; BUILD_SHARED_LIBS=ON; -DGGML_RPC=ON; all targets; 0 error lines
+CPU tree: archs files	OK	OK	OK	152 files written; 152 compared, differ: none; compared while writing (a shared file): none
+CPU tree: ident vs base	-	DIFFERS	DIFFERS	base wrote 152 files; 152 compared, differ: mamba mamba2 jamba falcon-h1 nemotron_h nemotron_h_moe metis16 granitehybrid inkling2 inkling2_loop ; written by land only: 0; Summary: all 157 test(s) passed
+ctest, test by test	83 tests, 82 pass	83 tests, 82 pass	SAME	
+hand-run tests, verdicts	9 of 9 OK	9 of 9 OK	SAME	
+hand-run tests, logs line by line (hand.tsv)	-	-	SAME	7 logs, 7 the same without times, paths and b12723's rs_replay line; 
+CPU pipe step (C935, C1010, C1020): 25 architecture-arm pairs	25 of 25 OK	25 of 25 OK	SAME	
+card pipe step (C1009, C1019), base	-	125 of 125 OK	OK	
+card pipe step (C1009, C1019), head	-	125 of 125 OK	OK	
+card pipe step: plain decoding's hashes, head against base	-	25 of 25 the same	SAME	
+greedy reply, Swift Qwen3.8-Flash-Next Pascal Q2 GGUF, code (v5 preset, -ts 1,1,1), head against base	256 tokens	256 tokens	SAME	the same token ids; drafted/accepted 236/176 and 236/176; MiB per card the same after the load and after the requests
+greedy reply, Swift Qwen3.8-Flash-Next Pascal Q2 GGUF, prose (v5 preset, -ts 1,1,1), head against base	256 tokens	256 tokens	SAME	the same token ids; drafted/accepted 286/159 and 286/159; MiB per card the same after the load and after the requests
+greedy reply, Swift Qwen3.8-Flash-Next Pascal Q2 GGUF, code (v5 preset, -ts 1,1,1), head with UP_ENV against head	256 tokens	no reply	NO REPLY	first difference at token 0
+greedy reply, Swift Qwen3.8-Flash-Next Pascal Q2 GGUF, prose (v5 preset, -ts 1,1,1), head with UP_ENV against head	256 tokens	no reply	NO REPLY	first difference at token 0
+greedy reply, Flint Pascal Q8 GGUF, code (v5 preset, -ts 1,1,1), head against base	256 tokens	256 tokens	SAME	the same token ids; MiB per card the same after the load and after the requests
+greedy reply, Flint Pascal Q8 GGUF, prose (v5 preset, -ts 1,1,1), head against base	256 tokens	256 tokens	SAME	the same token ids; MiB per card the same after the load and after the requests
+greedy reply, Flint Pascal Q8 GGUF, code (v5 preset, -ts 1,1,1), head with UP_ENV against head	256 tokens	256 tokens	DIFFERENT	first difference at token 11
+greedy reply, Flint Pascal Q8 GGUF, prose (v5 preset, -ts 1,1,1), head with UP_ENV against head	256 tokens	256 tokens	DIFFERENT	first difference at token 0
+greedy reply, Ornith-1.5-122B Pascal N2P GGUF, code (v5 preset, -ts 1,1,1), head against base	256 tokens	256 tokens	SAME	the same token ids; MiB per card the same after the load and after the requests
+greedy reply, Ornith-1.5-122B Pascal N2P GGUF, prose (v5 preset, -ts 1,1,1), head against base	256 tokens	256 tokens	SAME	the same token ids; MiB per card the same after the load and after the requests
+greedy reply, Ornith-1.5-122B Pascal N2P GGUF, code (v5 preset, -ts 1,1,1), head with UP_ENV against head	256 tokens	256 tokens	DIFFERENT	first difference at token 29
+greedy reply, Ornith-1.5-122B Pascal N2P GGUF, prose (v5 preset, -ts 1,1,1), head with UP_ENV against head	256 tokens	256 tokens	DIFFERENT	first difference at token 50
+final build: greedy reply, Swift Qwen3.8-Flash-Next Pascal Q2 GGUF, code (v5 preset, -ts 1,1), final caf27fdae against first head 0a6a04e22	256 tokens	256 tokens	SAME	the same token ids; drafted/accepted 236/176 and 236/176; MiB per card the same after the load and after the requests
+final build: greedy reply, Swift Qwen3.8-Flash-Next Pascal Q2 GGUF, prose (v5 preset, -ts 1,1), final caf27fdae against first head 0a6a04e22	256 tokens	256 tokens	SAME	the same token ids; drafted/accepted 273/163 and 273/163; MiB per card the same after the load and after the requests
+final build: greedy reply, Swift Qwen3.8-Flash-Next Pascal Q2 GGUF, code (v5 preset, -ts 1,1), final with UP_ENV against final caf27fdae	256 tokens	256 tokens	DIFFERENT	first difference at token 124; drafted/accepted 239/175 and 236/176
+final build: greedy reply, Swift Qwen3.8-Flash-Next Pascal Q2 GGUF, prose (v5 preset, -ts 1,1), final with UP_ENV against final caf27fdae	256 tokens	256 tokens	DIFFERENT	first difference at token 56; drafted/accepted 283/160 and 273/163
+test-backend-ops mul_mat-p106	-	5458/5458 tests passed	OK	settings: P106_ENV; FAIL lines 0; not supported 521; illegal access 0
+test-backend-ops mul_mat-p106-mt2	-	5458/5458 tests passed	OK	settings: P106_ENV GGML_CUDA_MMVQ_PASCAL_MT=2; FAIL lines 0; not supported 521; illegal access 0
+test-backend-ops mul_mat-p106-j64	-	5458/5458 tests passed	OK	settings: P106_ENV GGML_CUDA_MMQ_J64_I64=2; FAIL lines 0; not supported 521; illegal access 0
+test-backend-ops fa-plain	-	4679/4679 tests passed	OK	settings: none; FAIL lines 0; not supported 1429; illegal access 0
+test-backend-ops fa-forced	-	4679/4679 tests passed	OK	settings: GGML_CUDA_FATTN_TILE_PASCAL=2; FAIL lines 0; not supported 1429; illegal access 0
+test-backend-ops fa-all	-	4679/4679 tests passed	OK	settings: GGML_CUDA_FATTN_TILE_PASCAL=2 _LDS=1 _KDP=1 _MIN=1 GGML_CUDA_FATTN_DEC_PASCAL=4; FAIL lines 0; not supported 1429; illegal access 0
+test-backend-ops ops-head	-	2412/2412 tests passed	OK	settings: P106_ENV (head); FAIL lines 0; not supported 177; illegal access 0
+test-backend-ops ops-base	-	2233/2233 tests passed	OK	settings: P106_ENV (base); FAIL lines 0; not supported 177; illegal access 0
+test-backend-ops ops-headup	-	2412/2412 tests passed	OK	settings: P106_ENV UP_ENV (head); FAIL lines 0; not supported 177; illegal access 0
+test-backend-ops, the operators b12723 touched, head against base	2382 cases, 2208 OK	2553 cases, 2379 OK	SAME	2288 cases on both sides, the same verdict 2288
+test-backend-ops, the operators b12723 touched, head with UP_ENV against head	2553 cases, 2379 OK	2553 cases, 2379 OK	SAME	2553 cases on both sides, the same verdict 2553
+kept record: replay mul_mat-replay-base	-	5458/5458 tests passed	OK	NOREC 0; not supported 521; replay: <record>/mul_mat: 5458 cases replayed, 0 selected by the filter have no record
+kept record: replay mul_mat-replay-head-cpucheck	-	5458/5458 tests passed	OK	NOREC 0; not supported 521; replay: <record>/mul_mat: 5458 cases replayed, 0 selected by the filter have no record; replay cpu-check: 216 cases, 216 references identical, 0 verdicts differ
+kept record: replay mul_mat-replay-head	-	5458/5458 tests passed	OK	NOREC 0; not supported 521; replay: <record>/mul_mat: 5458 cases replayed, 0 selected by the filter have no record
+kept record: replay mul_mat_id-replay-base	-	2389/2389 tests passed	OK	NOREC 0; not supported 8; replay: <record>/mul_mat_id: 2389 cases replayed, 0 selected by the filter have no record
+kept record: replay mul_mat_id-replay-head-cpucheck	-	2389/2389 tests passed	OK	NOREC 0; not supported 8; replay: <record>/mul_mat_id: 2389 cases replayed, 0 selected by the filter have no record; replay cpu-check: 84 cases, 84 references identical, 0 verdicts differ
+kept record: replay mul_mat_id-replay-head	-	2389/2389 tests passed	OK	NOREC 0; not supported 8; replay: <record>/mul_mat_id: 2389 cases replayed, 0 selected by the filter have no record
+kept record, mul_mat_id: each case head against base (replay)	2389 cases	2389 cases	SAME	2389 in both: verdict the same 2389, verdict and error the same 2389; only in head 0
+kept record, mul_mat: each case head against base (replay)	5458 cases	5458 cases	SAME	5458 in both: verdict the same 5458, verdict and error the same 5458; only in head 0
+test-llama-archs trace: head with #32655's softplus helper and the three inkling2 graph commits reverted, CPU tree, against base	-	-	SAME	base wrote 152 files; 152 compared, differ: none; written by trace only: 0; Summary: all 157 test(s) passed
+test-backend-ops machine code (cuobjdump -sass), kernel by kernel	-	differ 470, only in base 24, only in head 48, same bytes 9581	SAME but named	dequantize_block_nvfp4: differ 3; gated_delta_net_cuda: only in base 16, only in head 24; mul_mat_vec_f: differ 440; rms_norm_mul_rope_f32: only in base 8, only in head 24; rope_multi: differ 20; soft_max_f32_parallelize_cols: differ 7
+renamed kernels, gated_delta_net_cuda: each head instance (the new template argument false) against its base twin	16 pairs	8 the same instructions past parameter offsets	SAME but named	_Z20gated_delta_net_cudaILi16ELb1ELb0ELb0ELi4EEvPKfS1_S1_S1_...: differing 105, differing past parameter offsets 105; _Z20gated_delta_net_cudaILi16ELb1ELb1ELb0ELi4EEvPKfS1_S1_S1_...: differing 360, differing past parameter offsets 360; _Z20gated_delta_net_cudaILi32ELb1ELb0ELb0ELi4EEvPKfS1_S1_S1_...: differing 369, differing past parameter offsets 369; _Z20gated_delta_net_cudaILi32ELb1ELb1ELb0ELi4EEvPKfS1_S1_S1_...: differing 365, differing past parameter offsets 365; _Z20gated_delta_net_cudaILi64ELb1ELb0ELb0ELi4EEvPKfS1_S1_S1_...: differing 312, differing past parameter offsets 312; _Z20gated_delta_net_cudaILi64ELb1ELb1ELb0ELi4EEvPKfS1_S1_S1_...: differing 404, differing past parameter offsets 404; _Z20gated_delta_net_cudaILi128ELb1ELb0ELb0ELi4EEvPKfS1_S1_S1...: differing 274, differing past parameter offsets 274; _Z20gated_delta_net_cudaILi128ELb1ELb1ELb0ELi4EEvPKfS1_S1_S1...: differing 498, differing past parameter offsets 498
+renamed kernels, rms_norm_mul_rope_f32: each head instance (the new template argument false) against its base twin	8 pairs	8 the same instructions past parameter offsets	SAME	
+final build (TESTS=1, web page b12722)	-	llama.cpp-20261125-caf27fdae-pascal-p106-v5-cand-b12723.tar.gz	OK	md5 779a6b2473045c77a643a9871ffbc96f, 1630376772 bytes
+final build's programs against the first head's: md5	24 programs	24 programs	DIFFERENT	24 of 24 md5s differ (every program carries its commit id and an ELF build id: bin_compare.tsv shows where)
+final build's programs against the first head's: bytes and functions (bin_compare.sh)	24 programs	5 with no function changed, 19 with one	SAME but named	no function changed: llama-gguf, test-backend-ops, test-cuda-keepalive, test-hop-mailbox, test-top-k-sort (bytes differing: 29: the short commit id and the ELF build id); the rest link libllama and differ in the size of llama_model_qwen4exp::graph::build_layer_attn_linear(llm_graph_input_rs*, ggml_tensor*, int) only (the code after it moves, so millions of bytes differ: bin_compare.tsv lists each program)
+final build: test-llama-archs -b CPU -s 1 logits against the first head's	-	152 compared	SAME	differ: 0
+final build: test-backend-ops machine code (cuobjdump -sass) against the first head's, kernel by kernel	-	same bytes 10099	SAME	
+final build: llama-server machine code (cuobjdump -sass) against the first head's, kernel by kernel	-	same bytes 10099	SAME	

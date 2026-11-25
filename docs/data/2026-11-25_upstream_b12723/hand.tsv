@@ -1,0 +1,8 @@
+log	base lines	head lines	without times, paths and the rs_replay line
+context-model	40	40	same
+eval-callback	892	892	same
+hop-cast	31	31	same
+moe-ids	660	660	same
+route-once-x1	2798	2798	same
+route-once-x30	2799	2799	same
+thread-safety	26	26	same

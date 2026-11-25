@@ -1,0 +1,7 @@
+step	run	exit	passed	OK lines	FAIL lines	NOREC	not supported	illegal access	seconds	record or replay line
+replay	mul_mat-replay-base	0	5458/5458 tests passed	5459	0	0	521	0	46	replay: <record>/mul_mat: 5458 cases replayed, 0 selected by the filter have no record
+replay	mul_mat-replay-head-cpucheck	0	5458/5458 tests passed	5459	0	0	521	0	46	replay: <record>/mul_mat: 5458 cases replayed, 0 selected by the filter have no record; replay cpu-check: 216 cases, 216 references identical, 0 verdicts differ
+replay	mul_mat-replay-head	0	5458/5458 tests passed	5459	0	0	521	0	206	replay: <record>/mul_mat: 5458 cases replayed, 0 selected by the filter have no record
+replay	mul_mat_id-replay-base	0	2389/2389 tests passed	2390	0	0	8	0	68	replay: <record>/mul_mat_id: 2389 cases replayed, 0 selected by the filter have no record
+replay	mul_mat_id-replay-head-cpucheck	0	2389/2389 tests passed	2390	0	0	8	0	70	replay: <record>/mul_mat_id: 2389 cases replayed, 0 selected by the filter have no record; replay cpu-check: 84 cases, 84 references identical, 0 verdicts differ
+replay	mul_mat_id-replay-head	0	2389/2389 tests passed	2390	0	0	8	0	290	replay: <record>/mul_mat_id: 2389 cases replayed, 0 selected by the filter have no record

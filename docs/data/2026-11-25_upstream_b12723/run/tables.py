@@ -7,9 +7,10 @@ Reads: rig/md5.txt, rig/bin-md5-{base,head}.txt, checks/{rig,cpu}-warnings-*.txt
 cpu/summary.tsv, cpu/{base,land}/hand/*.log, gpupipe/summary.tsv, load/<model>-<build>/, bops/summary.tsv, bops/*.log,
 bops/ops-*.tsv, the kept record's steps ({replay,record,replay2}/bops/: summary.txt, *-replay-*.tsv), the machine-code
 comparisons (sass/sass_compare.tsv, sass2/sass_pairs.tsv), the logits trace (cpu-trace/summary.tsv) and the final
-build's check (final/: rig/md5.txt, rig/bin-md5-*.txt, checks/archs/, sass/sass_compare.tsv, load/).
+build's check (final/: rig/md5.txt, rig/bin-md5-*.txt, checks/bin_compare.tsv from bin_compare.sh, checks/archs/,
+sass/ and sass-server/sass_compare.tsv for test-backend-ops and llama-server, load/).
 Writes: checks.tsv, ctest.tsv, hand.tsv, pipe.tsv, gpu_pipe.tsv, replies.tsv, bops.tsv, ops_cases.tsv, replays.tsv,
-replay_cases.tsv, logits.tsv, sass_compare.tsv, sass_pairs.tsv, binaries.tsv.
+replay_cases.tsv, logits.tsv, sass_compare.tsv, sass_pairs.tsv, bin_compare.tsv, binaries.tsv.
 """
 import csv
 import json
@@ -50,7 +51,10 @@ checks.append(["rig build (TESTS=1)", "-", md5[0].split()[1] if md5 else "-", "O
 rb, rh = set(lines("checks", "rig-warnings-base.txt")), set(lines("checks", "rig-warnings-head.txt"))
 checks.append(["rig build warnings", str(len(rb)), str(len(rh)), "OK" if not rh - rb else "NEW",
                f"only in head: {len(rh - rb)}; only in base: {len(rb - rh)}"])
-cb, ch = set(lines("checks", "cpu-warnings-base.txt")), set(lines("checks", "cpu-warnings-head.txt"))
+# run.sh's warnings() drops gcc's, nvcc's and CMakeLists.txt's line numbers; a CMake script's (ui-assets.cmake:621) too here
+def cmake_ln(ls):
+    return {re.sub(r"(\.cmake):\d+", r"\1", l) for l in ls}
+cb, ch = cmake_ln(lines("checks", "cpu-warnings-base.txt")), cmake_ln(lines("checks", "cpu-warnings-head.txt"))
 checks.append(["CPU build warnings", str(len(cb)), str(len(ch)), "OK" if not ch - cb else "NEW",
                f"only in head: {len(ch - cb)}; only in base: {len(cb - ch)}"])
 
@@ -83,19 +87,28 @@ checks.append(["ctest, test by test", f"{sum(1 for r in ct if r[1] != '-')} test
                "SAME but named" if diffs else "SAME", "; ".join(f"{r[0]}: {r[1]} -> {r[2]}" for r in diffs)])
 write("ctest.tsv", ["test", "base 2d839da1d", "head 0a6a04e22"], ct)
 
-# the hand-run logs line by line, leaving out what may differ between two runs of one build (times, the trees' paths)
-# and the line b12723 adds to every context's log ("rs_replay = false", #31669)
-def norm_log(path):
+# the hand-run logs line by line with compare_hand.py's rules (docs/data/2026-11-05_c565_ladder4fix/run/): the time stamp
+# and level letter dropped, the trees' paths as <tree>, the numbers masked in timing lines, and thread-safety and
+# context-model (two threads write each) compared as sorted lists with every stamp dropped; and without the line b12723
+# adds to every context's log ("rs_replay = false", #31669)
+STAMP = re.compile(r"^\d+\.\d+\.\d+\.\d+ [A-Z] ?")
+ANY_STAMP = re.compile(r"\d+\.\d{2}\.\d{3}\.\d{3} ")
+LEVEL = re.compile(r"^[IWED] ")
+TIMING = re.compile(r"( ms\b| ms$|ms per token|tokens per second| t/s|time =|seconds)")
+ORDERLESS = {"thread-safety", "context-model"}
+def norm_log(path, orderless=False):
     out = []
     for l in open(path, encoding="utf-8", errors="replace"):
         if re.search(r"rs_replay\s+=", l):
             continue
-        l = re.sub(r"^\d+\.\d+\.\d+ ", "", l)
+        l = STAMP.sub("", l.rstrip("\n")).rstrip()
+        if orderless:
+            l = LEVEL.sub("", ANY_STAMP.sub("", l))
         l = re.sub(r"/cpu/(base|land)/", "/cpu/<tree>/", l)
-        l = re.sub(r"\d+(\.\d+)? ms\b", "<t> ms", l)
-        l = re.sub(r"took \S+", "took <t>", l)
-        out.append(l.rstrip("\n"))
-    return out
+        if TIMING.search(l):
+            l = re.sub(r"\d+(\.\d+)?", "N", l)
+        out.append(l)
+    return sorted(out) if orderless else out
 hand = []
 hd_dir = os.path.join(W, "cpu", "base", "hand")
 for n in sorted(os.listdir(hd_dir)) if os.path.isdir(hd_dir) else []:
@@ -105,7 +118,7 @@ for n in sorted(os.listdir(hd_dir)) if os.path.isdir(hd_dir) else []:
     if not os.path.exists(h):
         hand.append([n[:-4], "-", "-", "only in base"])
         continue
-    lb, lh = norm_log(b), norm_log(h)
+    lb, lh = norm_log(b, n[:-4] in ORDERLESS), norm_log(h, n[:-4] in ORDERLESS)
     nd = sum(1 for x, y in zip(lb, lh) if x != y) + abs(len(lb) - len(lh))
     hand.append([n[:-4], str(len(lb)), str(len(lh)), "same" if nd == 0 else f"{nd} lines differ"])
 write("hand.tsv", ["log", "base lines", "head lines", "without times, paths and the rs_replay line"], hand)
@@ -182,6 +195,12 @@ for root, builds in (("", ("head", "base", "headup")), ("final", ("head", "base"
                 rep_rows.append([root or "first", m, b, p, rd(d, "load.txt").strip(), str(len(t)), str(len(c)),
                                  f"{dr[0]}/{dr[1]}" if dr[0] is not None else "-", mem(root, m, b, "mem.csv"),
                                  mem(root, m, b, "mem-after.csv"), bin_md5])
+        # the layer split the load ran with (three cards -ts 1,1,1; the final build's load ran on two, -ts 1,1)
+        ts = (re.search(r"-ts (\S+)", rd(root, "load", f"{m}-head", "command.txt")) or [None, "?"])[1]
+        if root:  # the final run: its head is caf27fdae, its base the first head 0a6a04e22
+            label = {"head": "final caf27fdae", "base": "first head 0a6a04e22", "headup": "final with UP_ENV"}
+        else:
+            label = {"head": "head", "base": "base", "headup": "head with UP_ENV"}
         for x, y in (("head", "base"), ("headup", "head")):
             for p in ("code", "prose"):
                 if (x, p) not in got or (y, p) not in got:
@@ -190,8 +209,7 @@ for root, builds in (("", ("head", "base", "headup")), ("final", ("head", "base"
                 same = a_[0] == b_[0] and len(a_[0]) > 0
                 n = next((i for i, (u, v) in enumerate(zip(a_[0], b_[0])) if u != v), min(len(a_[0]), len(b_[0])))
                 ma = mem(root, m, x, "mem-after.csv") == mem(root, m, y, "mem-after.csv") and mem(root, m, x, "mem.csv") == mem(root, m, y, "mem.csv")
-                label = {"head": "head", "base": "base", "headup": "head with UP_ENV"}
-                checks.append([f"{'final build: ' if root else ''}greedy reply, {NAMES[m]}, {p} (v5 preset, -ts 1,1,1), {label[x]} against {label[y]}",
+                checks.append([f"{'final build: ' if root else ''}greedy reply, {NAMES[m]}, {p} (v5 preset, -ts {ts}), {label[x]} against {label[y]}",
                                f"{len(b_[0])} tokens", f"{len(a_[0])} tokens" if a_[0] else "no reply",
                                "SAME" if same else ("NO REPLY" if not a_[0] else "DIFFERENT"),
                                ("the same token ids" if same else f"first difference at token {n}") +
@@ -346,20 +364,40 @@ if fm:
     fb = {l.split()[1]: l.split()[0] for l in lines("final", "rig", "bin-md5-base.txt") if len(l.split()) == 2}
     fh = {l.split()[1]: l.split()[0] for l in lines("final", "rig", "bin-md5-head.txt") if len(l.split()) == 2}
     dif = sorted(n for n in set(fb) | set(fh) if fb.get(n) != fh.get(n))
-    checks.append(["final build's programs against the first head's", f"{len(fb)} programs", f"{len(fh)} programs",
-                   "SAME but named" if dif else "SAME", "differing: " + (", ".join(dif) or "none")])
+    checks.append(["final build's programs against the first head's: md5", f"{len(fb)} programs", f"{len(fh)} programs",
+                   "DIFFERENT" if dif else "SAME",
+                   f"{len(dif)} of {len(fh)} md5s differ (every program carries its commit id and an ELF build id: "
+                   "bin_compare.tsv shows where)"])
+    # bin_compare.sh: bytes that differ and the defined symbols whose size differs, program by program
+    bc = tsv("final", "checks", "bin_compare.tsv")
+    if bc:
+        write("bin_compare.tsv", bc[0], bc[1:])
+        rows_ = [r for r in bc[1:] if len(r) >= 7]
+        nolib = [r for r in rows_ if r[6] == "0"]
+        withf = [r for r in rows_ if r[6] != "0"]
+        funcs = sorted({f for r in withf for f in (r[7] if len(r) > 7 else "").split("|") if f})
+        checks.append(["final build's programs against the first head's: bytes and functions (bin_compare.sh)",
+                       f"{len(rows_)} programs", f"{len(nolib)} with no function changed, {len(withf)} with one",
+                       "SAME but named",
+                       f"no function changed: {', '.join(r[0] for r in nolib)} "
+                       f"(bytes differing: {', '.join(sorted({r[3] for r in nolib}))}: the short commit id and the ELF build id); "
+                       f"the rest link libllama and differ in the size of {'; '.join(funcs)} only "
+                       "(the code after it moves, so millions of bytes differ: bin_compare.tsv lists each program)"
+                       if withf else ""])
     fl = rd("final", "checks", "archs", "head-compare.log")
     fc = [l for l in fl.splitlines() if "logits against" in l]
     fd = [l for l in fc if ", 0 of " not in l]
     checks.append(["final build: test-llama-archs -b CPU -s 1 logits against the first head's", "-", f"{len(fc)} compared",
                    "SAME" if fc and not fd else "DIFFERENT", f"differ: {len(fd)}"])
-    fs = tsv("final", "sass", "sass_compare.tsv")
-    if fs:
-        ft = {}
-        for r in fs[1:]:
-            ft[r[1]] = ft.get(r[1], 0) + int(r[2])
-        checks.append(["final build: test-backend-ops machine code against the first head's", "-",
-                       ", ".join(f"{k} {v}" for k, v in sorted(ft.items())), "SAME" if set(ft) == {"same bytes"} else "DIFFERENT", ""])
+    for sd, prog in (("sass", "test-backend-ops"), ("sass-server", "llama-server")):
+        fs = tsv("final", sd, "sass_compare.tsv")
+        if fs:
+            ft = {}
+            for r in fs[1:]:
+                ft[r[1]] = ft.get(r[1], 0) + int(r[2])
+            checks.append([f"final build: {prog} machine code (cuobjdump -sass) against the first head's, kernel by kernel", "-",
+                           ", ".join(f"{k} {v}" for k, v in sorted(ft.items())),
+                           "SAME" if set(ft) == {"same bytes"} else "DIFFERENT", ""])
 
 write("checks.tsv", ["check", "base 2d839da1d", "head 0a6a04e22 (final: caf27fdae)", "verdict", "detail"], checks)
 
