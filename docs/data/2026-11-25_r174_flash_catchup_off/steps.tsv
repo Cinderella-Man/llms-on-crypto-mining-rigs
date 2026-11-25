@@ -1,0 +1,49 @@
+pass_type	depth	load	arm	step_ms	steps	accepted	drafted	ids_md5
+greedy, pass 1	0	ca	c	105.365	109	147	321	2aadc9cf
+greedy, pass 1	0	cb	c	102.695	109	147	321	2aadc9cf
+greedy, pass 1	0	offa	off	102.439	109	147	321	2aadc9cf
+greedy, pass 1	0	offb	off	102.417	109	147	321	2aadc9cf
+greedy, pass 1	4096	ca	c	114.350	79	177	231	765babe2
+greedy, pass 1	4096	cb	c	117.167	79	177	231	765babe2
+greedy, pass 1	4096	offa	off	113.114	79	177	231	765babe2
+greedy, pass 1	4096	offb	off	113.020	79	177	231	765babe2
+greedy, pass 1	8192	ca	c	120.472	83	173	245	8a589d39
+greedy, pass 1	8192	cb	c	120.224	83	173	245	8a589d39
+greedy, pass 1	8192	offa	off	120.583	83	173	245	8a589d39
+greedy, pass 1	8192	offb	off	120.707	83	173	245	8a589d39
+greedy, pass 1	all	ca	c	112.611	271	497	797	2aadc9cf,765babe2,8a589d39
+greedy, pass 1	all	cb	c	112.283	271	497	797	2aadc9cf,765babe2,8a589d39
+greedy, pass 1	all	offa	off	111.108	271	497	797	2aadc9cf,765babe2,8a589d39
+greedy, pass 1	all	offb	off	111.110	271	497	797	2aadc9cf,765babe2,8a589d39
+greedy, pass 2	0	ca	c	98.078	108	148	318	2aadc9cf
+greedy, pass 2	0	cb	c	98.144	108	148	318	2aadc9cf
+greedy, pass 2	0	offa	off	98.108	108	148	318	2aadc9cf
+greedy, pass 2	0	offb	off	98.118	108	148	318	2aadc9cf
+greedy, pass 2	4096	ca	c	108.700	79	177	231	765babe2
+greedy, pass 2	4096	cb	c	108.764	79	177	231	765babe2
+greedy, pass 2	4096	offa	off	108.769	79	177	231	765babe2
+greedy, pass 2	4096	offb	off	108.912	79	177	231	765babe2
+greedy, pass 2	8192	ca	c	113.197	78	178	230	8a589d39
+greedy, pass 2	8192	cb	c	113.036	78	178	230	8a589d39
+greedy, pass 2	8192	offa	off	113.272	78	178	230	8a589d39
+greedy, pass 2	8192	offb	off	113.318	78	178	230	8a589d39
+greedy, pass 2	all	ca	c	105.695	265	503	779	2aadc9cf,765babe2,8a589d39
+greedy, pass 2	all	cb	c	105.693	265	503	779	2aadc9cf,765babe2,8a589d39
+greedy, pass 2	all	offa	off	105.750	265	503	779	2aadc9cf,765babe2,8a589d39
+greedy, pass 2	all	offb	off	105.810	265	503	779	2aadc9cf,765babe2,8a589d39
+sampled	0	ca	c	100.753	97	159	285	1f333fb2
+sampled	0	cb	c	100.659	97	159	285	1f333fb2
+sampled	0	offa	off	100.908	97	159	285	1f333fb2
+sampled	0	offb	off	100.692	97	159	285	1f333fb2
+sampled	4096	ca	c	111.842	79	177	232	e2a5529b
+sampled	4096	cb	c	111.824	79	177	232	e2a5529b
+sampled	4096	offa	off	123.621	79	177	232	e2a5529b
+sampled	4096	offb	off	111.897	79	177	232	e2a5529b
+sampled	8192	ca	c	113.742	75	181	222	ad961273
+sampled	8192	cb	c	114.139	75	181	222	ad961273
+sampled	8192	offa	off	124.972	75	181	222	ad961273
+sampled	8192	offb	off	114.512	75	181	222	ad961273
+sampled	all	ca	c	108.124	251	517	739	1f333fb2,ad961273,e2a5529b
+sampled	all	cb	c	108.201	251	517	739	1f333fb2,ad961273,e2a5529b
+sampled	all	offa	off	115.247	251	517	739	1f333fb2,ad961273,e2a5529b
+sampled	all	offb	off	108.348	251	517	739	1f333fb2,ad961273,e2a5529b

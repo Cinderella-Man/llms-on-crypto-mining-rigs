@@ -12,6 +12,13 @@
 #   c1     32768,8192,1 (control): one full-head round after a miss, R175's fb1
 #   s0     32768,8192,0: no full-head round after a miss; the missed token still joins the list
 #   loads  warm:c1 c1a:c1 s0a:s0 s0b:s0 c1b:c1
+# VARIANT=r174 (R174, Q1506, 2026-11-25) keeps the preset's shortlist and makes the draft's overlapped catch-up the
+# arm (LLAMA_MTP_CATCHUP_OVERLAP, docs/switches.md; WORK's default /tmp/r174):
+#   c      LLAMA_MTP_CATCHUP_OVERLAP=1, the preset as it is (control): the draft catches up on a prompt call once the
+#          next call is queued on the target
+#   off    LLAMA_MTP_CATCHUP_OVERLAP=0: the draft catches up on each prompt call before the next call starts
+#          (LLAMA_MTP_HROW_LAZY=1 stays set and changes nothing without the overlap)
+#   loads  warm:c ca:c offa:off offb:off cb:c
 # The server logs each load's count at its end ("draft head shortlist: N drafts with it, M with the full head, K target
 # tokens outside it"), so the arms' full-head rounds can be compared with their steps.
 # This is R69's deep-lane design (docs/data/2026-11-20_r69_sparse_switch/run/r69.sh) with the fallback as the arm.
@@ -31,7 +38,7 @@
 set -uo pipefail
 : "${RIG:?RIG=<ssh alias of the rig>}"
 VARIANT=${VARIANT:-r175}
-case $VARIANT in r175|r230) ;; *) echo "VARIANT=r175|r230"; exit 1 ;; esac
+case $VARIANT in r175|r230|r174) ;; *) echo "VARIANT=r175|r230|r174"; exit 1 ;; esac
 export RIG WORK=${WORK:-/tmp/$VARIANT}
 [ -n "${DRY:-}" ] && export DRY
 L=bench/deep_lane/remote.sh
@@ -46,6 +53,11 @@ common() {
     export ARMS="c1 s0" ARM_ENV_c1="$SW=32768,8192,1" ARM_ENV_s0="$SW=32768,8192,0" \
       LOADS="warm:c1 c1a:c1 s0a:s0 s0b:s0 c1b:c1"
     unset ARM_ENV_c ARM_ENV_fb1
+  fi
+  if [ "$VARIANT" = r174 ]; then
+    export ENV_DROP=LLAMA_MTP_CATCHUP_OVERLAP ARMS="c off" ARM_ENV_c="LLAMA_MTP_CATCHUP_OVERLAP=1" \
+      ARM_ENV_off="LLAMA_MTP_CATCHUP_OVERLAP=0" LOADS="warm:c ca:c offa:off offb:off cb:c"
+    unset ARM_ENV_fb1
   fi
 }
 case ${STEP:-start} in
