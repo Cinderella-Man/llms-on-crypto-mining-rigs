@@ -493,7 +493,7 @@ BF16 before any quantization. Gate: ≤ 0.03.
 | Rotations, group-64 Q4_1, router precision | Q13/Q15, Q16/Q28, Q23/Q35 |
 | Vocabulary trimming of the head (lossy) | Surveys A 3.5 and C 3.13; candidate 5 is the exact variant |
 | Vulkan, `GGML_CUDA_GRAPH_OPT`, fusion switch | Q34, E2.13 |
-| Headless mode, memory overclock, second SO-DIMM | Q83, Q86 |
+| Headless mode, memory overclock, larger SO-DIMM | Q83, Q86 |
 | GPU sampling for tool requests, reasoning budget | Q67, Q85 |
 | ik_llama.cpp types and engine, MXFP4/NVFP4 | E2.11, survey B L8/L9 |
 | Persistent kernel mentioned as a long-term option | Survey B L7, [rec note](rec_engine.md); no registry row until now |

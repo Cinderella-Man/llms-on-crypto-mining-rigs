@@ -80,7 +80,7 @@ S4-L0 (32.5 GB), nine cards, fork `eeaa59660`, f16 KV, `LLAMA_NO_MOE_DOWN_RESCAL
   - measure deep contexts with llama-batched-bench;
   - log available memory and swap in `bench.sh`;
   - keep `--cache-ram 0` in llama-server, whose host prompt cache copies the same state;
-  - a second SO-DIMM (the board has a free slot) removes the problem in hardware.
+  - a larger SO-DIMM in the board's one slot removes the problem in hardware.
 
 ## 1. What changes between the 32k and the 64k decode
 
@@ -397,8 +397,8 @@ split values with `/`). Under H1 this changes nothing.
      1.78 GiB. Keep `--cache-ram 0`, as `server_bench.sh` and the chat benchmark already do.
    - Context checkpoints copy only the sliding-window cache, ~35 MiB each for Flint at `-ub 128` (est.). A few (the
      chat benchmark uses 4) are affordable; the default 32 are not.
-5. **Hardware:** the board has a second SO-DIMM slot (32 GB maximum; [hardware spec](../../mining_rig.md)). A second
-   DDR4 module removes this class of problem and makes the memory dual-channel. Without it, running benchmarks with
+5. **Hardware:** the board has one SO-DIMM slot ([hardware spec](../../mining_rig.md)). A larger
+   DDR4 module in it (est. 16 GB at most) removes this class of problem; the memory stays single-channel. Without it, running benchmarks with
    the desktop stopped frees a few hundred MiB (est.).
 
 **H2 (above 65,536 keys):** E3's per-op profile names the kernel. Fix its index type or launch dimensions there, and

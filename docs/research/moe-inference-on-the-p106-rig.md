@@ -491,7 +491,7 @@ The backlog merges and de-duplicates the experiment ideas from all eight notes i
 | E2.16 | Power-limit sweep 60–75 W | E0.8, E1.1 | **[GO-AHEAD]** | Low | None |
 | E2.17 | Memory overclock (one card) | E0.12, E1.14 | **[GO-AHEAD] [KEYBOARD]** | **High** | None |
 | E2.18 | PCIe ASPM policy | E0.1, E0.11 | **[GO-AHEAD]**; boot parameter **[KEYBOARD]** | Medium | None |
-| E2.19 | Second SO-DIMM before/after | E0.6, E0.9 | **[GO-AHEAD] [KEYBOARD]** (hardware) | Low | None |
+| E2.19 | Larger SO-DIMM before/after | E0.6, E0.9 | **[GO-AHEAD] [KEYBOARD]** (hardware) | Low | None |
 
 **E2.1 · CUDA graphs on sm_61.** *Purpose:* test the cheapest potential speed-up in the whole report (C4, C5). *Depends on:* E0.3, E0.9, E1.1. *Setup:* re-check whether PR #27721 has merged. If not, build current master with its one-line change (the gate moves from `GGML_CUDA_CC_VOLTA` to `GGML_CUDA_CC_DP4A`). A/B it against `GGML_CUDA_DISABLE_GRAPHS=1`: first on one card with the E0.9 models, then layer split over 2/4/9 cards with the E1.1 and E1.4 models, at depths 0 and 4096. *Measure:* tg, VRAM delta, greedy-output identity and KLD identity. *Expect:* +10–50 % on small MoEs, less on bigger ones; the P100 data in the same PR shows graphs can also regress, so both directions are live. *Effort/risk:* Low–medium / low.
 
@@ -529,7 +529,7 @@ The backlog merges and de-duplicates the experiment ideas from all eight notes i
 
 **E2.18 · PCIe ASPM policy.** *Purpose:* remove any link-wake latency from hops and logits (C21). *Depends on:* E0.1 (only worth doing if ASPM is actually active), E0.11. *Setup:* set the runtime policy to `performance` (reversible), then repeat E0.11 and E1.3. The boot-time `pcie_aspm=off` route needs a reboot. *Measure:* small-copy latency, tg. *Expect:* lower latency only if L1 was engaged. *Effort/risk:* Low / medium (some platforms misbehave on runtime ASPM changes). **[GO-AHEAD]**, and **[KEYBOARD]** for the boot parameter.
 
-**E2.19 · Second SO-DIMM before/after.** *Purpose:* separate "blocked by 3.7 GiB of RAM" from "blocked by Pascal or the CPU". *Depends on:* E0.6, E0.9. *Setup:* add a DDR4 SO-DIMM in the free slot (up to 32 GB total, dual channel), then rerun E0.6 (repeat loads from page cache), E0.9, E2.15 and the RAM-blocked engines (E4.4, E4.7, E4.8). *Measure:* load times, decode, which engines now start. *Expect:* faster repeat loads for models smaller than RAM; RAM floors lifted, AVX blockers unchanged. *Effort/risk:* Low / low, but needs a power-down and the passphrase. **[GO-AHEAD] [KEYBOARD].**
+**E2.19 · Larger SO-DIMM before/after.** *Purpose:* separate "blocked by 3.7 GiB of RAM" from "blocked by Pascal or the CPU". *Depends on:* E0.6, E0.9. *Setup:* replace the 4 GB module with a larger DDR4 SO-DIMM in the board's one slot (est. 16 GB at most, still single channel), then rerun E0.6 (repeat loads from page cache), E0.9, E2.15 and the RAM-blocked engines (E4.4, E4.7, E4.8). *Measure:* load times, decode, which engines now start. *Expect:* faster repeat loads for models smaller than RAM; RAM floors lifted, AVX blockers unchanged. *Effort/risk:* Low / low, but needs a power-down and the passphrase. **[GO-AHEAD] [KEYBOARD].**
 
 ### Phase 3 — stretch models, compression and the workstation as a partner
 
@@ -759,7 +759,7 @@ CREATE TABLE artifacts (
 |---|---|---|
 | Q2 | Can the workstation be a permanent participant (an RPC "big-model mode"), or only a model store and build box? | The value of E3.14–E3.20 versus the NFS-only path |
 | Q3 | Which rig changes are acceptable without case-by-case review: package installs (NFS client, iperf3, profilers, a Python venv), network listeners (rpc-server, iperf3, LAN-bound llama-server), mounts, headless mode, power limits, memory overclocking, ASPM? | Which [GO-AHEAD] experiments can run unattended |
-| Q4 | Is hardware spend on the table: a second SO-DIMM, a USB 3.0 SSD, a larger internal SSD (a LUKS clone), a wall-plug power meter? | E2.19, the canary residency trade-off, tokens-per-joule accuracy |
+| Q4 | Is hardware spend on the table: a larger SO-DIMM, a USB 3.0 SSD, a larger internal SSD (a LUKS clone), a wall-plug power meter? | E2.19, the canary residency trade-off, tokens-per-joule accuracy |
 | Q5 | What are the target workloads (chat, coding, agent tool loops), the typical context length, and is the goal single-user latency or multi-user throughput? | Priority of KV-light hybrids over GQA models; the value of E2.10 and E1.6 |
 | Q6 | Are thinking-heavy models acceptable at an expected 20–40 tok/s, or should thinking-light models (Nemotron Lightning, Gemma 4) get priority? | The weight of E1.15 against benchmark ranks |
 | Q7 | What quality loss is acceptable for a faster quant or a pruned model, and which languages besides English matter? | Pass/fail thresholds in E1.14, E3.4, E2.8 |

@@ -324,7 +324,7 @@ Tensor parallelism adds no capacity over a layer split. Rejected.
   rig's share on its own drive for later loads.
 - The largest expert tensors of the models above are 0.9–1.6 GB at 4–8 bits (est.: Ornith Q8_0 0.86 GB, Qwen3.5-397B
   Q4 1.2 GB, Step-3.5-Flash Q8_0 1.6 GB). Each must fit next to the server process in a 4 GB host (claim to test;
-  the board takes a second SO-DIMM, up to 32 GB).
+  the board's one SO-DIMM slot takes a larger module, est. 16 GB at most).
 - Loads of models over ~100 GiB across two hosts hung in `llama-server` until `-dio` (direct I/O) was set (issue
   #19745, ROCm hosts).
 

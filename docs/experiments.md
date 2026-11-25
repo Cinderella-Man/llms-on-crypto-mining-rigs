@@ -68,7 +68,7 @@ deep). Results live in [benchmarks/](benchmarks/) and, for all work since 2026-1
 | E2.16 | Power-limit sweep | n/a | 75 W is the cards' maximum, so a sweep can only lower it; energy use is outside the speed focus |
 | E2.17 | Memory overclock (one card) | open | Needs owner approval (risk of hangs) |
 | E2.18 | PCIe ASPM policy | n/a | ASPM is already disabled on every link |
-| E2.19 | Second SO-DIMM before/after | open | Hardware change |
+| E2.19 | Larger SO-DIMM before/after (one slot on the board) | open | Hardware change |
 
 ## Phase 3: stretch models, compression, the workstation as a partner
 

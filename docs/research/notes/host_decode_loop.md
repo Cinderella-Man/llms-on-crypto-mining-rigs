@@ -645,7 +645,7 @@ A second run with `CTX=32768 NS='1 4'` shows how the mask fill and its upload gr
 | Persistent kernel per card and its host-free end state (mailboxes in mapped memory) | Q88; [breakthrough candidates](breakthrough_candidates.md) §2 |
 | Hop cost between cards | Q81 |
 | Per-request fixed cost (re-reserve, checkpoints), prompt caching for agents | Q111; [prefill note](prefill_pascal.md) §1.5, §4 |
-| Headless mode, second SO-DIMM, `--no-mmap` load time | Q83, Q86, Q84 |
+| Headless mode, larger SO-DIMM, `--no-mmap` load time | Q83, Q86, Q84 |
 | Lighter last card, split output head | [multi-conversation serving](multi_conversation_serving.md) §2.3; [unconventional ideas](unconventional_ideas.md) idea 6 |
 | Tensor and expert parallelism over x1 links | [multi-GPU physics](multigpu_pascal_performance.md) Q3–Q4 |
 | rec's 8-token dispatches and GPU grammar masks | [rec note](rec_engine.md) |

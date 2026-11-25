@@ -447,7 +447,7 @@ prompt test (llama-bench pp512 with a model that fits one card, as in the calibr
   the executor's power regime (Q87/Q104 rig runs with power logging), then C1 if that regime is power-bound.
 - **Only after a ≥ 24 h clean record:** the boot-time unit that re-applies offsets (a persistent change).
 - **Needs a reboot or hardware:** none of the recommended steps. A hang needs a reboot with the passphrase. PCIe 2.0 is a
-  hardware limit of the cards. Route B (Coolbits) needs an Xorg restart, not a reboot. A second SO-DIMM (Q86) is a
+  hardware limit of the cards. Route B (Coolbits) needs an Xorg restart, not a reboot. A larger SO-DIMM (Q86) is a
   power-down.
 
 ## What this changes in the plan
@@ -476,7 +476,7 @@ prompt test (llama-bench pp512 with a model that fits one card, as in the calibr
 | No PCIe or instruction-rate unlock for Pascal mining cards; CMP unlocks need GSP-era modules; Q103's throughput calibration | [Pascal forks](pascal_forks_and_quants.md) §1, §6; Q103 |
 | Page walks as a fixed cost per token | Q99; [Pascal forks](pascal_forks_and_quants.md) §3 |
 | `-t 1`, the OpenMP spinner, synchronization policy, thread placement, page faults on the mapped embedding table | [host note](host_decode_loop.md); Q118 |
-| Second SO-DIMM | Q86, E2.19 |
+| Larger SO-DIMM | Q86, E2.19 |
 | Thermal steady state and power-log validity | E0.12 |
 
 ## Not verified

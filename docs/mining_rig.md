@@ -16,8 +16,8 @@ discontinued.
 | CPU | Intel Celeron 3865U (Kaby Lake), 2 cores / 2 threads, 1.8 GHz, 2 MB L3, 15 W |
 | Chipset | Intel Sunrise Point-LP (on-package), PCIe root ports at 2.0 speed |
 | Integrated graphics | Intel HD Graphics 610 |
-| Memory | 1 × 4 GB DDR4 SO-DIMM at 2133 MT/s, single channel; 2 slots, 32 GB maximum |
-| Storage | 64 GB M.2 SATA III SSD |
+| Memory | 1 × 4 GB DDR4 SO-DIMM (a DDR4-2400 module) at 2133 MT/s, single channel; one SO-DIMM slot, est. 16 GB maximum |
+| Storage | 64 GB M.2 2242 SATA III SSD |
 | Network | 1 × Gigabit Ethernet (Realtek RTL8111/8168) |
 | Display output | 1 × HDMI 1.4 (from the integrated graphics) |
 | USB | 2 × USB 3.0, 2 × USB 2.0 |
@@ -111,6 +111,45 @@ Ethernet needs.
   75 W limit, which pulls the core clock down to ~1700–1760 MHz from its 1911 MHz maximum
   ([single-card calibration](benchmarks/2026-10-22-single-card-calibration.md)).
 
+## Boards and connectors
+
+The system is built from three kinds of board: a backplane, a CPU card that plugs into it like an expansion card, and
+the nine GPU cards. These are the parts seen on a dismantled system.
+
+**Backplane**
+
+- Nine x16 slots for the GPU cards, wired as one lane each, and a tenth x16 slot (`PCIE_MB_1`) for the CPU card.
+- The two ASM1184e switches. One (`U12`) is beside the CPU card's slot.
+- Seven 6-pin 12 V inputs (`PW1`–`PW7`) for the power supply's PCIe cables, and two 4-pin fan headers (`CPUFAN1`,
+  `CPUFAN2`).
+- An 8-pin power header beside each GPU slot (`PCIEPW8` and `PCIEPW9` beside slots 8 and 9). A cable runs from each one
+  to its card's 6-pin connector, so the cards get their power through the backplane.
+- The fuse positions on these 12 V lines (four of them beside `PCIEPW8`) are fitted with 0 Ω links, not fuses. A
+  short behind a card is stopped only by the power supply's own protection.
+
+**CPU card**
+
+- Labelled "SKL-U/KBL-U CPU CARD": a whole computer on a plug-in card, built for any Skylake-U or Kaby Lake-U
+  processor (here the Celeron 3865U, under a passive heatsink). Its gold edge carries PCIe lanes, power and control
+  lines to the backplane's `PCIE_MB_1` slot. It is not a PCIe device itself.
+- One DDR4 SO-DIMM slot, on the front; the back has none. The firmware also lists an empty `ChannelA-DIMM0`, but that
+  channel has no slot.
+- One M.2 SATA socket with standoffs for 2242, 2260 and 2280 drives. It holds a 64 GB M.2 2242 SSD with a Phison
+  PS3111-S11 controller.
+- On the bracket: a power button, power and SATA LEDs, one USB 3.0 port, one USB 2.0 port, HDMI and Gigabit Ethernet.
+- Also on the card: a CR2032 cell, a Clear CMOS button, a buzzer and a Nuvoton Super I/O chip.
+- Some positions are on the board but not fitted: an mSATA/mini-PCIe socket, an eMMC chip, a DC input jack and a
+  serial header.
+
+**GPU cards**
+
+- Passive cooling: a full-length finned aluminium heatsink and no fan. The chassis fans blow through it.
+- Power: one 6-pin PCIe connector (`J10`). The board has room for an 8-pin (the empty two-pin position `J13`), but the
+  75 W limit needs only the 6-pin.
+- `J12` is a 4-pin fan header with nothing plugged in: JST PH type with a 2.0 mm pitch, measured from a photograph, so
+  check it with a caliper before buying a plug. The driver reports `fan.speed` 0 % on every card.
+- The edge connector is x16 long. The GPU advertises PCIe 1.0 x4 and links at x1 in this system.
+
 ## Workload characteristics
 
 The x1 links are no problem for mining, where the host sends small jobs and gets hashes back. For
@@ -123,7 +162,8 @@ other workloads they set the limits:
   splitting a job so that each GPU works on its own slice and passes only small results along suits
   this system. Schemes that synchronise large tensors on every step do not.
 - **The host is weak.** Two Celeron cores and 4 GB of single-channel RAM bottleneck anything that does
-  real work on the CPU. RAM can be expanded to 32 GB using the free second slot.
+  real work on the CPU. The board has one SO-DIMM slot, so more RAM means a larger module in its place: est. 16 GB at
+  most, since Intel lists 32 GB over two channels for the 3865U and only one channel has a slot.
 
 ## Software support
 

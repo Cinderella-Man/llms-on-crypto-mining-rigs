@@ -294,7 +294,7 @@ For the throughput mode N stays at ≤ ~8 on nine cards (S_eff) or ~16 with grou
 - Per pipe slot: a pinned 0.6 MB output buffer, its own scheduler and graph metadata (a few MB touched, est.).
 - llama-server keeps `--ctx-checkpoints` per slot in host RAM: 52.5 MiB each (the sliding-window cells). Eight
   conversations with 4 checkpoints each would take 1.6 GiB of the ~2.6 GiB free; with N ≥ 4 the server needs 1–2
-  checkpoints per slot, or the second SO-DIMM (Q86).
+  checkpoints per slot, or a larger SO-DIMM (Q86).
 - `--cache-ram 0` stays on: the host prompt cache copies whole sequence states (28 KiB per token).
 
 ## 3. Prior art and what has to change (question 3)
@@ -503,7 +503,7 @@ Validate it on experiments 2 and 3, then use it to pick the split, B and the pol
 | Two copies for two users | [Unconventional ideas](unconventional_ideas.md), rejected list |
 | Host sampling for tool requests, GPU sampling with a host grammar check | Q55, Q67 |
 | Prompt processing sweeps | Q80 |
-| Headless mode, second SO-DIMM | Q83, Q86 |
+| Headless mode, larger SO-DIMM | Q83, Q86 |
 
 ## Not verified
 

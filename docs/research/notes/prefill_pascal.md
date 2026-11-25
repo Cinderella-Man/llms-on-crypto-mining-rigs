@@ -703,7 +703,7 @@ time both with host memory logged; then send the same prompt plus one turn and c
 | Multi-token kernels for 2–4-token tails | Q78 |
 | Decode attention at depth, q8_0 KV scratch, KV-sharded attention | Q59, Q60, Q61, Q95; [attention note](pascal_attention_long_context.md) |
 | Host prompt cache and llama-bench's state copy on 4 GB | Q79; [long-context cliff](long_context_cliff.md) |
-| Headless mode, second SO-DIMM | Q83, Q86 |
+| Headless mode, larger SO-DIMM | Q83, Q86 |
 | Instruction-throughput calibration | Q103 |
 
 ## Not verified
