@@ -1,0 +1,23 @@
+size 449: off 445 4 | v5 64x6 61 4 | v5c 64x6 61 4 | rep 64x6 61 4: as C905 (rig before, CPU plan after)
+size 569: off 53 512 4 | v5 53 11 64x7 53 4 | v5c 53 64x8 4 | rep 53 11 64x7 53 4: as C905 (rig before, CPU plan after)
+size 577: off 61 512 4 | v5 61 5 62 64x6 61 4 | v5c 61 64x8 4 | rep 61 5 62 64x6 61 4: as C905 (rig before, CPU plan after)
+size 583: off 67 512 4 | v5 63 4 61 64x6 67 4 | v5c 67 64x8 4 | rep 63 4 61 64x6 67 4: as C905 (rig before, CPU plan after)
+size 599: off 83 512 4 | v5 64 19 45 64x7 19 4 | v5c 64 19 64x8 4 | rep 64 19 45 64x7 19 4: as C905 (rig before, CPU plan after)
+size 610: off 94 512 4 | v5 64 30 34 64x7 30 4 | v5c 64 30 64x8 4 | rep 64 30 34 64x7 30 4: as C905 (rig before, CPU plan after)
+size 775: off 259 512 4 | v5 64x3 63 4 61 64x6 67 4 | v5c 64x3 67 64x8 4 | rep 64x3 63 4 61 64x6 67 4: as C905 (rig before, CPU plan after)
+size 803: off 287 512 4 | v5 64x4 31 33 64x7 31 4 | v5c 64x4 31 64x8 4 | rep 64x4 31 33 64x7 31 4: as C905 (rig before, CPU plan after)
+size 815: off 299 512 4 | v5 64x4 43 21 64x7 43 4 | v5c 64x4 43 64x8 4 | rep 64x4 43 21 64x7 43 4: as C905 (rig before, CPU plan after)
+size 896: off 380 512 4 | v5 64x5 60 5 63 64x6 60 4 | v5c 64x5 60 64x8 4 | rep 64x5 60 5 63 64x6 60 4: as C905 (rig before, CPU plan after)
+size 936: off 420 512 4 | v5 64x6 36 28 64x7 36 4 | v5c 64x6 36 64x8 4 | rep 64x6 36 28 64x7 36 4: as C905 (rig before, CPU plan after)
+size 1028: off 512x2 4 | v5 64x16 4 | v5c 64x16 4 | rep 64x16 4: as C905 (rig before, CPU plan after)
+size 1086: off 512 58 512 4 | v5 64x8 58 6 64x7 58 4 | v5c 64x8 58 64x8 4 | rep 64x8 58 6 64x7 58 4: as C905 (rig before, CPU plan after)
+size 1130: off 512 102 512 4 | v5 64x9 38 26 64x7 38 4 | v5c 64x9 38 64x8 4 | rep 64x9 38 26 64x7 38 4: as C905 (rig before, CPU plan after)
+size 1300: off 512 272 512 4 | v5 64x12 16 48 64x7 16 4 | v5c 64x12 16 64x8 4 | rep 64x12 16 48 64x7 16 4: as C905 (rig before, CPU plan after)
+size 1359: off 512 331 512 4 | v5 64x13 11 53 64x7 11 4 | v5c 64x13 11 64x8 4 | rep 64x13 11 53 64x7 11 4: as C905 (rig before, CPU plan after)
+v5:v5c untouched: 37440 of 37440 rows the same bits
+v5:v5c same: 12072 of 12072 rows the same bits
+off:v5 untouched: 912 of 912 rows the same bits
+off:v5c untouched: 1448 of 1448 rows the same bits
+v5:rep same: 110168 of 110168 rows the same bits
+in-call checkpoints filled and read per arm call: min 1, max 2
+calls: 128

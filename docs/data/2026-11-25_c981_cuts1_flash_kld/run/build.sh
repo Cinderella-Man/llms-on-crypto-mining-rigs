@@ -12,23 +12,25 @@ set -euo pipefail
 IMAGE=${IMAGE:-nvidia/cuda:12.9.2-devel-ubuntu24.04}
 HERE=$(cd "$(dirname "$0")" && pwd)
 mkdir -p "$OUT"
-cp "$HERE/kld_cuts.cpp" "$OUT/kld_cuts.cpp"
+cp "$HERE/kld_cuts.cpp" "$HERE/sysinfo.cpp" "$OUT/"
 run() {
     # shellcheck disable=SC2086
     docker run --rm ${DOCKER_ARGS:-} --network none -v "$TREE:/work:ro" -v "$OUT:$OUT" "$IMAGE" bash -euo pipefail -c '
         B=/work/src/build
         L=/usr/local/cuda-12.9/targets/x86_64-linux/lib
         cd "'"$OUT"'"
-        c++ -O3 -DNDEBUG -fopenmp -Wall -Wextra -DGGML_USE_CPU -DGGML_USE_CUDA \
-            -I/work/src/common -I/work/src/vendor -I/work/src/include -I/work/src/ggml/include \
-            -c kld_cuts.cpp -o kld_cuts.o
-        c++ -O3 -DNDEBUG -fopenmp kld_cuts.o -o kld-cuts -Wl,-rpath,$L: \
-            $B/common/libllama-common.a $B/common/libllama-common-base.a $B/vendor/cpp-httplib/libcpp-httplib.a \
-            $B/src/libllama.a $B/ggml/src/libggml.a $B/ggml/src/libggml-cpu.a $B/ggml/src/ggml-cuda/libggml-cuda.a \
-            $B/ggml/src/libggml-base.a /usr/lib/gcc/x86_64-linux-gnu/13/libgomp.so /usr/lib/x86_64-linux-gnu/libpthread.a \
-            -lm -ldl $L/libcudart.so $L/libcublas.so $L/libculibos.a $L/libcublasLt.so \
-            /usr/local/cuda/targets/x86_64-linux/lib/stubs/libcuda.so
-        md5sum kld_cuts.cpp kld-cuts "$B/bin/llama-perplexity" "$B/src/libllama.a"
+        for t in kld_cuts:kld-cuts sysinfo:sysinfo; do
+            c++ -O3 -DNDEBUG -fopenmp -Wall -Wextra -DGGML_USE_CPU -DGGML_USE_CUDA \
+                -I/work/src/common -I/work/src/vendor -I/work/src/include -I/work/src/ggml/include \
+                -c ${t%%:*}.cpp -o ${t%%:*}.o
+            c++ -O3 -DNDEBUG -fopenmp ${t%%:*}.o -o ${t##*:} -Wl,-rpath,$L: \
+                $B/common/libllama-common.a $B/common/libllama-common-base.a $B/vendor/cpp-httplib/libcpp-httplib.a \
+                $B/src/libllama.a $B/ggml/src/libggml.a $B/ggml/src/libggml-cpu.a $B/ggml/src/ggml-cuda/libggml-cuda.a \
+                $B/ggml/src/libggml-base.a /usr/lib/gcc/x86_64-linux-gnu/13/libgomp.so /usr/lib/x86_64-linux-gnu/libpthread.a \
+                -lm -ldl $L/libcudart.so $L/libcublas.so $L/libculibos.a $L/libcublasLt.so \
+                /usr/local/cuda/targets/x86_64-linux/lib/stubs/libcuda.so
+        done
+        md5sum kld_cuts.cpp kld-cuts sysinfo.cpp sysinfo "$B/bin/llama-perplexity" "$B/src/libllama.a"
         git -C /work/src rev-parse HEAD 2>/dev/null || true'
 }
 if [ -n "${LOCK:-}" ]; then
