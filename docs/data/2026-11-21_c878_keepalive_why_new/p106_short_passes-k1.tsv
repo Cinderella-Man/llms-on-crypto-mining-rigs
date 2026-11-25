@@ -1,0 +1,16 @@
+# every generation pass shorter than a full verify pass
+task	tokens	cells_before	last_of_reply	log_s
+0	3	92	no	316.541
+0	2	93	no	316.851
+0	1	94	yes	317.058
+21	2	4349	yes	366.025
+100	2	4349	yes	379.149
+182	1	6398	yes	437.652
+253	1	6398	yes	450.099
+
+# card 0's evaluations of graphs written at most 4 times; log clock = profile clock + 283.790 s (4 of 4 matched within 25 ms)
+eval	host_ms	graph	how	launch_groups	gpu_ms	pass_task	pass_tokens	pass_cells_before	last_of_reply
+18	33061.012	4	eager	311	19.22	0	2	93	no
+19	33272.766	5	eager	310	26.23	0	1	94	yes
+107	82229.250	4	eager	311	21.93	21	2	4349	yes
+269	153856.518	5	eager	310	20.55	182	1	6398	yes
