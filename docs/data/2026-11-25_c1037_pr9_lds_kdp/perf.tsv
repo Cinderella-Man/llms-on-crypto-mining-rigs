@@ -1,0 +1,61 @@
+K/V type	n_kv	query tokens	arm	kernel	us/run, repeat 1	us/run, repeat 2	mean	spread (max - min)
+q8_0	256	8	q8	Pascal tile kernel, Q8_0 loads decoded at load	124.53	125.43	124.98	0.90
+q8_0	256	8	lds	Pascal tile kernel, Q8_0 loads decoded at store	111.65	111.59	111.62	0.06
+q8_0	256	8	kdp	Pascal tile kernel, Q8_0 K scored in int8 (dp4a), loads decoded at store	84.95	85.05	85.00	0.10
+q8_0	256	8	ldskdp	Pascal tile kernel, Q8_0 K scored in int8 (dp4a), loads decoded at store	85.29	85.03	85.16	0.26
+q8_0	4096	8	q8	Pascal tile kernel, Q8_0 loads decoded at load	1499.99	1499.60	1499.80	0.39
+q8_0	4096	8	lds	Pascal tile kernel, Q8_0 loads decoded at store	1271.17	1264.48	1267.83	6.69
+q8_0	4096	8	kdp	Pascal tile kernel, Q8_0 K scored in int8 (dp4a), loads decoded at store	914.11	911.22	912.66	2.89
+q8_0	4096	8	ldskdp	Pascal tile kernel, Q8_0 K scored in int8 (dp4a), loads decoded at store	912.32	912.76	912.54	0.44
+q8_0	8192	8	q8	Pascal tile kernel, Q8_0 loads decoded at load	2964.77	2964.17	2964.47	0.60
+q8_0	8192	8	lds	Pascal tile kernel, Q8_0 loads decoded at store	2494.43	2481.70	2488.06	12.73
+q8_0	8192	8	kdp	Pascal tile kernel, Q8_0 K scored in int8 (dp4a), loads decoded at store	1790.60	1784.94	1787.77	5.66
+q8_0	8192	8	ldskdp	Pascal tile kernel, Q8_0 K scored in int8 (dp4a), loads decoded at store	1788.39	1787.97	1788.18	0.42
+q8_0	16384	8	q8	Pascal tile kernel, Q8_0 loads decoded at load	5872.30	5870.73	5871.51	1.57
+q8_0	16384	8	lds	Pascal tile kernel, Q8_0 loads decoded at store	4928.46	4900.89	4914.68	27.57
+q8_0	16384	8	kdp	Pascal tile kernel, Q8_0 K scored in int8 (dp4a), loads decoded at store	3515.17	3503.50	3509.34	11.67
+q8_0	16384	8	ldskdp	Pascal tile kernel, Q8_0 K scored in int8 (dp4a), loads decoded at store	3512.48	3514.18	3513.33	1.70
+q8_0	32768	8	q8	Pascal tile kernel, Q8_0 loads decoded at load	11725.58	11723.43	11724.51	2.15
+q8_0	32768	8	lds	Pascal tile kernel, Q8_0 loads decoded at store	9813.76	9773.51	9793.64	40.25
+q8_0	32768	8	kdp	Pascal tile kernel, Q8_0 K scored in int8 (dp4a), loads decoded at store	7005.73	6984.20	6994.97	21.53
+q8_0	32768	8	ldskdp	Pascal tile kernel, Q8_0 K scored in int8 (dp4a), loads decoded at store	7000.61	7001.80	7001.20	1.19
+q8_0	49152	8	q8	Pascal tile kernel, Q8_0 loads decoded at load	17573.27	17566.13	17569.70	7.14
+q8_0	49152	8	lds	Pascal tile kernel, Q8_0 loads decoded at store	14699.69	14635.19	14667.44	64.50
+q8_0	49152	8	kdp	Pascal tile kernel, Q8_0 K scored in int8 (dp4a), loads decoded at store	10446.09	10428.91	10437.50	17.18
+q8_0	49152	8	ldskdp	Pascal tile kernel, Q8_0 K scored in int8 (dp4a), loads decoded at store	10445.57	10443.55	10444.56	2.02
+q8_0	256	512	q8	Pascal tile kernel, Q8_0 loads decoded at load	6511.65	6512.01	6511.83	0.36
+q8_0	256	512	lds	Pascal tile kernel, Q8_0 loads decoded at store	5929.46	5911.60	5920.53	17.86
+q8_0	256	512	kdp	Pascal tile kernel, Q8_0 K scored in int8 (dp4a), loads decoded at store	4511.02	4505.97	4508.50	5.05
+q8_0	256	512	ldskdp	Pascal tile kernel, Q8_0 K scored in int8 (dp4a), loads decoded at store	4509.33	4505.50	4507.41	3.83
+q8_0	4096	512	q8	Pascal tile kernel, Q8_0 loads decoded at load	89598.74	89797.68	89698.21	198.94
+q8_0	4096	512	lds	Pascal tile kernel, Q8_0 loads decoded at store	76235.55	76113.39	76174.47	122.16
+q8_0	4096	512	kdp	Pascal tile kernel, Q8_0 K scored in int8 (dp4a), loads decoded at store	54866.95	54643.26	54755.10	223.69
+q8_0	4096	512	ldskdp	Pascal tile kernel, Q8_0 K scored in int8 (dp4a), loads decoded at store	54761.82	54657.73	54709.78	104.09
+q8_0	8192	512	q8	Pascal tile kernel, Q8_0 loads decoded at load	179079.53	178610.57	178845.05	468.96
+q8_0	8192	512	lds	Pascal tile kernel, Q8_0 loads decoded at store	152053.01	151796.54	151924.78	256.47
+q8_0	8192	512	kdp	Pascal tile kernel, Q8_0 K scored in int8 (dp4a), loads decoded at store	107861.90	107920.41	107891.15	58.51
+q8_0	8192	512	ldskdp	Pascal tile kernel, Q8_0 K scored in int8 (dp4a), loads decoded at store	108162.97	108138.45	108150.71	24.52
+q8_0	16384	512	q8	Pascal tile kernel, Q8_0 loads decoded at load	354807.60	355207.25	355007.42	399.65
+q8_0	16384	512	lds	Pascal tile kernel, Q8_0 loads decoded at store	303006.34	303118.34	303062.34	112.00
+q8_0	16384	512	kdp	Pascal tile kernel, Q8_0 K scored in int8 (dp4a), loads decoded at store	214876.32	214508.41	214692.36	367.91
+q8_0	16384	512	ldskdp	Pascal tile kernel, Q8_0 K scored in int8 (dp4a), loads decoded at store	214827.07	215134.32	214980.70	307.25
+q8_0	32768	512	q8	Pascal tile kernel, Q8_0 loads decoded at load	707655.57	706905.72	707280.65	749.85
+q8_0	32768	512	lds	Pascal tile kernel, Q8_0 loads decoded at store	606433.66	604613.69	605523.68	1819.97
+q8_0	32768	512	kdp	Pascal tile kernel, Q8_0 K scored in int8 (dp4a), loads decoded at store	428157.91	428942.10	428550.01	784.19
+q8_0	32768	512	ldskdp	Pascal tile kernel, Q8_0 K scored in int8 (dp4a), loads decoded at store	428790.92	429177.96	428984.44	387.04
+q8_0	49152	512	q8	Pascal tile kernel, Q8_0 loads decoded at load	1063396.88	1061487.98	1062442.43	1908.90
+q8_0	49152	512	lds	Pascal tile kernel, Q8_0 loads decoded at store	910594.38	908178.88	909386.63	2415.50
+q8_0	49152	512	kdp	Pascal tile kernel, Q8_0 K scored in int8 (dp4a), loads decoded at store	643452.22	644569.29	644010.76	1117.07
+q8_0	49152	512	ldskdp	Pascal tile kernel, Q8_0 K scored in int8 (dp4a), loads decoded at store	644822.15	644245.28	644533.72	576.87
+f16	256	8	base	stock kernel	128.96	129.90	129.43	0.94
+f16	4096	8	base	stock kernel	1149.63	1165.87	1157.75	16.24
+f16	8192	8	base	stock kernel	2239.58	2266.07	2252.82	26.49
+f16	16384	8	base	stock kernel	4403.90	4447.82	4425.86	43.92
+f16	32768	8	base	stock kernel	8783.69	8847.67	8815.68	63.98
+f16	49152	8	base	stock kernel	13077.48	13155.71	13116.59	78.23
+f16	256	512	base	Pascal tile kernel, F16	5257.75	5274.71	5266.23	16.96
+f16	4096	512	base	Pascal tile kernel, F16	66482.02	67007.18	66744.60	525.16
+f16	8192	512	base	Pascal tile kernel, F16	132757.47	133148.76	132953.11	391.29
+f16	16384	512	base	Pascal tile kernel, F16	264082.41	264399.45	264240.93	317.04
+f16	32768	512	base	Pascal tile kernel, F16	529909.92	529528.00	529718.96	381.92
+f16	49152	512	base	Pascal tile kernel, F16	794392.53	793804.17	794098.35	588.36

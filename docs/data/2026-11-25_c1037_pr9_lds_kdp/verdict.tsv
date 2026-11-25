@@ -1,0 +1,49 @@
+n_kv	query tokens	arm	kernel	arm repeats us	arm mean us	Q8_0 preset (q8) repeats us	q8 mean us	arm / q8	larger repeat spread vs q8 us	class vs q8	F16 (base) repeats us	F16 mean us	arm / F16	larger repeat spread vs F16 us	class vs F16	floor used	12 layers, arm - q8, ms a call (est.)
+256	8	q8	Pascal tile kernel, Q8_0 loads decoded at load	124.53, 125.43	124.98						128.96, 129.90	129.43	0.9656	0.94	gain	1.71 %	
+256	8	lds	Pascal tile kernel, Q8_0 loads decoded at store	111.65, 111.59	111.62	124.53, 125.43	124.98	0.8931	0.90	gain	128.96, 129.90	129.43	0.8624	0.94	gain	1.71 %	-0.160
+256	8	kdp	Pascal tile kernel, Q8_0 K scored in int8 (dp4a), loads decoded at store	84.95, 85.05	85.00	124.53, 125.43	124.98	0.6801	0.90	gain	128.96, 129.90	129.43	0.6567	0.94	gain	1.71 %	-0.480
+256	8	ldskdp	Pascal tile kernel, Q8_0 K scored in int8 (dp4a), loads decoded at store	85.29, 85.03	85.16	124.53, 125.43	124.98	0.6814	0.90	gain	128.96, 129.90	129.43	0.6580	0.94	gain	1.71 %	-0.478
+4096	8	q8	Pascal tile kernel, Q8_0 loads decoded at load	1499.99, 1499.60	1499.80						1149.63, 1165.87	1157.75	1.2954	16.24	loss	1.71 %	
+4096	8	lds	Pascal tile kernel, Q8_0 loads decoded at store	1271.17, 1264.48	1267.83	1499.99, 1499.60	1499.80	0.8453	6.69	gain	1149.63, 1165.87	1157.75	1.0951	16.24	loss	1.71 %	-2.784
+4096	8	kdp	Pascal tile kernel, Q8_0 K scored in int8 (dp4a), loads decoded at store	914.11, 911.22	912.66	1499.99, 1499.60	1499.80	0.6085	2.89	gain	1149.63, 1165.87	1157.75	0.7883	16.24	gain	1.71 %	-7.046
+4096	8	ldskdp	Pascal tile kernel, Q8_0 K scored in int8 (dp4a), loads decoded at store	912.32, 912.76	912.54	1499.99, 1499.60	1499.80	0.6084	0.44	gain	1149.63, 1165.87	1157.75	0.7882	16.24	gain	1.71 %	-7.047
+8192	8	q8	Pascal tile kernel, Q8_0 loads decoded at load	2964.77, 2964.17	2964.47						2239.58, 2266.07	2252.82	1.3159	26.49	loss	1.71 %	
+8192	8	lds	Pascal tile kernel, Q8_0 loads decoded at store	2494.43, 2481.70	2488.06	2964.77, 2964.17	2964.47	0.8393	12.73	gain	2239.58, 2266.07	2252.82	1.1044	26.49	loss	1.71 %	-5.717
+8192	8	kdp	Pascal tile kernel, Q8_0 K scored in int8 (dp4a), loads decoded at store	1790.60, 1784.94	1787.77	2964.77, 2964.17	2964.47	0.6031	5.66	gain	2239.58, 2266.07	2252.82	0.7936	26.49	gain	1.71 %	-14.120
+8192	8	ldskdp	Pascal tile kernel, Q8_0 K scored in int8 (dp4a), loads decoded at store	1788.39, 1787.97	1788.18	2964.77, 2964.17	2964.47	0.6032	0.60	gain	2239.58, 2266.07	2252.82	0.7938	26.49	gain	1.71 %	-14.115
+16384	8	q8	Pascal tile kernel, Q8_0 loads decoded at load	5872.30, 5870.73	5871.51						4403.90, 4447.82	4425.86	1.3266	43.92	loss	1.71 %	
+16384	8	lds	Pascal tile kernel, Q8_0 loads decoded at store	4928.46, 4900.89	4914.68	5872.30, 5870.73	5871.51	0.8370	27.57	gain	4403.90, 4447.82	4425.86	1.1104	43.92	loss	1.71 %	-11.482
+16384	8	kdp	Pascal tile kernel, Q8_0 K scored in int8 (dp4a), loads decoded at store	3515.17, 3503.50	3509.34	5872.30, 5870.73	5871.51	0.5977	11.67	gain	4403.90, 4447.82	4425.86	0.7929	43.92	gain	1.71 %	-28.346
+16384	8	ldskdp	Pascal tile kernel, Q8_0 K scored in int8 (dp4a), loads decoded at store	3512.48, 3514.18	3513.33	5872.30, 5870.73	5871.51	0.5984	1.70	gain	4403.90, 4447.82	4425.86	0.7938	43.92	gain	1.71 %	-28.298
+32768	8	q8	Pascal tile kernel, Q8_0 loads decoded at load	11725.58, 11723.43	11724.51						8783.69, 8847.67	8815.68	1.3300	63.98	loss	1.71 %	
+32768	8	lds	Pascal tile kernel, Q8_0 loads decoded at store	9813.76, 9773.51	9793.64	11725.58, 11723.43	11724.51	0.8353	40.25	gain	8783.69, 8847.67	8815.68	1.1109	63.98	loss	1.71 %	-23.170
+32768	8	kdp	Pascal tile kernel, Q8_0 K scored in int8 (dp4a), loads decoded at store	7005.73, 6984.20	6994.97	11725.58, 11723.43	11724.51	0.5966	21.53	gain	8783.69, 8847.67	8815.68	0.7935	63.98	gain	1.71 %	-56.754
+32768	8	ldskdp	Pascal tile kernel, Q8_0 K scored in int8 (dp4a), loads decoded at store	7000.61, 7001.80	7001.20	11725.58, 11723.43	11724.51	0.5971	2.15	gain	8783.69, 8847.67	8815.68	0.7942	63.98	gain	1.71 %	-56.680
+49152	8	q8	Pascal tile kernel, Q8_0 loads decoded at load	17573.27, 17566.13	17569.70						13077.48, 13155.71	13116.59	1.3395	78.23	loss	1.71 %	
+49152	8	lds	Pascal tile kernel, Q8_0 loads decoded at store	14699.69, 14635.19	14667.44	17573.27, 17566.13	17569.70	0.8348	64.50	gain	13077.48, 13155.71	13116.59	1.1182	78.23	loss	1.71 %	-34.827
+49152	8	kdp	Pascal tile kernel, Q8_0 K scored in int8 (dp4a), loads decoded at store	10446.09, 10428.91	10437.50	17573.27, 17566.13	17569.70	0.5941	17.18	gain	13077.48, 13155.71	13116.59	0.7957	78.23	gain	1.71 %	-85.586
+49152	8	ldskdp	Pascal tile kernel, Q8_0 K scored in int8 (dp4a), loads decoded at store	10445.57, 10443.55	10444.56	17573.27, 17566.13	17569.70	0.5945	7.14	gain	13077.48, 13155.71	13116.59	0.7963	78.23	gain	1.71 %	-85.502
+256	512	q8	Pascal tile kernel, Q8_0 loads decoded at load	6511.65, 6512.01	6511.83						5257.75, 5274.71	5266.23	1.2365	16.96	loss	2.69 %	
+256	512	lds	Pascal tile kernel, Q8_0 loads decoded at store	5929.46, 5911.60	5920.53	6511.65, 6512.01	6511.83	0.9092	17.86	gain	5257.75, 5274.71	5266.23	1.1242	17.86	loss	2.69 %	-7.096
+256	512	kdp	Pascal tile kernel, Q8_0 K scored in int8 (dp4a), loads decoded at store	4511.02, 4505.97	4508.50	6511.65, 6512.01	6511.83	0.6924	5.05	gain	5257.75, 5274.71	5266.23	0.8561	16.96	gain	2.69 %	-24.040
+256	512	ldskdp	Pascal tile kernel, Q8_0 K scored in int8 (dp4a), loads decoded at store	4509.33, 4505.50	4507.41	6511.65, 6512.01	6511.83	0.6922	3.83	gain	5257.75, 5274.71	5266.23	0.8559	16.96	gain	2.69 %	-24.053
+4096	512	q8	Pascal tile kernel, Q8_0 loads decoded at load	89598.74, 89797.68	89698.21						66482.02, 67007.18	66744.60	1.3439	525.16	loss	2.69 %	
+4096	512	lds	Pascal tile kernel, Q8_0 loads decoded at store	76235.55, 76113.39	76174.47	89598.74, 89797.68	89698.21	0.8492	198.94	gain	66482.02, 67007.18	66744.60	1.1413	525.16	loss	2.69 %	-162.285
+4096	512	kdp	Pascal tile kernel, Q8_0 K scored in int8 (dp4a), loads decoded at store	54866.95, 54643.26	54755.10	89598.74, 89797.68	89698.21	0.6104	223.69	gain	66482.02, 67007.18	66744.60	0.8204	525.16	gain	2.69 %	-419.317
+4096	512	ldskdp	Pascal tile kernel, Q8_0 K scored in int8 (dp4a), loads decoded at store	54761.82, 54657.73	54709.78	89598.74, 89797.68	89698.21	0.6099	198.94	gain	66482.02, 67007.18	66744.60	0.8197	525.16	gain	2.69 %	-419.861
+8192	512	q8	Pascal tile kernel, Q8_0 loads decoded at load	179079.53, 178610.57	178845.05						132757.47, 133148.76	132953.11	1.3452	468.96	loss	2.69 %	
+8192	512	lds	Pascal tile kernel, Q8_0 loads decoded at store	152053.01, 151796.54	151924.78	179079.53, 178610.57	178845.05	0.8495	468.96	gain	132757.47, 133148.76	132953.11	1.1427	391.29	loss	2.69 %	-323.043
+8192	512	kdp	Pascal tile kernel, Q8_0 K scored in int8 (dp4a), loads decoded at store	107861.90, 107920.41	107891.15	179079.53, 178610.57	178845.05	0.6033	468.96	gain	132757.47, 133148.76	132953.11	0.8115	391.29	gain	2.69 %	-851.447
+8192	512	ldskdp	Pascal tile kernel, Q8_0 K scored in int8 (dp4a), loads decoded at store	108162.97, 108138.45	108150.71	179079.53, 178610.57	178845.05	0.6047	468.96	gain	132757.47, 133148.76	132953.11	0.8134	391.29	gain	2.69 %	-848.332
+16384	512	q8	Pascal tile kernel, Q8_0 loads decoded at load	354807.60, 355207.25	355007.42						264082.41, 264399.45	264240.93	1.3435	399.65	loss	2.69 %	
+16384	512	lds	Pascal tile kernel, Q8_0 loads decoded at store	303006.34, 303118.34	303062.34	354807.60, 355207.25	355007.42	0.8537	399.65	gain	264082.41, 264399.45	264240.93	1.1469	317.04	loss	2.69 %	-623.341
+16384	512	kdp	Pascal tile kernel, Q8_0 K scored in int8 (dp4a), loads decoded at store	214876.32, 214508.41	214692.36	354807.60, 355207.25	355007.42	0.6048	399.65	gain	264082.41, 264399.45	264240.93	0.8125	367.91	gain	2.69 %	-1683.781
+16384	512	ldskdp	Pascal tile kernel, Q8_0 K scored in int8 (dp4a), loads decoded at store	214827.07, 215134.32	214980.70	354807.60, 355207.25	355007.42	0.6056	399.65	gain	264082.41, 264399.45	264240.93	0.8136	317.04	gain	2.69 %	-1680.321
+32768	512	q8	Pascal tile kernel, Q8_0 loads decoded at load	707655.57, 706905.72	707280.65						529909.92, 529528.00	529718.96	1.3352	749.85	loss	2.69 %	
+32768	512	lds	Pascal tile kernel, Q8_0 loads decoded at store	606433.66, 604613.69	605523.68	707655.57, 706905.72	707280.65	0.8561	1819.97	gain	529909.92, 529528.00	529718.96	1.1431	1819.97	loss	2.69 %	-1221.084
+32768	512	kdp	Pascal tile kernel, Q8_0 K scored in int8 (dp4a), loads decoded at store	428157.91, 428942.10	428550.01	707655.57, 706905.72	707280.65	0.6059	784.19	gain	529909.92, 529528.00	529718.96	0.8090	784.19	gain	2.69 %	-3344.768
+32768	512	ldskdp	Pascal tile kernel, Q8_0 K scored in int8 (dp4a), loads decoded at store	428790.92, 429177.96	428984.44	707655.57, 706905.72	707280.65	0.6065	749.85	gain	529909.92, 529528.00	529718.96	0.8098	387.04	gain	2.69 %	-3339.554
+49152	512	q8	Pascal tile kernel, Q8_0 loads decoded at load	1063396.88, 1061487.98	1062442.43						794392.53, 793804.17	794098.35	1.3379	1908.90	loss	2.69 %	
+49152	512	lds	Pascal tile kernel, Q8_0 loads decoded at store	910594.38, 908178.88	909386.63	1063396.88, 1061487.98	1062442.43	0.8559	2415.50	gain	794392.53, 793804.17	794098.35	1.1452	2415.50	loss	2.69 %	-1836.670
+49152	512	kdp	Pascal tile kernel, Q8_0 K scored in int8 (dp4a), loads decoded at store	643452.22, 644569.29	644010.76	1063396.88, 1061487.98	1062442.43	0.6062	1908.90	gain	794392.53, 793804.17	794098.35	0.8110	1117.07	gain	2.69 %	-5021.180
+49152	512	ldskdp	Pascal tile kernel, Q8_0 K scored in int8 (dp4a), loads decoded at store	644822.15, 644245.28	644533.72	1063396.88, 1061487.98	1062442.43	0.6067	1908.90	gain	794392.53, 793804.17	794098.35	0.8117	588.36	gain	2.69 %	-5014.905
