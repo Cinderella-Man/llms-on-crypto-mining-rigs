@@ -1,0 +1,6 @@
+set	filter	ops	params	runs_using_it	cases	ok	fail	norec	declined_by_cpu	declined_but_recorded	replay_summary	exit
+v4kern	1	MUL_MAT	type_a=q6_K,(type_b=f32,)?m=[0-9]+,n=[1-5],	13	130	130	0	0	10	10	130 cases replayed, 0 selected by the filter have no record	0
+v4kern	2	MUL_MAT	type_a=(iq4_xs|q4_K),(type_b=f32,)?m=[0-9]+,n=[1-5],	12	336	336	0	0	20	20	336 cases replayed, 0 selected by the filter have no record	0
+v4kern	3	MUL_MAT	type_a=(iq4_xs|q4_K|q5_K),(type_b=f32,)?m=[0-9]+,n=[5-8],	13	295	295	0	0	3	3	295 cases replayed, 0 selected by the filter have no record	0
+v4kern	4	MUL_MAT	type_a=(iq4_xs|q4_K),(type_b=f32,)?m=[0-9]+,n=[1-5],|type_a=q6_K,(type_b=f32,)?m=[0-9]+,n=[1-5],|type_a=(iq4_xs|q4_K|q5_K),(type_b=f32,)?m=[0-9]+,n=[5-8],	9	705	705	0	0	33	33	705 cases replayed, 0 selected by the filter have no record	0
+ro8kt	1	MUL_MAT	type_a=(iq4_xs|q4_K),(type_b=f32,)?m=[0-9]+,n=[5-8],	16	208	208	0	0	2	2	208 cases replayed, 0 selected by the filter have no record	0
