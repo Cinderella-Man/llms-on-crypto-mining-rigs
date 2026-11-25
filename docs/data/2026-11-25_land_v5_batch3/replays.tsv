@@ -1,0 +1,13 @@
+step	run	exit	passed	OK lines	FAIL lines	NOREC	not supported	illegal access	seconds	record or replay line
+replay	mul_mat-replay-base	0	5125/5125 tests passed	5126	0	36	521	0	192	replay: <record>/mul_mat: 5125 cases replayed, 36 selected by the filter have no record
+replay	mul_mat-replay-head-cpucheck	1	5124/5125 tests passed	5124	2	333	521	0	107	replay: <record>/mul_mat: 5125 cases replayed, 333 selected by the filter have no record; replay cpu-check: 204 cases, 204 references identical, 0 verdicts differ
+replay	mul_mat-replay-head	0	5125/5125 tests passed	5126	0	333	521	0	195	replay: <record>/mul_mat: 5125 cases replayed, 333 selected by the filter have no record
+replay	mul_mat_id-replay-base	0	2370/2370 tests passed	2371	0	19	8	0	218	replay: <record>/mul_mat_id: 2370 cases replayed, 19 selected by the filter have no record
+replay	mul_mat_id-replay-head-cpucheck	0	2370/2370 tests passed	2371	0	19	8	0	186	replay: <record>/mul_mat_id: 2370 cases replayed, 19 selected by the filter have no record; replay cpu-check: 84 cases, 84 references identical, 0 verdicts differ
+replay	mul_mat_id-replay-head	0	2370/2370 tests passed	2371	0	19	8	0	280	replay: <record>/mul_mat_id: 2370 cases replayed, 19 selected by the filter have no record
+record	mul_mat-record	0	333/333 tests passed	334	0	0	521	0	17	record: <record>/mul_mat: 333 cases, 0.789 GB of files, 0 left out by the caps, 5125 kept from an earlier run
+record	mul_mat_id-record	0	19/19 tests passed	20	0	0	8	0	11	record: <record>/mul_mat_id: 19 cases, 1.378 GB of files, 0 left out by the caps, 2370 kept from an earlier run
+replay2	mul_mat-replay-base	0	5161/5161 tests passed	5162	0	0	521	0	82	replay: <record>/mul_mat: 5161 cases replayed, 0 selected by the filter have no record
+replay2	mul_mat-replay-head	0	5458/5458 tests passed	5459	0	0	521	0	97	replay: <record>/mul_mat: 5458 cases replayed, 0 selected by the filter have no record
+replay2	mul_mat_id-replay-base	0	2389/2389 tests passed	2390	0	0	8	0	168	replay: <record>/mul_mat_id: 2389 cases replayed, 0 selected by the filter have no record
+replay2	mul_mat_id-replay-head	0	2389/2389 tests passed	2390	0	0	8	0	119	replay: <record>/mul_mat_id: 2389 cases replayed, 0 selected by the filter have no record

@@ -1,0 +1,7 @@
+arm	settings	exit	passed	OK lines	FAIL lines	not supported	illegal access	failing cases
+mul_mat-p106	P106_ENV	0	5458/5458 tests passed	5459	0	521	0	-
+mul_mat-p106-mt2	P106_ENV GGML_CUDA_MMVQ_PASCAL_MT=2	0	5458/5458 tests passed	5459	0	521	0	-
+mul_mat-p106-j64	P106_ENV GGML_CUDA_MMQ_J64_I64=2	0	5458/5458 tests passed	5459	0	521	0	-
+fa-plain	none	0	4679/4679 tests passed	4680	0	1429	0	-
+fa-forced	GGML_CUDA_FATTN_TILE_PASCAL=2	0	4679/4679 tests passed	4680	0	1429	0	-
+fa-all	GGML_CUDA_FATTN_TILE_PASCAL=2 _LDS=1 _KDP=1 _MIN=1 GGML_CUDA_FATTN_DEC_PASCAL=4	0	4679/4679 tests passed	4680	0	1429	0	-

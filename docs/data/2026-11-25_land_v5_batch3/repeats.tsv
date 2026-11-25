@@ -1,0 +1,7 @@
+set	build	mode	runs	OK	FAIL	no verdict
+repeat	base	live	100	100	0	0
+repeat	base	replay	100	100	0	0
+repeat	head	live	100	100	0	0
+repeat	head	replay	100	100	0	0
+repeat2h	head	cpucheck	150	150	0	0
+repeat2b	base	cpucheck	150	150	0	0

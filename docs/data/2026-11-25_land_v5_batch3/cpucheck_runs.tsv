@@ -1,0 +1,24 @@
+run	build and replay	exit	passed	FAIL lines	seconds
+driver	head	0	5125/5125	0	195
+driver	base	0	5125/5125	0	192
+driver	head-cpucheck	1	5124/5125	2	107
+repeat base1	base	0	5161/5161	0	91
+repeat base1	base-cpucheck	0	5161/5161	0	129
+repeat head2	head	0	5458/5458	0	121
+repeat head2	head-cpucheck	0	5458/5458	0	64
+repeat base3	base	0	5161/5161	0	59
+repeat base3	base-cpucheck	0	5161/5161	0	51
+repeat head4	head	0	5458/5458	0	50
+repeat head4	head-cpucheck	0	5458/5458	0	46
+repeat base5	base	0	5161/5161	0	46
+repeat base5	base-cpucheck	0	5161/5161	0	48
+repeat head6	head	0	5458/5458	0	48
+repeat head6	head-cpucheck	0	5458/5458	0	49
+repeat base7	base	0	5161/5161	0	45
+repeat base7	base-cpucheck	0	5161/5161	0	42
+repeat head8	head	0	5458/5458	0	42
+repeat head8	head-cpucheck	0	5458/5458	0	44
+repeat base9	base	0	5161/5161	0	41
+repeat base9	base-cpucheck	0	5161/5161	0	42
+repeat head10	head	0	5458/5458	0	42
+repeat head10	head-cpucheck	0	5458/5458	0	44

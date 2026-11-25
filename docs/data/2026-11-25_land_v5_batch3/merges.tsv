@@ -1,0 +1,8 @@
+order	branch	branch head	merge commit	code row	registry	switch it brings	default
+1	pascal-p106-v5-log-flush-all (carries pascal-p106-v5-evalcb-flush 4d8fe365a)	cf093e11c	6086d1ec9	C1028 (C1007)	Q1761 (Q1740)	none: the common logger flushed when a program returns or exits	-
+2	pascal-p106-v5-ctest-seed	55e14cb79	f1370786b	C1008	Q1741	none: ctest's test-generate-models with seed 1 (tests/CMakeLists.txt)	-
+3	pascal-p106-v5-profile-anchors	cad303eb9	d0ef6e0a1	C1004	Q1737	GGML_CUDA_PROFILE_HOST_ANCHORS (read only with GGML_CUDA_PROFILE_HOST set)	follows GGML_CUDA_PROFILE_HOST_NOWAIT (0 by default): off
+4	pascal-p106-v5-topk-tail-tie	b24c9a675	cfe8ce576	C992	Q1725	none: test-backend-ops' TOPK_MOE_TAIL check (test code only)	-
+5	pascal-p106-v5-fault-scale	ceaf710a1	e1a0cea64	C993	Q1726	GGML_CUDA_FATTN_TILE_PASCAL_FAULT_SCALE (read only with the test fault GGML_CUDA_FATTN_TILE_PASCAL_FAULT=1)	1.05; the fault is off by default
+6	pascal-p106-v5-mmq-j64-tile	ebec6544e	7e84c8cd0	C1024	Q1757	GGML_CUDA_MMQ_J64_I64	0 (off)
+7	pascal-p106-v5-nvml-probe	88b0db403	2d839da1d	C1025	Q1758	GGML_CUDA_NVML_PROBE	unset: the probe runs only when a card with fast BF16 is present (never on P106 cards; on RTX 3090s it runs, as upstream's)

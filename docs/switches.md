@@ -87,6 +87,17 @@ every random model, the same card-suite results with the fork's Pascal kernels f
 memory on Flint Pascal Q8 GGUF and Ornith-1.5-122B Pascal N2P GGUF. The one result that changes is the Flash-Next
 fix's: pipelined Flash-Next decoding now gives plain decoding's tokens.
 
+**Eight more landed on 2026-11-25** (`pascal-p106-v5` = `2d839da1d`, on upstream b12674;
+[docs/data/2026-11-25_land_v5_batch3/](data/2026-11-25_land_v5_batch3/README.md)). They bring
+`GGML_CUDA_PROFILE_HOST_ANCHORS` (read only with the host profile on), `GGML_CUDA_FATTN_TILE_PASCAL_FAULT_SCALE` (read
+only with the test fault on), `GGML_CUDA_MMQ_J64_I64` and `GGML_CUDA_NVML_PROBE`, each with its row below, and four
+branches' changes without a switch ([listed below](#what-has-no-switch)). Each is off by default but the NVML probe, whose default
+skips upstream's probe where no card reads its answer: never on P106 cards, while a card with fast BF16 (compute 8.0
+and newer) still runs it as upstream does. With no switch set, the combined build gives the build before it's logits
+on every random model, the same tests and pipe verdicts, each recorded card-suite case's verdict and error, and the same
+greedy replies and memory on Flint Pascal Q8 GGUF and Ornith-1.5-122B Pascal N2P GGUF; its card code is the base's but
+for the 64-row tile's new kernel copies and the test fault's multiplies.
+
 ## Which preset sets each switch
 
 Each model has a preset per release, `release/<model>-<version>/settings.env`: the switches (`PRESET_ENV`) and the
@@ -420,6 +431,13 @@ Q1040.
   - `llama-quantize` keeps Flash-Next's `ple_norm` tensors F32 when a file stores them 2-D (C983, Q1716).
   - Output only: the server's `pipe reallocs` timing line with pipe slots (C901, Q1629) and the host profile's last
     column `queued` (C877, Q1583).
+- **v5's changes without a switch, landed 2026-11-25** ([docs/data/2026-11-25_land_v5_batch3/](data/2026-11-25_land_v5_batch3/README.md)):
+  - The common logger is flushed when a program returns from `main` or calls `exit()`: `llama-eval-callback` and
+    `test-thread-safety` (C1007, Q1740) and the 38 other programs that use it (C1028, Q1761), so none loses its last
+    logged lines. Output only.
+  - Tests only: ctest writes its random models with seed 1, so a failure on one draw comes back (C1008, Q1741), and
+    `test-backend-ops`' `TOPK_MOE_TAIL` check no longer fails on a router tie in a slot both backends cut (C992,
+    Q1725).
 - **Output only:** the `COMPUTE_6_1` backend feature entry, the server's extra timing fields (`sampled_on_device`,
   `grammar_n`, `cache_src`, `ckpt_*`, ...) and the info level of its checkpoint log lines.
 - **The -1 expert-id checks** compiled into llama.cpp's expert kernels: a comparison never taken for valid ids

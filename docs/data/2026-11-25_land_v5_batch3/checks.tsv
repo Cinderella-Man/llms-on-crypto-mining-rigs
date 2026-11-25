@@ -1,0 +1,46 @@
+check	base eee615cdb	head 2d839da1d	verdict	detail
+rig build (TESTS=1)	-	llama.cpp-20261125-2d839da1d-pascal-p106-v5-land-batch3.tar.gz	OK	md5 7d774f05c29460a6993b19d38796047c, 1626909591 bytes
+rig build warnings	32	32	OK	only in head: 0; only in base: 0
+CPU build warnings	2	2	OK	only in head: 0; only in base: 0
+test-llama-archs -b CPU -s 1, rig builds: logits files	152 written	152 compared	SAME	differ: 0; head Summary: all 157 test(s) passed; head against base Summary: all 157 test(s) passed
+CPU tree: build	OK	OK	OK	rc=0; BUILD_SHARED_LIBS=ON; -DGGML_RPC=ON; all targets; 0 error lines
+CPU tree: archs files	OK	OK	OK	152 files written; 152 compared, differ: none; compared while writing (a shared file): none
+CPU tree: ident vs base	-	SAME	SAME	base wrote 152 files; 152 compared, differ: none; written by land only: 0; Summary: all 157 test(s) passed
+ctest, test by test	83 tests, 82 pass	83 tests, 82 pass	SAME	
+hand-run tests, verdicts	9 of 9 OK	9 of 9 OK	SAME	
+hand-run tests, logs line by line (compare_hand.py)	-	-	SAME	24 comparisons, 24 the same; 
+CPU pipe step (C935, C1010, C1020): 25 architecture-arm pairs	25 of 25 OK	25 of 25 OK	SAME	
+card pipe step (C1009, C1019), base	-	125 of 125 OK	OK	
+card pipe step (C1009, C1019), head	-	125 of 125 OK	OK	
+card pipe step: plain decoding's hashes, head against base	-	25 of 25 the same	SAME	
+greedy reply, Flint Pascal Q8 GGUF (v5 preset, -ts 1,1,1)	256 tokens	256 tokens	SAME	the same token ids
+greedy reply, Ornith-1.5-122B Pascal N2P GGUF (v5 preset, -ts 1,1,1)	256 tokens	256 tokens	SAME	the same token ids
+test-backend-ops mul_mat-p106	-	5458/5458 tests passed	OK	settings: P106_ENV; FAIL lines 0; not supported 521; illegal access 0
+test-backend-ops mul_mat-p106-mt2	-	5458/5458 tests passed	OK	settings: P106_ENV GGML_CUDA_MMVQ_PASCAL_MT=2; FAIL lines 0; not supported 521; illegal access 0
+test-backend-ops mul_mat-p106-j64	-	5458/5458 tests passed	OK	settings: P106_ENV GGML_CUDA_MMQ_J64_I64=2; FAIL lines 0; not supported 521; illegal access 0
+test-backend-ops fa-plain	-	4679/4679 tests passed	OK	settings: none; FAIL lines 0; not supported 1429; illegal access 0
+test-backend-ops fa-forced	-	4679/4679 tests passed	OK	settings: GGML_CUDA_FATTN_TILE_PASCAL=2; FAIL lines 0; not supported 1429; illegal access 0
+test-backend-ops fa-all	-	4679/4679 tests passed	OK	settings: GGML_CUDA_FATTN_TILE_PASCAL=2 _LDS=1 _KDP=1 _MIN=1 GGML_CUDA_FATTN_DEC_PASCAL=4; FAIL lines 0; not supported 1429; illegal access 0
+kept record: replay mul_mat-replay-base	-	5125/5125 tests passed	OK	NOREC 36; not supported 521; replay: <record>/mul_mat: 5125 cases replayed, 36 selected by the filter have no record
+kept record: replay mul_mat-replay-head-cpucheck	-	5124/5125 tests passed	FAIL	NOREC 333; not supported 521; replay: <record>/mul_mat: 5125 cases replayed, 333 selected by the filter have no record; replay cpu-check: 204 cases, 204 references identical, 0 verdicts differ
+kept record: replay mul_mat-replay-head	-	5125/5125 tests passed	OK	NOREC 333; not supported 521; replay: <record>/mul_mat: 5125 cases replayed, 333 selected by the filter have no record
+kept record: replay mul_mat_id-replay-base	-	2370/2370 tests passed	OK	NOREC 19; not supported 8; replay: <record>/mul_mat_id: 2370 cases replayed, 19 selected by the filter have no record
+kept record: replay mul_mat_id-replay-head-cpucheck	-	2370/2370 tests passed	OK	NOREC 19; not supported 8; replay: <record>/mul_mat_id: 2370 cases replayed, 19 selected by the filter have no record; replay cpu-check: 84 cases, 84 references identical, 0 verdicts differ
+kept record: replay mul_mat_id-replay-head	-	2370/2370 tests passed	OK	NOREC 19; not supported 8; replay: <record>/mul_mat_id: 2370 cases replayed, 19 selected by the filter have no record
+kept record: record mul_mat-record	-	333/333 tests passed	OK	NOREC 0; not supported 521; record: <record>/mul_mat: 333 cases, 0.789 GB of files, 0 left out by the caps, 5125 kept from an earlier run
+kept record: record mul_mat_id-record	-	19/19 tests passed	OK	NOREC 0; not supported 8; record: <record>/mul_mat_id: 19 cases, 1.378 GB of files, 0 left out by the caps, 2370 kept from an earlier run
+kept record: replay2 mul_mat-replay-base	-	5161/5161 tests passed	OK	NOREC 0; not supported 521; replay: <record>/mul_mat: 5161 cases replayed, 0 selected by the filter have no record
+kept record: replay2 mul_mat-replay-head	-	5458/5458 tests passed	OK	NOREC 0; not supported 521; replay: <record>/mul_mat: 5458 cases replayed, 0 selected by the filter have no record
+kept record: replay2 mul_mat_id-replay-base	-	2389/2389 tests passed	OK	NOREC 0; not supported 8; replay: <record>/mul_mat_id: 2389 cases replayed, 0 selected by the filter have no record
+kept record: replay2 mul_mat_id-replay-head	-	2389/2389 tests passed	OK	NOREC 0; not supported 8; replay: <record>/mul_mat_id: 2389 cases replayed, 0 selected by the filter have no record
+kept record, mul_mat_id: each case head against base (replay2)	2389 cases	2389 cases	SAME	2389 in both: verdict the same 2389, verdict and error the same 2389; only in head 0
+kept record, mul_mat: each case head against base (replay2)	5161 cases	5458 cases	SAME	5161 in both: verdict the same 5161, verdict and error the same 5161; only in head 297
+MUL_MAT replay with --cpu-check 25, every run, head	-	5 of 6 runs pass	ONE FAILURE	driver: 5124/5125; repeat head2: 5458/5458; repeat head4: 5458/5458; repeat head6: 5458/5458; repeat head8: 5458/5458; repeat head10: 5458/5458
+MUL_MAT replay with --cpu-check 25, every run, base	-	5 of 5 runs pass	OK	repeat base1: 5161/5161; repeat base3: 5161/5161; repeat base5: 5161/5161; repeat base7: 5161/5161; repeat base9: 5161/5161
+the failing BF16 case alone, repeat base live	-	100 of 100 OK	OK	
+the failing BF16 case alone, repeat base replay	-	100 of 100 OK	OK	
+the failing BF16 case alone, repeat head live	-	100 of 100 OK	OK	
+the failing BF16 case alone, repeat head replay	-	100 of 100 OK	OK	
+the failing BF16 case alone, repeat2h head cpucheck	-	150 of 150 OK	OK	
+the failing BF16 case alone, repeat2b base cpucheck	-	150 of 150 OK	OK	
+test-backend-ops machine code (cuobjdump -sass), kernel by kernel	-	differ 1675, only in head 66, same bytes 8334	SAME but named	differing: mul_mat_q in one printed line number each, the Pascal attention kernels in the fault's multiplies (C993); mul_mat_vec_f: same bytes 440, same bytes 1
