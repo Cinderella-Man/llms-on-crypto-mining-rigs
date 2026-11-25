@@ -1,0 +1,7 @@
+request	arm (P106)	C951 arm (3090)	token ids md5 equal	first differing token (from 0)
+code	mtp	own (branch c9c3134d4)	no	124
+code	plain	plain (branch c9c3134d4)	yes	same
+prose	mtp	own (branch c9c3134d4)	no	56
+prose	plain	plain (branch c9c3134d4)	no	131
+deep	mtp	own (branch c9c3134d4)	no	0
+deep	plain	plain (branch c9c3134d4)	no	0

@@ -1,0 +1,4 @@
+request	mtp = plain (p1)	first differing token (from 0)	mtp's token there	plain's token there	mtp: top two there (p2)	plain: top two there (p2)	mtp p1 = p2	plain p1 = p2
+code	no	124	78296	4058	78296 "fraction" 0.4700 | 4058 "with" 0.4681	4058 "with" 0.4791 | 78296 "fraction" 0.4591	yes	yes
+prose	no	67	1857	9167	1857 " index" 0.3816 | 9167 " slot" 0.3212	9167 " slot" 0.3451 | 1857 " index" 0.3206	yes	yes
+deep	no	21	4487	4618	4487 " forward" 0.1959 | 4618 " graph" 0.1948	4618 " graph" 0.2109 | 4487 " forward" 0.1930	yes	yes
