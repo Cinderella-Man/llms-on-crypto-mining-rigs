@@ -1,0 +1,9 @@
+depth	arm	exit	chunks/n_ctx	cache K/V	prompt kernel	decode kernel	result
+98304	f16	0	3/98304	f16/f16	256,f16		ok
+98304	q8	0	3/98304	q8_0/q8_0	256,q8_0	256,q8_0,4	ok
+98304	q8k	0	3/98304	q8_0/q8_0		256,q8_0,4	ok
+98304	f16d	0	3/98304	f16/f16			ok
+65536	f16	0	3/65536	f16/f16	256,f16		ok
+65536	q8	0	3/65536	q8_0/q8_0	256,q8_0	256,q8_0,4	ok
+65536	q8k	0	3/65536	q8_0/q8_0		256,q8_0,4	ok
+65536	f16d	0	3/65536	f16/f16			ok

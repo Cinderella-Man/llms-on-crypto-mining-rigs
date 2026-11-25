@@ -31,6 +31,10 @@ anything for a P106.
 For the rig run: Ornith can run its agent check with a Q8_0 cache. Its tasks will show whether a perplexity cost of a
 few tenths of a percent beyond 8,192 tokens matters; this check can neither show nor rule out one that small.
 
+Longer contexts: at 65,536 and 98,304 tokens the rise stays the same size, +0.233 % ± 0.228 % and +0.236 % ± 0.216 % on
+three stretches each, within 1 % at both, and pull request 9's decode kernel adds no error to it there
+([2026-11-24_c990_q8_cache_long](../2026-11-24_c990_q8_cache_long/README.md), Q1723).
+
 ## What ran
 
 | | |
