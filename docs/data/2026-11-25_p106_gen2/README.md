@@ -85,6 +85,20 @@ after the day's several driver loads:
   - the P104 sequence exactly, without the extra steps of step 3;
   - someone at the console to type the disk passphrase on the reboot that a dropped card needs.
 
+## The second try: set up for a fresh boot
+
+[run/gen2_fresh_boot.sh](run/gen2_fresh_boot.sh) prepares and runs it in steps, by hand. First, `install-entry`
+writes a one-time GRUB entry (`/boot/grub/custom.cfg`, which GRUB reads without regenerating `grub.cfg`) and picks
+it for the next boot only, with `grub-reboot`. The entry is the default one, plus:
+- `modprobe.blacklist=nvidia`: the driver does not load itself at boot;
+- `module_blacklist=nvidia_drm,nvidia_modeset`: the kernel refuses the two display modules, which the driver's udev
+  rule loads by name as soon as the driver appears, and which initialize every card;
+- `systemd.mask=nvidia-persistenced.service`: the persistence daemon stays off.
+
+On that boot no card is initialized until the patched driver is loaded by hand. The steps then run in order:
+`check`, `load`, `push` and `test`. The push is the P104 sequence exactly, once, without the extra steps of the
+first try's step 3. `remove-entry` undoes the entry.
+
 ## Files
 
 | File | What |
@@ -92,6 +106,7 @@ after the day's several driver loads:
 | [run/patch_gen1_bail.py](run/patch_gen1_bail.py) | the 2-byte copy of `nvidia.ko` 580.178.04, signature removed; refuses unless the sequence occurs exactly once |
 | [run/gen2_push.py](run/gen2_push.py) | read-only check of the register mirror, then the push; refuses on any failed check |
 | [run/retry_latch.py](run/retry_latch.py) | the retry that preceded the card's drop: **don't run it**; it is kept because it is what ran |
+| [run/gen2_fresh_boot.sh](run/gen2_fresh_boot.sh) | the second try: the one-time boot entry, then `check`, `load`, `push`, `test` on the fresh boot |
 | [../../../bench/p2p_check/](../../../bench/p2p_check/README.md) | `--host-cards`: host ↔ card copies checked word for word and timed (binary md5 `d392338dd555f251444c85d646c0ef23`) |
 
 Commands (on the build machine, then the rig, as root; `$RIG` is your rig):
