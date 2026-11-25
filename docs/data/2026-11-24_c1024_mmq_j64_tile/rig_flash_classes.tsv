@@ -1,0 +1,14 @@
+metric	depth	arm	control	loads	control_loads	spread	delta	percent	class
+generation	0	j64	unset	23.58 23.55	23.69 23.54	0.16	-0.05	-0.2	negligible
+generation	4096	j64	unset	29.24 29.26	29.27 29.22	0.04	0.01	0.0	negligible
+generation	8192	j64	unset	27.25 27.22	27.26 27.25	0.03	-0.02	-0.1	negligible
+generation_all	all	j64	unset	26.48 26.46	26.53 26.45	0.08	-0.02	-0.1	negligible
+step_pass1	0	j64	unset	102.27 102.37	101.30 102.46	1.16	0.45	0.4	negligible
+step_pass1	4096	j64	unset	112.75 112.90	112.81 113.25	0.44	-0.20	-0.2	negligible
+step_pass1	8192	j64	unset	120.33 120.53	120.11 120.16	0.20	0.30	0.2	loss
+step_pass2	0	j64	unset	97.83 97.95	97.88 98.02	0.15	-0.06	-0.1	negligible
+step_pass2	4096	j64	unset	108.91 108.58	108.63 108.53	0.33	0.16	0.1	negligible
+step_pass2	8192	j64	unset	112.83 112.91	113.02 112.98	0.08	-0.14	-0.1	gain
+prompt	0	j64	unset	53.0 51.5	53.6 53.2	1.5	-1.2	-2.2	negligible
+prompt	4096	j64	unset	193.8 196.2	185.3 187.7	2.4	8.5	4.6	gain
+prompt	8192	j64	unset	214.6 219.3	212.0 225.2	13.2	-1.7	-0.8	negligible

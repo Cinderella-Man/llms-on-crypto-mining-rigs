@@ -10,8 +10,8 @@ P106-090 has 5 SMs, and at a 64-token micro-batch the taller tile gives a launch
 `GGML_CUDA_MMQ_J64_I64` gives that tile its 64 rows back, so a rig can measure both in one build. It lives on the fork
 branch `pascal-p106-v5-mmq-j64-tile` (`ebec6544e`, one commit on the candidate `pascal-p106-v5-cand-b12674` at
 `eee615cdb`). It was built and checked on a build machine's RTX 3090s, which run the rig build's compute 6.1 code
-through the driver's compiler and take the same DP4A table. Correctness only: nothing here is timed. The P106's prompt
-time is [the rig check](#the-rig-check) below.
+through the driver's compiler and take the same DP4A table. Nothing on the build machine is timed. The P106's prompt
+time with each tile is [the rig check](#the-rig-check) below (2026-11-25).
 
 ## Result in plain words
 
@@ -27,7 +27,13 @@ time is [the rig check](#the-rig-check) below.
 - **It reaches more than 64-token passes.** On the P106's tile table 64 columns is the widest tile for these types. So
   the switch, like #31352 itself, changes every prompt pass of 49 or more tokens: the taper's 64-token micro-batches,
   and also Flint's 128-token and Flash-Next's 512-token ones. The rig check reads both kinds.
-- **What it does not show:** which tile is faster on a P106. That is [the rig check](#the-rig-check) below, est. 1 h.
+- **On a P106 rig the 64-row tile is slower where it was meant to help, and faster where it was not.** On the
+  64-token passes (the prompt's last 64 tokens on top of 4,096 and 8,192 cached) it cost Flint Pascal Q8 GGUF 10.423
+  and 14.748 ms (+1.71 % and +2.20 %) and Flash-Next 11.958 ms at 8,192 (+0.89 %); it never saved time there. On
+  Flash-Next's 512-token passes it read the 4,096-token prime 4.56 % faster (193.777 and 196.221 tok/s against 185.280
+  and 187.722). Replies and generation are unchanged. So both presets keep upstream's tile (the switch stays unset),
+  and since the two ends move in opposite directions, the next step is choosing the height per launch (C1044, Q1777):
+  128 rows for a 64-token pass, 64 rows for a 512-token one. [The rig check](#the-rig-check) has every load.
 
 ## The change
 
@@ -126,26 +132,108 @@ so `test-backend-ops test -o MUL_MAT -p '<that>'` runs them alone.
 
 ## The rig check
 
-Registry row Q1757's other half, queued for a P106 rig that holds both files. The deep lane
-([bench/deep_lane](../../../bench/deep_lane/README.md)) on this branch's rig build, two arms on the one build:
-`unset` (upstream's 128-row tile, the control) and `j64` (`GGML_CUDA_MMQ_J64_I64=1`). Loads
-`warm unset1 j641 unset2 j642`, depths 0, 4,096 and 8,192, 256 tokens a pass, the sampler pass; once on Flint Pascal
-Q8 GGUF with [release/flint-v5/settings.env](../../../release/flint-v5/settings.env), once on Flash-Next with
-[release/flash-next-v5/settings.env](../../../release/flash-next-v5/settings.env) (its file and MTP draft). Each
-depth's first decode pass reads the prompt's 64-token tail in one micro-batch, the case the taller tile halves the
-blocks of. The primes read 4,032 and 4,096 tokens in the presets' micro-batches, which take the same tile. What to read:
-the tail's prompt time at each depth and the primes' prompt speed, each load by value and classed against the spread,
-and the same greedy replies in both arms. From the repository root on a machine that only runs ssh, once per model:
+Registry row Q1757's other half, run on 2026-11-25 on one rig of nine P106-090 cards (driver 580.178.04, 4 GB of host
+memory): Flint from 15:34 to 16:29, Flash-Next from 16:35 to 17:12. The cards ran the rig's daily memory-only clock
+profile ([bench/mem_offset](../../../bench/mem_offset/README.md)), the same in both arms, with the kit's watchdog on:
+every card at its offsets, 0 Xid and no offset lowered before and after. The build is this branch's rig build
+(`llama-server` md5 `ac6e5a6d36621a27e7c2ab252768ef2f`).
+
+The deep lane ([bench/deep_lane](../../../bench/deep_lane/README.md)) ran two arms on that one build: `unset`
+(upstream's 128-row tile, the control) and `j64` (`GGML_CUDA_MMQ_J64_I64=1`). Loads `warm unset1 j641 unset2 j642`,
+depths 0, 4,096 and 8,192, 256 tokens a pass, the sampler pass. It ran once on Flint Pascal Q8 GGUF (`p065`) with
+[release/flint-v5/settings.env](../../../release/flint-v5/settings.env), and once on Flash-Next (Swift
+Qwen3.8-Flash-Next GSQ-RCO Q2_0 with its MTP draft) with
+[release/flash-next-v5/settings.env](../../../release/flash-next-v5/settings.env). The dry run showed two server lines,
+each the preset's, with the switch in `j64`'s only; each `j64` server printed it among its switches.
+
+What each read measures:
+- **The tail.** At each depth the first decode pass reads the prompt's last 64 tokens on top of the cache, in one
+  64-token micro-batch (both presets' taper reads short prompts in micro-batches of 64). That is the case the taller
+  tile halves the blocks of. The table gives its `prompt_ms`.
+- **The primes.** These read the prompt without its tail: 4,032 tokens on an empty cache at 4,096, then 4,100 (Flint)
+  or 4,612 (Flash-Next) on top of a checkpoint at 8,192. They run in the presets' micro-batches, 128 tokens for Flint
+  and 512 for Flash-Next, which take the same 64-column tile. The table gives their prompt tok/s.
+
+Each value below is one load. The class follows the deep lane's rule: the spread is the larger of the two arms'
+differences between their two loads, and an arm is a gain or a loss when its mean differs from the control's by more
+than that spread, negligible otherwise.
+
+**The tail, 64 tokens read, ms** ([rig_prompt.tsv](rig_prompt.tsv)):
+
+| Model | Depth | `unset` (unset1, unset2) | `j64` (j641, j642) | Spread | `j64` against `unset` | Class |
+|---|---:|---|---|---:|---:|---|
+| Flint | 0 | 706.924, 711.837 | 729.560, 914.053 | 184.493 | +112.426 ms (+15.85 %) | negligible |
+| Flint | 4,096 | 607.858, 610.068 | 618.496, 620.276 | 2.210 | +10.423 ms (+1.71 %) | **loss** |
+| Flint | 8,192 | 670.119, 667.911 | 686.329, 681.197 | 5.132 | +14.748 ms (+2.20 %) | **loss** |
+| Flash-Next | 0 | 1,194.077, 1,202.011 | 1,207.714, 1,242.208 | 34.494 | +26.917 ms (+2.25 %) | negligible |
+| Flash-Next | 4,096 | 1,484.180, 1,428.262 | 1,456.368, 1,453.718 | 55.918 | −1.178 ms (−0.08 %) | negligible |
+| Flash-Next | 8,192 | 1,338.544, 1,347.377 | 1,360.031, 1,349.806 | 10.225 | +11.958 ms (+0.89 %) | **loss** |
+
+**The primes, prompt tok/s:**
+
+| Model | Depth | Tokens read (micro-batch) | `unset` (unset1, unset2) | `j64` (j641, j642) | Spread | `j64` against `unset` | Class |
+|---|---:|---|---|---|---:|---:|---|
+| Flint | 4,096 | 4,032 (128) | 560.582, 567.302 | 563.215, 433.457 | 129.757 | −65.606 (−11.63 %) | negligible |
+| Flint | 8,192 | 4,100 (128) | 545.905, 546.388 | 532.401, 494.389 | 38.012 | −32.752 (−6.00 %) | negligible |
+| Flash-Next | 4,096 | 4,032 (512) | 185.280, 187.722 | 193.777, 196.221 | 2.444 | +8.498 (+4.56 %) | **gain** |
+| Flash-Next | 8,192 | 4,612 (512) | 212.028, 225.183 | 214.558, 219.314 | 13.155 | −1.669 (−0.76 %) | negligible |
+
+- **64-token passes: the 64-row tile never saves time.** It is a loss at three of the six points: Flint at 4,096 and
+  8,192, both `j64` loads slower than both `unset` loads, and Flash-Next at 8,192. At depth 0 both models' `j64` loads
+  are again the slower ones, but within the spread. Upstream's taller tile, with half the blocks for 5 SMs, is the
+  faster one on a P106.
+- **512-token passes: the 64-row tile is faster on Flash-Next's 4,096 prime**, by 8.498 tok/s, both `j64` loads above
+  both `unset` loads. At 8,192 it is negligible: there the prime also reads attention over 3,516 cached tokens, and the
+  two `unset` loads differ by 13.155 tok/s.
+- **128-token passes (Flint's primes): no class.** Flint's j642 ran its first requests slowly, so the rule gives
+  negligible. The clean load j641 read 563.215 tok/s at 4,096 (`unset` 560.582 and 567.302) and 532.401 at 8,192
+  (`unset` 545.905 and 546.388).
+- **The same greedy replies.** At every depth, the greedy reply was the same on every pass, load and arm, in both
+  models. Flash-Next's sampler pass took the same draft counters in every load. No load reallocated its graph.
+- **Generation unchanged.** Over all depths Flint generated 57.77 and 57.80 tok/s in `unset` and 57.80 and 56.58 in
+  `j64`. Flash-Next generated 26.53 and 26.45 against 26.48 and 26.46. Both are negligible. A few per-depth classes go
+  past very small spreads, in both directions: Flint +0.07 tok/s (+0.1 %) at 4,096, and Flash-Next's step +0.30 ms
+  (+0.2 %) on pass 1 and −0.14 ms (−0.1 %) on pass 2 at 8,192. The switch reaches only prompt passes of 49 or more
+  tokens, and Flash-Next's draft checks are 4 tokens wide.
+- **Flint's j642 started slowly, and the cause was not found.** Its untimed warm-up read 64 tokens in 4,157.819 ms; the
+  other four loads took 2,969.926, 2,910.276, 2,975.579 and 3,045.920. Its first three timed requests were slow too:
+  - the depth-0 tail, 914.053 ms;
+  - its generation, 42.06 tok/s on pass 1 against 47.77, 47.74 and 47.92;
+  - the 4,096 prime, 433.457 tok/s;
+  - the 8,192 prime, 494.389 tok/s.
+
+  From the 4,096 tail on, its requests matched j641's. The card log shows the same clocks as j641 at the same requests,
+  and host memory stayed as in the other loads. The rig's journal shows no login during the timed loads of either
+  lane. The prompt-time loss at 4,096 and 8,192 does not rest on this load: j642's tails there were 620.276 and
+  681.197 ms, against j641's 618.496 and 686.329. Registry Q1845 keeps the question (parked).
+
+**For the presets:** both keep upstream's tile; the switch stays unset. On Flint the 64-row tile never gains. On
+Flash-Next it gains on the 512-token passes of long prompts, but it loses on the 64-token passes that short agent turns
+are read in. The two ends move in opposite directions, so choosing the tile's height per launch is the next step
+(C1044, registry Q1777). The direction is the reverse of the block-count guess: 128 rows for a 64-token pass (one column
+tile) and 64 rows for a 512-token pass (eight column tiles). Where between 64 and 512 tokens the better height changes
+is that row's question; Flint's 128-token primes did not settle it here.
+
+The commands, from the repository root on a machine that only runs ssh (the run's were these, with the rig's paths):
 
 ```bash
-RIG=<rig> WORK=<folder on the rig> BIN=<this build's llama-server on the rig> MODEL=<model file on the rig> \
-  [MODEL_DRAFT=<draft on the rig>] PRESET=release/<flint|flash-next>-v5/settings.env \
-  TEXT_LOCAL=<recorded agent text> OUT=<folder here> STEP=start \
+RIG=<rig> WORK=<folder on the rig> BIN=<this build's llama-server on the rig> MODEL=<Flint Pascal Q8 GGUF on the rig> \
+  PRESET=release/flint-v5/settings.env TEXT_LOCAL=<recorded agent text> OUT=<out>/flint STEP=start \
   bash docs/data/2026-11-24_c1024_mmq_j64_tile/run/rig_lane.sh
+RIG=<rig> WORK=<folder on the rig> MODEL=<Flash-Next's first shard on the rig> MODEL_DRAFT=<its MTP draft on the rig> \
+  BIN=<this build's llama-server on the rig> PRESET=release/flash-next-v5/settings.env TEXT_LOCAL=<recorded agent text> \
+  OUT=<out>/flash STEP=start bash docs/data/2026-11-24_c1024_mmq_j64_tile/run/rig_lane.sh
 ```
 
-then `STEP=wait` and `STEP=collect` with the same `RIG`, `WORK` and `OUT`. `STEP=start` runs the deep lane's dry run
-first and starts only when the two server lines are the preset's, with the switch in `j64`'s only.
+Each was followed by `STEP=wait` and `STEP=collect` with the same `RIG`, `WORK` and `OUT`. `STEP=start` runs the deep
+lane's dry run first and starts only when the two server lines are the preset's, with the switch in `j64`'s only. The
+prompts are the same ids on every load, cut from this project's recorded agent text. The deep lane wrote each model's
+`table.md` and `classes.tsv` itself. The prompt table:
+
+```bash
+python3 -I docs/data/2026-11-24_c1024_mmq_j64_tile/run/rig_tail.py --lane flint=<out>/flint --lane flash=<out>/flash \
+  --tsv docs/data/2026-11-24_c1024_mmq_j64_tile/rig_prompt.tsv
+```
 
 ## Files
 
@@ -161,6 +249,11 @@ first and starts only when the two server lines are the preset's, with the switc
 | [run/ptx_j64.py](run/ptx_j64.py) | the same in PTX, block labels renumbered |
 | [run/c1024_tables.py](run/c1024_tables.py) | `bops.tsv`, `j64_cases.tsv`, `launches.tsv` from the test logs |
 | [run/rig_lane.sh](run/rig_lane.sh) | the rig check: the deep lane, two arms on one build |
+| [run/rig_tail.py](run/rig_tail.py) | the rig check's prompt table: each depth's 64-token tail and prime by load, classed |
+| [rig_prompt.tsv](rig_prompt.tsv) | the rig check: the tail's `prompt_ms` and the primes' tok/s per model, depth and arm, each load, the spread and the class |
+| [rig_flint_table.md](rig_flint_table.md), [rig_flash_table.md](rig_flash_table.md) | the deep lane's own tables per model: generation, the step, prompt reading, the sampler pass, the checks (replies, prompts, reallocations) |
+| [rig_flint_classes.tsv](rig_flint_classes.tsv), [rig_flash_classes.tsv](rig_flash_classes.tsv) | the deep lane's classes per model, metric and depth |
+| [rig_flint_requests.csv](rig_flint_requests.csv), [rig_flash_requests.csv](rig_flash_requests.csv) | one line per request of the rig check (deep_client.py's columns: tokens read, prompt and generation ms, the replies' md5) |
 
 ## Commands
 

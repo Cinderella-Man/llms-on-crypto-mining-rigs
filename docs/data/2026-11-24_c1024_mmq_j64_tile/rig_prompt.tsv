@@ -1,0 +1,21 @@
+lane	metric	depth	arm	tokens_read	loads	mean	spread	delta	percent	control_mean	class
+flint	tail prompt ms	0	unset	64	706.924 711.837	709.380	4.913				control
+flint	tail prompt ms	0	j64	64	729.560 914.053	821.806	184.493	112.426	15.85	709.380	negligible
+flint	tail prompt ms	4096	unset	64	607.858 610.068	608.963	2.210				control
+flint	tail prompt ms	4096	j64	64	618.496 620.276	619.386	2.210	10.423	1.71	608.963	loss
+flint	tail prompt ms	8192	unset	64	670.119 667.911	669.015	2.208				control
+flint	tail prompt ms	8192	j64	64	686.329 681.197	683.763	5.132	14.748	2.20	669.015	loss
+flint	prime prompt tok/s	4096	unset	4032	560.582 567.302	563.942	6.720				control
+flint	prime prompt tok/s	4096	j64	4032	563.215 433.457	498.336	129.757	-65.606	-11.63	563.942	negligible
+flint	prime prompt tok/s	8192	unset	4100	545.905 546.388	546.146	0.483				control
+flint	prime prompt tok/s	8192	j64	4100	532.401 494.389	513.395	38.012	-32.752	-6.00	546.146	negligible
+flash	tail prompt ms	0	unset	64	1194.077 1202.011	1198.044	7.934				control
+flash	tail prompt ms	0	j64	64	1207.714 1242.208	1224.961	34.494	26.917	2.25	1198.044	negligible
+flash	tail prompt ms	4096	unset	64	1484.180 1428.262	1456.221	55.918				control
+flash	tail prompt ms	4096	j64	64	1456.368 1453.718	1455.043	55.918	-1.178	-0.08	1456.221	negligible
+flash	tail prompt ms	8192	unset	64	1338.544 1347.377	1342.961	8.833				control
+flash	tail prompt ms	8192	j64	64	1360.031 1349.806	1354.918	10.225	11.958	0.89	1342.961	loss
+flash	prime prompt tok/s	4096	unset	4032	185.280 187.722	186.501	2.442				control
+flash	prime prompt tok/s	4096	j64	4032	193.777 196.221	194.999	2.444	8.498	4.56	186.501	gain
+flash	prime prompt tok/s	8192	unset	4612	212.028 225.183	218.605	13.155				control
+flash	prime prompt tok/s	8192	j64	4612	214.558 219.314	216.936	13.155	-1.669	-0.76	218.605	negligible
