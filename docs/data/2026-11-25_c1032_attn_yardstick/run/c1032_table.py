@@ -275,7 +275,8 @@ def main():
                         "head 256, q8_0 K/V" if want else "none", "pass" if ok else "FAIL"])
     for arm in ARMS:
         if bufs.get(arm):
-            verdict.append([f"context: {arm}'s compute buffers (the generic kernel's F16 copies of K/V make them larger)",
+            verdict.append([f"context: {arm}'s compute buffers (they change with the attention kernel: the "
+                            "generic one adds F16 copies of K/V)",
                             "MiB", ", ".join(f"{d} {s}" for d, s in bufs[arm]), "", "context"])
     write(os.path.join(dest, "verdict.tsv"), ["check", "measure", "value", "rule", "result"], verdict)
 

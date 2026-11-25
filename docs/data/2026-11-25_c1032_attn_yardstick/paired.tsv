@@ -1,0 +1,25 @@
+form	arm or pair	measure	stretches	mean	se	t
+alone	q8g	kld	12	0.006320	0.001102	5.73
+alone	q8g	top_differs_pct	12	1.720000	0.231453	7.43
+alone	q8g	ln_ppl_ratio	12	-0.000280	0.000887	-0.32
+alone	q8f1	kld	12	0.011030	0.001957	5.63
+alone	q8f1	top_differs_pct	12	2.249000	0.262790	8.56
+alone	q8f1	ln_ppl_ratio	12	0.000380	0.001194	0.32
+alone	C994 q8u	kld	12	0.007960	0.001781	4.47
+alone	C994 q8u	top_differs_pct	12	2.061000	0.269150	7.66
+alone	C994 q8u	ln_ppl_ratio	12	0.000430	0.001323	0.33
+yardstick against C994's	q8g - q8u	kld	12	-0.001640	0.000741	-2.21
+yardstick against C994's	q8g - q8u	top_differs_pct	12	-0.341000	0.092390	-3.69
+yardstick against C994's	q8g - q8u	ln_ppl_ratio	12	-0.000710	0.001147	-0.62
+yardstick against C994's	q8g / q8u - 1	kld	12	-0.133270	0.060045	-2.22
+yardstick against C994's	q8g / q8u - 1	top_differs_pct	12	-0.165350	0.035133	-4.71
+against q8g	q8f1 - q8g	kld	12	0.004710	0.000901	5.23
+against q8g	q8f1 - q8g	top_differs_pct	12	0.529000	0.074329	7.12
+against q8g	q8f1 - q8g	ln_ppl_ratio	12	0.000660	0.001618	0.41
+against q8g, divided by it	(q8f1 - q8g) / q8g	kld	12	0.763601	0.069741	10.95
+against q8g, divided by it	(q8f1 - q8g) / q8g	top_differs_pct	12	0.368735	0.077379	4.77
+against C994 q8u	q8f1 - C994 q8u	kld	12	0.003070	0.000469	6.54
+against C994 q8u	q8f1 - C994 q8u	top_differs_pct	12	0.188000	0.075615	2.49
+against C994 q8u	q8f1 - C994 q8u	ln_ppl_ratio	12	-0.000050	0.002155	-0.02
+against C994 q8u, divided by it	(q8f1 - C994 q8u) / C994 q8u	kld	12	0.504086	0.074878	6.73
+against C994 q8u, divided by it	(q8f1 - C994 q8u) / C994 q8u	top_differs_pct	12	0.121316	0.037824	3.21

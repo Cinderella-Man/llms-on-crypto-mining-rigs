@@ -1,0 +1,35 @@
+check	measure	value	rule	result
+yardstick against C994's: q8g - q8u	kld	-0.001640 ± 0.000741 (t -2.21)	|t| >= 3	not seen
+yardstick against C994's: q8g - q8u	top_differs_pct	-0.341000 ± 0.092390 (t -3.69)	|t| >= 3	seen
+yardstick against C994's: q8g - q8u	ln_ppl_ratio	-0.000710 ± 0.001147 (t -0.62)	|t| >= 3	not seen
+against q8g: q8f1 - q8g	kld	0.004710 ± 0.000901 (t 5.23)	t >= 3	seen
+against q8g: q8f1 - q8g	top_differs_pct	0.529000 ± 0.074329 (t 7.12)	t >= 3	seen
+against q8g: q8f1 - q8g	ln_ppl_ratio	0.000660 ± 0.001618 (t 0.41)	|t| >= 3	not seen
+against q8g, divided by it: (q8f1 - q8g) / q8g	kld	0.763601 ± 0.069741 (t 10.95)	t >= 3	seen
+against q8g, divided by it: (q8f1 - q8g) / q8g	top_differs_pct	0.368735 ± 0.077379 (t 4.77)	t >= 3	seen
+against q8g: smallest output scale error seen, est. (q8f1 scaled by (eps/0.05)^2)	kld	4.04 %		est.
+against q8g: smallest output scale error seen, est. (q8f1 scaled by (eps/0.05)^1)	top_differs_pct	4.25 %		est.
+against q8g, divided by it: smallest output scale error seen, est. (q8f1 scaled by (eps/0.05)^2)	kld	4.02 %		est.
+against q8g, divided by it: smallest output scale error seen, est. (q8f1 scaled by (eps/0.05)^1)	top_differs_pct	4.40 %		est.
+output scale error whose KLD equals q8g's, est. 0.05 * sqrt(mean q8g / mean q8f1) per stretch	kld	3.78 %		est.
+output scale error whose top-token disagreement equals q8g's, est. 0.05 * mean q8g / mean q8f1	top_differs_pct	3.82 %		est.
+correlation over the stretches of q8f1's KLD with q8g's	kld	0.98		context
+against C994 q8u: smallest output scale error seen, est. (q8f1 scaled by (eps/0.05)^2)	kld	4.58 %		est.
+against C994 q8u: smallest output scale error seen, est. (q8f1 scaled by (eps/0.05)^1)	top_differs_pct	5.09 %		est.
+against C994 q8u, divided by it: smallest output scale error seen, est. (q8f1 scaled by (eps/0.05)^2)	kld	4.43 %		est.
+against C994 q8u, divided by it: smallest output scale error seen, est. (q8f1 scaled by (eps/0.05)^1)	top_differs_pct	4.97 %		est.
+output scale error whose KLD equals C994 q8u's, est. 0.05 * sqrt(mean C994 q8u / mean q8f1) per stretch	kld	4.25 %		est.
+output scale error whose top-token disagreement equals C994 q8u's, est. 0.05 * mean C994 q8u / mean q8f1	top_differs_pct	4.58 %		est.
+correlation over the stretches of q8f1's KLD with C994 q8u's	kld	0.97		context
+the attention-only yardstick's KLD over all tokens, against C994's q8u (0.007963)	kld	0.006319 against 0.007963: 0.794 of it		result
+the smallest attention error seen, est. 0.05 * sqrt(q8g's KLD / 0.011030) over all tokens	kld	3.78 % (C994's yardstick: 4.25 %)		est.
+correlation over the stretches of q8g's KLD with C994's q8u's	kld	0.98		context
+validity: q8g's reference perplexity (PPL(base), read from q8's file) equals C994's	ppl	1.577859 against 1.577859	equal at 6 decimals	pass
+validity: q8f1's reference perplexity (PPL(base), read from q8's file) equals C994's	ppl	1.577859 against 1.577859	equal at 6 decimals	pass
+validity: q8f1 repeats C994's q8f1 (every stretch's KLD and same top, and the mean KLD)	kld, top	mean KLD 0.011030 against 0.011030; same top 97.751 against 97.751	equal on every stretch	pass
+validity: q8 logs the compute 6.1 prompt attention kernel	kernel	head 256, q8_0 K/V	head 256, q8_0 K/V	pass
+validity: q8g logs no compute 6.1 prompt attention kernel line (the generic one ran)	kernel	none	none	pass
+validity: q8f1 logs the compute 6.1 prompt attention kernel	kernel	head 256, q8_0 K/V	head 256, q8_0 K/V	pass
+context: q8's compute buffers (they change with the attention kernel: the generic one adds F16 copies of K/V)	MiB	CUDA0 225.61, CUDA1 171.60, CUDA2 656.61, CUDA_Host 92.10		context
+context: q8g's compute buffers (they change with the attention kernel: the generic one adds F16 copies of K/V)	MiB	CUDA0 234.08, CUDA1 180.06, CUDA2 602.61, CUDA_Host 92.10		context
+context: q8f1's compute buffers (they change with the attention kernel: the generic one adds F16 copies of K/V)	MiB	CUDA0 225.61, CUDA1 171.60, CUDA2 656.61, CUDA_Host 92.10		context

@@ -43,7 +43,9 @@ by stretch, beside the old kernel in micro-batches of 128, and judge by the KLD 
 divided per stretch. That sees structural bugs at once and uniform errors from est. about 4.4 %. Smaller errors move
 the output less than reordering the whole model's sums does. A new attention kernel reorders only the attention sums,
 so a yardstick that changes only the attention kernel may be much smaller and would let the check see smaller errors
-([Q1765](../../../quants/experiments.md)). Making the check a ready tool is
+([Q1765](../../../quants/experiments.md)). That yardstick, the build's generic tile kernel on the same cache, is 0.79
+of this one, and with it the check sees uniform errors from est. about 4.0 %
+([2026-11-25_c1032_attn_yardstick](../2026-11-25_c1032_attn_yardstick/README.md)). Making the check a ready tool is
 [Q1766](../../../quants/experiments.md).
 
 ## What ran
