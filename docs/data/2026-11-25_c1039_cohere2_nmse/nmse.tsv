@@ -1,0 +1,556 @@
+set	arch	model	logits_file	cpu_logits_cand_vs_ref	card_vs_cpu_nmse_ref_on	card_vs_cpu_nmse_cand_on	card_vs_cpu_nmse_ref_off	card_vs_cpu_nmse_cand_off	card_vs_cpu_nmse_ref_on2	card_vs_cpu_nmse_cand_on2	builds_same_fusions_on	builds_same_fusions_off	repeats_same
+plain	clip	Dense	clip	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+plain	llama	Dense	llama	differ	9.90e-08	1.07e-07	9.90e-08	1.07e-07	9.90e-08	1.07e-07	no	no	yes
+plain	llama	MoE	llama-moe	same	9.69e-08	9.69e-08	9.69e-08	9.69e-08	9.69e-08	9.69e-08	yes	yes	yes
+plain	llama4	MoE	llama4	differ	1.58e-07	9.20e-08	1.58e-07	9.20e-08	1.58e-07	9.20e-08	no	no	yes
+plain	deci	Dense	deci	differ	1.18e-07	1.07e-07	1.18e-07	1.07e-07	1.18e-07	1.07e-07	no	no	yes
+plain	falcon	Dense	falcon	differ	2.19e-07	8.81e-08	2.19e-07	8.81e-08	2.19e-07	8.81e-08	no	no	yes
+plain	baichuan	Dense	baichuan	differ	1.22e-07	9.09e-08	1.22e-07	9.09e-08	1.22e-07	9.09e-08	no	no	yes
+plain	grok	MoE	grok	differ	8.71e-08	8.73e-08	8.71e-08	8.73e-08	8.71e-08	8.73e-08	no	no	yes
+plain	gpt2	Dense	gpt2	differ	1.78e-07	9.13e-08	1.78e-07	9.13e-08	1.78e-07	9.13e-08	no	no	yes
+plain	gptj	Dense	gptj	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+plain	gptneox	Dense	gptneox	differ	2.02e-07	9.74e-08	2.02e-07	9.74e-08	2.02e-07	9.74e-08	no	no	yes
+plain	mpt	Dense	mpt	differ	2.04e-07	9.43e-08	2.04e-07	9.43e-08	2.04e-07	9.43e-08	no	no	yes
+plain	starcoder	Dense	starcoder	differ	1.97e-07	9.53e-08	1.97e-07	9.54e-08	1.97e-07	9.53e-08	no	no	yes
+plain	refact	Dense	refact	differ	1.24e-07	9.06e-08	1.24e-07	9.06e-08	1.24e-07	9.06e-08	no	no	yes
+plain	refact	MoE	refact-moe	same	9.33e-08	9.33e-08	9.33e-08	9.33e-08	9.33e-08	9.33e-08	yes	yes	yes
+plain	bert	Dense	bert	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+plain	modern-bert	Dense	modern-bert	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+plain	nomic-bert	Dense	nomic-bert	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+plain	nomic-bert-moe	Dense	nomic-bert-moe	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+plain	neo-bert	Dense	neo-bert	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+plain	jina-bert-v2	Dense	jina-bert-v2	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+plain	jina-bert-v3	Dense	jina-bert-v3	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+plain	eurobert	Dense	eurobert	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+plain	bloom	Dense	bloom	differ	1.92e-07	1.07e-07	1.92e-07	1.07e-07	1.92e-07	1.07e-07	no	no	yes
+plain	stablelm	Dense	stablelm	differ	1.47e-07	9.22e-08	1.47e-07	9.22e-08	1.47e-07	9.22e-08	no	no	yes
+plain	qwen	Dense	qwen	differ	1.06e-07	9.29e-08	1.06e-07	9.29e-08	1.06e-07	9.29e-08	no	no	yes
+plain	qwen2	Dense	qwen2	same	6.59e-08	6.59e-08	6.59e-08	6.59e-08	6.59e-08	6.59e-08	yes	yes	yes
+plain	qwen2moe	MoE	qwen2moe	differ	1.15e-07	9.05e-08	1.15e-07	9.05e-08	1.15e-07	9.05e-08	no	no	yes
+plain	qwen2vl	Dense	qwen2vl	same	9.16e-08	9.16e-08	9.16e-08	9.16e-08	9.16e-08	9.16e-08	yes	yes	yes
+plain	sensenova_u1	Dense	sensenova_u1	same	9.07e-08	9.07e-08	9.07e-08	9.07e-08	9.07e-08	9.07e-08	yes	yes	yes
+plain	qwen3	Dense	qwen3	same	8.94e-08	8.94e-08	8.94e-08	8.94e-08	8.94e-08	8.94e-08	yes	yes	yes
+plain	qwen3moe	MoE	qwen3moe	same	9.03e-08	9.03e-08	9.03e-08	9.03e-08	9.03e-08	9.03e-08	yes	yes	yes
+plain	flint	MoE	flint	same	9.22e-08	9.22e-08	9.22e-08	9.22e-08	9.22e-08	9.22e-08	yes	yes	yes
+plain	qwen3next	MoE	qwen3next	differ	8.89e-08	8.72e-08	8.89e-08	8.72e-08	8.89e-08	8.72e-08	no	no	yes
+plain	qwen3vl	Dense	qwen3vl	differ	1.21e-07	9.14e-08	1.21e-07	9.14e-08	1.21e-07	9.14e-08	no	no	yes
+plain	qwen3vlmoe	MoE	qwen3vlmoe	differ	1.07e-07	9.03e-08	1.07e-07	9.03e-08	1.07e-07	9.03e-08	no	no	yes
+plain	qwen35	Dense	qwen35	same	8.76e-08	8.76e-08	8.76e-08	8.76e-08	8.76e-08	8.76e-08	yes	yes	yes
+plain	qwen35moe	MoE	qwen35moe	differ	8.89e-08	8.73e-08	8.89e-08	8.73e-08	8.89e-08	8.73e-08	no	no	yes
+plain	clef	Dense	clef	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+plain	vllm-decision2	Dense	vllm-decision2	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+plain	clover_moe	MoE	clover_moe	differ	8.90e-08	8.93e-08	8.90e-08	8.93e-08	8.90e-08	8.93e-08	no	no	yes
+plain	qwen4exp	MoE	qwen4exp	differ	8.52e-08	8.38e-08	8.52e-08	8.38e-08	8.52e-08	8.38e-08	no	no	yes
+plain	phi2	Dense	phi2	differ	1.74e-07	9.58e-08	1.74e-07	9.58e-08	1.74e-07	9.58e-08	no	no	yes
+plain	phi3	Dense	phi3	differ	1.21e-07	9.03e-08	1.21e-07	9.03e-08	1.21e-07	9.03e-08	no	no	yes
+plain	phimoe	MoE	phimoe	differ	1.08e-07	9.66e-08	1.07e-07	9.66e-08	1.08e-07	9.66e-08	no	no	yes
+plain	plamo	Dense	plamo	differ	1.10e-07	9.03e-08	1.10e-07	9.03e-08	1.10e-07	9.03e-08	no	no	yes
+plain	plamo2	Dense	plamo2	differ	4.04e-07	8.60e-08	4.01e-07	8.60e-08	4.04e-07	8.60e-08	no	no	yes
+plain	plamo3	Dense	plamo3	differ	3.91e-07	1.02e-07	3.93e-07	1.02e-07	3.91e-07	1.02e-07	no	no	yes
+plain	codeshell	Dense	codeshell	differ	2.03e-07	9.81e-08	2.03e-07	9.81e-08	2.03e-07	9.81e-08	no	no	yes
+plain	orion	Dense	orion	differ	1.45e-07	9.11e-08	1.45e-07	9.11e-08	1.45e-07	9.11e-08	no	no	yes
+plain	internlm2	Dense	internlm2	differ	1.24e-07	8.94e-08	1.24e-07	8.94e-08	1.24e-07	8.94e-08	no	no	yes
+plain	minicpm	Dense	minicpm	differ	8.97e-08	9.26e-08	8.97e-08	9.26e-08	8.97e-08	9.26e-08	no	no	yes
+plain	minicpm	MoE	minicpm-moe	same	8.88e-08	8.88e-08	8.88e-08	8.88e-08	8.88e-08	8.88e-08	yes	yes	yes
+plain	minicpm3	Dense	minicpm3	differ	8.88e-08	8.60e-08	8.88e-08	8.60e-08	8.88e-08	8.60e-08	no	no	yes
+plain	gemma	Dense	gemma	differ	8.53e-08	8.46e-08	8.53e-08	8.46e-08	8.53e-08	8.46e-08	no	no	yes
+plain	gemma2	Dense	gemma2	differ	8.83e-08	8.42e-08	8.83e-08	8.42e-08	8.83e-08	8.42e-08	no	no	yes
+plain	gemma3	Dense	gemma3	differ	9.08e-08	8.65e-08	9.08e-08	8.65e-08	9.08e-08	8.65e-08	no	no	yes
+plain	gemma3n	Dense	gemma3n	differ	1.31e-07	8.30e-08	1.31e-07	8.30e-08	1.31e-07	8.30e-08	no	no	yes
+plain	gemma4	Dense	gemma4	same	7.31e-07	7.31e-07	7.21e-07	7.21e-07	7.31e-07	7.31e-07	yes	yes	yes
+plain	gemma-embedding	Dense	gemma-embedding	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+plain	gemma-embedding2	Dense	gemma-embedding2	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+plain	starcoder2	Dense	starcoder2	differ	2.03e-07	9.81e-08	2.03e-07	9.81e-08	2.03e-07	9.81e-08	no	no	yes
+plain	mamba	Dense	mamba	same	8.48e-08	8.48e-08	8.48e-08	8.48e-08	8.48e-08	8.48e-08	yes	yes	yes
+plain	mamba2	Dense	mamba2	same	8.70e-08	8.70e-08	8.70e-08	8.70e-08	8.70e-08	8.70e-08	yes	yes	yes
+plain	maple	MoE	maple	differ	1.08e-07	9.19e-08	1.08e-07	9.19e-08	1.08e-07	9.19e-08	no	no	yes
+plain	jamba	Dense	jamba	differ	1.20e-07	8.57e-08	1.20e-07	8.57e-08	1.20e-07	8.57e-08	no	no	yes
+plain	falcon-h1	Dense	falcon-h1	differ	1.25e-07	1.04e-07	1.25e-07	1.04e-07	1.25e-07	1.04e-07	no	no	yes
+plain	xverse	Dense	xverse	differ	1.24e-07	8.94e-08	1.24e-07	8.94e-08	1.24e-07	8.94e-08	no	no	yes
+plain	command-r	Dense	command-r	differ	1.09e-07	8.95e-08	1.09e-07	8.95e-08	1.09e-07	8.95e-08	no	no	yes
+plain	cohere2	Dense	cohere2	same	8.92e-08	8.92e-08	8.92e-08	8.92e-08	8.92e-08	8.92e-08	yes	yes	yes
+plain	cohere2moe	MoE	cohere2moe	differ	9.17e-08	8.99e-08	9.17e-08	8.99e-08	9.17e-08	8.99e-08	no	no	yes
+plain	dbrx	MoE	dbrx	differ	9.82e-08	8.93e-08	9.82e-08	8.93e-08	9.82e-08	8.93e-08	no	no	yes
+plain	olmo	Dense	olmo	differ	6.06e-07	9.12e-08	6.06e-07	9.12e-08	6.06e-07	9.12e-08	no	no	yes
+plain	olmo2	Dense	olmo2	differ	3.33e-07	1.53e-07	3.34e-07	1.53e-07	3.33e-07	1.53e-07	no	no	yes
+plain	olmoe	MoE	olmoe	differ	1.07e-07	8.95e-08	1.07e-07	8.95e-08	1.07e-07	8.95e-08	no	no	yes
+plain	muse-glimmer	Dense	muse-glimmer	differ	9.18e-08	8.82e-08	9.18e-08	8.82e-08	9.18e-08	8.82e-08	no	no	yes
+plain	muse-spark	MoE	muse-spark	differ	4.30e-07	1.42e-07	4.30e-07	1.42e-07	4.30e-07	1.42e-07	no	no	yes
+plain	openelm	Dense	openelm	differ	1.16e-07	8.46e-08	1.16e-07	8.46e-08	1.16e-07	8.46e-08	no	no	yes
+plain	arctic	MoE	arctic	differ	1.28e-07	9.13e-08	1.28e-07	9.13e-08	1.28e-07	9.13e-08	no	no	yes
+plain	deepseek	MoE	deepseek	differ	1.26e-07	9.07e-08	1.27e-07	9.07e-08	1.26e-07	9.07e-08	no	no	yes
+plain	deepseek2	MoE	deepseek2	differ	3.72e-09	2.85e-09	3.72e-09	2.85e-09	3.72e-09	2.85e-09	no	no	yes
+plain	deepseek2-ocr	Dense	deepseek2-ocr	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+plain	deepseek32	MoE	deepseek32	same	2.85e-09	2.85e-09	2.85e-09	2.85e-09	2.85e-09	2.85e-09	yes	yes	yes
+plain	deepseek4	MoE	deepseek4	differ	6.28e-07	1.97e-07	6.28e-07	1.97e-07	6.28e-07	1.97e-07	no	no	yes
+plain	deepseek41	MoE	deepseek41	differ	6.87e-07	2.05e-07	6.97e-07	2.05e-07	6.87e-07	2.05e-07	no	no	yes
+plain	xing4_0	MoE	xing4_0	differ	3.15e-09	2.97e-09	3.15e-09	2.97e-09	3.15e-09	2.97e-09	no	no	yes
+plain	chatglm	Dense	chatglm	differ	1.21e-07	9.06e-08	1.21e-07	9.06e-08	1.21e-07	9.06e-08	no	no	yes
+plain	glm4	Dense	glm4	differ	3.21e-07	1.43e-07	3.20e-07	1.43e-07	3.21e-07	1.43e-07	no	no	yes
+plain	glm4moe	MoE	glm4moe	differ	1.30e-07	9.25e-08	1.30e-07	9.25e-08	1.30e-07	9.25e-08	no	no	yes
+plain	glm-dsa	MoE	glm-dsa	same	2.85e-09	2.85e-09	2.85e-09	2.85e-09	2.85e-09	2.85e-09	yes	yes	yes
+plain	bitnet	Dense	bitnet	same	8.71e-08	8.71e-08	8.71e-08	8.71e-08	8.71e-08	8.71e-08	yes	yes	yes
+plain	t5	Dense	t5	no logits file	2.79e-07	2.79e-07	2.79e-07	2.79e-07	2.79e-07	2.79e-07	yes	yes	yes
+plain	t5encoder	Dense	t5encoder	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+plain	jais	Dense	jais	differ	1.19e-07	9.59e-08	1.19e-07	9.59e-08	1.19e-07	9.59e-08	no	no	yes
+plain	jais2	Dense	jais2	differ	1.43e-07	9.70e-08	1.43e-07	9.70e-08	1.43e-07	9.70e-08	no	no	yes
+plain	nemotron	Dense	nemotron	differ	1.43e-07	9.70e-08	1.43e-07	9.70e-08	1.43e-07	9.70e-08	no	no	yes
+plain	nemotron_h	Dense	nemotron_h	differ	8.97e-08	8.36e-08	8.97e-08	8.36e-08	8.97e-08	8.36e-08	no	no	yes
+plain	nemotron_h_moe	Dense	nemotron_h_moe	differ	8.97e-08	8.36e-08	8.97e-08	8.36e-08	8.97e-08	8.36e-08	no	no	yes
+plain	metis16	MoE	metis16	differ	1.33e-07	1.42e-07	1.33e-07	1.42e-07	1.33e-07	1.42e-07	no	no	yes
+plain	exaone	Dense	exaone	differ	1.23e-07	9.09e-08	1.23e-07	9.09e-08	1.23e-07	9.09e-08	no	no	yes
+plain	exaone4	Dense	exaone4	differ	3.26e-07	1.52e-07	3.26e-07	1.52e-07	3.26e-07	1.52e-07	no	no	yes
+plain	exaone-moe	MoE	exaone-moe	differ	1.27e-07	9.14e-08	1.27e-07	9.14e-08	1.27e-07	9.14e-08	no	no	yes
+plain	rwkv6	Dense	rwkv6	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+plain	rwkv6qwen2	Dense	rwkv6qwen2	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+plain	rwkv7	Dense	rwkv7	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+plain	arwkv7	Dense	arwkv7	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+plain	granite	Dense	granite	differ	1.01e-07	1.15e-07	1.01e-07	1.15e-07	1.01e-07	1.15e-07	no	no	yes
+plain	granite	MoE	granite-moe	same	1.01e-07	1.01e-07	1.01e-07	1.01e-07	1.01e-07	1.01e-07	yes	yes	yes
+plain	granitemoe	Dense	granitemoe	differ	1.01e-07	1.15e-07	1.01e-07	1.15e-07	1.01e-07	1.15e-07	no	no	yes
+plain	granitemoe	MoE	granitemoe-moe	same	1.01e-07	1.01e-07	1.01e-07	1.01e-07	1.01e-07	1.01e-07	yes	yes	yes
+plain	granitehybrid	Dense	granitehybrid	differ	8.82e-08	8.70e-08	8.82e-08	8.70e-08	8.82e-08	8.70e-08	no	no	yes
+plain	graniteswitch	Dense	graniteswitch	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+plain	granite_swa	Dense	granite_swa	differ	1.01e-07	1.15e-07	1.01e-07	1.15e-07	1.01e-07	1.15e-07	no	no	yes
+plain	chameleon	Dense	chameleon	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+plain	wavtokenizer-dec	Dense	wavtokenizer-dec	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+plain	plm	Dense	plm	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+plain	bailingmoe	MoE	bailingmoe	differ	1.31e-07	9.18e-08	1.31e-07	9.18e-08	1.31e-07	9.18e-08	no	no	yes
+plain	bailingmoe2	MoE	bailingmoe2	differ	1.18e-07	8.79e-08	1.18e-07	8.79e-08	1.18e-07	8.79e-08	no	no	yes
+plain	bailingmoe3	MoE	bailingmoe3	differ	2.54e-08	2.52e-08	2.54e-08	2.52e-08	2.54e-08	2.52e-08	no	no	yes
+plain	dots1	MoE	dots1	differ	1.29e-07	9.16e-08	1.29e-07	9.16e-08	1.29e-07	9.16e-08	no	no	yes
+plain	dots3note	MoE	dots3note	differ	6.87e-10	6.59e-10	6.87e-10	6.59e-10	6.87e-10	6.59e-10	no	no	yes
+plain	arcee	Dense	arcee	differ	1.77e-07	9.06e-08	1.77e-07	9.06e-08	1.77e-07	9.06e-08	no	no	yes
+plain	afmoe	MoE	afmoe	differ	8.84e-08	8.59e-08	8.84e-08	8.59e-08	8.84e-08	8.59e-08	no	no	yes
+plain	laguna	MoE	laguna	differ	9.93e-09	3.91e-14	9.93e-09	3.93e-14	9.93e-09	3.91e-14	no	no	yes
+plain	ernie4_5	MoE	ernie4_5	differ	1.24e-07	8.94e-08	1.24e-07	8.94e-08	1.24e-07	8.94e-08	no	no	yes
+plain	ernie4_5-moe	MoE	ernie4_5-moe	differ	1.22e-07	8.97e-08	1.22e-07	8.97e-08	1.22e-07	8.97e-08	no	no	yes
+plain	hunyuan-moe	MoE	hunyuan-moe	differ	1.22e-07	9.03e-08	1.21e-07	9.03e-08	1.22e-07	9.03e-08	no	no	yes
+plain	hunyuan-dense	Dense	hunyuan-dense	differ	1.23e-07	9.16e-08	1.23e-07	9.16e-08	1.23e-07	9.16e-08	no	no	yes
+plain	hunyuan_vl	Dense	hunyuan_vl	differ	1.23e-07	9.16e-08	1.23e-07	9.16e-08	1.23e-07	9.16e-08	no	no	yes
+plain	hy_v3	MoE	hy_v3	differ	9.24e-08	9.00e-08	9.24e-08	9.00e-08	9.24e-08	9.00e-08	no	no	yes
+plain	hy_v4	MoE	hy_v4	differ	7.74e-08	5.33e-10	7.74e-08	5.33e-10	7.74e-08	5.33e-10	no	no	yes
+plain	smollm3	Dense	smollm3	differ	1.24e-07	8.94e-08	1.24e-07	8.94e-08	1.24e-07	8.94e-08	no	no	yes
+plain	gpt-oss	MoE	gpt-oss	differ	1.83e-07	1.05e-07	1.83e-07	1.05e-07	1.83e-07	1.05e-07	no	no	yes
+plain	lfm2	Dense	lfm2	same	8.93e-08	8.93e-08	8.93e-08	8.93e-08	8.93e-08	8.93e-08	yes	yes	yes
+plain	lfm2moe	MoE	lfm2moe	same	8.69e-08	8.69e-08	8.69e-08	8.69e-08	8.69e-08	8.69e-08	yes	yes	yes
+plain	lfm3	Dense	lfm3	same	1.60e-07	1.60e-07	1.60e-07	1.60e-07	1.60e-07	1.60e-07	yes	yes	yes
+plain	dream	Dense	dream	no logits file	1.17e-07	8.95e-08	1.17e-07	8.95e-08	1.17e-07	8.95e-08	no	no	yes
+plain	smallthinker	MoE	smallthinker	differ	1.19e-07	9.08e-08	1.19e-07	9.08e-08	1.19e-07	9.08e-08	no	no	yes
+plain	llada	Dense	llada	no logits file	1.17e-07	8.96e-08	1.17e-07	8.96e-08	1.17e-07	8.96e-08	no	no	yes
+plain	llada-moe	MoE	llada-moe	no logits file	1.09e-07	9.04e-08	1.09e-07	9.04e-08	1.09e-07	9.04e-08	no	no	yes
+plain	seed_oss	Dense	seed_oss	differ	1.22e-07	9.04e-08	1.22e-07	9.04e-08	1.22e-07	9.04e-08	no	no	yes
+plain	grovemoe	MoE	grovemoe	differ	1.08e-07	9.03e-08	1.08e-07	9.03e-08	1.08e-07	9.03e-08	no	no	yes
+plain	apertus	Dense	apertus	differ	2.44e-07	9.86e-08	2.44e-07	9.86e-08	2.44e-07	9.86e-08	no	no	yes
+plain	minimax-m2	MoE	minimax-m2	differ	1.09e-07	8.98e-08	1.09e-07	8.98e-08	1.09e-07	8.98e-08	no	no	yes
+plain	cogvlm	Dense	cogvlm	differ	1.19e-07	8.72e-08	1.19e-07	8.72e-08	1.19e-07	8.72e-08	no	no	yes
+plain	rnd1	MoE	rnd1	no logits file	1.09e-07	9.04e-08	1.09e-07	9.04e-08	1.09e-07	9.04e-08	no	no	yes
+plain	pangu-embedded	Dense	pangu-embedded	differ	1.11e-07	9.84e-08	1.11e-07	9.84e-08	1.11e-07	9.84e-08	no	no	yes
+plain	mistral3	Dense	mistral3	differ	9.90e-08	1.07e-07	9.90e-08	1.07e-07	9.90e-08	1.07e-07	no	no	yes
+plain	mistral3	MoE	mistral3-moe	same	9.69e-08	9.69e-08	9.69e-08	9.69e-08	9.69e-08	9.69e-08	yes	yes	yes
+plain	mistral4	MoE	mistral4	differ	3.67e-09	2.85e-09	3.67e-09	2.85e-09	3.67e-09	2.85e-09	no	no	yes
+plain	mistral-large4	MoE	mistral-large4	same	2.82e-09	2.82e-09	2.82e-09	2.82e-09	2.82e-09	2.82e-09	yes	yes	yes
+plain	paddleocr	MoE	paddleocr	differ	1.11e-07	9.84e-08	1.11e-07	9.84e-08	1.11e-07	9.84e-08	no	no	yes
+plain	mimo2	MoE	mimo2	differ	1.02e-07	8.69e-08	1.02e-07	8.69e-08	1.02e-07	8.69e-08	no	no	yes
+plain	step35	MoE	step35	differ	6.42e-09	3.53e-14	6.41e-09	3.53e-14	6.42e-09	3.53e-14	no	no	yes
+plain	spark2_5	Dense	spark2_5	differ	1.32e-07	9.06e-08	1.32e-07	9.06e-08	1.32e-07	9.06e-08	no	no	yes
+plain	llama-embed	Dense	llama-embed	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+plain	llama-embed	MoE	llama-embed-moe	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+plain	maincoder	Dense	maincoder	differ	1.23e-07	8.97e-08	1.23e-07	8.97e-08	1.23e-07	8.97e-08	no	no	yes
+plain	maion-coder	MoE	maion-coder	differ	5.66e-07	2.04e-07	5.58e-07	2.04e-07	5.66e-07	2.04e-07	no	no	yes
+plain	kimi-linear	MoE	kimi-linear	differ	2.18e-10	2.10e-10	2.18e-10	2.10e-10	2.18e-10	2.10e-10	no	no	yes
+plain	kimi-k3	MoE	kimi-k3	differ	4.14e-07	3.29e-07	4.14e-07	3.29e-07	4.14e-07	3.29e-07	no	no	yes
+plain	kimi-k31	MoE	kimi-k31	differ	4.14e-07	3.29e-07	4.14e-07	3.29e-07	4.14e-07	3.29e-07	no	no	yes
+plain	glm5-next	MoE	glm5-next	differ	1.73e-07	1.74e-07	1.73e-07	1.74e-07	1.73e-07	1.74e-07	no	no	yes
+plain	talkie	Dense	talkie	differ	1.14e-07	8.64e-08	1.14e-07	8.64e-08	1.14e-07	8.64e-08	no	no	yes
+plain	mellum	MoE	mellum	same	9.24e-08	9.24e-08	9.24e-08	9.24e-08	9.24e-08	9.24e-08	yes	yes	yes
+plain	minimax-m3	MoE	minimax-m3	same	9.28e-08	9.28e-08	9.28e-08	9.28e-08	9.28e-08	9.28e-08	yes	yes	yes
+plain	nanbeige	Dense	nanbeige	same	9.11e-08	9.11e-08	9.11e-08	9.11e-08	9.11e-08	9.11e-08	yes	yes	yes
+plain	qwen3tts	Dense	qwen3tts	differ	1.18e-07	8.98e-08	1.18e-07	8.98e-08	1.18e-07	8.98e-08	no	no	yes
+plain	pockettts	Dense	pockettts	differ	2.12e-07	7.97e-08	2.12e-07	7.97e-08	2.12e-07	7.97e-08	no	no	yes
+plain	zonos3	MoE	zonos3	differ	1.39e-07	1.08e-07	1.39e-07	1.08e-07	1.39e-07	1.08e-07	no	no	yes
+plain	minimax-01	MoE	minimax-01	differ	1.24e-07	8.63e-08	1.24e-07	8.63e-08	1.24e-07	8.63e-08	no	no	yes
+plain	hrm_text	Dense	hrm_text	differ	4.71e-06	9.27e-08	4.71e-06	9.27e-08	4.71e-06	9.27e-08	no	no	yes
+plain	k2-horizon	Dense	k2-horizon	differ	1.16e-07	8.65e-08	1.16e-07	8.65e-08	1.16e-07	8.65e-08	no	no	yes
+plain	k2-horizon	MoE	k2-horizon-moe	differ	1.22e-07	8.59e-08	1.22e-07	8.59e-08	1.22e-07	8.59e-08	no	no	yes
+plain	beam	MoE	beam	differ	5.40e-07	1.81e-07	5.41e-07	1.81e-07	5.40e-07	1.81e-07	no	no	yes
+plain	kolibri1	MoE	kolibri1	differ	2.78e-07	1.47e-07	2.75e-07	1.46e-07	2.78e-07	1.47e-07	no	no	yes
+plain	limite	Dense	limite	differ	3.73e-07	4.78e-10	3.73e-07	4.78e-10	3.73e-07	4.78e-10	no	no	yes
+plain	ricursive	Dense	ricursive	same	8.81e-08	8.81e-08	8.81e-08	8.81e-08	8.81e-08	8.81e-08	yes	yes	yes
+plain	inkling2	MoE	inkling2	differ	5.99e-08	7.89e-08	6.00e-08	7.89e-08	5.99e-08	7.89e-08	no	no	yes
+plain	zaya1	MoE	zaya1	no logits file		7.70e-08		7.70e-08		7.70e-08			
+plain	moshi	Dense	moshi	no logits file		8.94e-08		8.94e-08		8.94e-08			
+plain	kokoro	Dense	kokoro	no logits file		SKIP		SKIP		SKIP			
+plain	tiny-voca	Dense	tiny-voca	no logits file		SKIP		SKIP		SKIP			
+plain	inkling2_loop	MoE	inkling2_loop	no logits file		9.04e-08		9.04e-08		9.04e-08			
+plain	domynedge	Dense	domynedge	no logits file		1.37e-07		1.37e-07		1.37e-07			
+f32	clip	Dense	clip	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+f32	llama	Dense	llama	differ	9.90e-08	1.07e-07	9.90e-08	1.07e-07	9.90e-08	1.07e-07	no	no	yes
+f32	llama	MoE	llama-moe	same	9.69e-08	9.69e-08	9.69e-08	9.69e-08	9.69e-08	9.69e-08	yes	yes	yes
+f32	llama4	MoE	llama4	differ	1.58e-07	9.20e-08	1.58e-07	9.20e-08	1.58e-07	9.20e-08	no	no	yes
+f32	deci	Dense	deci	differ	1.18e-07	1.07e-07	1.18e-07	1.07e-07	1.18e-07	1.07e-07	no	no	yes
+f32	falcon	Dense	falcon	differ	2.19e-07	8.81e-08	2.19e-07	8.81e-08	2.19e-07	8.81e-08	no	no	yes
+f32	baichuan	Dense	baichuan	differ	1.22e-07	9.09e-08	1.22e-07	9.09e-08	1.22e-07	9.09e-08	no	no	yes
+f32	grok	MoE	grok	differ	8.75e-08	8.74e-08	8.75e-08	8.74e-08	8.75e-08	8.74e-08	no	no	yes
+f32	gpt2	Dense	gpt2	differ	1.78e-07	9.13e-08	1.78e-07	9.13e-08	1.78e-07	9.13e-08	no	no	yes
+f32	gptj	Dense	gptj	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+f32	gptneox	Dense	gptneox	differ	2.02e-07	9.74e-08	2.02e-07	9.74e-08	2.02e-07	9.74e-08	no	no	yes
+f32	mpt	Dense	mpt	differ	2.04e-07	9.43e-08	2.04e-07	9.43e-08	2.04e-07	9.43e-08	no	no	yes
+f32	starcoder	Dense	starcoder	differ	1.97e-07	9.53e-08	1.97e-07	9.54e-08	1.97e-07	9.53e-08	no	no	yes
+f32	refact	Dense	refact	differ	1.24e-07	9.06e-08	1.24e-07	9.06e-08	1.24e-07	9.06e-08	no	no	yes
+f32	refact	MoE	refact-moe	same	9.33e-08	9.33e-08	9.33e-08	9.33e-08	9.33e-08	9.33e-08	yes	yes	yes
+f32	bert	Dense	bert	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+f32	modern-bert	Dense	modern-bert	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+f32	nomic-bert	Dense	nomic-bert	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+f32	nomic-bert-moe	Dense	nomic-bert-moe	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+f32	neo-bert	Dense	neo-bert	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+f32	jina-bert-v2	Dense	jina-bert-v2	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+f32	jina-bert-v3	Dense	jina-bert-v3	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+f32	eurobert	Dense	eurobert	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+f32	bloom	Dense	bloom	differ	1.92e-07	1.07e-07	1.92e-07	1.07e-07	1.92e-07	1.07e-07	no	no	yes
+f32	stablelm	Dense	stablelm	differ	1.47e-07	9.22e-08	1.47e-07	9.22e-08	1.47e-07	9.22e-08	no	no	yes
+f32	qwen	Dense	qwen	differ	1.06e-07	9.29e-08	1.06e-07	9.29e-08	1.06e-07	9.29e-08	no	no	yes
+f32	qwen2	Dense	qwen2	same	6.59e-08	6.59e-08	6.59e-08	6.59e-08	6.59e-08	6.59e-08	yes	yes	yes
+f32	qwen2moe	MoE	qwen2moe	differ	1.15e-07	9.05e-08	1.15e-07	9.05e-08	1.15e-07	9.05e-08	no	no	yes
+f32	qwen2vl	Dense	qwen2vl	same	9.16e-08	9.16e-08	9.16e-08	9.16e-08	9.16e-08	9.16e-08	yes	yes	yes
+f32	sensenova_u1	Dense	sensenova_u1	same	9.07e-08	9.07e-08	9.07e-08	9.07e-08	9.07e-08	9.07e-08	yes	yes	yes
+f32	qwen3	Dense	qwen3	same	8.94e-08	8.94e-08	8.94e-08	8.94e-08	8.94e-08	8.94e-08	yes	yes	yes
+f32	qwen3moe	MoE	qwen3moe	same	9.03e-08	9.03e-08	9.03e-08	9.03e-08	9.03e-08	9.03e-08	yes	yes	yes
+f32	flint	MoE	flint	same	9.22e-08	9.22e-08	9.22e-08	9.22e-08	9.22e-08	9.22e-08	yes	yes	yes
+f32	qwen3next	MoE	qwen3next	differ	8.89e-08	8.72e-08	8.89e-08	8.72e-08	8.89e-08	8.72e-08	no	no	yes
+f32	qwen3vl	Dense	qwen3vl	differ	1.21e-07	9.14e-08	1.21e-07	9.14e-08	1.21e-07	9.14e-08	no	no	yes
+f32	qwen3vlmoe	MoE	qwen3vlmoe	differ	1.07e-07	9.03e-08	1.07e-07	9.03e-08	1.07e-07	9.03e-08	no	no	yes
+f32	qwen35	Dense	qwen35	same	8.76e-08	8.76e-08	8.76e-08	8.76e-08	8.76e-08	8.76e-08	yes	yes	yes
+f32	qwen35moe	MoE	qwen35moe	differ	8.89e-08	8.73e-08	8.89e-08	8.73e-08	8.89e-08	8.73e-08	no	no	yes
+f32	clef	Dense	clef	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+f32	vllm-decision2	Dense	vllm-decision2	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+f32	clover_moe	MoE	clover_moe	differ	8.90e-08	8.93e-08	8.90e-08	8.93e-08	8.90e-08	8.93e-08	no	no	yes
+f32	qwen4exp	MoE	qwen4exp	differ	8.52e-08	8.38e-08	8.52e-08	8.38e-08	8.52e-08	8.38e-08	no	no	yes
+f32	phi2	Dense	phi2	differ	1.74e-07	9.58e-08	1.74e-07	9.58e-08	1.74e-07	9.58e-08	no	no	yes
+f32	phi3	Dense	phi3	differ	1.21e-07	9.03e-08	1.21e-07	9.03e-08	1.21e-07	9.03e-08	no	no	yes
+f32	phimoe	MoE	phimoe	differ	1.08e-07	9.66e-08	1.07e-07	9.66e-08	1.08e-07	9.66e-08	no	no	yes
+f32	plamo	Dense	plamo	differ	1.10e-07	9.03e-08	1.10e-07	9.03e-08	1.10e-07	9.03e-08	no	no	yes
+f32	plamo2	Dense	plamo2	differ	4.04e-07	8.60e-08	4.01e-07	8.60e-08	4.04e-07	8.60e-08	no	no	yes
+f32	plamo3	Dense	plamo3	differ	3.91e-07	1.02e-07	3.93e-07	1.02e-07	3.91e-07	1.02e-07	no	no	yes
+f32	codeshell	Dense	codeshell	differ	2.03e-07	9.81e-08	2.03e-07	9.81e-08	2.03e-07	9.81e-08	no	no	yes
+f32	orion	Dense	orion	differ	1.45e-07	9.11e-08	1.45e-07	9.11e-08	1.45e-07	9.11e-08	no	no	yes
+f32	internlm2	Dense	internlm2	differ	1.24e-07	8.94e-08	1.24e-07	8.94e-08	1.24e-07	8.94e-08	no	no	yes
+f32	minicpm	Dense	minicpm	differ	8.97e-08	9.26e-08	8.97e-08	9.26e-08	8.97e-08	9.26e-08	no	no	yes
+f32	minicpm	MoE	minicpm-moe	same	8.88e-08	8.88e-08	8.88e-08	8.88e-08	8.88e-08	8.88e-08	yes	yes	yes
+f32	minicpm3	Dense	minicpm3	differ	8.88e-08	8.60e-08	8.88e-08	8.60e-08	8.88e-08	8.60e-08	no	no	yes
+f32	gemma	Dense	gemma	differ	8.53e-08	8.46e-08	8.53e-08	8.46e-08	8.53e-08	8.46e-08	no	no	yes
+f32	gemma2	Dense	gemma2	differ	8.83e-08	8.42e-08	8.83e-08	8.42e-08	8.83e-08	8.42e-08	no	no	yes
+f32	gemma3	Dense	gemma3	differ	9.08e-08	8.65e-08	9.08e-08	8.65e-08	9.08e-08	8.65e-08	no	no	yes
+f32	gemma3n	Dense	gemma3n	differ	1.31e-07	8.30e-08	1.31e-07	8.30e-08	1.31e-07	8.30e-08	no	no	yes
+f32	gemma4	Dense	gemma4	same	7.31e-07	7.31e-07	7.21e-07	7.21e-07	7.31e-07	7.31e-07	yes	yes	yes
+f32	gemma-embedding	Dense	gemma-embedding	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+f32	gemma-embedding2	Dense	gemma-embedding2	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+f32	starcoder2	Dense	starcoder2	differ	2.03e-07	9.81e-08	2.03e-07	9.81e-08	2.03e-07	9.81e-08	no	no	yes
+f32	mamba	Dense	mamba	same	8.48e-08	8.48e-08	8.48e-08	8.48e-08	8.48e-08	8.48e-08	yes	yes	yes
+f32	mamba2	Dense	mamba2	same	8.70e-08	8.70e-08	8.70e-08	8.70e-08	8.70e-08	8.70e-08	yes	yes	yes
+f32	maple	MoE	maple	differ	1.08e-07	9.19e-08	1.08e-07	9.19e-08	1.08e-07	9.19e-08	no	no	yes
+f32	jamba	Dense	jamba	differ	1.20e-07	8.57e-08	1.20e-07	8.57e-08	1.20e-07	8.57e-08	no	no	yes
+f32	falcon-h1	Dense	falcon-h1	differ	1.25e-07	1.04e-07	1.25e-07	1.04e-07	1.25e-07	1.04e-07	no	no	yes
+f32	xverse	Dense	xverse	differ	1.24e-07	8.94e-08	1.24e-07	8.94e-08	1.24e-07	8.94e-08	no	no	yes
+f32	command-r	Dense	command-r	differ	1.09e-07	8.95e-08	1.09e-07	8.95e-08	1.09e-07	8.95e-08	no	no	yes
+f32	cohere2	Dense	cohere2	same	8.92e-08	8.92e-08	8.92e-08	8.92e-08	8.92e-08	8.92e-08	yes	yes	yes
+f32	cohere2moe	MoE	cohere2moe	differ	9.17e-08	8.99e-08	9.17e-08	8.99e-08	9.17e-08	8.99e-08	no	no	yes
+f32	dbrx	MoE	dbrx	differ	9.82e-08	8.93e-08	9.82e-08	8.93e-08	9.82e-08	8.93e-08	no	no	yes
+f32	olmo	Dense	olmo	differ	6.06e-07	9.12e-08	6.06e-07	9.12e-08	6.06e-07	9.12e-08	no	no	yes
+f32	olmo2	Dense	olmo2	differ	3.33e-07	1.53e-07	3.34e-07	1.53e-07	3.33e-07	1.53e-07	no	no	yes
+f32	olmoe	MoE	olmoe	differ	1.07e-07	8.95e-08	1.07e-07	8.95e-08	1.07e-07	8.95e-08	no	no	yes
+f32	muse-glimmer	Dense	muse-glimmer	differ	9.18e-08	8.82e-08	9.18e-08	8.82e-08	9.18e-08	8.82e-08	no	no	yes
+f32	muse-spark	MoE	muse-spark	differ	4.30e-07	1.42e-07	4.30e-07	1.42e-07	4.30e-07	1.42e-07	no	no	yes
+f32	openelm	Dense	openelm	differ	1.16e-07	8.46e-08	1.16e-07	8.46e-08	1.16e-07	8.46e-08	no	no	yes
+f32	arctic	MoE	arctic	differ	1.28e-07	9.13e-08	1.28e-07	9.13e-08	1.28e-07	9.13e-08	no	no	yes
+f32	deepseek	MoE	deepseek	differ	1.26e-07	9.07e-08	1.27e-07	9.07e-08	1.26e-07	9.07e-08	no	no	yes
+f32	deepseek2	MoE	deepseek2	differ	2.91e-09	1.93e-09	2.91e-09	1.93e-09	2.91e-09	1.93e-09	no	no	yes
+f32	deepseek2-ocr	Dense	deepseek2-ocr	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+f32	deepseek32	MoE	deepseek32	same	1.93e-09	1.93e-09	1.93e-09	1.93e-09	1.93e-09	1.93e-09	yes	yes	yes
+f32	deepseek4	MoE	deepseek4	differ	6.28e-07	1.97e-07	6.28e-07	1.97e-07	6.28e-07	1.97e-07	no	no	yes
+f32	deepseek41	MoE	deepseek41	differ	6.87e-07	2.05e-07	6.97e-07	2.05e-07	6.87e-07	2.05e-07	no	no	yes
+f32	xing4_0	MoE	xing4_0	differ	2.56e-09	2.10e-09	2.56e-09	2.10e-09	2.56e-09	2.10e-09	no	no	yes
+f32	chatglm	Dense	chatglm	differ	1.21e-07	9.06e-08	1.21e-07	9.06e-08	1.21e-07	9.06e-08	no	no	yes
+f32	glm4	Dense	glm4	differ	3.21e-07	1.43e-07	3.20e-07	1.43e-07	3.21e-07	1.43e-07	no	no	yes
+f32	glm4moe	MoE	glm4moe	differ	1.30e-07	9.25e-08	1.30e-07	9.25e-08	1.30e-07	9.25e-08	no	no	yes
+f32	glm-dsa	MoE	glm-dsa	same	1.93e-09	1.93e-09	1.93e-09	1.93e-09	1.93e-09	1.93e-09	yes	yes	yes
+f32	bitnet	Dense	bitnet	same	8.71e-08	8.71e-08	8.71e-08	8.71e-08	8.71e-08	8.71e-08	yes	yes	yes
+f32	t5	Dense	t5	no logits file	2.79e-07	2.79e-07	2.79e-07	2.79e-07	2.79e-07	2.79e-07	yes	yes	yes
+f32	t5encoder	Dense	t5encoder	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+f32	jais	Dense	jais	differ	1.19e-07	9.59e-08	1.19e-07	9.59e-08	1.19e-07	9.59e-08	no	no	yes
+f32	jais2	Dense	jais2	differ	1.43e-07	9.70e-08	1.43e-07	9.70e-08	1.43e-07	9.70e-08	no	no	yes
+f32	nemotron	Dense	nemotron	differ	1.43e-07	9.70e-08	1.43e-07	9.70e-08	1.43e-07	9.70e-08	no	no	yes
+f32	nemotron_h	Dense	nemotron_h	differ	8.97e-08	8.36e-08	8.97e-08	8.36e-08	8.97e-08	8.36e-08	no	no	yes
+f32	nemotron_h_moe	Dense	nemotron_h_moe	differ	8.97e-08	8.36e-08	8.97e-08	8.36e-08	8.97e-08	8.36e-08	no	no	yes
+f32	metis16	MoE	metis16	differ	1.33e-07	1.42e-07	1.33e-07	1.42e-07	1.33e-07	1.42e-07	no	no	yes
+f32	exaone	Dense	exaone	differ	1.23e-07	9.09e-08	1.23e-07	9.09e-08	1.23e-07	9.09e-08	no	no	yes
+f32	exaone4	Dense	exaone4	differ	3.26e-07	1.52e-07	3.26e-07	1.52e-07	3.26e-07	1.52e-07	no	no	yes
+f32	exaone-moe	MoE	exaone-moe	differ	1.27e-07	9.14e-08	1.27e-07	9.14e-08	1.27e-07	9.14e-08	no	no	yes
+f32	rwkv6	Dense	rwkv6	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+f32	rwkv6qwen2	Dense	rwkv6qwen2	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+f32	rwkv7	Dense	rwkv7	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+f32	arwkv7	Dense	arwkv7	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+f32	granite	Dense	granite	differ	1.01e-07	1.15e-07	1.01e-07	1.15e-07	1.01e-07	1.15e-07	no	no	yes
+f32	granite	MoE	granite-moe	same	1.01e-07	1.01e-07	1.01e-07	1.01e-07	1.01e-07	1.01e-07	yes	yes	yes
+f32	granitemoe	Dense	granitemoe	differ	1.01e-07	1.15e-07	1.01e-07	1.15e-07	1.01e-07	1.15e-07	no	no	yes
+f32	granitemoe	MoE	granitemoe-moe	same	1.01e-07	1.01e-07	1.01e-07	1.01e-07	1.01e-07	1.01e-07	yes	yes	yes
+f32	granitehybrid	Dense	granitehybrid	differ	8.82e-08	8.70e-08	8.82e-08	8.70e-08	8.82e-08	8.70e-08	no	no	yes
+f32	graniteswitch	Dense	graniteswitch	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+f32	granite_swa	Dense	granite_swa	differ	1.01e-07	1.15e-07	1.01e-07	1.15e-07	1.01e-07	1.15e-07	no	no	yes
+f32	chameleon	Dense	chameleon	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+f32	wavtokenizer-dec	Dense	wavtokenizer-dec	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+f32	plm	Dense	plm	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+f32	bailingmoe	MoE	bailingmoe	differ	1.31e-07	9.18e-08	1.31e-07	9.18e-08	1.31e-07	9.18e-08	no	no	yes
+f32	bailingmoe2	MoE	bailingmoe2	differ	1.18e-07	8.79e-08	1.18e-07	8.79e-08	1.18e-07	8.79e-08	no	no	yes
+f32	bailingmoe3	MoE	bailingmoe3	differ	1.80e-08	1.77e-08	1.80e-08	1.77e-08	1.80e-08	1.77e-08	no	no	yes
+f32	dots1	MoE	dots1	differ	1.29e-07	9.16e-08	1.29e-07	9.16e-08	1.29e-07	9.16e-08	no	no	yes
+f32	dots3note	MoE	dots3note	differ	5.21e-10	5.11e-10	5.21e-10	5.11e-10	5.21e-10	5.11e-10	no	no	yes
+f32	arcee	Dense	arcee	differ	1.77e-07	9.06e-08	1.77e-07	9.06e-08	1.77e-07	9.06e-08	no	no	yes
+f32	afmoe	MoE	afmoe	differ	8.84e-08	8.59e-08	8.84e-08	8.59e-08	8.84e-08	8.59e-08	no	no	yes
+f32	laguna	MoE	laguna	differ	9.93e-09	3.91e-14	9.93e-09	3.93e-14	9.93e-09	3.91e-14	no	no	yes
+f32	ernie4_5	MoE	ernie4_5	differ	1.24e-07	8.94e-08	1.24e-07	8.94e-08	1.24e-07	8.94e-08	no	no	yes
+f32	ernie4_5-moe	MoE	ernie4_5-moe	differ	1.22e-07	8.97e-08	1.22e-07	8.97e-08	1.22e-07	8.97e-08	no	no	yes
+f32	hunyuan-moe	MoE	hunyuan-moe	differ	1.22e-07	9.03e-08	1.21e-07	9.03e-08	1.22e-07	9.03e-08	no	no	yes
+f32	hunyuan-dense	Dense	hunyuan-dense	differ	1.23e-07	9.16e-08	1.23e-07	9.16e-08	1.23e-07	9.16e-08	no	no	yes
+f32	hunyuan_vl	Dense	hunyuan_vl	differ	1.23e-07	9.16e-08	1.23e-07	9.16e-08	1.23e-07	9.16e-08	no	no	yes
+f32	hy_v3	MoE	hy_v3	differ	9.24e-08	9.00e-08	9.24e-08	9.00e-08	9.24e-08	9.00e-08	no	no	yes
+f32	hy_v4	MoE	hy_v4	differ	5.48e-08	3.29e-10	5.48e-08	3.29e-10	5.48e-08	3.29e-10	no	no	yes
+f32	smollm3	Dense	smollm3	differ	1.24e-07	8.94e-08	1.24e-07	8.94e-08	1.24e-07	8.94e-08	no	no	yes
+f32	gpt-oss	MoE	gpt-oss	differ	1.83e-07	1.05e-07	1.83e-07	1.05e-07	1.83e-07	1.05e-07	no	no	yes
+f32	lfm2	Dense	lfm2	same	8.93e-08	8.93e-08	8.93e-08	8.93e-08	8.93e-08	8.93e-08	yes	yes	yes
+f32	lfm2moe	MoE	lfm2moe	same	8.69e-08	8.69e-08	8.69e-08	8.69e-08	8.69e-08	8.69e-08	yes	yes	yes
+f32	lfm3	Dense	lfm3	same	1.60e-07	1.60e-07	1.60e-07	1.60e-07	1.60e-07	1.60e-07	yes	yes	yes
+f32	dream	Dense	dream	no logits file	1.17e-07	8.95e-08	1.17e-07	8.95e-08	1.17e-07	8.95e-08	no	no	yes
+f32	smallthinker	MoE	smallthinker	differ	1.19e-07	9.08e-08	1.19e-07	9.08e-08	1.19e-07	9.08e-08	no	no	yes
+f32	llada	Dense	llada	no logits file	1.17e-07	8.96e-08	1.17e-07	8.96e-08	1.17e-07	8.96e-08	no	no	yes
+f32	llada-moe	MoE	llada-moe	no logits file	1.09e-07	9.04e-08	1.09e-07	9.04e-08	1.09e-07	9.04e-08	no	no	yes
+f32	seed_oss	Dense	seed_oss	differ	1.22e-07	9.04e-08	1.22e-07	9.04e-08	1.22e-07	9.04e-08	no	no	yes
+f32	grovemoe	MoE	grovemoe	differ	1.08e-07	9.03e-08	1.08e-07	9.03e-08	1.08e-07	9.03e-08	no	no	yes
+f32	apertus	Dense	apertus	differ	2.44e-07	9.86e-08	2.44e-07	9.86e-08	2.44e-07	9.86e-08	no	no	yes
+f32	minimax-m2	MoE	minimax-m2	differ	1.09e-07	8.98e-08	1.09e-07	8.98e-08	1.09e-07	8.98e-08	no	no	yes
+f32	cogvlm	Dense	cogvlm	differ	1.19e-07	8.72e-08	1.19e-07	8.72e-08	1.19e-07	8.72e-08	no	no	yes
+f32	rnd1	MoE	rnd1	no logits file	1.09e-07	9.04e-08	1.09e-07	9.04e-08	1.09e-07	9.04e-08	no	no	yes
+f32	pangu-embedded	Dense	pangu-embedded	differ	1.11e-07	9.84e-08	1.11e-07	9.84e-08	1.11e-07	9.84e-08	no	no	yes
+f32	mistral3	Dense	mistral3	differ	9.90e-08	1.07e-07	9.90e-08	1.07e-07	9.90e-08	1.07e-07	no	no	yes
+f32	mistral3	MoE	mistral3-moe	same	9.69e-08	9.69e-08	9.69e-08	9.69e-08	9.69e-08	9.69e-08	yes	yes	yes
+f32	mistral4	MoE	mistral4	differ	2.83e-09	1.93e-09	2.83e-09	1.93e-09	2.83e-09	1.93e-09	no	no	yes
+f32	mistral-large4	MoE	mistral-large4	same	2.07e-09	2.07e-09	2.07e-09	2.07e-09	2.07e-09	2.07e-09	yes	yes	yes
+f32	paddleocr	MoE	paddleocr	differ	1.11e-07	9.84e-08	1.11e-07	9.84e-08	1.11e-07	9.84e-08	no	no	yes
+f32	mimo2	MoE	mimo2	differ	1.02e-07	8.69e-08	1.02e-07	8.69e-08	1.02e-07	8.69e-08	no	no	yes
+f32	step35	MoE	step35	differ	6.42e-09	3.53e-14	6.41e-09	3.53e-14	6.42e-09	3.53e-14	no	no	yes
+f32	spark2_5	Dense	spark2_5	differ	1.32e-07	9.06e-08	1.32e-07	9.06e-08	1.32e-07	9.06e-08	no	no	yes
+f32	llama-embed	Dense	llama-embed	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+f32	llama-embed	MoE	llama-embed-moe	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+f32	maincoder	Dense	maincoder	differ	1.23e-07	8.97e-08	1.23e-07	8.97e-08	1.23e-07	8.97e-08	no	no	yes
+f32	maion-coder	MoE	maion-coder	differ	5.66e-07	2.04e-07	5.58e-07	2.04e-07	5.66e-07	2.04e-07	no	no	yes
+f32	kimi-linear	MoE	kimi-linear	differ	1.72e-10	1.67e-10	1.72e-10	1.67e-10	1.72e-10	1.67e-10	no	no	yes
+f32	kimi-k3	MoE	kimi-k3	differ	3.38e-07	2.16e-07	3.38e-07	2.16e-07	3.38e-07	2.16e-07	no	no	yes
+f32	kimi-k31	MoE	kimi-k31	differ	3.38e-07	2.16e-07	3.38e-07	2.16e-07	3.38e-07	2.16e-07	no	no	yes
+f32	glm5-next	MoE	glm5-next	differ	1.73e-07	1.74e-07	1.73e-07	1.74e-07	1.73e-07	1.74e-07	no	no	yes
+f32	talkie	Dense	talkie	differ	1.14e-07	8.64e-08	1.14e-07	8.64e-08	1.14e-07	8.64e-08	no	no	yes
+f32	mellum	MoE	mellum	same	9.24e-08	9.24e-08	9.24e-08	9.24e-08	9.24e-08	9.24e-08	yes	yes	yes
+f32	minimax-m3	MoE	minimax-m3	same	9.28e-08	9.28e-08	9.28e-08	9.28e-08	9.28e-08	9.28e-08	yes	yes	yes
+f32	nanbeige	Dense	nanbeige	same	9.11e-08	9.11e-08	9.11e-08	9.11e-08	9.11e-08	9.11e-08	yes	yes	yes
+f32	qwen3tts	Dense	qwen3tts	differ	1.18e-07	8.98e-08	1.18e-07	8.98e-08	1.18e-07	8.98e-08	no	no	yes
+f32	pockettts	Dense	pockettts	differ	2.12e-07	7.97e-08	2.12e-07	7.97e-08	2.12e-07	7.97e-08	no	no	yes
+f32	zonos3	MoE	zonos3	differ	1.39e-07	1.08e-07	1.39e-07	1.08e-07	1.39e-07	1.08e-07	no	no	yes
+f32	minimax-01	MoE	minimax-01	differ	1.24e-07	8.63e-08	1.24e-07	8.63e-08	1.24e-07	8.63e-08	no	no	yes
+f32	hrm_text	Dense	hrm_text	differ	4.71e-06	9.27e-08	4.71e-06	9.27e-08	4.71e-06	9.27e-08	no	no	yes
+f32	k2-horizon	Dense	k2-horizon	differ	1.16e-07	8.65e-08	1.16e-07	8.65e-08	1.16e-07	8.65e-08	no	no	yes
+f32	k2-horizon	MoE	k2-horizon-moe	differ	1.22e-07	8.59e-08	1.22e-07	8.59e-08	1.22e-07	8.59e-08	no	no	yes
+f32	beam	MoE	beam	differ	5.40e-07	1.81e-07	5.41e-07	1.81e-07	5.40e-07	1.81e-07	no	no	yes
+f32	kolibri1	MoE	kolibri1	differ	2.78e-07	1.47e-07	2.75e-07	1.46e-07	2.78e-07	1.47e-07	no	no	yes
+f32	limite	Dense	limite	differ	3.73e-07	4.78e-10	3.73e-07	4.78e-10	3.73e-07	4.78e-10	no	no	yes
+f32	ricursive	Dense	ricursive	same	8.81e-08	8.81e-08	8.81e-08	8.81e-08	8.81e-08	8.81e-08	yes	yes	yes
+f32	inkling2	MoE	inkling2	differ	6.39e-09	1.06e-08	6.39e-09	1.06e-08	6.39e-09	1.06e-08	no	no	yes
+f32	zaya1	MoE	zaya1	no logits file		7.70e-08		7.70e-08		7.70e-08			
+f32	moshi	Dense	moshi	no logits file		8.94e-08		8.94e-08		8.94e-08			
+f32	kokoro	Dense	kokoro	no logits file		SKIP		SKIP		SKIP			
+f32	tiny-voca	Dense	tiny-voca	no logits file		SKIP		SKIP		SKIP			
+f32	inkling2_loop	MoE	inkling2_loop	no logits file		1.37e-08		1.37e-08		1.37e-08			
+f32	domynedge	Dense	domynedge	no logits file		1.37e-07		1.37e-07		1.37e-07			
+notf32	clip	Dense	clip	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+notf32	llama	Dense	llama	differ	8.62e-14	2.22e-14	8.62e-14	2.22e-14	8.62e-14	2.22e-14	no	no	yes
+notf32	llama	MoE	llama-moe	same	2.27e-14	2.27e-14	2.27e-14	2.27e-14	2.27e-14	2.27e-14	yes	yes	yes
+notf32	llama4	MoE	llama4	differ	7.40e-14	4.23e-14	7.40e-14	4.23e-14	7.40e-14	4.23e-14	no	no	yes
+notf32	deci	Dense	deci	differ	2.97e-14	2.22e-14	2.97e-14	2.22e-14	2.97e-14	2.22e-14	no	no	yes
+notf32	falcon	Dense	falcon	differ	5.07e-08	1.19e-12	5.07e-08	1.19e-12	5.07e-08	1.19e-12	no	no	yes
+notf32	baichuan	Dense	baichuan	differ	3.50e-14	2.50e-14	3.50e-14	2.50e-14	3.50e-14	2.50e-14	no	no	yes
+notf32	grok	MoE	grok	differ	2.64e-11	2.26e-14	2.64e-11	2.24e-14	2.64e-11	2.26e-14	no	no	yes
+notf32	gpt2	Dense	gpt2	differ	3.87e-08	6.33e-11	3.87e-08	6.33e-11	3.87e-08	6.33e-11	no	no	yes
+notf32	gptj	Dense	gptj	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+notf32	gptneox	Dense	gptneox	differ	4.66e-08	7.93e-11	4.66e-08	7.94e-11	4.66e-08	7.93e-11	no	no	yes
+notf32	mpt	Dense	mpt	differ	4.04e-08	5.29e-11	4.04e-08	5.29e-11	4.04e-08	5.29e-11	no	no	yes
+notf32	starcoder	Dense	starcoder	differ	4.29e-08	6.61e-11	4.29e-08	6.60e-11	4.29e-08	6.61e-11	no	no	yes
+notf32	refact	Dense	refact	differ	3.98e-14	5.49e-14	3.98e-14	5.49e-14	3.98e-14	5.49e-14	no	no	yes
+notf32	refact	MoE	refact-moe	same	3.23e-14	3.23e-14	3.23e-14	3.23e-14	3.23e-14	3.23e-14	yes	yes	yes
+notf32	bert	Dense	bert	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+notf32	modern-bert	Dense	modern-bert	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+notf32	nomic-bert	Dense	nomic-bert	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+notf32	nomic-bert-moe	Dense	nomic-bert-moe	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+notf32	neo-bert	Dense	neo-bert	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+notf32	jina-bert-v2	Dense	jina-bert-v2	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+notf32	jina-bert-v3	Dense	jina-bert-v3	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+notf32	eurobert	Dense	eurobert	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+notf32	bloom	Dense	bloom	differ	3.99e-08	6.09e-11	3.99e-08	6.09e-11	3.99e-08	6.09e-11	no	no	yes
+notf32	stablelm	Dense	stablelm	differ	4.33e-14	2.47e-14	4.33e-14	2.57e-14	4.33e-14	2.47e-14	no	no	yes
+notf32	qwen	Dense	qwen	differ	3.09e-14	2.84e-14	3.09e-14	2.84e-14	3.09e-14	2.84e-14	no	no	yes
+notf32	qwen2	Dense	qwen2	same	3.21e-14	3.21e-14	3.21e-14	3.21e-14	3.21e-14	3.21e-14	yes	yes	yes
+notf32	qwen2moe	MoE	qwen2moe	differ	3.54e-14	3.11e-14	3.49e-14	3.11e-14	3.54e-14	3.11e-14	no	no	yes
+notf32	qwen2vl	Dense	qwen2vl	same	3.43e-14	3.43e-14	3.43e-14	3.43e-14	3.43e-14	3.43e-14	yes	yes	yes
+notf32	sensenova_u1	Dense	sensenova_u1	same	2.89e-14	2.89e-14	2.89e-14	2.89e-14	2.89e-14	2.89e-14	yes	yes	yes
+notf32	qwen3	Dense	qwen3	same	2.42e-14	2.42e-14	2.43e-14	2.43e-14	2.42e-14	2.42e-14	yes	yes	yes
+notf32	qwen3moe	MoE	qwen3moe	same	3.01e-14	3.01e-14	3.01e-14	3.01e-14	3.01e-14	3.01e-14	yes	yes	yes
+notf32	flint	MoE	flint	same	3.15e-14	3.15e-14	3.15e-14	3.15e-14	3.15e-14	3.15e-14	yes	yes	yes
+notf32	qwen3next	MoE	qwen3next	differ	2.25e-14	2.34e-14	2.27e-14	2.35e-14	2.25e-14	2.34e-14	no	no	yes
+notf32	qwen3vl	Dense	qwen3vl	differ	3.75e-14	3.48e-14	3.75e-14	3.48e-14	3.75e-14	3.48e-14	no	no	yes
+notf32	qwen3vlmoe	MoE	qwen3vlmoe	differ	3.33e-14	3.01e-14	3.17e-14	3.01e-14	3.33e-14	3.01e-14	no	no	yes
+notf32	qwen35	Dense	qwen35	same	2.19e-14	2.19e-14	2.19e-14	2.19e-14	2.19e-14	2.19e-14	yes	yes	yes
+notf32	qwen35moe	MoE	qwen35moe	differ	2.21e-14	2.44e-14	2.20e-14	2.44e-14	2.21e-14	2.44e-14	no	no	yes
+notf32	clef	Dense	clef	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+notf32	vllm-decision2	Dense	vllm-decision2	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+notf32	clover_moe	MoE	clover_moe	differ	2.27e-14	2.16e-14	2.23e-14	2.15e-14	2.27e-14	2.16e-14	no	no	yes
+notf32	qwen4exp	MoE	qwen4exp	differ	2.51e-14	2.56e-14	2.51e-14	2.56e-14	2.51e-14	2.56e-14	no	no	yes
+notf32	phi2	Dense	phi2	differ	3.96e-08	7.76e-11	3.96e-08	7.76e-11	3.96e-08	7.76e-11	no	no	yes
+notf32	phi3	Dense	phi3	differ	3.45e-14	8.39e-14	3.45e-14	8.39e-14	3.45e-14	8.39e-14	no	no	yes
+notf32	phimoe	MoE	phimoe	differ	2.65e-14	2.17e-14	2.59e-14	2.19e-14	2.65e-14	2.17e-14	no	no	yes
+notf32	plamo	Dense	plamo	differ	3.20e-14	3.74e-14	3.20e-14	3.74e-14	3.20e-14	3.74e-14	no	no	yes
+notf32	plamo2	Dense	plamo2	differ	3.73e-11	3.01e-13	3.73e-11	3.01e-13	3.73e-11	3.01e-13	no	no	yes
+notf32	plamo3	Dense	plamo3	differ	1.21e-10	5.49e-12	1.22e-10	5.50e-12	1.21e-10	5.49e-12	no	no	yes
+notf32	codeshell	Dense	codeshell	differ	4.52e-08	8.52e-11	4.52e-08	8.52e-11	4.52e-08	8.52e-11	no	no	yes
+notf32	orion	Dense	orion	differ	4.47e-14	2.42e-14	4.47e-14	2.35e-14	4.47e-14	2.42e-14	no	no	yes
+notf32	internlm2	Dense	internlm2	differ	3.72e-14	3.98e-14	3.72e-14	3.98e-14	3.72e-14	3.98e-14	no	no	yes
+notf32	minicpm	Dense	minicpm	differ	2.40e-14	2.44e-14	2.40e-14	2.44e-14	2.40e-14	2.44e-14	no	no	yes
+notf32	minicpm	MoE	minicpm-moe	same	2.16e-14	2.16e-14	2.16e-14	2.16e-14	2.16e-14	2.16e-14	yes	yes	yes
+notf32	minicpm3	Dense	minicpm3	differ	2.10e-14	2.35e-14	2.10e-14	2.35e-14	2.10e-14	2.35e-14	no	no	yes
+notf32	gemma	Dense	gemma	differ	4.60e-11	2.02e-14	4.60e-11	2.02e-14	4.60e-11	2.02e-14	no	no	yes
+notf32	gemma2	Dense	gemma2	differ	6.33e-10	2.93e-14	6.33e-10	2.96e-14	6.33e-10	2.93e-14	no	no	yes
+notf32	gemma3	Dense	gemma3	differ	6.83e-10	2.34e-14	6.83e-10	2.33e-14	6.83e-10	2.34e-14	no	no	yes
+notf32	gemma3n	Dense	gemma3n	differ	5.11e-08	8.02e-09	5.11e-08	8.02e-09	5.11e-08	8.02e-09	no	no	yes
+notf32	gemma4	Dense	gemma4	same	1.43e-07	1.43e-07	1.43e-07	1.43e-07	1.43e-07	1.43e-07	yes	yes	yes
+notf32	gemma-embedding	Dense	gemma-embedding	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+notf32	gemma-embedding2	Dense	gemma-embedding2	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+notf32	starcoder2	Dense	starcoder2	differ	4.52e-08	8.52e-11	4.52e-08	8.52e-11	4.52e-08	8.52e-11	no	no	yes
+notf32	mamba	Dense	mamba	same	2.15e-14	2.15e-14	2.15e-14	2.15e-14	2.15e-14	2.15e-14	yes	yes	yes
+notf32	mamba2	Dense	mamba2	same	2.30e-14	2.30e-14	2.30e-14	2.30e-14	2.30e-14	2.30e-14	yes	yes	yes
+notf32	maple	MoE	maple	differ	3.34e-14	2.43e-14	3.36e-14	2.43e-14	3.34e-14	2.43e-14	no	no	yes
+notf32	jamba	Dense	jamba	differ	3.28e-14	2.08e-14	3.28e-14	2.08e-14	3.28e-14	2.08e-14	no	no	yes
+notf32	falcon-h1	Dense	falcon-h1	differ	3.44e-14	3.17e-14	3.44e-14	3.17e-14	3.44e-14	3.17e-14	no	no	yes
+notf32	xverse	Dense	xverse	differ	3.72e-14	3.98e-14	3.72e-14	3.98e-14	3.72e-14	3.98e-14	no	no	yes
+notf32	command-r	Dense	command-r	differ	5.70e-14	2.58e-14	5.70e-14	2.52e-14	5.70e-14	2.58e-14	no	no	yes
+notf32	cohere2	Dense	cohere2	same	2.43e-14	2.44e-14	2.43e-14	2.43e-14	2.43e-14	2.44e-14	no	yes	yes
+notf32	cohere2moe	MoE	cohere2moe	differ	2.54e-14	2.54e-14	2.54e-14	2.54e-14	2.54e-14	2.54e-14	yes	yes	yes
+notf32	dbrx	MoE	dbrx	differ	3.19e-14	2.74e-14	3.20e-14	2.41e-14	3.19e-14	2.74e-14	no	no	yes
+notf32	olmo	Dense	olmo	differ	1.68e-13	5.81e-14	1.68e-13	5.81e-14	1.68e-13	5.81e-14	no	no	yes
+notf32	olmo2	Dense	olmo2	differ	2.00e-12	1.04e-13	1.50e-12	1.01e-13	2.00e-12	1.04e-13	no	no	yes
+notf32	olmoe	MoE	olmoe	differ	3.32e-14	3.23e-14	3.27e-14	3.23e-14	3.32e-14	3.23e-14	no	no	yes
+notf32	muse-glimmer	Dense	muse-glimmer	differ	5.35e-14	2.81e-14	5.38e-14	2.82e-14	5.35e-14	2.81e-14	no	no	yes
+notf32	muse-spark	MoE	muse-spark	differ	5.05e-13	4.09e-13	4.15e-13	4.04e-13	5.05e-13	4.09e-13	no	no	yes
+notf32	openelm	Dense	openelm	differ	1.76e-13	2.26e-14	1.77e-13	2.26e-14	1.76e-13	2.26e-14	no	no	yes
+notf32	arctic	MoE	arctic	differ	7.65e-14	2.65e-14	7.77e-14	2.65e-14	7.65e-14	2.65e-14	no	no	yes
+notf32	deepseek	MoE	deepseek	differ	3.97e-14	3.90e-14	3.95e-14	3.90e-14	3.97e-14	3.90e-14	no	no	yes
+notf32	deepseek2	MoE	deepseek2	differ	1.96e-13	1.01e-13	1.96e-13	1.01e-13	1.96e-13	1.01e-13	no	no	yes
+notf32	deepseek2-ocr	Dense	deepseek2-ocr	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+notf32	deepseek32	MoE	deepseek32	same	1.01e-13	1.01e-13	1.01e-13	1.01e-13	1.01e-13	1.01e-13	yes	yes	yes
+notf32	deepseek4	MoE	deepseek4	differ	3.96e-11	8.78e-11	4.06e-11	8.78e-11	3.96e-11	8.78e-11	no	no	yes
+notf32	deepseek41	MoE	deepseek41	differ	1.53e-10	5.59e-11	1.53e-10	5.61e-11	1.53e-10	5.59e-11	no	no	yes
+notf32	xing4_0	MoE	xing4_0	differ	5.97e-13	9.97e-13	5.97e-13	9.97e-13	5.97e-13	9.97e-13	no	no	yes
+notf32	chatglm	Dense	chatglm	differ	3.61e-14	2.41e-14	3.61e-14	2.41e-14	3.61e-14	2.41e-14	no	no	yes
+notf32	glm4	Dense	glm4	differ	2.20e-13	1.66e-13	1.49e-13	2.66e-13	2.20e-13	1.66e-13	no	no	yes
+notf32	glm4moe	MoE	glm4moe	differ	4.15e-14	2.43e-14	4.17e-14	2.43e-14	4.15e-14	2.43e-14	no	no	yes
+notf32	glm-dsa	MoE	glm-dsa	same	1.01e-13	1.01e-13	1.01e-13	1.01e-13	1.01e-13	1.01e-13	yes	yes	yes
+notf32	bitnet	Dense	bitnet	same	2.54e-12	2.54e-12	2.54e-12	2.54e-12	2.54e-12	2.54e-12	yes	yes	yes
+notf32	t5	Dense	t5	no logits file	2.11e-09	2.11e-09	2.11e-09	2.11e-09	2.11e-09	2.11e-09	yes	yes	yes
+notf32	t5encoder	Dense	t5encoder	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+notf32	jais	Dense	jais	differ	2.82e-14	2.16e-14	2.82e-14	2.11e-14	2.82e-14	2.16e-14	no	no	yes
+notf32	jais2	Dense	jais2	differ	3.89e-14	2.38e-14	3.89e-14	2.25e-14	3.89e-14	2.38e-14	no	no	yes
+notf32	nemotron	Dense	nemotron	differ	3.89e-14	2.38e-14	3.89e-14	2.25e-14	3.89e-14	2.38e-14	no	no	yes
+notf32	nemotron_h	Dense	nemotron_h	differ	2.00e-14	1.96e-14	2.00e-14	1.96e-14	2.00e-14	1.96e-14	no	no	yes
+notf32	nemotron_h_moe	Dense	nemotron_h_moe	differ	2.00e-14	1.96e-14	2.00e-14	1.96e-14	2.00e-14	1.96e-14	no	no	yes
+notf32	metis16	MoE	metis16	differ	3.51e-14	3.38e-14	3.40e-14	3.38e-14	3.51e-14	3.38e-14	no	no	yes
+notf32	exaone	Dense	exaone	differ	3.67e-14	5.12e-14	3.67e-14	5.12e-14	3.67e-14	5.12e-14	no	no	yes
+notf32	exaone4	Dense	exaone4	differ	4.35e-13	5.39e-14	2.32e-13	5.39e-14	4.35e-13	5.39e-14	no	no	yes
+notf32	exaone-moe	MoE	exaone-moe	differ	3.56e-13	1.92e-13	3.54e-13	1.92e-13	3.56e-13	1.92e-13	no	no	yes
+notf32	rwkv6	Dense	rwkv6	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+notf32	rwkv6qwen2	Dense	rwkv6qwen2	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+notf32	rwkv7	Dense	rwkv7	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+notf32	arwkv7	Dense	arwkv7	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+notf32	granite	Dense	granite	differ	2.47e-14	2.99e-14	2.47e-14	2.99e-14	2.47e-14	2.99e-14	no	no	yes
+notf32	granite	MoE	granite-moe	same	2.45e-14	2.45e-14	2.45e-14	2.45e-14	2.45e-14	2.45e-14	yes	yes	yes
+notf32	granitemoe	Dense	granitemoe	differ	2.47e-14	2.99e-14	2.47e-14	2.99e-14	2.47e-14	2.99e-14	no	no	yes
+notf32	granitemoe	MoE	granitemoe-moe	same	2.45e-14	2.45e-14	2.45e-14	2.45e-14	2.45e-14	2.45e-14	yes	yes	yes
+notf32	granitehybrid	Dense	granitehybrid	differ	2.05e-14	1.99e-14	2.05e-14	1.99e-14	2.05e-14	1.99e-14	no	no	yes
+notf32	graniteswitch	Dense	graniteswitch	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+notf32	granite_swa	Dense	granite_swa	differ	5.19e-14	2.71e-14	5.19e-14	2.71e-14	5.19e-14	2.71e-14	no	no	yes
+notf32	chameleon	Dense	chameleon	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+notf32	wavtokenizer-dec	Dense	wavtokenizer-dec	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+notf32	plm	Dense	plm	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+notf32	bailingmoe	MoE	bailingmoe	differ	4.12e-14	7.68e-14	4.08e-14	7.68e-14	4.12e-14	7.68e-14	no	no	yes
+notf32	bailingmoe2	MoE	bailingmoe2	differ	3.57e-14	2.37e-14	3.52e-14	2.37e-14	3.57e-14	2.37e-14	no	no	yes
+notf32	bailingmoe3	MoE	bailingmoe3	differ	8.16e-14	7.46e-14	8.13e-14	7.46e-14	8.16e-14	7.46e-14	no	no	yes
+notf32	dots1	MoE	dots1	differ	3.88e-14	3.41e-14	3.83e-14	3.40e-14	3.88e-14	3.41e-14	no	no	yes
+notf32	dots3note	MoE	dots3note	differ	1.02e-13	3.82e-14	1.02e-13	3.81e-14	1.02e-13	3.82e-14	no	no	yes
+notf32	arcee	Dense	arcee	differ	5.37e-14	2.87e-14	5.37e-14	2.87e-14	5.37e-14	2.87e-14	no	no	yes
+notf32	afmoe	MoE	afmoe	differ	2.31e-14	2.18e-14	6.57e-14	2.12e-14	2.31e-14	2.18e-14	no	no	yes
+notf32	laguna	MoE	laguna	differ	3.58e-14	3.81e-14	3.53e-14	3.82e-14	3.58e-14	3.81e-14	no	no	yes
+notf32	ernie4_5	MoE	ernie4_5	differ	3.72e-14	3.98e-14	3.72e-14	3.98e-14	3.72e-14	3.98e-14	no	no	yes
+notf32	ernie4_5-moe	MoE	ernie4_5-moe	differ	3.77e-14	4.02e-14	3.80e-14	4.02e-14	3.77e-14	4.02e-14	no	no	yes
+notf32	hunyuan-moe	MoE	hunyuan-moe	differ	3.65e-14	6.31e-14	3.76e-14	6.31e-14	3.65e-14	6.31e-14	no	no	yes
+notf32	hunyuan-dense	Dense	hunyuan-dense	differ	3.70e-14	7.23e-14	3.70e-14	7.23e-14	3.70e-14	7.23e-14	no	no	yes
+notf32	hunyuan_vl	Dense	hunyuan_vl	differ	3.70e-14	7.23e-14	3.70e-14	7.23e-14	3.70e-14	7.23e-14	no	no	yes
+notf32	hy_v3	MoE	hy_v3	differ	2.92e-14	2.46e-14	2.67e-14	2.44e-14	2.92e-14	2.46e-14	no	no	yes
+notf32	hy_v4	MoE	hy_v4	differ	7.57e-12	4.21e-14	7.58e-12	4.21e-14	7.57e-12	4.21e-14	no	no	yes
+notf32	smollm3	Dense	smollm3	differ	3.72e-14	3.98e-14	3.72e-14	3.98e-14	3.72e-14	3.98e-14	no	no	yes
+notf32	gpt-oss	MoE	gpt-oss	differ	5.81e-14	2.64e-14	5.83e-14	2.62e-14	5.81e-14	2.64e-14	no	no	yes
+notf32	lfm2	Dense	lfm2	same	2.17e-14	2.17e-14	2.18e-14	2.18e-14	2.17e-14	2.17e-14	yes	yes	yes
+notf32	lfm2moe	MoE	lfm2moe	same	2.10e-14	2.10e-14	2.09e-14	2.09e-14	2.10e-14	2.10e-14	yes	yes	yes
+notf32	lfm3	Dense	lfm3	same	9.15e-14	9.15e-14	8.50e-14	8.50e-14	9.15e-14	9.15e-14	yes	yes	yes
+notf32	dream	Dense	dream	no logits file	4.84e-14	3.08e-14	4.84e-14	3.08e-14	4.84e-14	3.08e-14	no	no	yes
+notf32	smallthinker	MoE	smallthinker	differ	3.54e-14	2.73e-14	3.51e-14	2.73e-14	3.54e-14	2.73e-14	no	no	yes
+notf32	llada	Dense	llada	no logits file	4.08e-14	2.44e-14	4.08e-14	2.44e-14	4.08e-14	2.44e-14	no	no	yes
+notf32	llada-moe	MoE	llada-moe	no logits file	3.53e-14	2.57e-14	3.63e-14	2.58e-14	3.53e-14	2.57e-14	no	no	yes
+notf32	seed_oss	Dense	seed_oss	differ	3.72e-14	2.92e-14	3.72e-14	2.92e-14	3.72e-14	2.92e-14	no	no	yes
+notf32	grovemoe	MoE	grovemoe	differ	3.34e-14	3.03e-14	3.31e-14	3.03e-14	3.34e-14	3.03e-14	no	no	yes
+notf32	apertus	Dense	apertus	differ	6.85e-14	2.29e-14	6.69e-14	2.33e-14	6.85e-14	2.29e-14	no	no	yes
+notf32	minimax-m2	MoE	minimax-m2	differ	3.31e-14	4.36e-14	3.31e-14	4.36e-14	3.31e-14	4.36e-14	no	no	yes
+notf32	cogvlm	Dense	cogvlm	differ	1.34e-13	3.18e-14	1.34e-13	3.18e-14	1.34e-13	3.18e-14	no	no	yes
+notf32	rnd1	MoE	rnd1	no logits file	3.58e-14	2.58e-14	3.65e-14	2.58e-14	3.58e-14	2.58e-14	no	no	yes
+notf32	pangu-embedded	Dense	pangu-embedded	differ	2.86e-14	2.39e-14	2.86e-14	2.39e-14	2.86e-14	2.39e-14	no	no	yes
+notf32	mistral3	Dense	mistral3	differ	8.62e-14	2.22e-14	8.62e-14	2.22e-14	8.62e-14	2.22e-14	no	no	yes
+notf32	mistral3	MoE	mistral3-moe	same	2.27e-14	2.27e-14	2.27e-14	2.27e-14	2.27e-14	2.27e-14	yes	yes	yes
+notf32	mistral4	MoE	mistral4	differ	1.97e-13	1.02e-13	1.98e-13	1.02e-13	1.97e-13	1.02e-13	no	no	yes
+notf32	mistral-large4	MoE	mistral-large4	same	7.77e-14	7.77e-14	7.77e-14	7.77e-14	7.77e-14	7.77e-14	yes	yes	yes
+notf32	paddleocr	MoE	paddleocr	differ	2.86e-14	2.39e-14	2.86e-14	2.39e-14	2.86e-14	2.39e-14	no	no	yes
+notf32	mimo2	MoE	mimo2	differ	4.08e-13	3.12e-14	3.77e-13	3.12e-14	4.08e-13	3.12e-14	no	no	yes
+notf32	step35	MoE	step35	differ	3.56e-14	3.04e-14	3.57e-14	3.04e-14	3.56e-14	3.04e-14	no	no	yes
+notf32	spark2_5	Dense	spark2_5	differ	1.06e-08	2.36e-14	1.06e-08	2.36e-14	1.06e-08	2.36e-14	no	no	yes
+notf32	llama-embed	Dense	llama-embed	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+notf32	llama-embed	MoE	llama-embed-moe	no logits file	SKIP	SKIP	SKIP	SKIP	SKIP	SKIP			
+notf32	maincoder	Dense	maincoder	differ	4.48e-14	2.47e-14	4.48e-14	2.47e-14	4.48e-14	2.47e-14	no	no	yes
+notf32	maion-coder	MoE	maion-coder	differ	6.25e-13	6.12e-13	7.43e-13	7.58e-13	6.25e-13	6.12e-13	no	no	yes
+notf32	kimi-linear	MoE	kimi-linear	differ	2.70e-14	2.30e-14	2.70e-14	2.30e-14	2.70e-14	2.30e-14	no	no	yes
+notf32	kimi-k3	MoE	kimi-k3	differ	9.31e-13	1.21e-12	9.31e-13	1.21e-12	9.31e-13	1.21e-12	no	no	yes
+notf32	kimi-k31	MoE	kimi-k31	differ	9.31e-13	1.21e-12	9.31e-13	1.21e-12	9.31e-13	1.21e-12	no	no	yes
+notf32	glm5-next	MoE	glm5-next	differ	3.73e-11	3.83e-11	3.73e-11	3.83e-11	3.73e-11	3.83e-11	no	no	yes
+notf32	talkie	Dense	talkie	differ	6.51e-14	5.72e-14	6.46e-14	5.71e-14	6.51e-14	5.72e-14	no	no	yes
+notf32	mellum	MoE	mellum	same	2.53e-14	2.53e-14	2.52e-14	2.52e-14	2.53e-14	2.53e-14	yes	yes	yes
+notf32	minimax-m3	MoE	minimax-m3	same	2.44e-13	2.44e-13	2.45e-13	2.45e-13	2.44e-13	2.44e-13	yes	yes	yes
+notf32	nanbeige	Dense	nanbeige	same	2.46e-14	2.46e-14	2.46e-14	2.46e-14	2.46e-14	2.46e-14	yes	yes	yes
+notf32	qwen3tts	Dense	qwen3tts	differ	5.15e-14	4.76e-14	5.15e-14	4.76e-14	5.15e-14	4.76e-14	no	no	yes
+notf32	pockettts	Dense	pockettts	differ	5.19e-08	9.17e-13	5.19e-08	9.14e-13	5.19e-08	9.17e-13	no	no	yes
+notf32	zonos3	MoE	zonos3	differ	6.88e-14	5.48e-14	7.01e-14	5.33e-14	6.88e-14	5.48e-14	no	no	yes
+notf32	minimax-01	MoE	minimax-01	differ	3.96e-14	2.58e-14	3.97e-14	2.58e-14	3.96e-14	2.58e-14	no	no	yes
+notf32	hrm_text	Dense	hrm_text	differ	1.22e-12	2.99e-14	1.22e-12	2.99e-14	1.22e-12	2.99e-14	no	no	yes
+notf32	k2-horizon	Dense	k2-horizon	differ	3.41e-14	2.23e-14	3.41e-14	2.23e-14	3.41e-14	2.23e-14	no	no	yes
+notf32	k2-horizon	MoE	k2-horizon-moe	differ	4.09e-14	2.96e-14	4.11e-14	2.95e-14	4.09e-14	2.96e-14	no	no	yes
+notf32	beam	MoE	beam	differ	3.61e-13	2.08e-13	3.60e-13	2.08e-13	3.61e-13	2.08e-13	no	no	yes
+notf32	kolibri1	MoE	kolibri1	differ	5.02e-13	5.44e-13	5.07e-13	5.44e-13	5.02e-13	5.44e-13	no	no	yes
+notf32	limite	Dense	limite	differ	5.79e-14	6.23e-15	5.79e-14	6.23e-15	5.79e-14	6.23e-15	no	no	yes
+notf32	ricursive	Dense	ricursive	same	1.14e-13	1.14e-13	1.14e-13	1.14e-13	1.14e-13	1.14e-13	yes	yes	yes
+notf32	inkling2	MoE	inkling2	differ	3.38e-10	2.49e-10	3.38e-10	2.49e-10	3.38e-10	2.49e-10	no	no	yes
+notf32	zaya1	MoE	zaya1	no logits file		1.84e-14		1.84e-14		1.84e-14			
+notf32	moshi	Dense	moshi	no logits file		4.12e-14		4.12e-14		4.12e-14			
+notf32	kokoro	Dense	kokoro	no logits file		SKIP		SKIP		SKIP			
+notf32	tiny-voca	Dense	tiny-voca	no logits file		SKIP		SKIP		SKIP			
+notf32	inkling2_loop	MoE	inkling2_loop	no logits file		6.09e-10		6.09e-10		6.09e-10			
+notf32	domynedge	Dense	domynedge	no logits file		1.02e-13		1.01e-13		1.02e-13			

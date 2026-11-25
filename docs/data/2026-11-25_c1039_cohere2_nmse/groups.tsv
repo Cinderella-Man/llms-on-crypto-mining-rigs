@@ -1,0 +1,10 @@
+set	cpu_logits_cand_vs_ref	models_with_a_number_in_every_run	builds_same_fusions_on	builds_same_fusions_off	repeats_same
+plain	differ	120	0	0	120
+plain	no logits file	5	1	1	5
+plain	same	28	28	28	28
+f32	differ	120	0	0	120
+f32	no logits file	5	1	1	5
+f32	same	28	28	28	28
+notf32	differ	120	1	1	120
+notf32	no logits file	5	1	1	5
+notf32	same	28	27	28	28

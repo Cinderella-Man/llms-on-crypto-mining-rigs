@@ -1,0 +1,19 @@
+set	run	build	fusions	exit	summary	card_rows_ok	card_rows_fail	card_rows_skip	cpu_logits_written	cpu_logits_compared_with_ref_on	cpu_logits_differing
+plain	ref-on	af00bb13b	on (default)	0	Summary: all 155 test(s) passed	153	0	26	148	0	0
+plain	cand-on	eee615cdb	on (default)	1	Summary: 159 test(s) executed, 120 failed	157	0	28	4	148	120
+plain	ref-off	af00bb13b	off (GGML_CUDA_DISABLE_FUSION=1)	0	Summary: all 155 test(s) passed	153	0	26	0	148	0
+plain	cand-off	eee615cdb	off (GGML_CUDA_DISABLE_FUSION=1)	1	Summary: 159 test(s) executed, 120 failed	157	0	28	0	152	120
+plain	ref-on2	af00bb13b	on (default)	0	Summary: all 155 test(s) passed	153	0	26	0	148	0
+plain	cand-on2	eee615cdb	on (default)	1	Summary: 159 test(s) executed, 120 failed	157	0	28	0	152	120
+f32	ref-on	af00bb13b	on (default)	0	Summary: all 155 test(s) passed	153	0	26	148	0	0
+f32	cand-on	eee615cdb	on (default)	1	Summary: 159 test(s) executed, 120 failed	157	0	28	4	148	120
+f32	ref-off	af00bb13b	off (GGML_CUDA_DISABLE_FUSION=1)	0	Summary: all 155 test(s) passed	153	0	26	0	148	0
+f32	cand-off	eee615cdb	off (GGML_CUDA_DISABLE_FUSION=1)	1	Summary: 159 test(s) executed, 120 failed	157	0	28	0	152	120
+f32	ref-on2	af00bb13b	on (default)	0	Summary: all 155 test(s) passed	153	0	26	0	148	0
+f32	cand-on2	eee615cdb	on (default)	1	Summary: 159 test(s) executed, 120 failed	157	0	28	0	152	120
+notf32	ref-on	af00bb13b	on (default)	0	Summary: all 155 test(s) passed	153	0	26	148	0	0
+notf32	cand-on	eee615cdb	on (default)	1	Summary: 159 test(s) executed, 120 failed	157	0	28	4	148	120
+notf32	ref-off	af00bb13b	off (GGML_CUDA_DISABLE_FUSION=1)	0	Summary: all 155 test(s) passed	153	0	26	0	148	0
+notf32	cand-off	eee615cdb	off (GGML_CUDA_DISABLE_FUSION=1)	1	Summary: 159 test(s) executed, 120 failed	157	0	28	0	152	120
+notf32	ref-on2	af00bb13b	on (default)	0	Summary: all 155 test(s) passed	153	0	26	0	148	0
+notf32	cand-on2	eee615cdb	on (default)	1	Summary: 159 test(s) executed, 120 failed	157	0	28	0	152	120
