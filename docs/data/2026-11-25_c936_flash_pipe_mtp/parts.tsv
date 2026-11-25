@@ -1,0 +1,26 @@
+config	request	against	index	its token	the reference's token	the reference's top two (id:text:logprob)	this config's top two
+preset	reply256	plain	136	31488	30653	30653:" expiration":-1.0007 31488:" expire":-1.0324	31488:" expire":-0.9994 30653:" expiration":-1.0161
+preset	reply512	plain	43	5479	15403	15403:" membership":-1.3120 5479:" insert":-1.4555	-
+preset	schema	plain	13	75	548	548:"__":-1.2729 75:"l":-1.3369	-
+plain	reply256	preset	136	30653	31488	31488:" expire":-0.9994 30653:" expiration":-1.0161	30653:" expiration":-1.0007 31488:" expire":-1.0324
+plain	reply512	preset	43	15403	5479	-	15403:" membership":-1.3120 5479:" insert":-1.4555
+plain	schema	preset	13	548	75	-	548:"__":-1.2729 75:"l":-1.3369
+d1	reply256	preset	136	30653	31488	31488:" expire":-0.9994 30653:" expiration":-1.0161	-
+d1	reply512	preset	43	15403	5479	-	-
+d1	schema	preset	13	548	75	-	-
+d2	reply256	preset	136	30653	31488	31488:" expire":-0.9994 30653:" expiration":-1.0161	-
+d2	reply512	preset	43	15403	5479	-	-
+d2	schema	preset	13	548	75	-	-
+d3	reply256	preset	136	30653	31488	31488:" expire":-0.9994 30653:" expiration":-1.0161	-
+d3	reply512	preset	43	15403	5479	-	-
+d3	schema	preset	13	548	75	-	-
+walk	reply256	preset	136	30653	31488	31488:" expire":-0.9994 30653:" expiration":-1.0161	-
+walk	reply512	preset	43	15403	5479	-	-
+walk	schema	preset	13	548	75	-	-
+grammar	reply256	preset	136	30653	31488	31488:" expire":-0.9994 30653:" expiration":-1.0161	-
+grammar	reply512	preset	43	15403	5479	-	-
+grammar	schema	preset	13	548	75	-	-
+grammar	schema	plain	23	1877	23095	23095:"tests":-1.4265 1877:"test":-1.4787	-
+plain_probs	reply256	preset	136	30653	31488	31488:" expire":-0.9994 30653:" expiration":-1.0161	30653:" expiration":-1.0007 31488:" expire":-1.0324
+plain_probs	reply512	preset	43	15403	5479	-	15403:" membership":-1.3120 5479:" insert":-1.4555
+plain_probs	schema	preset	13	548	75	-	548:"__":-1.2729 75:"l":-1.3369

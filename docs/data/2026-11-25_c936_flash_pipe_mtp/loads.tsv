@@ -1,0 +1,9 @@
+config	added to the preset	status	load s	server's pipe lines
+preset	-	loaded; requests done (client exit 0)	229	-
+plain	draft off	loaded; requests done (client exit 0)	213	-
+d1	--pipe-depth 1 --pipe-guess mtp	loaded; requests done (client exit 0)	229	pipelined speculation: the MTP head guesses (rows of 10240) / pipelined speculation: up to 1 guesses (mtp, copy >= 4, floor 0), 4 pipe slots
+d2	--pipe-depth 2 --pipe-guess mtp	loaded; requests done (client exit 0)	229	pipelined speculation: the MTP head guesses (rows of 10240) / pipelined speculation: up to 2 guesses (mtp, copy >= 4, floor 0), 6 pipe slots
+d3	--pipe-depth 3 --pipe-guess mtp	loaded; requests done (client exit 0)	229	pipelined speculation: the MTP head guesses (rows of 10240) / pipelined speculation: up to 3 guesses (mtp, copy >= 4, floor 0), 8 pipe slots
+walk	--pipe-depth 3 --pipe-guess mtp --pipe-mtp-walk 1000	loaded; requests done (client exit 0)	229	pipelined speculation: the MTP head guesses (rows of 10240) / pipelined speculation: up to 3 guesses (mtp, copy >= 4, floor 0), 8 pipe slots
+grammar	LLAMA_PIPE_GRAMMAR=1 --pipe-depth 3 --pipe-guess mtp	loaded; requests done (client exit 0)	229	pipelined speculation: the MTP head guesses (rows of 10240) / pipelined speculation: up to 3 guesses (mtp, copy >= 4, floor 0), 8 pipe slots
+plain_probs	-	loaded; requests done (client exit 0)	213	-

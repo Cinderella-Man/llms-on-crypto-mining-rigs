@@ -1,0 +1,28 @@
+config	request	tokens	stop	client s	error	vs preset	vs plain	tok/s (server)	text start
+preset	reply256	256	limit	16.1	-	same	parts at 136	20.28	We need answer user: "Write a Python class implementing an L
+preset	reply256_probs	256	limit	16.1	-	same	parts at 136	17.61	We need answer user: "Write a Python class implementing an L
+preset	reply512	512	limit	22.9	-	same	parts at 43	23.85	We need answer user: "Explain how a Bloom filter works, when
+preset	schema	34	eos	3.4	-	same	parts at 13	21.19	{"name": "lru_cache_ttl", "files": ["lru_cache.py", "test_lr
+plain	reply256	256	limit	16.8	-	parts at 136	same	18.07	We need answer user: "Write a Python class implementing an L
+plain	reply256_probs	256	limit	17.6	-	parts at 136	same	15.80	We need answer user: "Write a Python class implementing an L
+plain	reply512	512	limit	29.4	-	parts at 43	same	18.26	We need answer user: "Explain how a Bloom filter works, when
+plain	schema	37	eos	3.9	-	parts at 13	same	17.34	{"name": "lru_cache_ttl", "files": ["__init__.py", "cache.py
+d1	reply256	256	limit	23.2	-	parts at 136	same	12.65	We need answer user: "Write a Python class implementing an L
+d1	reply512	512	limit	36.3	-	parts at 43	same	14.65	We need answer user: "Explain how a Bloom filter works, when
+d1	schema	37	eos	19.0	-	parts at 13	same	2.10	{"name": "lru_cache_ttl", "files": ["__init__.py", "cache.py
+d2	reply256	256	limit	29.6	-	parts at 136	same	9.66	We need answer user: "Write a Python class implementing an L
+d2	reply512	512	limit	47.9	-	parts at 43	same	11.03	We need answer user: "Explain how a Bloom filter works, when
+d2	schema	37	eos	17.4	-	parts at 13	same	2.30	{"name": "lru_cache_ttl", "files": ["__init__.py", "cache.py
+d3	reply256	256	limit	39.8	-	parts at 136	same	7.00	We need answer user: "Write a Python class implementing an L
+d3	reply512	512	limit	62.8	-	parts at 43	same	8.37	We need answer user: "Explain how a Bloom filter works, when
+d3	schema	37	eos	19.6	-	parts at 13	same	2.04	{"name": "lru_cache_ttl", "files": ["__init__.py", "cache.py
+walk	reply256	256	limit	38.3	-	parts at 136	same	7.25	We need answer user: "Write a Python class implementing an L
+walk	reply512	512	limit	62.0	-	parts at 43	same	8.47	We need answer user: "Explain how a Bloom filter works, when
+walk	schema	37	eos	20.4	-	parts at 13	same	1.96	{"name": "lru_cache_ttl", "files": ["__init__.py", "cache.py
+grammar	reply256	256	limit	35.7	-	parts at 136	same	7.80	We need answer user: "Write a Python class implementing an L
+grammar	reply512	512	limit	56.9	-	parts at 43	same	9.23	We need answer user: "Explain how a Bloom filter works, when
+grammar	schema	32	eos	11.7	-	parts at 13	parts at 23	3.13	{"name": "lru_cache_ttl", "files": ["__init__.py", "cache.py
+plain_probs	reply256	256	limit	17.1	-	parts at 136	same	17.76	We need answer user: "Write a Python class implementing an L
+plain_probs	reply256_probs	256	limit	17.6	-	parts at 136	same	15.80	We need answer user: "Write a Python class implementing an L
+plain_probs	reply512	512	limit	35.5	-	parts at 43	same	15.01	We need answer user: "Explain how a Bloom filter works, when
+plain_probs	schema	37	eos	4.3	-	parts at 13	same	14.30	{"name": "lru_cache_ttl", "files": ["__init__.py", "cache.py

@@ -1,0 +1,28 @@
+config	request	guesses	right	wrong	from the store	grammar rejections	MTP rows	ms per MTP row	draft accepted	draft generated	graphs reused	pipe re-plans (same / changed cards)
+preset	reply256	-	-	-	-	-	-	-	144	333	108	-
+preset	reply256_probs	-	-	-	-	-	-	-	148	321	104	-
+preset	reply512	-	-	-	-	-	-	-	312	596	194	-
+preset	schema	-	-	-	-	-	-	-	20	39	12	-
+plain	reply256	-	-	-	-	-	-	-	-	-	253	-
+plain	reply256_probs	-	-	-	-	-	-	-	-	-	252	-
+plain	reply512	-	-	-	-	-	-	-	-	-	506	-
+plain	schema	-	-	-	-	-	-	-	-	-	35	-
+d1	reply256	254	181	73	0	0	509	8.950	-	-	1	221 / 4
+d1	reply512	510	330	180	0	0	1021	8.879	-	-	0	257 / 0
+d1	schema	0	0	0	0	0	-	-	18	33	5	0 / 0
+d2	reply256	342	166	88	0	0	762	7.083	-	-	1	312 / 6
+d2	reply512	709	311	199	0	0	1530	7.030	-	-	0	356 / 0
+d2	schema	0	0	0	0	0	-	-	18	33	5	0 / 0
+d3	reply256	431	165	89	0	0	1012	6.893	-	-	1	397 / 8
+d3	reply512	913	308	202	0	0	2038	7.019	-	-	0	381 / 0
+d3	schema	0	0	0	0	0	-	-	18	33	5	0 / 0
+walk	reply256	445	158	96	0	0	542	7.052	-	-	1	395 / 8
+walk	reply512	930	299	211	0	0	1142	7.094	-	-	0	454 / 0
+walk	schema	0	0	0	0	0	-	-	18	33	5	0 / 0
+grammar	reply256	431	165	89	0	0	1012	6.932	-	-	1	397 / 8
+grammar	reply512	913	308	202	0	0	2038	7.047	-	-	0	381 / 0
+grammar	schema	50	20	8	0	2	120	7.825	0	6	0	0 / 0
+plain_probs	reply256	-	-	-	-	-	-	-	-	-	253	-
+plain_probs	reply256_probs	-	-	-	-	-	-	-	-	-	252	-
+plain_probs	reply512	-	-	-	-	-	-	-	-	-	506	-
+plain_probs	schema	-	-	-	-	-	-	-	-	-	35	-
