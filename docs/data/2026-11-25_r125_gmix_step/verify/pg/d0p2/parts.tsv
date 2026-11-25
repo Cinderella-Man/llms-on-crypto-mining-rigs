@@ -1,0 +1,40 @@
+trace	cards	passes	part	ms_per_pass
+verify-r1	cards 0 to 7	82	routed experts	19.522
+verify-r1	cards 0 to 7	82	shared expert	3.730
+verify-r1	cards 0 to 7	82	hyper-connections (BF16)	13.630
+verify-r1	cards 0 to 7	82	router	1.356
+verify-r1	cards 0 to 7	82	attention and recurrent projections	17.534
+verify-r1	cards 0 to 7	82	Gated DeltaNet state and conv	8.635
+verify-r1	cards 0 to 7	82	attention (FLASH_ATTN_EXT)	0.941
+verify-r1	cards 0 to 7	82	output layer	0.000
+verify-r1	cards 0 to 7	82	token embeddings	0.000
+verify-r1	cards 0 to 7	82	other ops without weights	6.140
+verify-r1	cards 0 to 7	82	other weights	0.789
+verify-r1	cards 0 to 7	82	sum of the parts	72.277
+verify-r1	card 8	82	routed experts	0.866
+verify-r1	card 8	82	shared expert	0.174
+verify-r1	card 8	82	hyper-connections (BF16)	0.620
+verify-r1	card 8	82	router	0.059
+verify-r1	card 8	82	attention and recurrent projections	0.811
+verify-r1	card 8	82	Gated DeltaNet state and conv	0.253
+verify-r1	card 8	82	attention (FLASH_ATTN_EXT)	0.087
+verify-r1	card 8	82	output layer	3.361
+verify-r1	card 8	82	token embeddings	0.000
+verify-r1	card 8	82	other ops without weights	1.317
+verify-r1	card 8	82	other weights	0.168
+verify-r1	card 8	82	sum of the parts	7.715
+verify-r1	all cards	82	routed experts	20.388
+verify-r1	all cards	82	shared expert	3.905
+verify-r1	all cards	82	hyper-connections (BF16)	14.250
+verify-r1	all cards	82	router	1.415
+verify-r1	all cards	82	attention and recurrent projections	18.345
+verify-r1	all cards	82	Gated DeltaNet state and conv	8.887
+verify-r1	all cards	82	attention (FLASH_ATTN_EXT)	1.028
+verify-r1	all cards	82	output layer	3.361
+verify-r1	all cards	82	token embeddings	0.000
+verify-r1	all cards	82	other ops without weights	7.457
+verify-r1	all cards	82	other weights	0.957
+verify-r1	all cards	82	sum of the parts	79.992
+verify-r1	card 8	82	by position: before the head's product	3.451
+verify-r1	card 8	82	by position: the head's product	3.361
+verify-r1	card 8	82	by position: after the head's product	0.904

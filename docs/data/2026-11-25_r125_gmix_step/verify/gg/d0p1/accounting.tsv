@@ -1,0 +1,19 @@
+trace	cards	passes	where	ms_per_pass
+verify-r1	cards 0 to 7	101	the head's product	0.000
+verify-r1	cards 0 to 7	101	the sampling chain after the product	0.000
+verify-r1	cards 0 to 7	101	the output's hyper-connection products	0.000
+verify-r1	cards 0 to 7	101	GATED_DELTA_NET	8.647
+verify-r1	cards 0 to 7	101	GDN_CONV	0.751
+verify-r1	cards 0 to 7	101	copies of the PLE conv history (cache_ple_r)	0.070
+verify-r1	cards 0 to 7	101	routed experts	35.284
+verify-r1	cards 0 to 7	101	shared expert, router, hyper-connections	19.086
+verify-r1	cards 0 to 7	101	everything else	26.470
+verify-r1	card 8	101	the head's product	3.359
+verify-r1	card 8	101	the sampling chain after the product	0.903
+verify-r1	card 8	101	the output's hyper-connection products	0.120
+verify-r1	card 8	101	GATED_DELTA_NET	0.258
+verify-r1	card 8	101	GDN_CONV	0.019
+verify-r1	card 8	101	copies of the PLE conv history (cache_ple_r)	0.000
+verify-r1	card 8	101	routed experts	0.860
+verify-r1	card 8	101	shared expert, router, hyper-connections	0.851
+verify-r1	card 8	101	everything else	1.324

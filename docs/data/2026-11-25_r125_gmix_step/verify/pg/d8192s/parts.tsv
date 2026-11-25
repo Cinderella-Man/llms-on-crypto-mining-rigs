@@ -1,0 +1,40 @@
+trace	cards	passes	part	ms_per_pass
+verify-r1	cards 0 to 7	83	routed experts	19.947
+verify-r1	cards 0 to 7	83	shared expert	3.695
+verify-r1	cards 0 to 7	83	hyper-connections (BF16)	13.619
+verify-r1	cards 0 to 7	83	router	1.362
+verify-r1	cards 0 to 7	83	attention and recurrent projections	17.640
+verify-r1	cards 0 to 7	83	Gated DeltaNet state and conv	8.672
+verify-r1	cards 0 to 7	83	attention (FLASH_ATTN_EXT)	11.524
+verify-r1	cards 0 to 7	83	output layer	0.000
+verify-r1	cards 0 to 7	83	token embeddings	0.000
+verify-r1	cards 0 to 7	83	other ops without weights	7.392
+verify-r1	cards 0 to 7	83	other weights	0.821
+verify-r1	cards 0 to 7	83	sum of the parts	84.673
+verify-r1	card 8	83	routed experts	0.872
+verify-r1	card 8	83	shared expert	0.176
+verify-r1	card 8	83	hyper-connections (BF16)	0.629
+verify-r1	card 8	83	router	0.060
+verify-r1	card 8	83	attention and recurrent projections	0.827
+verify-r1	card 8	83	Gated DeltaNet state and conv	0.257
+verify-r1	card 8	83	attention (FLASH_ATTN_EXT)	1.056
+verify-r1	card 8	83	output layer	3.380
+verify-r1	card 8	83	token embeddings	0.000
+verify-r1	card 8	83	other ops without weights	1.501
+verify-r1	card 8	83	other weights	0.168
+verify-r1	card 8	83	sum of the parts	8.926
+verify-r1	all cards	83	routed experts	20.818
+verify-r1	all cards	83	shared expert	3.872
+verify-r1	all cards	83	hyper-connections (BF16)	14.248
+verify-r1	all cards	83	router	1.422
+verify-r1	all cards	83	attention and recurrent projections	18.467
+verify-r1	all cards	83	Gated DeltaNet state and conv	8.929
+verify-r1	all cards	83	attention (FLASH_ATTN_EXT)	12.580
+verify-r1	all cards	83	output layer	3.380
+verify-r1	all cards	83	token embeddings	0.000
+verify-r1	all cards	83	other ops without weights	8.893
+verify-r1	all cards	83	other weights	0.989
+verify-r1	all cards	83	sum of the parts	93.599
+verify-r1	card 8	83	by position: before the head's product	4.558
+verify-r1	card 8	83	by position: the head's product	3.380
+verify-r1	card 8	83	by position: after the head's product	0.987
