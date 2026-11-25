@@ -8,6 +8,10 @@
 # and the token joins the list. Arms (the preset's own value is dropped and each arm sets its one value):
 #   c      32768,8192,2, the preset's value (control): two full-head rounds after a miss
 #   fb1    32768,8192,1: one full-head round after a miss
+# VARIANT=r230 (R230, Q1643, 2026-11-25) runs two other arms, the rest unchanged (WORK's default /tmp/r230):
+#   c1     32768,8192,1 (control): one full-head round after a miss, R175's fb1
+#   s0     32768,8192,0: no full-head round after a miss; the missed token still joins the list
+#   loads  warm:c1 c1a:c1 s0a:s0 s0b:s0 c1b:c1
 # The server logs each load's count at its end ("draft head shortlist: N drafts with it, M with the full head, K target
 # tokens outside it"), so the arms' full-head rounds can be compared with their steps.
 # This is R69's deep-lane design (docs/data/2026-11-20_r69_sparse_switch/run/r69.sh) with the fallback as the arm.
@@ -26,7 +30,9 @@
 # The tables then run where OUT is: python3 -I bench/deep_lane/deep_table.py OUT --control c.
 set -uo pipefail
 : "${RIG:?RIG=<ssh alias of the rig>}"
-export RIG WORK=${WORK:-/tmp/r175}
+VARIANT=${VARIANT:-r175}
+case $VARIANT in r175|r230) ;; *) echo "VARIANT=r175|r230"; exit 1 ;; esac
+export RIG WORK=${WORK:-/tmp/$VARIANT}
 [ -n "${DRY:-}" ] && export DRY
 L=bench/deep_lane/remote.sh
 SW=LLAMA_DRAFT_SHORTLIST
@@ -36,6 +42,11 @@ common() {
     TAG='^t1swift/' SAMPLER_PASS=1 N_PREDICT=256 KEEP_REPLY=1 DEPTHS="0 4096 8192" \
     ENV_DROP=$SW ARMS="c fb1" ARM_ENV_c="$SW=32768,8192,2" ARM_ENV_fb1="$SW=32768,8192,1" \
     LOADS="warm:c ca:c fb1a:fb1 fb1b:fb1 cb:c"
+  if [ "$VARIANT" = r230 ]; then
+    export ARMS="c1 s0" ARM_ENV_c1="$SW=32768,8192,1" ARM_ENV_s0="$SW=32768,8192,0" \
+      LOADS="warm:c1 c1a:c1 s0a:s0 s0b:s0 c1b:c1"
+    unset ARM_ENV_c ARM_ENV_fb1
+  fi
 }
 case ${STEP:-start} in
 dry) common; DRY=1 bash $L start ;;
