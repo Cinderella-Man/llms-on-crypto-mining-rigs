@@ -99,6 +99,31 @@ On that boot no card is initialized until the patched driver is loaded by hand. 
 `check`, `load`, `push` and `test`. The push is the P104 sequence exactly, once, without the extra steps of the
 first try's step 3. `remove-entry` undoes the entry.
 
+## The second try: the card died at the speed write
+
+On the fresh boot, rig 1 the same day:
+- **The stock driver had loaded itself at boot, by name, despite `modprobe.blacklist=nvidia`.** The display modules
+  were refused as intended ("Module nvidia_modeset is blacklisted"), nobody held a card open, and card 4's registers
+  were still at their power-on values. The driver's own start-up had never run on the card.
+- **The power-on values differ from those after the driver's start-up:** `0x8841C` `PRIV_MISC_1` `0x00340500`
+  (against `0xc0b46500`), `0x8C040` `LINK_CONFIG_0` `0x20089000` (speed field 2), `0x8C2C0` `CYA_0` `0x060711b3`;
+  `LnkCap` `0x00453c41` and the `LnkCap2` mirror `0x2`, Gen1 only, as before. The CMP 100-210 notes give `0x00340500`
+  as their card's value with the clamp cleared, so on the P106-090 the Gen1-only declaration doesn't come from
+  `0x8841C` alone.
+- **The push:** the stock driver was unloaded and the patched one loaded, and nobody opened a card; every check passed
+  again. The writes went in the P104 order. The read of `LINK_CONFIG_0` before the speed write was still valid, and
+  the read-back right after that write returned `ffffffff` from every register. The card died at the speed write or
+  just after it, the port showed the same endless training (`LnkSta` `0x1811`), and card 4 needs a reboot again. No
+  recovery was tried: every one failed on this state the first time.
+- **Back to stock:** card 4 was removed from the PCI tree and the stock driver loaded; the eight other cards passed the
+  copy check through host memory. The boot entry was removed, and `grub.cfg` was never changed.
+
+**Verdict:** the P104-100 sequence kills a P106-090's link, on a card the driver had initialized (first try) and on a
+fresh one (second try). Together with the one public P106-090 attempt, which also lost its card, that parks Q994. It
+reopens only with a sequence shown to work on a P106-090 first, such as the UEFI pre-boot tool that showed one at
+5 GT/s on a desktop board ([P106-90-Unlock-X16](https://github.com/DaZuiZZZZ/P106-90-Unlock-X16); its registers are not
+published).
+
 ## Files
 
 | File | What |
