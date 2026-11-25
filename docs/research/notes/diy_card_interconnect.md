@@ -194,6 +194,9 @@ The rest of the path (rig 1, `run/pcie_facts.sh` in the data folder, Q990):
 
 ## 3. Raising the cards' link speed to Gen2
 
+Tried on 2026-11-25 and parked: the full record of both tries, with every register value and step, is
+[p106_p2p_gen2_trials.md](p106_p2p_gen2_trials.md).
+
 ### 3.1 What caps the cards
 
 - **Not a fuse and not the VBIOS file, as far as anyone has found.** On every NVIDIA mining card reverse-engineered so
@@ -263,6 +266,9 @@ The rest of the path (rig 1, `run/pcie_facts.sh` in the data folder, Q990):
   shown to work elsewhere.
 
 ## 4. Peer-to-peer without NVLink
+
+Tried on 2026-11-25: this board carries no peer traffic. The full record of every test is
+[p106_p2p_gen2_trials.md](p106_p2p_gen2_trials.md).
 
 ### 4.1 What blocks it
 
