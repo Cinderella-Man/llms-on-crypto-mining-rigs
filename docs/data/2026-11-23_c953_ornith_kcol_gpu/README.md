@@ -106,17 +106,19 @@ md5 `ade8ec94ae8db18ca3a2ff28aaf0e6e1`, built by C899 with `TESTS=1`) and the ba
 CUDA allocation and copy on each first:
 
 ```bash
-env WORK=$WORK NEW=$NEW_TREE/bin REF=$BASE_TREE/bin REPO=$REPO ORNITH=$MODELS/Ornith-1.5-122B-N2P-N3P-valid1-headQ5_0.gguf \
+env WORK=$WORK NEW=$NEW_TREE/bin REF=$BASE_TREE/bin REPO=$REPO ORNITH=$MODELS/Ornith-1.5-122B-N2P-N3P-valid1-headQ5_0.gguf FORCED=mmv \
     MOUNTS="<the folders holding the builds and the model>" DOCKER_ARGS="--cpu-shares=256" \
     setsid nohup bash $REPO/docs/data/2026-11-23_c953_ornith_kcol_gpu/run/run.sh > $WORK/driver.log 2>&1 < /dev/null &
 # after it wrote $WORK/DONE (bops 15:33-15:35, load 15:35-15:46):
-env WORK=$WORK NEW=$NEW_TREE/bin REF=$BASE_TREE/bin REPO=$REPO ORNITH=... STEPS=kernels \
+env WORK=$WORK NEW=$NEW_TREE/bin REF=$BASE_TREE/bin REPO=$REPO ORNITH=... FORCED=mmv STEPS=kernels \
     setsid nohup bash $REPO/docs/data/2026-11-23_c953_ornith_kcol_gpu/run/run.sh > $WORK/driver.log 2>&1 < /dev/null &
 # then, on the output copied back:
 python3 -I run/tables.py $WORK .
 ```
 
-Every container runs `nvidia/cuda:12.9.2-devel-ubuntu24.04` with the PTX JIT's cache in `$WORK/jitcache`. The
+`FORCED=mmv` forces the matrix-vector kernels alone, as this run did; the driver's default since 2026-11-25 forces
+every compute-6.1-only path of the fork ([scripts/pascal_forced.sh](../../../scripts/pascal_forced.sh), C991). Every
+container runs `nvidia/cuda:12.9.2-devel-ubuntu24.04` with the PTX JIT's cache in `$WORK/jitcache`. The
 `test-backend-ops` runs use card 0; the loads all three.
 
 ## Provenance and licence

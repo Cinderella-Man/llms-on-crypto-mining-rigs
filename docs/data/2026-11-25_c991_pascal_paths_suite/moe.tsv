@@ -1,0 +1,35 @@
+case	live	with_check	with_fault3
+MOE_LAYER(type_router=bf16,type_gu=iq4_xs,type_dn=iq4_xs,type_sh=iq4_xs)	OK	OK	FAIL
+MOE_LAYER(type_router=bf16,type_gu=iq4_xs,type_dn=iq4_xs,type_sh=q5_K)	OK	OK	FAIL
+MOE_LAYER(type_router=bf16,type_gu=iq4_xs,type_dn=iq4_xs,type_sh=q8_0)	OK	OK	FAIL
+MOE_LAYER(type_router=bf16,type_gu=iq4_xs,type_dn=q5_K,type_sh=q5_K)	OK	OK	FAIL
+MOE_LAYER(type_router=bf16,type_gu=iq4_xs,type_dn=q5_K,type_sh=q8_0)	OK	OK	FAIL
+MOE_LAYER(type_router=bf16,type_gu=q5_0,type_dn=q5_0,type_sh=q8_0)	OK	OK	FAIL
+MOE_LAYER(type_router=bf16,type_gu=q5_K,type_dn=q5_K,type_sh=q5_K)	OK	OK	FAIL
+MOE_LAYER(type_router=bf16,type_gu=q5_K,type_dn=q5_K,type_sh=q8_0)	OK	OK	FAIL
+MOE_LAYER(type_router=bf16,type_gu=q5_K,type_dn=q8_0,type_sh=q8_0)	OK	OK	FAIL
+MOE_LAYER(type_router=f16,type_gu=q5_0,type_dn=q5_0,type_sh=q5_0)	OK	OK	FAIL
+MOE_LAYER(type_router=f16,type_gu=q5_0,type_dn=q5_0,type_sh=q8_0)	OK	OK	FAIL
+MOE_LAYER(type_router=f16,type_gu=q5_0,type_dn=q8_0,type_sh=q8_0)	OK	OK	FAIL
+MOE_LAYER(type_router=f16,type_gu=q8_0,type_dn=q5_0,type_sh=q8_0)	OK	OK	FAIL
+MOE_LAYER(type_router=f32,type_gu=q5_0,type_dn=q5_0,type_sh=q5_0)	OK	OK	FAIL
+MOE_LAYER(type_router=f32,type_gu=q5_0,type_dn=q5_0,type_sh=q8_0)	OK	OK	FAIL
+MOE_LAYER(type_router=f32,type_gu=q5_0,type_dn=q8_0,type_sh=q8_0)	OK	OK	FAIL
+MOE_LAYER(type_router=f32,type_gu=q8_0,type_dn=q5_0,type_sh=q8_0)	OK	OK	FAIL
+# check: ggml_cuda_moe_persistent_end_graph: CUDA0: persistent MoE kernel ran 1 layers, 1 compared with the per-op path, 0 differed (logits 0, ids 0, weights 0, routed act 0, routed down 0, shared act 0, routed sum 0)
+# check: ggml_cuda_moe_persistent_end_graph: CUDA0: persistent MoE kernel ran 1 layers, 1 compared with the per-op path, 0 differed (logits 0, ids 0, weights 0, routed act 0, routed down 0, shared act 0, routed sum 0)
+# check: ggml_cuda_moe_persistent_end_graph: CUDA0: persistent MoE kernel ran 1 layers, 1 compared with the per-op path, 0 differed (logits 0, ids 0, weights 0, routed act 0, routed down 0, shared act 0, routed sum 0)
+# check: ggml_cuda_moe_persistent_end_graph: CUDA0: persistent MoE kernel ran 1 layers, 1 compared with the per-op path, 0 differed (logits 0, ids 0, weights 0, routed act 0, routed down 0, shared act 0, routed sum 0)
+# check: ggml_cuda_moe_persistent_end_graph: CUDA0: persistent MoE kernel ran 1 layers, 1 compared with the per-op path, 0 differed (logits 0, ids 0, weights 0, routed act 0, routed down 0, shared act 0, routed sum 0)
+# check: ggml_cuda_moe_persistent_end_graph: CUDA0: persistent MoE kernel ran 1 layers, 1 compared with the per-op path, 0 differed (logits 0, ids 0, weights 0, routed act 0, routed down 0, shared act 0, routed sum 0)
+# check: ggml_cuda_moe_persistent_end_graph: CUDA0: persistent MoE kernel ran 1 layers, 1 compared with the per-op path, 0 differed (logits 0, ids 0, weights 0, routed act 0, routed down 0, shared act 0, routed sum 0)
+# check: ggml_cuda_moe_persistent_end_graph: CUDA0: persistent MoE kernel ran 1 layers, 1 compared with the per-op path, 0 differed (logits 0, ids 0, weights 0, routed act 0, routed down 0, shared act 0, routed sum 0)
+# check: ggml_cuda_moe_persistent_end_graph: CUDA0: persistent MoE kernel ran 1 layers, 1 compared with the per-op path, 0 differed (logits 1, ids 0, weights 0, routed act 0, routed down 0, shared act 0, routed sum 0)
+# check: ggml_cuda_moe_persistent_end_graph: CUDA0: persistent MoE kernel ran 1 layers, 1 compared with the per-op path, 0 differed (logits 1, ids 0, weights 0, routed act 0, routed down 0, shared act 0, routed sum 0)
+# check: ggml_cuda_moe_persistent_end_graph: CUDA0: persistent MoE kernel ran 1 layers, 1 compared with the per-op path, 0 differed (logits 1, ids 0, weights 0, routed act 0, routed down 0, shared act 0, routed sum 0)
+# check: ggml_cuda_moe_persistent_end_graph: CUDA0: persistent MoE kernel ran 1 layers, 1 compared with the per-op path, 0 differed (logits 1, ids 0, weights 0, routed act 0, routed down 0, shared act 0, routed sum 0)
+# check: ggml_cuda_moe_persistent_end_graph: CUDA0: persistent MoE kernel ran 1 layers, 1 compared with the per-op path, 0 differed (logits 1, ids 0, weights 0, routed act 0, routed down 0, shared act 0, routed sum 0)
+# check: ggml_cuda_moe_persistent_end_graph: CUDA0: persistent MoE kernel ran 1 layers, 1 compared with the per-op path, 0 differed (logits 1, ids 0, weights 0, routed act 0, routed down 0, shared act 0, routed sum 0)
+# check: ggml_cuda_moe_persistent_end_graph: CUDA0: persistent MoE kernel ran 1 layers, 1 compared with the per-op path, 0 differed (logits 1, ids 0, weights 0, routed act 0, routed down 0, shared act 0, routed sum 0)
+# check: ggml_cuda_moe_persistent_end_graph: CUDA0: persistent MoE kernel ran 1 layers, 1 compared with the per-op path, 0 differed (logits 1, ids 0, weights 0, routed act 0, routed down 0, shared act 0, routed sum 0)
+# check: ggml_cuda_moe_persistent_end_graph: CUDA0: persistent MoE kernel ran 1 layers, 1 compared with the per-op path, 0 differed (logits 1, ids 0, weights 0, routed act 0, routed down 0, shared act 0, routed sum 0)

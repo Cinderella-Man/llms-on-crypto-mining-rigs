@@ -1,0 +1,1541 @@
+share	launches	kernel
+fa	673	convert_unary<float, __half>
+fa	11	convert_unary<ggml_fp8_e4m3_t, __half>
+fa	609	convert_unary<__nv_bfloat16, __half>
+fa	4	convert_unary_cont_vec4<__nv_bfloat16, __half>
+fa	726	dequantize_block<(int)32, (int)1, &dequantize_q8_0, __half>
+fa	612	dequantize_block<(int)32, (int)2, &dequantize_q4_0, __half>
+fa	672	dequantize_block<(int)32, (int)2, &dequantize_q4_1, __half>
+fa	672	dequantize_block<(int)32, (int)2, &dequantize_q5_0, __half>
+fa	672	dequantize_block<(int)32, (int)2, &dequantize_q5_1, __half>
+fa	2	dequantize_block_q4_1<__half>
+fa	19	dequantize_block_q8_0_f16<(bool)0>
+fa	2	dequantize_block_q8_0_f16<(bool)1>
+fa	1013	flash_attn_combine_results<(int)128>
+fa	382	flash_attn_combine_results<(int)256>
+fa	224	flash_attn_combine_results<(int)40>
+fa	93	flash_attn_combine_results<(int)512>
+fa	1837	flash_attn_combine_results<(int)64>
+fa	336	flash_attn_combine_results<(int)72>
+fa	118	flash_attn_combine_results<(int)80>
+fa	674	flash_attn_combine_results<(int)96>
+fa	75	flash_attn_ext_vec<(int)128, (int)1, (ggml_type)1, (ggml_type)1, (bool)0>
+fa	60	flash_attn_ext_vec<(int)128, (int)1, (ggml_type)1, (ggml_type)1, (bool)1>
+fa	1	flash_attn_ext_vec<(int)128, (int)1, (ggml_type)43, (ggml_type)43, (bool)0>
+fa	4	flash_attn_ext_vec<(int)128, (int)1, (ggml_type)8, (ggml_type)8, (bool)0>
+fa	23	flash_attn_ext_vec<(int)256, (int)1, (ggml_type)1, (ggml_type)1, (bool)0>
+fa	1	flash_attn_ext_vec<(int)256, (int)1, (ggml_type)2, (ggml_type)2, (bool)0>
+fa	1	flash_attn_ext_vec<(int)256, (int)1, (ggml_type)43, (ggml_type)43, (bool)0>
+fa	9	flash_attn_ext_vec<(int)256, (int)1, (ggml_type)8, (ggml_type)8, (bool)0>
+fa	7	flash_attn_ext_vec<(int)256, (int)2, (ggml_type)8, (ggml_type)8, (bool)0>
+fa	209	flash_attn_ext_vec<(int)64, (int)1, (ggml_type)1, (ggml_type)1, (bool)0>
+fa	44	flash_attn_ext_vec<(int)64, (int)1, (ggml_type)2, (ggml_type)2, (bool)0>
+fa	36	flash_attn_ext_vec<(int)64, (int)1, (ggml_type)30, (ggml_type)30, (bool)0>
+fa	1	flash_attn_ext_vec<(int)64, (int)1, (ggml_type)43, (ggml_type)43, (bool)0>
+fa	45	flash_attn_ext_vec<(int)64, (int)1, (ggml_type)8, (ggml_type)8, (bool)0>
+fa	133	flash_attn_mask_to_KV_max<(int)1>
+fa	23	flash_attn_mask_to_KV_max<(int)2>
+fa	294	flash_attn_mask_to_KV_max<(int)32>
+fa	157	flash_attn_mask_to_KV_max<(int)4>
+fa	5	flash_attn_mask_to_KV_max<(int)8>
+fa	1	flash_attn_tile<(int)128, (int)128, (int)1, (int)2, (bool)0>
+fa	24	flash_attn_tile<(int)128, (int)128, (int)1, (int)4, (bool)0>
+fa	12	flash_attn_tile<(int)128, (int)128, (int)1, (int)4, (bool)1>
+fa	19	flash_attn_tile<(int)128, (int)128, (int)1, (int)8, (bool)0>
+fa	20	flash_attn_tile<(int)128, (int)128, (int)2, (int)1, (bool)0>
+fa	18	flash_attn_tile<(int)128, (int)128, (int)2, (int)1, (bool)1>
+fa	1	flash_attn_tile<(int)128, (int)128, (int)2, (int)8, (bool)0>
+fa	227	flash_attn_tile<(int)128, (int)128, (int)32, (int)1, (bool)0>
+fa	168	flash_attn_tile<(int)128, (int)128, (int)32, (int)1, (bool)1>
+fa	90	flash_attn_tile<(int)128, (int)128, (int)4, (int)1, (bool)0>
+fa	79	flash_attn_tile<(int)128, (int)128, (int)4, (int)1, (bool)1>
+fa	2	flash_attn_tile<(int)128, (int)128, (int)4, (int)2, (bool)0>
+fa	24	flash_attn_tile<(int)128, (int)128, (int)4, (int)4, (bool)0>
+fa	12	flash_attn_tile<(int)128, (int)128, (int)4, (int)4, (bool)1>
+fa	8	flash_attn_tile<(int)128, (int)128, (int)4, (int)8, (bool)0>
+fa	3	flash_attn_tile<(int)128, (int)128, (int)4, (int)8, (bool)1>
+fa	33	flash_attn_tile<(int)128, (int)128, (int)8, (int)4, (bool)0>
+fa	12	flash_attn_tile<(int)128, (int)128, (int)8, (int)4, (bool)1>
+fa	4	flash_attn_tile<(int)192, (int)128, (int)1, (int)16, (bool)0>
+fa	6	flash_attn_tile<(int)192, (int)128, (int)1, (int)8, (bool)0>
+fa	12	flash_attn_tile<(int)192, (int)128, (int)2, (int)16, (bool)0>
+fa	13	flash_attn_tile<(int)192, (int)128, (int)4, (int)8, (bool)0>
+fa	5	flash_attn_tile<(int)256, (int)256, (int)16, (int)2, (bool)0>
+fa	8	flash_attn_tile<(int)256, (int)256, (int)1, (int)4, (bool)0>
+fa	4	flash_attn_tile<(int)256, (int)256, (int)1, (int)8, (bool)0>
+fa	8	flash_attn_tile<(int)256, (int)256, (int)2, (int)1, (bool)0>
+fa	1	flash_attn_tile<(int)256, (int)256, (int)2, (int)1, (bool)1>
+fa	5	flash_attn_tile<(int)256, (int)256, (int)2, (int)4, (bool)0>
+fa	2	flash_attn_tile<(int)256, (int)256, (int)2, (int)8, (bool)0>
+fa	90	flash_attn_tile<(int)256, (int)256, (int)32, (int)1, (bool)0>
+fa	1	flash_attn_tile<(int)256, (int)256, (int)32, (int)1, (bool)1>
+fa	28	flash_attn_tile<(int)256, (int)256, (int)4, (int)1, (bool)0>
+fa	18	flash_attn_tile<(int)256, (int)256, (int)4, (int)4, (bool)0>
+fa	11	flash_attn_tile<(int)256, (int)256, (int)4, (int)8, (bool)0>
+fa	2	flash_attn_tile<(int)256, (int)256, (int)4, (int)8, (bool)1>
+fa	55	flash_attn_tile<(int)256, (int)256, (int)8, (int)4, (bool)0>
+fa	17	flash_attn_tile<(int)320, (int)256, (int)1, (int)16, (bool)0>
+fa	8	flash_attn_tile<(int)40, (int)40, (int)1, (int)4, (bool)0>
+fa	48	flash_attn_tile<(int)40, (int)40, (int)2, (int)1, (bool)0>
+fa	112	flash_attn_tile<(int)40, (int)40, (int)32, (int)1, (bool)0>
+fa	48	flash_attn_tile<(int)40, (int)40, (int)4, (int)1, (bool)0>
+fa	8	flash_attn_tile<(int)40, (int)40, (int)4, (int)4, (bool)0>
+fa	4	flash_attn_tile<(int)512, (int)512, (int)1, (int)4, (bool)0>
+fa	2	flash_attn_tile<(int)512, (int)512, (int)1, (int)8, (bool)0>
+fa	10	flash_attn_tile<(int)512, (int)512, (int)2, (int)8, (bool)0>
+fa	1	flash_attn_tile<(int)512, (int)512, (int)4, (int)2, (bool)0>
+fa	19	flash_attn_tile<(int)512, (int)512, (int)4, (int)4, (bool)0>
+fa	4	flash_attn_tile<(int)576, (int)512, (int)1, (int)16, (bool)0>
+fa	14	flash_attn_tile<(int)576, (int)512, (int)1, (int)4, (bool)0>
+fa	39	flash_attn_tile<(int)576, (int)512, (int)4, (int)4, (bool)0>
+fa	24	flash_attn_tile<(int)64, (int)64, (int)1, (int)4, (bool)0>
+fa	102	flash_attn_tile<(int)64, (int)64, (int)2, (int)1, (bool)0>
+fa	921	flash_attn_tile<(int)64, (int)64, (int)32, (int)1, (bool)0>
+fa	388	flash_attn_tile<(int)64, (int)64, (int)4, (int)1, (bool)0>
+fa	64	flash_attn_tile<(int)64, (int)64, (int)4, (int)4, (bool)0>
+fa	3	flash_attn_tile<(int)64, (int)64, (int)4, (int)8, (bool)0>
+fa	12	flash_attn_tile<(int)72, (int)72, (int)1, (int)4, (bool)0>
+fa	72	flash_attn_tile<(int)72, (int)72, (int)2, (int)1, (bool)0>
+fa	168	flash_attn_tile<(int)72, (int)72, (int)32, (int)1, (bool)0>
+fa	72	flash_attn_tile<(int)72, (int)72, (int)4, (int)1, (bool)0>
+fa	12	flash_attn_tile<(int)72, (int)72, (int)4, (int)4, (bool)0>
+fa	4	flash_attn_tile<(int)80, (int)80, (int)1, (int)4, (bool)0>
+fa	26	flash_attn_tile<(int)80, (int)80, (int)2, (int)1, (bool)0>
+fa	58	flash_attn_tile<(int)80, (int)80, (int)32, (int)1, (bool)0>
+fa	26	flash_attn_tile<(int)80, (int)80, (int)4, (int)1, (bool)0>
+fa	4	flash_attn_tile<(int)80, (int)80, (int)4, (int)4, (bool)0>
+fa	24	flash_attn_tile<(int)96, (int)96, (int)1, (int)4, (bool)0>
+fa	145	flash_attn_tile<(int)96, (int)96, (int)2, (int)1, (bool)0>
+fa	337	flash_attn_tile<(int)96, (int)96, (int)32, (int)1, (bool)0>
+fa	144	flash_attn_tile<(int)96, (int)96, (int)4, (int)1, (bool)0>
+fa	24	flash_attn_tile<(int)96, (int)96, (int)4, (int)4, (bool)0>
+fa	43	flash_attn_tile_pascal<(int)128, (ggml_type)1, (ggml_type)1, (bool)1, (bool)0, (bool)0>
+fa	42	flash_attn_tile_pascal<(int)128, (ggml_type)8, (ggml_type)8, (bool)1, (bool)0, (bool)0>
+fa	42	flash_attn_tile_pascal<(int)256, (ggml_type)1, (ggml_type)1, (bool)0, (bool)0, (bool)0>
+fa	46	flash_attn_tile_pascal<(int)256, (ggml_type)8, (ggml_type)8, (bool)0, (bool)0, (bool)0>
+rest	4	acc_f32
+rest	72	add_id_kernel
+rest	3	ampere_s1688gemm_fp16_128x128_ldg8_stages_32x1_nt
+rest	2	ampere_s1688gemm_fp16_256x64_ldg8_stages_32x1_nn
+rest	8	ampere_sgemm_128x128_nn
+rest	2	ampere_sgemm_32x32_sliced1x4_nt
+rest	6	ampere_sgemm_32x32_sliced1x4_tn
+rest	10	arange_f32
+rest	13	argmax_f32
+rest	35	batch_trsm_right_kernel<float, (int)64, (int)4, (int)3, (bool)0, (bool)0, (bool)1>
+rest	16	col2im_1d_kernel<float>
+rest	11	col2im_1d_kernel<__half>
+rest	11	col2im_1d_kernel<__nv_bfloat16>
+rest	295	concat_cont<unsigned char, (int)0>
+rest	295	concat_cont<unsigned char, (int)1>
+rest	294	concat_cont<unsigned char, (int)2>
+rest	33	concat_cont<unsigned int, (int)0>
+rest	30	concat_cont<unsigned int, (int)1>
+rest	140	concat_cont<unsigned int, (int)2>
+rest	14	concat_cont<unsigned long, (int)0>
+rest	14	concat_cont<unsigned long, (int)1>
+rest	14	concat_cont<unsigned long, (int)2>
+rest	46	concat_cont<unsigned short, (int)0>
+rest	43	concat_cont<unsigned short, (int)1>
+rest	44	concat_cont<unsigned short, (int)2>
+rest	4	concat_non_cont<unsigned char, (int)0>
+rest	4	concat_non_cont<unsigned char, (int)1>
+rest	4	concat_non_cont<unsigned char, (int)2>
+rest	4	concat_non_cont<unsigned char, (int)3>
+rest	19	concat_non_cont<unsigned int, (int)0>
+rest	9	concat_non_cont<unsigned int, (int)1>
+rest	9	concat_non_cont<unsigned int, (int)2>
+rest	8	concat_non_cont<unsigned int, (int)3>
+rest	4	concat_non_cont<unsigned long, (int)0>
+rest	4	concat_non_cont<unsigned long, (int)1>
+rest	4	concat_non_cont<unsigned long, (int)2>
+rest	4	concat_non_cont<unsigned long, (int)3>
+rest	12	concat_non_cont<unsigned short, (int)0>
+rest	12	concat_non_cont<unsigned short, (int)1>
+rest	13	concat_non_cont<unsigned short, (int)2>
+rest	12	concat_non_cont<unsigned short, (int)3>
+rest	2	conv2d_dw_kernel<float, cwhn_layout>
+rest	2	conv2d_dw_kernel<float, whcn_layout>
+rest	2	conv2d_dw_kernel<__half, cwhn_layout>
+rest	2	conv2d_dw_kernel<__half, whcn_layout>
+rest	1001	conv2d_kernel<float, whcn_layout>
+rest	1004	conv2d_kernel<__half, whcn_layout>
+rest	4	conv2d_transpose_kernel<float>
+rest	4	conv2d_transpose_kernel<__half>
+rest	69	conv3d_implicit_gemm_f16<(int)0, (int)0, (int)0, (bool)0>
+rest	1	conv3d_implicit_gemm_f16<(int)1, (int)1, (int)1, (bool)0>
+rest	1	conv3d_implicit_gemm_f16<(int)1, (int)1, (int)3, (bool)0>
+rest	67	conv3d_implicit_gemm_f16<(int)3, (int)3, (int)3, (bool)0>
+rest	146	conv3d_kernel<float>
+rest	3	conv3d_kernel<__half>
+rest	101	conv3d_pad_f16
+rest	39	conv3d_reduce_split_k
+rest	1	convert_unary<float, __half>
+rest	2	convert_unary<__half, float>
+rest	1	convert_unary<__nv_bfloat16, float>
+rest	51	convert_unary_cont_vec4<float, __half>
+rest	10	convert_unary_cont_vec4<__half, float>
+rest	2	convert_unary_cont_vec4<__nv_bfloat16, float>
+rest	116	conv_transpose_1d_kernel
+rest	4	count_equal<int>
+rest	5	cpy_f32_q<&cpy_blck_f32_iq4_nl, (int)32>
+rest	6	cpy_f32_q<&cpy_blck_f32_q4_0, (int)32>
+rest	5	cpy_f32_q<&cpy_blck_f32_q4_1, (int)32>
+rest	5	cpy_f32_q<&cpy_blck_f32_q5_0, (int)32>
+rest	5	cpy_f32_q<&cpy_blck_f32_q5_1, (int)32>
+rest	5	cpy_f32_q<&cpy_blck_f32_q8_0, (int)32>
+rest	5	cpy_f32_q6_K
+rest	5	cpy_q6_K_f32
+rest	5	cpy_q_f32<&cpy_blck_q8_0_f32, (int)32>
+rest	5	cpy_q_f32<&cpy_blck_q_f32<&dequantize_iq4_nl_pair, (int)32>, (int)32>
+rest	6	cpy_q_f32<&cpy_blck_q_f32<&dequantize_q4_0, (int)32>, (int)32>
+rest	5	cpy_q_f32<&cpy_blck_q_f32<&dequantize_q4_1, (int)32>, (int)32>
+rest	5	cpy_q_f32<&cpy_blck_q_f32<&dequantize_q5_0, (int)32>, (int)32>
+rest	5	cpy_q_f32<&cpy_blck_q_f32<&dequantize_q5_1, (int)32>, (int)32>
+rest	55	cpy_scalar<&cpy_1_scalar<float, float>>
+rest	4	cpy_scalar<&cpy_1_scalar<float, ggml_fp8_e4m3_t>>
+rest	2	cpy_scalar<&cpy_1_scalar<float, __half>>
+rest	1	cpy_scalar<&cpy_1_scalar<float, int>>
+rest	1	cpy_scalar<&cpy_1_scalar<float, __nv_bfloat16>>
+rest	4	cpy_scalar<&cpy_1_scalar<ggml_fp8_e4m3_t, float>>
+rest	3	cpy_scalar<&cpy_1_scalar<__half, float>>
+rest	4	cpy_scalar<&cpy_1_scalar<__half, ggml_fp8_e4m3_t>>
+rest	40	cpy_scalar<&cpy_1_scalar<__half, __half>>
+rest	1	cpy_scalar<&cpy_1_scalar<__half, __nv_bfloat16>>
+rest	1	cpy_scalar<&cpy_1_scalar<int, float>>
+rest	4	cpy_scalar<&cpy_1_scalar<int, int>>
+rest	2	cpy_scalar<&cpy_1_scalar<__nv_bfloat16, float>>
+rest	4	cpy_scalar<&cpy_1_scalar<__nv_bfloat16, ggml_fp8_e4m3_t>>
+rest	1	cpy_scalar<&cpy_1_scalar<__nv_bfloat16, __half>>
+rest	8	cpy_scalar<&cpy_1_scalar<__nv_bfloat16, __nv_bfloat16>>
+rest	2	cpy_scalar<&cpy_1_scalar<short, short>>
+rest	6	cpy_scalar<&cpy_1_scalar<unsigned char, unsigned char>>
+rest	1	cpy_scalar_contiguous<float, ggml_fp8_e4m3_t>
+rest	4	cpy_scalar_contiguous<float, __half>
+rest	1	cpy_scalar_contiguous<float, int>
+rest	4	cpy_scalar_contiguous<float, __nv_bfloat16>
+rest	2	cpy_scalar_contiguous<ggml_fp8_e4m3_t, float>
+rest	5	cpy_scalar_contiguous<__half, float>
+rest	1	cpy_scalar_contiguous<__half, ggml_fp8_e4m3_t>
+rest	1	cpy_scalar_contiguous<__half, __nv_bfloat16>
+rest	1	cpy_scalar_contiguous<int, float>
+rest	5	cpy_scalar_contiguous<__nv_bfloat16, float>
+rest	1	cpy_scalar_contiguous<__nv_bfloat16, ggml_fp8_e4m3_t>
+rest	1	cpy_scalar_contiguous<__nv_bfloat16, __half>
+rest	4	cpy_scalar_transpose<float>
+rest	4	cpy_scalar_transpose<__half>
+rest	2	cpy_scalar_transpose<int>
+rest	3	cpy_scalar_transpose<__nv_bfloat16>
+rest	1	cross_entropy_loss_back_f32<(bool)0>
+rest	1	cross_entropy_loss_back_f32<(bool)1>
+rest	1	cross_entropy_loss_f32<(bool)0>
+rest	1	cross_entropy_loss_f32<(bool)1>
+rest	32	cub::CUB_200802_SM_610::DeviceRadixSortExclusiveSumKernel<cub::CUB_200802_SM_610::detail::radix::policy_hub<float, int, unsigned int>::Policy1000, unsigned int>
+rest	32	cub::CUB_200802_SM_610::DeviceRadixSortHistogramKernel<cub::CUB_200802_SM_610::detail::radix::policy_hub<float, int, unsigned int>::Policy1000, (bool)0, float, unsigned int, cub::CUB_200802_SM_610::detail::identity_decomposer_t>
+rest	128	cub::CUB_200802_SM_610::DeviceRadixSortOnesweepKernel<cub::CUB_200802_SM_610::detail::radix::policy_hub<float, int, unsigned int>::Policy1000, (bool)0, float, int, unsigned int, int, int, cub::CUB_200802_SM_610::detail::identity_decomposer_t>
+rest	8	cub::CUB_200802_SM_610::DeviceRadixSortSingleTileKernel<cub::CUB_200802_SM_610::detail::radix::policy_hub<float, int, unsigned int>::Policy1000, (bool)0, float, int, unsigned int, cub::CUB_200802_SM_610::detail::identity_decomposer_t>
+rest	26	cub::CUB_200802_SM_610::DeviceRadixSortSingleTileKernel<cub::CUB_200802_SM_610::detail::radix::policy_hub<float, int, unsigned int>::Policy1000, (bool)1, float, int, unsigned int, cub::CUB_200802_SM_610::detail::identity_decomposer_t>
+rest	3	cub::CUB_200802_SM_610::DeviceReduceKernel<cub::CUB_200802_SM_610::detail::reduce::policy_hub<float, unsigned long long, cuda::std::__4::plus<void>>::Policy1000, const float *, unsigned long long, cuda::std::__4::plus<void>, float, cuda::std::__4::__identity>
+rest	9	cub::CUB_200802_SM_610::DeviceReduceSingleTileKernel<cub::CUB_200802_SM_610::detail::reduce::policy_hub<float, unsigned long long, cuda::std::__4::plus<void>>::Policy1000, const float *, float *, unsigned long long, cuda::std::__4::plus<void>, float, float, cuda::std::__4::__identity>
+rest	3	cub::CUB_200802_SM_610::DeviceReduceSingleTileKernel<cub::CUB_200802_SM_610::detail::reduce::policy_hub<float, unsigned long long, cuda::std::__4::plus<void>>::Policy1000, float *, float *, int, cuda::std::__4::plus<void>, float, float, cuda::std::__4::__identity>
+rest	6	cub::CUB_200802_SM_610::DeviceScanInitKernel<cub::CUB_200802_SM_610::ScanTileState<float, (bool)1>>
+rest	6	cub::CUB_200802_SM_610::DeviceScanKernel<cub::CUB_200802_SM_610::detail::scan::policy_hub<float, float, float, unsigned long long, cuda::std::__4::plus<void>>::Policy1000, const float *, float *, cub::CUB_200802_SM_610::ScanTileState<float, (bool)1>, cuda::std::__4::plus<void>, cub::CUB_200802_SM_610::NullType, unsigned long long, float, (bool)0>
+rest	5	cub::CUB_200802_SM_610::DeviceSegmentedSortFallbackKernel<(bool)0, cub::CUB_200802_SM_610::detail::segmented_sort::policy_hub<float, int>::Policy860, float, int, int *, int *, int>
+rest	5	cub::CUB_200802_SM_610::DeviceSegmentedSortFallbackKernel<(bool)1, cub::CUB_200802_SM_610::detail::segmented_sort::policy_hub<float, int>::Policy860, float, int, int *, int *, int>
+rest	1	cub::CUB_200802_SM_610::DeviceSegmentedSortKernelLarge<(bool)0, cub::CUB_200802_SM_610::detail::segmented_sort::policy_hub<float, int>::Policy860, float, int, int *, int *, int>
+rest	1	cub::CUB_200802_SM_610::DeviceSegmentedSortKernelLarge<(bool)1, cub::CUB_200802_SM_610::detail::segmented_sort::policy_hub<float, int>::Policy860, float, int, int *, int *, int>
+rest	2	cub::CUB_200802_SM_610::DeviceThreeWayPartitionInitKernel<cub::CUB_200802_SM_610::ScanTileState<unsigned long, (bool)1>, unsigned int *>
+rest	1	cub::CUB_200802_SM_610::DeviceThreeWayPartitionKernel<cub::CUB_200802_SM_610::detail::three_way_partition::policy_hub<int, int>::Policy1000, thrust::THRUST_200802_SM_610_NS::counting_iterator<int, thrust::THRUST_200802_SM_610_NS::use_default, thrust::THRUST_200802_SM_610_NS::use_default, thrust::THRUST_200802_SM_610_NS::use_default>, unsigned int *, unsigned int *, thrust::THRUST_200802_SM_610_NS::reverse_iterator<unsigned int *>, unsigned int *, cub::CUB_200802_SM_610::ScanTileState<unsigned long, (bool)1>, cub::CUB_200802_SM_610::DispatchSegmentedSort<(bool)0, float, int, int, int *, int *, cub::CUB_200802_SM_610::detail::segmented_sort::policy_hub<float, int>>::LargeSegmentsSelectorT, cub::CUB_200802_SM_610::DispatchSegmentedSort<(bool)0, float, int, int, int *, int *, cub::CUB_200802_SM_610::detail::segmented_sort::policy_hub<float, int>>::SmallSegmentsSelectorT, int>
+rest	1	cub::CUB_200802_SM_610::DeviceThreeWayPartitionKernel<cub::CUB_200802_SM_610::detail::three_way_partition::policy_hub<int, int>::Policy1000, thrust::THRUST_200802_SM_610_NS::counting_iterator<int, thrust::THRUST_200802_SM_610_NS::use_default, thrust::THRUST_200802_SM_610_NS::use_default, thrust::THRUST_200802_SM_610_NS::use_default>, unsigned int *, unsigned int *, thrust::THRUST_200802_SM_610_NS::reverse_iterator<unsigned int *>, unsigned int *, cub::CUB_200802_SM_610::ScanTileState<unsigned long, (bool)1>, cub::CUB_200802_SM_610::DispatchSegmentedSort<(bool)1, float, int, int, int *, int *, cub::CUB_200802_SM_610::detail::segmented_sort::policy_hub<float, int>>::LargeSegmentsSelectorT, cub::CUB_200802_SM_610::DispatchSegmentedSort<(bool)1, float, int, int, int *, int *, cub::CUB_200802_SM_610::detail::segmented_sort::policy_hub<float, int>>::SmallSegmentsSelectorT, int>
+rest	2	cublasLt::splitKreduce_kernel<(int)32, (int)16, int, float, float, float, float, (bool)0, float, float, float, (bool)1, (bool)0, (bool)0, (bool)0>
+rest	3	cumsum_cub_kernel<float, (int)256>
+rest	9	cumsum_kernel<float>
+rest	2	cutlass::Kernel2<cutlass_75_tensorop_s1688gemm_f16_128x128_nn_align1>
+rest	6	cutlass::Kernel2<cutlass_75_wmma_tensorop_h161616gemm_32x32_32x2_tn_align1>
+rest	6	cutlass::Kernel2<cutlass_75_wmma_tensorop_s161616gemm_f16_32x32_32x1_nn_align1>
+rest	29	cutlass::Kernel2<cutlass_80_tensorop_s1688gemm_64x64_16x6_nt_align4>
+rest	26	cutlass::Kernel2<cutlass_80_tensorop_s1688gemm_64x64_16x6_tn_align4>
+rest	2	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_16x16_128x2_tn_align8>
+rest	4	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>
+rest	2	cutlass::Kernel2<cutlass_80_wmma_tensorop_s161616gemm_f16_32x32_128x2_nt_align8>
+rest	2	cutlass::Kernel2<cutlass_80_wmma_tensorop_s161616gemm_f16_32x32_32x1_nn_align2>
+rest	4	cutlass::Kernel2<cutlass_80_wmma_tensorop_s161616gemm_f16_32x32_32x1_nt_align2>
+rest	11	cutlass::Kernel2<cutlass_80_wmma_tensorop_s161616gemm_f16_32x32_32x1_nt_align8>
+rest	2	cutlass::Kernel2<cutlass_80_wmma_tensorop_s161616gemm_f16_32x32_64x1_nt_align8>
+rest	1	dequantize_block_iq3_s<__half>
+rest	1	dequantize_block_iq3_xxs<__half>
+rest	2	dequantize_block_iq4_nl<__half>
+rest	2	dequantize_block_iq4_xs<__half>
+rest	3	diag_kernel<float>
+rest	3	diag_kernel<__half>
+rest	11	dsv4_hc_comb_f32
+rest	2	dsv4_hc_post_f32<(bool)0, (bool)0>
+rest	3	dsv4_hc_post_f32<(bool)0, (bool)1>
+rest	5	dsv4_hc_post_f32<(bool)1, (bool)0>
+rest	1	dsv4_hc_post_f32<(bool)1, (bool)1>
+rest	10	dsv4_hc_pre_f32<(bool)0>
+rest	8	dsv4_hc_pre_f32<(bool)1>
+rest	4	fill_kernel<float>
+rest	3	fill_kernel<__half>
+rest	3	fwht_cuda<(int)128, float>
+rest	5	fwht_cuda<(int)128, __half>
+rest	2	fwht_cuda<(int)256, float>
+rest	4	fwht_cuda<(int)256, __half>
+rest	1	fwht_cuda<(int)512, float>
+rest	2	fwht_cuda<(int)512, __half>
+rest	1	fwht_cuda<(int)64, float>
+rest	2	fwht_cuda<(int)64, __half>
+rest	2	fwht_cuda_block<(int)1024, (int)256, float>
+rest	2	fwht_cuda_block<(int)1024, (int)256, __half>
+rest	1	fwht_cuda_block<(int)2048, (int)256, float>
+rest	1	fwht_cuda_block<(int)2048, (int)256, __half>
+rest	1	fwht_cuda_block<(int)4096, (int)256, float>
+rest	1	fwht_cuda_block<(int)4096, (int)256, __half>
+rest	1	fwht_cuda_block<(int)8192, (int)256, float>
+rest	1	fwht_cuda_block<(int)8192, (int)256, __half>
+rest	24	gated_delta_net_cuda<(int)128, (bool)0, (bool)0, (int)4>
+rest	6	gated_delta_net_cuda<(int)128, (bool)0, (bool)1, (int)4>
+rest	8	gated_delta_net_cuda<(int)128, (bool)1, (bool)0, (int)4>
+rest	1	gated_delta_net_cuda<(int)128, (bool)1, (bool)1, (int)4>
+rest	1	gated_delta_net_cuda<(int)16, (bool)0, (bool)0, (int)4>
+rest	3	gated_delta_net_cuda<(int)16, (bool)0, (bool)1, (int)4>
+rest	6	gated_delta_net_cuda<(int)16, (bool)1, (bool)0, (int)4>
+rest	1	gated_delta_net_cuda<(int)32, (bool)0, (bool)0, (int)4>
+rest	3	gated_delta_net_cuda<(int)32, (bool)0, (bool)1, (int)4>
+rest	4	gated_delta_net_cuda<(int)32, (bool)1, (bool)0, (int)4>
+rest	1	gated_delta_net_cuda<(int)32, (bool)1, (bool)1, (int)4>
+rest	12	gated_delta_net_cuda<(int)64, (bool)0, (bool)0, (int)4>
+rest	4	gated_delta_net_cuda<(int)64, (bool)0, (bool)1, (int)4>
+rest	9	gated_delta_net_cuda<(int)64, (bool)1, (bool)0, (int)4>
+rest	1	gated_delta_net_cuda<(int)64, (bool)1, (bool)1, (int)4>
+rest	4	gated_linear_attn_f32<(int)64>
+rest	8	gdn_conv_f32<(int)3>
+rest	37	gdn_conv_f32<(int)4>
+rest	11	gemmk1_kernel<int, float, (int)256, (int)5, (bool)0, (bool)0, (bool)0, (bool)0, cublasGemvTensorBatched<const float>, cublasGemvTensorBatched<const float>, cublasGemvTensorBatched<float>, float, (int)0>
+rest	13	gemmk1_kernel<int, float, (int)256, (int)5, (bool)0, (bool)0, (bool)0, (bool)0, cublasGemvTensorStridedBatched<const float>, cublasGemvTensorStridedBatched<const float>, cublasGemvTensorStridedBatched<float>, float, (int)0>
+rest	11	gemmk1_kernel<int, float, (int)256, (int)5, (bool)0, (bool)0, (bool)1, (bool)0, cublasGemvTensorBatched<const float>, cublasGemvTensorBatched<const float>, cublasGemvTensorBatched<float>, float, (int)0>
+rest	13	gemmk1_kernel<int, float, (int)256, (int)5, (bool)0, (bool)0, (bool)1, (bool)0, cublasGemvTensorStridedBatched<const float>, cublasGemvTensorStridedBatched<const float>, cublasGemvTensorStridedBatched<float>, float, (int)0>
+rest	4	gemmSN_NN_kernel<float, (int)128, (int)2, (int)4, (int)8, (int)2, (int)4, (bool)0, cublasGemvTensorStridedBatched<const __half>, cublasGemvTensorStridedBatched<const float>, cublasGemvTensorStridedBatched<float>>
+rest	5	gemmSN_NN_kernel<float, (int)128, (int)2, (int)4, (int)8, (int)4, (int)4, (bool)0, cublasGemvTensorBatched<const float>, cublasGemvTensorBatched<const float>, cublasGemvTensorBatched<float>>
+rest	3	gemmSN_NN_kernel<float, (int)256, (int)4, (int)2, (int)8, (int)4, (int)4, (bool)0, cublasGemvTensorBatched<const float>, cublasGemvTensorBatched<const float>, cublasGemvTensorBatched<float>>
+rest	4	gemv2N_kernel<int, int, float, float, float, float, (int)128, (int)2, (int)4, (int)4, (int)1, (bool)0, cublasGemvParamsEx<int, cublasGemvTensorBatched<const float>, cublasGemvTensorBatched<const float>, cublasGemvTensorBatched<float>, float>>
+rest	20	get_batch_pointers
+rest	2	group_norm_f32<(int)1024>
+rest	1	group_norm_f32<(int)32>
+rest	1026	im2col_3d_kernel<float>
+rest	1	im2col_3d_kernel<__half>
+rest	87	im2col_kernel<float>
+rest	35	im2col_kernel<__half>
+rest	78	init_indices
+rest	78	init_offsets
+rest	41	k_argsort_f32_i32<(ggml_sort_order)0>
+rest	249	k_argsort_f32_i32<(ggml_sort_order)1>
+rest	82	k_bin_bcast<&op_add, float, float, float, const float *>
+rest	1	k_bin_bcast<&op_add, float, float, float, const float *, const float *>
+rest	1	k_bin_bcast<&op_add, float, float, float, const float *, const float *, const float *>
+rest	1	k_bin_bcast<&op_add, float, float, float, const float *, const float *, const float *, const float *>
+rest	1	k_bin_bcast<&op_add, float, float, float, const float *, const float *, const float *, const float *, const float *>
+rest	1	k_bin_bcast<&op_add, float, float, float, const float *, const float *, const float *, const float *, const float *, const float *>
+rest	1	k_bin_bcast<&op_add, float, float, float, const float *, const float *, const float *, const float *, const float *, const float *, const float *>
+rest	3	k_bin_bcast<&op_add, float, float, float, const float *, const float *, const float *, const float *, const float *, const float *, const float *, const float *>
+rest	45	k_bin_bcast<&op_add, __half, __half, __half, const __half *>
+rest	1	k_bin_bcast<&op_add, __half, __half, __half, const __half *, const __half *>
+rest	3	k_bin_bcast<&op_add, __nv_bfloat16, float, __nv_bfloat16, const float *>
+rest	45	k_bin_bcast<&op_add, __nv_bfloat16, __nv_bfloat16, __nv_bfloat16, const __nv_bfloat16 *>
+rest	1	k_bin_bcast<&op_add, __nv_bfloat16, __nv_bfloat16, __nv_bfloat16, const __nv_bfloat16 *, const __nv_bfloat16 *>
+rest	1	k_bin_bcast<&op_add, __nv_bfloat16, __nv_bfloat16, __nv_bfloat16, const __nv_bfloat16 *, const __nv_bfloat16 *, const __nv_bfloat16 *>
+rest	61	k_bin_bcast<&op_div, float, float, float, const float *>
+rest	45	k_bin_bcast<&op_div, __half, __half, __half, const __half *>
+rest	3	k_bin_bcast<&op_div, __nv_bfloat16, float, __nv_bfloat16, const float *>
+rest	45	k_bin_bcast<&op_div, __nv_bfloat16, __nv_bfloat16, __nv_bfloat16, const __nv_bfloat16 *>
+rest	62	k_bin_bcast<&op_mul, float, float, float, const float *>
+rest	45	k_bin_bcast<&op_mul, __half, __half, __half, const __half *>
+rest	3	k_bin_bcast<&op_mul, __nv_bfloat16, float, __nv_bfloat16, const float *>
+rest	45	k_bin_bcast<&op_mul, __nv_bfloat16, __nv_bfloat16, __nv_bfloat16, const __nv_bfloat16 *>
+rest	27	k_bin_bcast<&op_repeat, float, float, float, >
+rest	2	k_bin_bcast<&op_repeat, __half, __half, __half, >
+rest	61	k_bin_bcast<&op_sub, float, float, float, const float *>
+rest	45	k_bin_bcast<&op_sub, __half, __half, __half, const __half *>
+rest	3	k_bin_bcast<&op_sub, __nv_bfloat16, float, __nv_bfloat16, const float *>
+rest	45	k_bin_bcast<&op_sub, __nv_bfloat16, __nv_bfloat16, __nv_bfloat16, const __nv_bfloat16 *>
+rest	1	k_bin_bcast_unravel<&op_add, float, float, float, const float *>
+rest	1	k_bin_bcast_unravel<&op_add, __half, __half, __half, const __half *>
+rest	1	k_bin_bcast_unravel<&op_add, __nv_bfloat16, __nv_bfloat16, __nv_bfloat16, const __nv_bfloat16 *>
+rest	1	k_bin_bcast_unravel<&op_div, float, float, float, const float *>
+rest	1	k_bin_bcast_unravel<&op_div, __half, __half, __half, const __half *>
+rest	1	k_bin_bcast_unravel<&op_div, __nv_bfloat16, __nv_bfloat16, __nv_bfloat16, const __nv_bfloat16 *>
+rest	1	k_bin_bcast_unravel<&op_mul, float, float, float, const float *>
+rest	1	k_bin_bcast_unravel<&op_mul, __half, __half, __half, const __half *>
+rest	1	k_bin_bcast_unravel<&op_mul, __nv_bfloat16, __nv_bfloat16, __nv_bfloat16, const __nv_bfloat16 *>
+rest	1	k_bin_bcast_unravel<&op_sub, float, float, float, const float *>
+rest	1	k_bin_bcast_unravel<&op_sub, __half, __half, __half, const __half *>
+rest	1	k_bin_bcast_unravel<&op_sub, __nv_bfloat16, __nv_bfloat16, __nv_bfloat16, const __nv_bfloat16 *>
+rest	1	kcol::mul_mat_kcol<(int)2, (int)1, (int)1>
+rest	3	kcol::mul_mat_kcol<(int)9, (int)1, (int)1>
+rest	1	kcol::quantize_records<(int)2>
+rest	3	kcol::quantize_records<(int)9>
+rest	2	k_compute_batched_ptrs
+rest	47	k_compute_out_prod_ptrs
+rest	8	k_get_rows<(int)128, (int)1, &dequantize_q1_0, float>
+rest	22	k_get_rows<(int)32, (int)1, &dequantize_q8_0, float>
+rest	25	k_get_rows<(int)32, (int)2, &dequantize_q4_0, float>
+rest	8	k_get_rows<(int)32, (int)2, &dequantize_q4_1_64, float>
+rest	20	k_get_rows<(int)32, (int)2, &dequantize_q4_1, float>
+rest	20	k_get_rows<(int)32, (int)2, &dequantize_q5_0, float>
+rest	20	k_get_rows<(int)32, (int)2, &dequantize_q5_1, float>
+rest	9	k_get_rows<(int)64, (int)1, &dequantize_q2_0, float>
+rest	4	k_get_rows_back_float<float, float>
+rest	14	k_get_rows_float<float, float>
+rest	12	k_get_rows_float<ggml_fp8_e4m3_t, float>
+rest	38	k_get_rows_float<__half, float>
+rest	12	k_get_rows_float<int, int>
+rest	24	k_get_rows_float<__nv_bfloat16, float>
+rest	15	k_get_rows_float_vec<float>
+rest	8	k_get_rows_kq<float, &dequantize_iq1_m<float>, (int)256>
+rest	8	k_get_rows_kq<float, &dequantize_iq1_s<float>, (int)256>
+rest	8	k_get_rows_kq<float, &dequantize_iq2_s<float>, (int)256>
+rest	8	k_get_rows_kq<float, &dequantize_iq2_xs<float>, (int)256>
+rest	8	k_get_rows_kq<float, &dequantize_iq2_xxs<float>, (int)256>
+rest	9	k_get_rows_kq<float, &dequantize_iq3_s<float>, (int)256>
+rest	9	k_get_rows_kq<float, &dequantize_iq3_xxs<float>, (int)256>
+rest	9	k_get_rows_kq<float, &dequantize_iq4_nl<float>, (int)256>
+rest	9	k_get_rows_kq<float, &dequantize_iq4_xs<float>, (int)256>
+rest	8	k_get_rows_kq<float, &dequantize_mxfp4<float>, (int)256>
+rest	8	k_get_rows_kq<float, &dequantize_n2p<float>, (int)256>
+rest	8	k_get_rows_kq<float, &dequantize_n2p_128<float>, (int)128>
+rest	8	k_get_rows_kq<float, &dequantize_n3p<float>, (int)256>
+rest	8	k_get_rows_kq<float, &dequantize_n3p_128<float>, (int)128>
+rest	9	k_get_rows_kq<float, &dequantize_q2_K<float>, (int)256>
+rest	9	k_get_rows_kq<float, &dequantize_q3_K<float>, (int)256>
+rest	10	k_get_rows_kq<float, &dequantize_q4_K<float>, (int)256>
+rest	9	k_get_rows_kq<float, &dequantize_q5_K<float>, (int)256>
+rest	9	k_get_rows_kq<float, &dequantize_q6_K<float>, (int)256>
+rest	65	k_moe_tail<(bool)0>
+rest	65	k_moe_tail<(bool)1>
+rest	13	kq_mask_kernel<float>
+rest	13	kq_mask_kernel<__half>
+rest	10	k_repeat_back<float>
+rest	1	k_set_rows<float, int, float>
+rest	2	k_set_rows<float, int, int>
+rest	17	k_set_rows<float, long, float>
+rest	16	k_set_rows<float, long, ggml_fp8_e4m3_t>
+rest	16	k_set_rows<float, long, __half>
+rest	1	k_set_rows<float, long, int>
+rest	16	k_set_rows<float, long, __nv_bfloat16>
+rest	2	k_set_rows<__half, int, __half>
+rest	18	k_set_rows<__half, long, __half>
+rest	1	k_set_rows<__nv_bfloat16, long, float>
+rest	1	k_set_rows<__nv_bfloat16, long, ggml_fp8_e4m3_t>
+rest	2	k_set_rows<__nv_bfloat16, long, __half>
+rest	1	k_set_rows<__nv_bfloat16, long, __nv_bfloat16>
+rest	1	k_set_rows_quant<float, int, block_q8_0, (int)32, &quantize_f32_q8_0_block>
+rest	10	k_set_rows_quant<float, long, block_iq4_nl, (int)32, &quantize_f32_iq4_nl_block>
+rest	10	k_set_rows_quant<float, long, block_q4_0, (int)32, &quantize_f32_q4_0_block>
+rest	10	k_set_rows_quant<float, long, block_q4_1, (int)32, &quantize_f32_q4_1_block>
+rest	10	k_set_rows_quant<float, long, block_q5_0, (int)32, &quantize_f32_q5_0_block>
+rest	10	k_set_rows_quant<float, long, block_q5_1, (int)32, &quantize_f32_q5_1_block>
+rest	10	k_set_rows_quant<float, long, block_q8_0, (int)32, &quantize_f32_q8_0_block>
+rest	1	k_set_rows_quant<__nv_bfloat16, int, block_q8_0, (int)32, &quantize_f32_q8_0_block>
+rest	1	k_set_rows_quant<__nv_bfloat16, long, block_iq4_nl, (int)32, &quantize_f32_iq4_nl_block>
+rest	1	k_set_rows_quant<__nv_bfloat16, long, block_q4_0, (int)32, &quantize_f32_q4_0_block>
+rest	1	k_set_rows_quant<__nv_bfloat16, long, block_q4_1, (int)32, &quantize_f32_q4_1_block>
+rest	1	k_set_rows_quant<__nv_bfloat16, long, block_q5_0, (int)32, &quantize_f32_q5_0_block>
+rest	1	k_set_rows_quant<__nv_bfloat16, long, block_q5_1, (int)32, &quantize_f32_q5_1_block>
+rest	1	k_set_rows_quant<__nv_bfloat16, long, block_q8_0, (int)32, &quantize_f32_q8_0_block>
+rest	6	k_skip_ids_fix
+rest	6	k_skip_ids_zero_rows
+rest	5	l2_norm_f32<(int)1024>
+rest	194	l2_norm_f32<(int)32>
+rest	4	leaky_relu_kernel<float>
+rest	3	leaky_relu_kernel<__half>
+rest	24	lightning_indexer_kernel_tile<(int)8, (int)64, (long)128, (long)4, (ggml_type)0, (bool)0>
+rest	2	lightning_indexer_kernel_tile<(int)8, (int)64, (long)128, (long)4, (ggml_type)0, (bool)1>
+rest	3	lightning_indexer_kernel_tile<(int)8, (int)64, (long)128, (long)4, (ggml_type)1, (bool)0>
+rest	7	lightning_indexer_kernel_tile<(int)8, (int)64, (long)128, (long)4, (ggml_type)1, (bool)1>
+rest	3	lightning_indexer_kernel_tile<(int)8, (int)64, (long)128, (long)4, (ggml_type)2, (bool)0>
+rest	2	lightning_indexer_kernel_tile<(int)8, (int)64, (long)128, (long)4, (ggml_type)2, (bool)1>
+rest	3	lightning_indexer_kernel_tile<(int)8, (int)64, (long)128, (long)4, (ggml_type)30, (bool)0>
+rest	2	lightning_indexer_kernel_tile<(int)8, (int)64, (long)128, (long)4, (ggml_type)30, (bool)1>
+rest	3	lightning_indexer_kernel_tile<(int)8, (int)64, (long)128, (long)4, (ggml_type)3, (bool)0>
+rest	2	lightning_indexer_kernel_tile<(int)8, (int)64, (long)128, (long)4, (ggml_type)3, (bool)1>
+rest	3	lightning_indexer_kernel_tile<(int)8, (int)64, (long)128, (long)4, (ggml_type)6, (bool)0>
+rest	2	lightning_indexer_kernel_tile<(int)8, (int)64, (long)128, (long)4, (ggml_type)6, (bool)1>
+rest	3	lightning_indexer_kernel_tile<(int)8, (int)64, (long)128, (long)4, (ggml_type)7, (bool)0>
+rest	2	lightning_indexer_kernel_tile<(int)8, (int)64, (long)128, (long)4, (ggml_type)7, (bool)1>
+rest	3	lightning_indexer_kernel_tile<(int)8, (int)64, (long)128, (long)4, (ggml_type)8, (bool)0>
+rest	3	lightning_indexer_kernel_tile<(int)8, (int)64, (long)128, (long)4, (ggml_type)8, (bool)1>
+rest	38	lightning_indexer_kernel_vec<(int)8, (int)64, (long)128, (long)32, (ggml_type)0, (bool)0>
+rest	4	lightning_indexer_kernel_vec<(int)8, (int)64, (long)128, (long)32, (ggml_type)0, (bool)1>
+rest	6	lightning_indexer_kernel_vec<(int)8, (int)64, (long)128, (long)32, (ggml_type)1, (bool)0>
+rest	4	lightning_indexer_kernel_vec<(int)8, (int)64, (long)128, (long)32, (ggml_type)1, (bool)1>
+rest	6	lightning_indexer_kernel_vec<(int)8, (int)64, (long)128, (long)32, (ggml_type)2, (bool)0>
+rest	4	lightning_indexer_kernel_vec<(int)8, (int)64, (long)128, (long)32, (ggml_type)2, (bool)1>
+rest	6	lightning_indexer_kernel_vec<(int)8, (int)64, (long)128, (long)32, (ggml_type)30, (bool)0>
+rest	4	lightning_indexer_kernel_vec<(int)8, (int)64, (long)128, (long)32, (ggml_type)30, (bool)1>
+rest	6	lightning_indexer_kernel_vec<(int)8, (int)64, (long)128, (long)32, (ggml_type)3, (bool)0>
+rest	4	lightning_indexer_kernel_vec<(int)8, (int)64, (long)128, (long)32, (ggml_type)3, (bool)1>
+rest	6	lightning_indexer_kernel_vec<(int)8, (int)64, (long)128, (long)32, (ggml_type)6, (bool)0>
+rest	4	lightning_indexer_kernel_vec<(int)8, (int)64, (long)128, (long)32, (ggml_type)6, (bool)1>
+rest	6	lightning_indexer_kernel_vec<(int)8, (int)64, (long)128, (long)32, (ggml_type)7, (bool)0>
+rest	4	lightning_indexer_kernel_vec<(int)8, (int)64, (long)128, (long)32, (ggml_type)7, (bool)1>
+rest	6	lightning_indexer_kernel_vec<(int)8, (int)64, (long)128, (long)32, (ggml_type)8, (bool)0>
+rest	4	lightning_indexer_kernel_vec<(int)8, (int)64, (long)128, (long)32, (ggml_type)8, (bool)1>
+rest	28	lightning_indexer_kernel_vec<(int)8, (int)64, (long)128, (long)4, (ggml_type)0, (bool)0>
+rest	2	lightning_indexer_kernel_vec<(int)8, (int)64, (long)128, (long)4, (ggml_type)0, (bool)1>
+rest	3	lightning_indexer_kernel_vec<(int)8, (int)64, (long)128, (long)4, (ggml_type)1, (bool)0>
+rest	12	lightning_indexer_kernel_vec<(int)8, (int)64, (long)128, (long)4, (ggml_type)1, (bool)1>
+rest	3	lightning_indexer_kernel_vec<(int)8, (int)64, (long)128, (long)4, (ggml_type)2, (bool)0>
+rest	2	lightning_indexer_kernel_vec<(int)8, (int)64, (long)128, (long)4, (ggml_type)2, (bool)1>
+rest	3	lightning_indexer_kernel_vec<(int)8, (int)64, (long)128, (long)4, (ggml_type)30, (bool)0>
+rest	2	lightning_indexer_kernel_vec<(int)8, (int)64, (long)128, (long)4, (ggml_type)30, (bool)1>
+rest	3	lightning_indexer_kernel_vec<(int)8, (int)64, (long)128, (long)4, (ggml_type)3, (bool)0>
+rest	2	lightning_indexer_kernel_vec<(int)8, (int)64, (long)128, (long)4, (ggml_type)3, (bool)1>
+rest	3	lightning_indexer_kernel_vec<(int)8, (int)64, (long)128, (long)4, (ggml_type)6, (bool)0>
+rest	2	lightning_indexer_kernel_vec<(int)8, (int)64, (long)128, (long)4, (ggml_type)6, (bool)1>
+rest	3	lightning_indexer_kernel_vec<(int)8, (int)64, (long)128, (long)4, (ggml_type)7, (bool)0>
+rest	2	lightning_indexer_kernel_vec<(int)8, (int)64, (long)128, (long)4, (ggml_type)7, (bool)1>
+rest	3	lightning_indexer_kernel_vec<(int)8, (int)64, (long)128, (long)4, (ggml_type)8, (bool)0>
+rest	2	lightning_indexer_kernel_vec<(int)8, (int)64, (long)128, (long)4, (ggml_type)8, (bool)1>
+rest	44	lightning_indexer_kernel_vec<(int)8, (int)64, (long)128, (long)64, (ggml_type)0, (bool)0>
+rest	5	lightning_indexer_kernel_vec<(int)8, (int)64, (long)128, (long)64, (ggml_type)0, (bool)1>
+rest	12	lightning_indexer_kernel_vec<(int)8, (int)64, (long)128, (long)64, (ggml_type)1, (bool)0>
+rest	4	lightning_indexer_kernel_vec<(int)8, (int)64, (long)128, (long)64, (ggml_type)1, (bool)1>
+rest	12	lightning_indexer_kernel_vec<(int)8, (int)64, (long)128, (long)64, (ggml_type)2, (bool)0>
+rest	4	lightning_indexer_kernel_vec<(int)8, (int)64, (long)128, (long)64, (ggml_type)2, (bool)1>
+rest	12	lightning_indexer_kernel_vec<(int)8, (int)64, (long)128, (long)64, (ggml_type)30, (bool)0>
+rest	4	lightning_indexer_kernel_vec<(int)8, (int)64, (long)128, (long)64, (ggml_type)30, (bool)1>
+rest	12	lightning_indexer_kernel_vec<(int)8, (int)64, (long)128, (long)64, (ggml_type)3, (bool)0>
+rest	4	lightning_indexer_kernel_vec<(int)8, (int)64, (long)128, (long)64, (ggml_type)3, (bool)1>
+rest	12	lightning_indexer_kernel_vec<(int)8, (int)64, (long)128, (long)64, (ggml_type)6, (bool)0>
+rest	4	lightning_indexer_kernel_vec<(int)8, (int)64, (long)128, (long)64, (ggml_type)6, (bool)1>
+rest	12	lightning_indexer_kernel_vec<(int)8, (int)64, (long)128, (long)64, (ggml_type)7, (bool)0>
+rest	4	lightning_indexer_kernel_vec<(int)8, (int)64, (long)128, (long)64, (ggml_type)7, (bool)1>
+rest	12	lightning_indexer_kernel_vec<(int)8, (int)64, (long)128, (long)64, (ggml_type)8, (bool)0>
+rest	4	lightning_indexer_kernel_vec<(int)8, (int)64, (long)128, (long)64, (ggml_type)8, (bool)1>
+rest	6	mm_ids_helper<(int)2>
+rest	1	mul_mat_q<(ggml_type)39, (int)16, (bool)1, (ggml_prec)30, (bool)0, (bool)0, (bool)0>
+rest	2	mul_mat_q<(ggml_type)39, (int)32, (bool)1, (ggml_prec)30, (bool)0, (bool)0, (bool)0>
+rest	2	mul_mat_q<(ggml_type)39, (int)8, (bool)1, (ggml_prec)30, (bool)0, (bool)0, (bool)0>
+rest	1	mul_mat_q<(ggml_type)40, (int)16, (bool)1, (ggml_prec)30, (bool)0, (bool)0, (bool)0>
+rest	2	mul_mat_q<(ggml_type)40, (int)32, (bool)1, (ggml_prec)30, (bool)0, (bool)0, (bool)0>
+rest	4	mul_mat_q<(ggml_type)40, (int)8, (bool)1, (ggml_prec)30, (bool)0, (bool)0, (bool)0>
+rest	2	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>
+rest	1	mul_mat_vec_f<float, float, (int)1, (int)256, (bool)0, (bool)0>
+rest	1	mul_mat_vec_f<float, float, (int)1, (int)32, (bool)0, (bool)0>
+rest	1	mul_mat_vec_q<(ggml_type)10, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>
+rest	1	mul_mat_vec_q<(ggml_type)14, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>
+rest	2	mul_mat_vec_q<(ggml_type)18, (int)1, (bool)0, (bool)0, (bool)0, (bool)0>
+rest	2	mul_mat_vec_q<(ggml_type)21, (int)1, (bool)0, (bool)0, (bool)0, (bool)0>
+rest	2	mul_mat_vec_q<(ggml_type)40, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>
+rest	1	mul_mat_vec_q_pascal<(ggml_type)12, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>
+rest	1	mul_mat_vec_q_pascal<(ggml_type)13, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>
+rest	3	mul_mat_vec_q_pascal<(ggml_type)23, (int)1, (int)1, (bool)0, (int)0, (int)16, (bool)0>
+rest	1	mul_mat_vec_q_pascal<(ggml_type)2, (int)2, (int)2, (bool)1, (int)0, (int)16, (bool)0>
+rest	1	mul_mat_vec_q_pascal<(ggml_type)8, (int)2, (int)2, (bool)1, (int)0, (int)16, (bool)0>
+rest	5	norm_f32<(int)1024, (bool)0, (bool)0>
+rest	46	norm_f32<(int)32, (bool)0, (bool)0>
+rest	32	offsetPointerArray_kernel<float>
+rest	4	op_clamp_kernel<float>
+rest	4	op_clamp_kernel<__half>
+rest	1	opt_step_adamw_f32
+rest	1	opt_step_sgd_f32
+rest	37	pad_f32
+rest	8	pad_reflect_1d_kernel_f32
+rest	224	pool1d_nchw_kernel
+rest	8	pool1d_row_kernel<(ggml_op_pool)0>
+rest	8	pool1d_row_kernel<(ggml_op_pool)1>
+rest	128	pool2d_nchw_kernel<float, float>
+rest	16	pool2d_nchw_kernel_warp<float, float>
+rest	10	quantize_mmq_q8_1<(mmq_q8_1_ds_layout)0, (bool)0>
+rest	2	quantize_mmq_q8_1<(mmq_q8_1_ds_layout)0, (bool)1>
+rest	15	quantize_q8_1
+rest	11	range_mask_kernel<float>
+rest	11	range_mask_kernel<__half>
+rest	5	reduce_rows_f32<(bool)0>
+rest	14	reduce_rows_f32<(bool)1>
+rest	6	reduce_rows_f32_strided<(bool)0>
+rest	3	reduce_rows_f32_strided<(bool)1>
+rest	5	rms_norm_back_f32<(int)1024>
+rest	5	rms_norm_back_f32<(int)32>
+rest	6	rms_norm_f32<float, (int)1024, (int)1, (bool)0, (bool)0, (bool)0, (bool)0, float>
+rest	2	rms_norm_f32<float, (int)1024, (int)1, (bool)1, (bool)0, (bool)0, (bool)0, float>
+rest	10	rms_norm_f32<float, (int)128, (int)1, (bool)1, (bool)0, (bool)0, (bool)0, float>
+rest	30	rms_norm_f32<float, (int)256, (int)1, (bool)0, (bool)0, (bool)0, (bool)0, float>
+rest	13	rms_norm_f32<float, (int)32, (int)1, (bool)1, (bool)0, (bool)0, (bool)0, float>
+rest	6	rms_norm_f32<__nv_bfloat16, (int)1024, (int)1, (bool)0, (bool)0, (bool)0, (bool)0, float>
+rest	2	rms_norm_f32<__nv_bfloat16, (int)1024, (int)1, (bool)1, (bool)0, (bool)0, (bool)0, float>
+rest	1	rms_norm_f32<__nv_bfloat16, (int)1024, (int)4, (bool)1, (bool)0, (bool)0, (bool)0, float>
+rest	11	rms_norm_f32<__nv_bfloat16, (int)128, (int)1, (bool)1, (bool)0, (bool)0, (bool)0, float>
+rest	26	rms_norm_f32<__nv_bfloat16, (int)256, (int)1, (bool)0, (bool)0, (bool)0, (bool)0, float>
+rest	1	rms_norm_f32<__nv_bfloat16, (int)256, (int)1, (bool)1, (bool)0, (bool)0, (bool)0, float>
+rest	12	rms_norm_f32<__nv_bfloat16, (int)32, (int)1, (bool)1, (bool)0, (bool)0, (bool)0, float>
+rest	1	rms_norm_f32<__nv_bfloat16, (int)512, (int)1, (bool)1, (bool)0, (bool)0, (bool)0, float>
+rest	7	roll_f32_cuda
+rest	42	rope_multi<(bool)0, (bool)0, float, float>
+rest	22	rope_multi<(bool)0, (bool)0, __half, __half>
+rest	4	rope_multi<(bool)0, (bool)0, __nv_bfloat16, __nv_bfloat16>
+rest	38	rope_multi<(bool)0, (bool)1, float, float>
+rest	18	rope_multi<(bool)0, (bool)1, __half, __half>
+rest	4	rope_multi<(bool)0, (bool)1, __nv_bfloat16, __nv_bfloat16>
+rest	48	rope_multi<(bool)1, (bool)0, float, float>
+rest	26	rope_multi<(bool)1, (bool)0, __half, __half>
+rest	6	rope_multi<(bool)1, (bool)0, __nv_bfloat16, __nv_bfloat16>
+rest	46	rope_multi<(bool)1, (bool)1, float, float>
+rest	26	rope_multi<(bool)1, (bool)1, __half, __half>
+rest	4	rope_multi<(bool)1, (bool)1, __nv_bfloat16, __nv_bfloat16>
+rest	41	rope_neox<(bool)0, (bool)0, float, float>
+rest	27	rope_neox<(bool)0, (bool)0, __half, __half>
+rest	2	rope_neox<(bool)0, (bool)0, __nv_bfloat16, __nv_bfloat16>
+rest	39	rope_neox<(bool)0, (bool)1, float, float>
+rest	25	rope_neox<(bool)0, (bool)1, __half, __half>
+rest	2	rope_neox<(bool)0, (bool)1, __nv_bfloat16, __nv_bfloat16>
+rest	45	rope_neox<(bool)1, (bool)0, float, float>
+rest	30	rope_neox<(bool)1, (bool)0, __half, __half>
+rest	4	rope_neox<(bool)1, (bool)0, __nv_bfloat16, __nv_bfloat16>
+rest	44	rope_neox<(bool)1, (bool)1, float, float>
+rest	29	rope_neox<(bool)1, (bool)1, __half, __half>
+rest	2	rope_neox<(bool)1, (bool)1, __nv_bfloat16, __nv_bfloat16>
+rest	41	rope_norm<(bool)0, (bool)0, float, float>
+rest	27	rope_norm<(bool)0, (bool)0, __half, __half>
+rest	2	rope_norm<(bool)0, (bool)0, __nv_bfloat16, __nv_bfloat16>
+rest	39	rope_norm<(bool)0, (bool)1, float, float>
+rest	25	rope_norm<(bool)0, (bool)1, __half, __half>
+rest	2	rope_norm<(bool)0, (bool)1, __nv_bfloat16, __nv_bfloat16>
+rest	43	rope_norm<(bool)1, (bool)0, float, float>
+rest	29	rope_norm<(bool)1, (bool)0, __half, __half>
+rest	3	rope_norm<(bool)1, (bool)0, __nv_bfloat16, __nv_bfloat16>
+rest	43	rope_norm<(bool)1, (bool)1, float, float>
+rest	29	rope_norm<(bool)1, (bool)1, __half, __half>
+rest	2	rope_norm<(bool)1, (bool)1, __nv_bfloat16, __nv_bfloat16>
+rest	12	rope_vision<(bool)0, (bool)0, float>
+rest	10	rope_vision<(bool)0, (bool)0, __half>
+rest	1	rope_vision<(bool)0, (bool)0, __nv_bfloat16>
+rest	10	rope_vision<(bool)0, (bool)1, float>
+rest	8	rope_vision<(bool)0, (bool)1, __half>
+rest	1	rope_vision<(bool)0, (bool)1, __nv_bfloat16>
+rest	14	rope_vision<(bool)1, (bool)0, float>
+rest	12	rope_vision<(bool)1, (bool)0, __half>
+rest	2	rope_vision<(bool)1, (bool)0, __nv_bfloat16>
+rest	14	rope_vision<(bool)1, (bool)1, float>
+rest	12	rope_vision<(bool)1, (bool)1, __half>
+rest	1	rope_vision<(bool)1, (bool)1, __nv_bfloat16>
+rest	3	rwkv_wkv7_f32<(int)64>
+rest	2	rwkv_wkv7_f32_t1_warp_row<(int)4>
+rest	4	rwkv_wkv_f32<(int)64>
+rest	7	scale_f32<float>
+rest	4	scale_f32<__nv_bfloat16>
+rest	1	silu_back_kernel<float>
+rest	3	sleep_ns
+rest	24	soft_max_back_f32
+rest	1	soft_max_f32<(bool)0, (int)0, (int)0, float>
+rest	1	soft_max_f32<(bool)0, (int)0, (int)0, __half>
+rest	100	soft_max_f32<(bool)1, (int)0, (int)0, float>
+rest	67	soft_max_f32<(bool)1, (int)0, (int)0, __half>
+rest	24	soft_max_f32<(bool)1, (int)1024, (int)1024, float>
+rest	16	soft_max_f32<(bool)1, (int)1024, (int)1024, __half>
+rest	2	soft_max_f32<(bool)1, (int)32, (int)32, float>
+rest	2	soft_max_f32<(bool)1, (int)32, (int)32, __half>
+rest	2	soft_max_f32_parallelize_cols<(int)16>
+rest	2	soft_max_f32_parallelize_cols<(int)2>
+rest	1	soft_max_f32_parallelize_cols<(int)32>
+rest	5	solve_tri_f32_fast<(int)0, (int)0>
+rest	1	solve_tri_f32_fast<(int)64, (int)10>
+rest	9	ssm_conv_f32<(bool)0, (unsigned long)128, (unsigned long)2>
+rest	9	ssm_conv_f32<(bool)0, (unsigned long)128, (unsigned long)3>
+rest	9	ssm_conv_f32<(bool)0, (unsigned long)128, (unsigned long)4>
+rest	9	ssm_conv_f32<(bool)0, (unsigned long)128, (unsigned long)7>
+rest	9	ssm_conv_f32<(bool)0, (unsigned long)128, (unsigned long)9>
+rest	6	ssm_conv_long_token_f32<(bool)0, (unsigned long)128, (unsigned long)2, (long)32>
+rest	6	ssm_conv_long_token_f32<(bool)0, (unsigned long)128, (unsigned long)3, (long)32>
+rest	6	ssm_conv_long_token_f32<(bool)0, (unsigned long)128, (unsigned long)4, (long)32>
+rest	6	ssm_conv_long_token_f32<(bool)0, (unsigned long)128, (unsigned long)7, (long)32>
+rest	6	ssm_conv_long_token_f32<(bool)0, (unsigned long)128, (unsigned long)9, (long)32>
+rest	1	ssm_scan_f32<(unsigned long)128, (unsigned long)16, (unsigned long)0>
+rest	2	ssm_scan_f32_group<(int)2, (int)64>
+rest	1	ssm_scan_f32_group<(int)3, (int)96>
+rest	8	ssm_scan_f32_group<(int)4, (int)128>
+rest	1	ssm_scan_f32_group<(int)8, (int)256>
+rest	4	ssm_ssd_init_state_kernel<(int)256>
+rest	7	ssm_ssd_pre_matmul_kernel<(int)256, __half>
+rest	4	ssm_ssd_prepare_dt_kernel<(int)256, (int)32>
+rest	7	ssm_ssd_scale_state_kernel<(int)256>
+rest	7	std::enable_if<!T7, void>::type internal::gemvx::kernel<int, int, float, float, float, float, (bool)0, (bool)1, (bool)0, (bool)0, (int)6, (bool)0, cublasGemvParamsEx<int, cublasGemvTensorBatched<const float>, cublasGemvTensorBatched<const float>, cublasGemvTensorBatched<float>, float>>
+rest	13	std::enable_if<!T7, void>::type internal::gemvx::kernel<int, int, float, float, float, float, (bool)0, (bool)1, (bool)0, (bool)0, (int)6, (bool)0, cublasGemvParamsEx<int, cublasGemvTensorStridedBatched<const float>, cublasGemvTensorStridedBatched<const float>, cublasGemvTensorStridedBatched<float>, float>>
+rest	3	std::enable_if<!T7, void>::type internal::gemvx::kernel<int, int, float, float, float, float, (bool)0, (bool)1, (bool)1, (bool)0, (int)6, (bool)0, cublasGemvParamsEx<int, cublasGemvTensorStridedBatched<const float>, cublasGemvTensorStridedBatched<const float>, cublasGemvTensorStridedBatched<float>, float>>
+rest	4	swiglu_clamp_kernel<float>
+rest	4	swiglu_clamp_kernel<__half>
+rest	8	swiglu_oai_kernel<float>
+rest	6	timestep_embedding_f32
+rest	19	top_k_mask_kernel<float>
+rest	19	top_k_mask_kernel<__half>
+rest	755	top_k_radix_gather<(int)256, (int)8>
+rest	3020	top_k_radix_histogram<(int)256, (int)8>
+rest	755	top_k_radix_init
+rest	3020	top_k_radix_select<(int)256, (int)8>
+rest	2	tri_kernel<float, (bool)0, (int)0>
+rest	2	tri_kernel<float, (bool)0, (int)1>
+rest	2	tri_kernel<float, (bool)1, (int)0>
+rest	2	tri_kernel<float, (bool)1, (int)1>
+rest	1	tri_kernel<__half, (bool)0, (int)0>
+rest	1	tri_kernel<__half, (bool)0, (int)1>
+rest	1	tri_kernel<__half, (bool)1, (int)0>
+rest	1	tri_kernel<__half, (bool)1, (int)1>
+rest	1	tri_kernel<__nv_bfloat16, (bool)0, (int)0>
+rest	1	tri_kernel<__nv_bfloat16, (bool)0, (int)1>
+rest	1	tri_kernel<__nv_bfloat16, (bool)1, (int)0>
+rest	1	tri_kernel<__nv_bfloat16, (bool)1, (int)1>
+rest	1	trsm_batch_right_upper_kernel_small<float, (int)32, (int)32, (int)64>
+rest	12	unary_gated_op_kernel<&op_gelu_erf, float>
+rest	12	unary_gated_op_kernel<&op_gelu_erf, __half>
+rest	12	unary_gated_op_kernel<&op_gelu_erf, __nv_bfloat16>
+rest	12	unary_gated_op_kernel<&op_gelu, float>
+rest	12	unary_gated_op_kernel<&op_gelu, __half>
+rest	12	unary_gated_op_kernel<&op_gelu, __nv_bfloat16>
+rest	12	unary_gated_op_kernel<&op_gelu_quick, float>
+rest	12	unary_gated_op_kernel<&op_gelu_quick, __half>
+rest	12	unary_gated_op_kernel<&op_gelu_quick, __nv_bfloat16>
+rest	12	unary_gated_op_kernel<&op_relu, float>
+rest	12	unary_gated_op_kernel<&op_relu, __half>
+rest	12	unary_gated_op_kernel<&op_relu, __nv_bfloat16>
+rest	12	unary_gated_op_kernel<&op_silu, float>
+rest	12	unary_gated_op_kernel<&op_silu, __half>
+rest	12	unary_gated_op_kernel<&op_silu, __nv_bfloat16>
+rest	2	unary_op_kernel<&op_abs, float>
+rest	2	unary_op_kernel<&op_abs, __half>
+rest	2	unary_op_kernel<&op_abs, __nv_bfloat16>
+rest	5	unary_op_kernel<&op_ceil, float>
+rest	5	unary_op_kernel<&op_ceil, __half>
+rest	5	unary_op_kernel<&op_ceil, __nv_bfloat16>
+rest	3	unary_op_kernel<&op_cos, float>
+rest	3	unary_op_kernel<&op_cos, __half>
+rest	3	unary_op_kernel<&op_cos, __nv_bfloat16>
+rest	2	unary_op_kernel<&op_elu, float>
+rest	2	unary_op_kernel<&op_elu, __half>
+rest	2	unary_op_kernel<&op_elu, __nv_bfloat16>
+rest	2	unary_op_kernel<&op_exp, float>
+rest	2	unary_op_kernel<&op_exp, __half>
+rest	2	unary_op_kernel<&op_expm1, float>
+rest	2	unary_op_kernel<&op_expm1, __half>
+rest	2	unary_op_kernel<&op_expm1, __nv_bfloat16>
+rest	2	unary_op_kernel<&op_exp, __nv_bfloat16>
+rest	5	unary_op_kernel<&op_floor, float>
+rest	5	unary_op_kernel<&op_floor, __half>
+rest	5	unary_op_kernel<&op_floor, __nv_bfloat16>
+rest	2	unary_op_kernel<&op_gelu_erf, float>
+rest	2	unary_op_kernel<&op_gelu_erf, __half>
+rest	2	unary_op_kernel<&op_gelu_erf, __nv_bfloat16>
+rest	2	unary_op_kernel<&op_gelu, float>
+rest	2	unary_op_kernel<&op_gelu, __half>
+rest	2	unary_op_kernel<&op_gelu, __nv_bfloat16>
+rest	2	unary_op_kernel<&op_gelu_quick, float>
+rest	2	unary_op_kernel<&op_gelu_quick, __half>
+rest	2	unary_op_kernel<&op_gelu_quick, __nv_bfloat16>
+rest	2	unary_op_kernel<&op_hardsigmoid, float>
+rest	2	unary_op_kernel<&op_hardsigmoid, __half>
+rest	2	unary_op_kernel<&op_hardsigmoid, __nv_bfloat16>
+rest	2	unary_op_kernel<&op_hardswish, float>
+rest	2	unary_op_kernel<&op_hardswish, __half>
+rest	2	unary_op_kernel<&op_hardswish, __nv_bfloat16>
+rest	3	unary_op_kernel<&op_log, float>
+rest	3	unary_op_kernel<&op_log, __half>
+rest	3	unary_op_kernel<&op_log, __nv_bfloat16>
+rest	2	unary_op_kernel<&op_neg, float>
+rest	2	unary_op_kernel<&op_neg, __half>
+rest	2	unary_op_kernel<&op_neg, __nv_bfloat16>
+rest	2	unary_op_kernel<&op_relu, float>
+rest	2	unary_op_kernel<&op_relu, __half>
+rest	2	unary_op_kernel<&op_relu, __nv_bfloat16>
+rest	5	unary_op_kernel<&op_round, float>
+rest	5	unary_op_kernel<&op_round, __half>
+rest	5	unary_op_kernel<&op_round, __nv_bfloat16>
+rest	2	unary_op_kernel<&op_sgn, float>
+rest	2	unary_op_kernel<&op_sgn, __half>
+rest	2	unary_op_kernel<&op_sgn, __nv_bfloat16>
+rest	3	unary_op_kernel<&op_sigmoid, float>
+rest	2	unary_op_kernel<&op_sigmoid, __half>
+rest	2	unary_op_kernel<&op_sigmoid, __nv_bfloat16>
+rest	2	unary_op_kernel<&op_silu, float>
+rest	2	unary_op_kernel<&op_silu, __half>
+rest	2	unary_op_kernel<&op_silu, __nv_bfloat16>
+rest	3	unary_op_kernel<&op_sin, float>
+rest	3	unary_op_kernel<&op_sin, __half>
+rest	3	unary_op_kernel<&op_sin, __nv_bfloat16>
+rest	2	unary_op_kernel<&op_softplus, float>
+rest	2	unary_op_kernel<&op_softplus, __half>
+rest	2	unary_op_kernel<&op_softplus, __nv_bfloat16>
+rest	3	unary_op_kernel<&op_sqr, float>
+rest	3	unary_op_kernel<&op_sqr, __half>
+rest	3	unary_op_kernel<&op_sqr, __nv_bfloat16>
+rest	3	unary_op_kernel<&op_sqrt, float>
+rest	3	unary_op_kernel<&op_sqrt, __half>
+rest	3	unary_op_kernel<&op_sqrt, __nv_bfloat16>
+rest	2	unary_op_kernel<&op_step, float>
+rest	2	unary_op_kernel<&op_step, __half>
+rest	2	unary_op_kernel<&op_step, __nv_bfloat16>
+rest	2	unary_op_kernel<&op_tanh, float>
+rest	2	unary_op_kernel<&op_tanh, __half>
+rest	2	unary_op_kernel<&op_tanh, __nv_bfloat16>
+rest	5	unary_op_kernel<&op_trunc, float>
+rest	5	unary_op_kernel<&op_trunc, __half>
+rest	5	unary_op_kernel<&op_trunc, __nv_bfloat16>
+rest	2	unary_op_kernel_strided<&op_abs, float>
+rest	2	unary_op_kernel_strided<&op_abs, __half>
+rest	2	unary_op_kernel_strided<&op_abs, __nv_bfloat16>
+rest	2	unary_op_kernel_strided<&op_ceil, float>
+rest	2	unary_op_kernel_strided<&op_ceil, __half>
+rest	2	unary_op_kernel_strided<&op_ceil, __nv_bfloat16>
+rest	2	unary_op_kernel_strided<&op_elu, float>
+rest	2	unary_op_kernel_strided<&op_elu, __half>
+rest	2	unary_op_kernel_strided<&op_elu, __nv_bfloat16>
+rest	2	unary_op_kernel_strided<&op_exp, float>
+rest	2	unary_op_kernel_strided<&op_exp, __half>
+rest	2	unary_op_kernel_strided<&op_expm1, float>
+rest	2	unary_op_kernel_strided<&op_expm1, __half>
+rest	2	unary_op_kernel_strided<&op_expm1, __nv_bfloat16>
+rest	2	unary_op_kernel_strided<&op_exp, __nv_bfloat16>
+rest	2	unary_op_kernel_strided<&op_floor, float>
+rest	2	unary_op_kernel_strided<&op_floor, __half>
+rest	2	unary_op_kernel_strided<&op_floor, __nv_bfloat16>
+rest	2	unary_op_kernel_strided<&op_gelu_erf, float>
+rest	2	unary_op_kernel_strided<&op_gelu_erf, __half>
+rest	2	unary_op_kernel_strided<&op_gelu_erf, __nv_bfloat16>
+rest	2	unary_op_kernel_strided<&op_gelu, float>
+rest	2	unary_op_kernel_strided<&op_gelu, __half>
+rest	2	unary_op_kernel_strided<&op_gelu, __nv_bfloat16>
+rest	2	unary_op_kernel_strided<&op_gelu_quick, float>
+rest	2	unary_op_kernel_strided<&op_gelu_quick, __half>
+rest	2	unary_op_kernel_strided<&op_gelu_quick, __nv_bfloat16>
+rest	2	unary_op_kernel_strided<&op_hardsigmoid, float>
+rest	2	unary_op_kernel_strided<&op_hardsigmoid, __half>
+rest	2	unary_op_kernel_strided<&op_hardsigmoid, __nv_bfloat16>
+rest	2	unary_op_kernel_strided<&op_hardswish, float>
+rest	2	unary_op_kernel_strided<&op_hardswish, __half>
+rest	2	unary_op_kernel_strided<&op_hardswish, __nv_bfloat16>
+rest	2	unary_op_kernel_strided<&op_neg, float>
+rest	2	unary_op_kernel_strided<&op_neg, __half>
+rest	2	unary_op_kernel_strided<&op_neg, __nv_bfloat16>
+rest	2	unary_op_kernel_strided<&op_relu, float>
+rest	2	unary_op_kernel_strided<&op_relu, __half>
+rest	2	unary_op_kernel_strided<&op_relu, __nv_bfloat16>
+rest	2	unary_op_kernel_strided<&op_round, float>
+rest	2	unary_op_kernel_strided<&op_round, __half>
+rest	2	unary_op_kernel_strided<&op_round, __nv_bfloat16>
+rest	2	unary_op_kernel_strided<&op_sgn, float>
+rest	2	unary_op_kernel_strided<&op_sgn, __half>
+rest	2	unary_op_kernel_strided<&op_sgn, __nv_bfloat16>
+rest	2	unary_op_kernel_strided<&op_sigmoid, float>
+rest	2	unary_op_kernel_strided<&op_sigmoid, __half>
+rest	2	unary_op_kernel_strided<&op_sigmoid, __nv_bfloat16>
+rest	2	unary_op_kernel_strided<&op_silu, float>
+rest	2	unary_op_kernel_strided<&op_silu, __half>
+rest	2	unary_op_kernel_strided<&op_silu, __nv_bfloat16>
+rest	2	unary_op_kernel_strided<&op_softplus, float>
+rest	2	unary_op_kernel_strided<&op_softplus, __half>
+rest	2	unary_op_kernel_strided<&op_softplus, __nv_bfloat16>
+rest	2	unary_op_kernel_strided<&op_step, float>
+rest	2	unary_op_kernel_strided<&op_step, __half>
+rest	2	unary_op_kernel_strided<&op_step, __nv_bfloat16>
+rest	2	unary_op_kernel_strided<&op_tanh, float>
+rest	2	unary_op_kernel_strided<&op_tanh, __half>
+rest	2	unary_op_kernel_strided<&op_tanh, __nv_bfloat16>
+rest	2	unary_op_kernel_strided<&op_trunc, float>
+rest	2	unary_op_kernel_strided<&op_trunc, __half>
+rest	2	unary_op_kernel_strided<&op_trunc, __nv_bfloat16>
+rest	4	upscale_f32
+rest	8	upscale_f32_bicubic
+rest	8	upscale_f32_bilinear
+rest	4	upscale_f32_bilinear_antialias
+rest	2	xielu_kernel<float>
+rest	2	xielu_kernel<__half>
+fused	404	add_id_kernel
+fused	7	add_rms_norm_mul_q8_1_f32<(int)1024, (bool)0>
+fused	8	add_rms_norm_mul_q8_1_f32<(int)1024, (bool)1>
+fused	1	add_rms_norm_mul_q8_1_f32<(int)256, (bool)1>
+fused	8	add_rms_norm_mul_q8_1_f32<(int)512, (bool)0>
+fused	9	add_rms_norm_mul_q8_1_f32<(int)512, (bool)1>
+fused	3	ampere_h16816gemm_128x64_ldg8_stages_32x6_tn
+fused	4	ampere_h16816gemm_256x128_ldg8_stages_32x3_tn
+fused	9	ampere_h16816gemm_64x64_ldg8_stages_64x5_tn
+fused	1127	ampere_h16816gemm_64x64_sliced1x2_ldg8_stages_64x5_tn
+fused	8	ampere_h1688gemm_256x64_ldg8_stages_32x1_tn
+fused	330	ampere_sgemm_32x32_sliced1x4_tn
+fused	128	concat_cont<unsigned int, (int)0>
+fused	213	concat_cont<unsigned int, (int)2>
+fused	1	convert_unary<ggml_fp8_e4m3_t, __half>
+fused	50	convert_unary_cont_vec4<float, __half>
+fused	3	convert_unary_cont_vec4<ggml_fp8_e4m3_t, __half>
+fused	1834	convert_unary_cont_vec4<__half, float>
+fused	4	cpy_scalar_contiguous<__half, float>
+fused	363	cpy_scalar_contiguous<int, float>
+fused	6	cpy_scalar_transpose<float>
+fused	5	cub::CUB_200802_SM_610::DeviceRadixSortSingleTileKernel<cub::CUB_200802_SM_610::detail::radix::policy_hub<float, int, unsigned int>::Policy1000, (bool)1, float, int, unsigned int, cub::CUB_200802_SM_610::detail::identity_decomposer_t>
+fused	105	cub::CUB_200802_SM_610::DeviceReduceKernel<cub::CUB_200802_SM_610::detail::reduce::policy_hub<float, unsigned long long, cuda::std::__4::plus<void>>::Policy1000, const float *, unsigned long long, cuda::std::__4::plus<void>, float, cuda::std::__4::__identity>
+fused	150	cub::CUB_200802_SM_610::DeviceReduceSingleTileKernel<cub::CUB_200802_SM_610::detail::reduce::policy_hub<float, unsigned long long, cuda::std::__4::plus<void>>::Policy1000, const float *, float *, unsigned long long, cuda::std::__4::plus<void>, float, float, cuda::std::__4::__identity>
+fused	105	cub::CUB_200802_SM_610::DeviceReduceSingleTileKernel<cub::CUB_200802_SM_610::detail::reduce::policy_hub<float, unsigned long long, cuda::std::__4::plus<void>>::Policy1000, float *, float *, int, cuda::std::__4::plus<void>, float, float, cuda::std::__4::__identity>
+fused	128	cublasLt::splitKreduce_kernel<(int)32, (int)16, int, float, float, float, float, (bool)0, float, float, float, (bool)1, (bool)0, (bool)0, (bool)0>
+fused	140	cublasLt::splitKreduce_kernel<(int)32, (int)16, int, __half, __half, __half, __half, (bool)0, __half, __half, __half, (bool)1, (bool)0, (bool)0, (bool)0>
+fused	1	cutlass::Kernel2<cutlass_75_wmma_tensorop_h161616gemm_32x32_128x2_tn_align1>
+fused	57	cutlass::Kernel2<cutlass_80_tensorop_h16816gemm_64x64_64x6_tn_align8>
+fused	132	cutlass::Kernel2<cutlass_80_tensorop_s1688gemm_64x64_16x6_tn_align4>
+fused	38	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_16x16_128x2_tn_align8>
+fused	586	cutlass::Kernel2<cutlass_80_wmma_tensorop_h161616gemm_32x32_128x2_tn_align8>
+fused	1	cutlass::Kernel2<cutlass_80_wmma_tensorop_s161616gemm_f16_32x32_128x2_nt_align8>
+fused	1	cutlass::Kernel2<cutlass_80_wmma_tensorop_s161616gemm_f16_32x32_32x1_nt_align2>
+fused	1	cutlass::Kernel2<cutlass_80_wmma_tensorop_s161616gemm_f16_32x32_32x1_nt_align8>
+fused	1	cutlass::Kernel2<cutlass_80_wmma_tensorop_s161616gemm_f16_32x32_64x1_nt_align8>
+fused	10	dequantize_block_iq1_m<__half>
+fused	2	dequantize_block_iq4_xs<__half>
+fused	6	dequantize_block_nvfp4<__half>
+fused	1	dequantize_block_q4_K<__half>
+fused	2	dequantize_block_q5_K<__half>
+fused	2	dequantize_block_q6_K<__half>
+fused	2	dequantize_block_q8_0_f16<(bool)0>
+fused	40	fill_kernel<float>
+fused	27	gated_delta_net_cuda<(int)128, (bool)0, (bool)0, (int)4>
+fused	6	gated_delta_net_cuda<(int)128, (bool)0, (bool)1, (int)4>
+fused	24	gated_delta_net_cuda<(int)32, (bool)0, (bool)0, (int)4>
+fused	10	gated_delta_net_cuda<(int)32, (bool)0, (bool)1, (int)4>
+fused	24	gated_delta_net_cuda<(int)64, (bool)0, (bool)0, (int)4>
+fused	8	gated_delta_net_cuda<(int)64, (bool)0, (bool)1, (int)4>
+fused	27	gated_rms_norm_f32
+fused	24	gdn_conv_f32<(int)4>
+fused	3717	gemmk1_kernel<int, float, (int)256, (int)5, (bool)1, (bool)0, (bool)0, (bool)0, cublasGemvTensorStridedBatched<const float>, cublasGemvTensorStridedBatched<const float>, cublasGemvTensorStridedBatched<float>, float, (int)0>
+fused	1	gemmSN_TN_kernel_half<(int)256, (int)8, (int)2, (int)4, (int)8, cublasGemvTensorStridedBatched<const __half>, cublasGemvTensorStridedBatched<const __half>, cublasGemvTensorStridedBatched<__half>>
+fused	2	group_norm_f32<(int)1024>
+fused	5	init_indices
+fused	5	init_offsets
+fused	363	k_argsort_f32_i32<(ggml_sort_order)0>
+fused	347	k_argsort_f32_i32<(ggml_sort_order)1>
+fused	1800	k_bin_bcast<&op_add, float, float, float, const float *>
+fused	169	k_bin_bcast<&op_add, float, float, float, const float *, const float *>
+fused	5	k_bin_bcast<&op_add, float, float, float, const float *, const float *, const float *>
+fused	1	k_bin_bcast<&op_add, float, float, float, const float *, const float *, const float *, const float *, const float *, const float *, const float *>
+fused	1	k_bin_bcast<&op_add, float, float, float, const float *, const float *, const float *, const float *, const float *, const float *, const float *, const float *>
+fused	4	k_bin_bcast<&op_add, __half, float, __half, const float *>
+fused	2	k_bin_bcast<&op_add, __half, float, __half, const float *, const float *>
+fused	16	k_bin_bcast<&op_add, __half, __half, __half, const __half *>
+fused	2	k_bin_bcast<&op_add, __half, __half, __half, const __half *, const __half *>
+fused	111	k_bin_bcast<&op_add, __nv_bfloat16, float, __nv_bfloat16, const float *>
+fused	9	k_bin_bcast<&op_add, __nv_bfloat16, float, __nv_bfloat16, const float *, const float *, const float *>
+fused	33	k_bin_bcast<&op_add, __nv_bfloat16, __nv_bfloat16, __nv_bfloat16, const __nv_bfloat16 *>
+fused	164	k_bin_bcast<&op_div, float, float, float, const float *>
+fused	1950	k_bin_bcast<&op_mul, float, float, float, const float *>
+fused	2	k_bin_bcast<&op_mul, float, float, float, const float *, const float *>
+fused	6	k_bin_bcast<&op_mul, __half, float, __half, const float *>
+fused	47	k_bin_bcast<&op_mul, __half, __half, __half, const __half *>
+fused	8	k_bin_bcast<&op_mul, __nv_bfloat16, float, __nv_bfloat16, const float *>
+fused	44	k_bin_bcast<&op_mul, __nv_bfloat16, __nv_bfloat16, __nv_bfloat16, const __nv_bfloat16 *>
+fused	79	k_bin_bcast<&op_repeat, float, float, float, >
+fused	81	k_bin_bcast<&op_sub, float, float, float, const float *>
+fused	23	kcol::mul_mat_kcol<(int)0, (int)2, (int)1>
+fused	11	kcol::mul_mat_kcol<(int)0, (int)2, (int)2>
+fused	11	kcol::mul_mat_kcol<(int)0, (int)3, (int)2>
+fused	13	kcol::mul_mat_kcol<(int)0, (int)4, (int)1>
+fused	11	kcol::mul_mat_kcol<(int)0, (int)5, (int)2>
+fused	16	kcol::mul_mat_kcol<(int)0, (int)8, (int)1>
+fused	10	kcol::mul_mat_kcol<(int)0, (int)8, (int)2>
+fused	13	kcol::mul_mat_kcol<(int)10, (int)4, (int)1>
+fused	13	kcol::mul_mat_kcol<(int)10, (int)8, (int)1>
+fused	18	kcol::mul_mat_kcol<(int)15, (int)2, (int)1>
+fused	8	kcol::mul_mat_kcol<(int)15, (int)3, (int)1>
+fused	10	kcol::mul_mat_kcol<(int)15, (int)4, (int)1>
+fused	2	kcol::mul_mat_kcol<(int)15, (int)6, (int)1>
+fused	6	kcol::mul_mat_kcol<(int)15, (int)7, (int)1>
+fused	4	kcol::mul_mat_kcol<(int)15, (int)8, (int)1>
+fused	10	kcol::mul_mat_kcol<(int)1, (int)2, (int)1>
+fused	9	kcol::mul_mat_kcol<(int)1, (int)3, (int)1>
+fused	72	kcol::mul_mat_kcol<(int)1, (int)4, (int)1>
+fused	59	kcol::mul_mat_kcol<(int)1, (int)5, (int)1>
+fused	9	kcol::mul_mat_kcol<(int)1, (int)6, (int)1>
+fused	9	kcol::mul_mat_kcol<(int)1, (int)7, (int)1>
+fused	62	kcol::mul_mat_kcol<(int)1, (int)8, (int)1>
+fused	8	kcol::mul_mat_kcol<(int)2, (int)1, (int)1>
+fused	64	kcol::mul_mat_kcol<(int)2, (int)2, (int)1>
+fused	14	kcol::mul_mat_kcol<(int)2, (int)3, (int)1>
+fused	50	kcol::mul_mat_kcol<(int)2, (int)4, (int)1>
+fused	54	kcol::mul_mat_kcol<(int)2, (int)5, (int)1>
+fused	10	kcol::mul_mat_kcol<(int)2, (int)6, (int)1>
+fused	10	kcol::mul_mat_kcol<(int)2, (int)7, (int)1>
+fused	54	kcol::mul_mat_kcol<(int)2, (int)8, (int)1>
+fused	69	kcol::mul_mat_kcol<(int)3, (int)2, (int)1>
+fused	10	kcol::mul_mat_kcol<(int)3, (int)3, (int)1>
+fused	59	kcol::mul_mat_kcol<(int)3, (int)4, (int)1>
+fused	50	kcol::mul_mat_kcol<(int)3, (int)5, (int)1>
+fused	6	kcol::mul_mat_kcol<(int)3, (int)6, (int)1>
+fused	6	kcol::mul_mat_kcol<(int)3, (int)7, (int)1>
+fused	65	kcol::mul_mat_kcol<(int)3, (int)8, (int)1>
+fused	10	kcol::mul_mat_kcol<(int)4, (int)2, (int)1>
+fused	42	kcol::mul_mat_kcol<(int)4, (int)4, (int)1>
+fused	52	kcol::mul_mat_kcol<(int)4, (int)5, (int)1>
+fused	2	kcol::mul_mat_kcol<(int)4, (int)6, (int)1>
+fused	2	kcol::mul_mat_kcol<(int)4, (int)7, (int)1>
+fused	53	kcol::mul_mat_kcol<(int)4, (int)8, (int)1>
+fused	45	kcol::mul_mat_kcol<(int)6, (int)2, (int)1>
+fused	5	kcol::mul_mat_kcol<(int)6, (int)3, (int)1>
+fused	45	kcol::mul_mat_kcol<(int)6, (int)4, (int)1>
+fused	45	kcol::mul_mat_kcol<(int)6, (int)5, (int)1>
+fused	5	kcol::mul_mat_kcol<(int)6, (int)6, (int)1>
+fused	5	kcol::mul_mat_kcol<(int)6, (int)7, (int)1>
+fused	45	kcol::mul_mat_kcol<(int)6, (int)8, (int)1>
+fused	7	kcol::mul_mat_kcol<(int)7, (int)5, (int)2>
+fused	13	kcol::mul_mat_kcol<(int)7, (int)8, (int)1>
+fused	7	kcol::mul_mat_kcol<(int)7, (int)8, (int)2>
+fused	95	kcol::quantize_records<(int)0>
+fused	230	kcol::quantize_records<(int)1>
+fused	26	kcol::quantize_records<(int)10>
+fused	48	kcol::quantize_records<(int)15>
+fused	264	kcol::quantize_records<(int)2>
+fused	265	kcol::quantize_records<(int)3>
+fused	161	kcol::quantize_records<(int)4>
+fused	195	kcol::quantize_records<(int)6>
+fused	27	kcol::quantize_records<(int)7>
+fused	1198	k_get_rows_float<float, float>
+fused	113	k_get_rows_float<float, __half>
+fused	35	k_get_rows_float_vec<float>
+fused	1	k_moe_layer<(ggml_type)13, (ggml_type)13, (ggml_type)13, (int)2>
+fused	1	k_moe_layer<(ggml_type)13, (ggml_type)13, (ggml_type)8, (int)2>
+fused	1	k_moe_layer<(ggml_type)13, (ggml_type)8, (ggml_type)8, (int)2>
+fused	1	k_moe_layer<(ggml_type)23, (ggml_type)13, (ggml_type)13, (int)2>
+fused	1	k_moe_layer<(ggml_type)23, (ggml_type)13, (ggml_type)8, (int)2>
+fused	1	k_moe_layer<(ggml_type)23, (ggml_type)23, (ggml_type)13, (int)2>
+fused	1	k_moe_layer<(ggml_type)23, (ggml_type)23, (ggml_type)23, (int)2>
+fused	1	k_moe_layer<(ggml_type)23, (ggml_type)23, (ggml_type)8, (int)2>
+fused	2	k_moe_layer<(ggml_type)6, (ggml_type)6, (ggml_type)6, (int)2>
+fused	3	k_moe_layer<(ggml_type)6, (ggml_type)6, (ggml_type)8, (int)2>
+fused	2	k_moe_layer<(ggml_type)6, (ggml_type)8, (ggml_type)8, (int)2>
+fused	2	k_moe_layer<(ggml_type)8, (ggml_type)6, (ggml_type)8, (int)2>
+fused	5	k_moe_tail<(bool)0>
+fused	5	k_moe_tail<(bool)1>
+fused	41	k_set_rows<float, int, float>
+fused	8	k_set_rows<float, long, float>
+fused	9	k_set_rows<float, long, __half>
+fused	3	k_set_rows<__nv_bfloat16, long, __half>
+fused	3	k_set_rows<__nv_bfloat16, long, __nv_bfloat16>
+fused	933	k_skip_ids_fix
+fused	933	k_skip_ids_zero_rows
+fused	50	l2_norm_f32<(int)1024>
+fused	248	l2_norm_f32<(int)32>
+fused	8	mm_ids_helper<(int)0>
+fused	20	mm_ids_helper<(int)10>
+fused	3	mm_ids_helper<(int)4>
+fused	356	mm_ids_helper<(int)8>
+fused	5	moe_weighted_reduction_f32
+fused	6	mtok_iq::mul_mat_vec_iq_pascal_mtok<(ggml_type)16, (bool)1, (int)4, (int)2>
+fused	12	mtok_iq::mul_mat_vec_iq_pascal_mtok<(ggml_type)16, (bool)1, (int)4, (int)4>
+fused	32	mtok_iq::mul_mat_vec_iq_pascal_mtok<(ggml_type)16, (bool)1, (int)4, (int)8>
+fused	6	mtok_iq::mul_mat_vec_iq_pascal_mtok<(ggml_type)17, (bool)1, (int)4, (int)2>
+fused	12	mtok_iq::mul_mat_vec_iq_pascal_mtok<(ggml_type)17, (bool)1, (int)4, (int)4>
+fused	32	mtok_iq::mul_mat_vec_iq_pascal_mtok<(ggml_type)17, (bool)1, (int)4, (int)8>
+fused	7	mtok_iq::mul_mat_vec_iq_pascal_mtok<(ggml_type)18, (bool)1, (int)4, (int)2>
+fused	14	mtok_iq::mul_mat_vec_iq_pascal_mtok<(ggml_type)18, (bool)1, (int)4, (int)4>
+fused	32	mtok_iq::mul_mat_vec_iq_pascal_mtok<(ggml_type)18, (bool)1, (int)4, (int)8>
+fused	4	mtok_iq::mul_mat_vec_iq_pascal_mtok<(ggml_type)18, (bool)1, (int)8, (int)2>
+fused	8	mtok_iq::mul_mat_vec_iq_pascal_mtok<(ggml_type)18, (bool)1, (int)8, (int)4>
+fused	6	mtok_iq::mul_mat_vec_iq_pascal_mtok<(ggml_type)21, (bool)1, (int)4, (int)2>
+fused	12	mtok_iq::mul_mat_vec_iq_pascal_mtok<(ggml_type)21, (bool)1, (int)4, (int)4>
+fused	32	mtok_iq::mul_mat_vec_iq_pascal_mtok<(ggml_type)21, (bool)1, (int)4, (int)8>
+fused	7	mtok_iq::mul_mat_vec_iq_pascal_mtok<(ggml_type)22, (bool)1, (int)4, (int)2>
+fused	14	mtok_iq::mul_mat_vec_iq_pascal_mtok<(ggml_type)22, (bool)1, (int)4, (int)4>
+fused	32	mtok_iq::mul_mat_vec_iq_pascal_mtok<(ggml_type)22, (bool)1, (int)4, (int)8>
+fused	4	mtok_iq::mul_mat_vec_iq_pascal_mtok<(ggml_type)22, (bool)1, (int)8, (int)2>
+fused	8	mtok_iq::mul_mat_vec_iq_pascal_mtok<(ggml_type)22, (bool)1, (int)8, (int)4>
+fused	8	mtok_iq::mul_mat_vec_iq_pascal_mtok<(ggml_type)29, (bool)1, (int)16, (int)2>
+fused	16	mtok_iq::mul_mat_vec_iq_pascal_mtok<(ggml_type)29, (bool)1, (int)16, (int)4>
+fused	32	mtok_iq::mul_mat_vec_iq_pascal_mtok<(ggml_type)29, (bool)1, (int)16, (int)8>
+fused	3	mtok_np::mul_mat_vec_np_pascal_mtok<(ggml_type)500, (bool)1, (int)0, (int)4, (int)2>
+fused	6	mtok_np::mul_mat_vec_np_pascal_mtok<(ggml_type)500, (bool)1, (int)0, (int)4, (int)4>
+fused	8	mtok_np::mul_mat_vec_np_pascal_mtok<(ggml_type)500, (bool)1, (int)0, (int)4, (int)8>
+fused	4	mtok_np::mul_mat_vec_np_pascal_mtok<(ggml_type)500, (bool)1, (int)0, (int)8, (int)2>
+fused	8	mtok_np::mul_mat_vec_np_pascal_mtok<(ggml_type)500, (bool)1, (int)0, (int)8, (int)4>
+fused	7	mtok_np::mul_mat_vec_np_pascal_mtok<(ggml_type)501, (bool)1, (int)0, (int)16, (int)2>
+fused	14	mtok_np::mul_mat_vec_np_pascal_mtok<(ggml_type)501, (bool)1, (int)0, (int)16, (int)4>
+fused	8	mtok_np::mul_mat_vec_np_pascal_mtok<(ggml_type)501, (bool)1, (int)0, (int)16, (int)8>
+fused	1	mtok_np::mul_mat_vec_np_pascal_mtok<(ggml_type)502, (bool)1, (int)0, (int)16, (int)2>
+fused	2	mtok_np::mul_mat_vec_np_pascal_mtok<(ggml_type)502, (bool)1, (int)0, (int)16, (int)4>
+fused	4	mtok_np::mul_mat_vec_np_pascal_mtok<(ggml_type)502, (bool)1, (int)0, (int)16, (int)8>
+fused	1	mtok_np::mul_mat_vec_np_pascal_mtok<(ggml_type)502, (bool)1, (int)0, (int)4, (int)2>
+fused	2	mtok_np::mul_mat_vec_np_pascal_mtok<(ggml_type)502, (bool)1, (int)0, (int)4, (int)4>
+fused	4	mtok_np::mul_mat_vec_np_pascal_mtok<(ggml_type)502, (bool)1, (int)0, (int)4, (int)8>
+fused	1	mtok_np::mul_mat_vec_np_pascal_mtok<(ggml_type)503, (bool)1, (int)0, (int)8, (int)2>
+fused	2	mtok_np::mul_mat_vec_np_pascal_mtok<(ggml_type)503, (bool)1, (int)0, (int)8, (int)4>
+fused	4	mtok_np::mul_mat_vec_np_pascal_mtok<(ggml_type)503, (bool)1, (int)0, (int)8, (int)8>
+fused	8	mul_mat_q<(ggml_type)10, (int)16, (bool)1, (ggml_prec)30, (bool)0, (bool)0, (bool)0>
+fused	4	mul_mat_q<(ggml_type)10, (int)32, (bool)1, (ggml_prec)30, (bool)0, (bool)0, (bool)0>
+fused	8	mul_mat_q<(ggml_type)11, (int)16, (bool)1, (ggml_prec)30, (bool)0, (bool)0, (bool)0>
+fused	4	mul_mat_q<(ggml_type)11, (int)32, (bool)1, (ggml_prec)30, (bool)0, (bool)0, (bool)0>
+fused	6	mul_mat_q<(ggml_type)12, (int)16, (bool)0, (ggml_prec)30, (bool)0, (bool)0, (bool)0>
+fused	8	mul_mat_q<(ggml_type)12, (int)16, (bool)1, (ggml_prec)30, (bool)0, (bool)0, (bool)0>
+fused	2	mul_mat_q<(ggml_type)12, (int)24, (bool)0, (ggml_prec)30, (bool)0, (bool)0, (bool)0>
+fused	1	mul_mat_q<(ggml_type)12, (int)32, (bool)0, (ggml_prec)30, (bool)0, (bool)0, (bool)0>
+fused	4	mul_mat_q<(ggml_type)12, (int)32, (bool)1, (ggml_prec)30, (bool)0, (bool)0, (bool)0>
+fused	1	mul_mat_q<(ggml_type)12, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0, (bool)0>
+fused	14	mul_mat_q<(ggml_type)12, (int)8, (bool)0, (ggml_prec)30, (bool)0, (bool)0, (bool)0>
+fused	52	mul_mat_q<(ggml_type)12, (int)8, (bool)1, (ggml_prec)30, (bool)0, (bool)0, (bool)0>
+fused	3	mul_mat_q<(ggml_type)13, (int)16, (bool)0, (ggml_prec)30, (bool)0, (bool)0, (bool)0>
+fused	26	mul_mat_q<(ggml_type)13, (int)16, (bool)1, (ggml_prec)30, (bool)0, (bool)0, (bool)0>
+fused	4	mul_mat_q<(ggml_type)13, (int)32, (bool)1, (ggml_prec)30, (bool)0, (bool)0, (bool)0>
+fused	8	mul_mat_q<(ggml_type)14, (int)16, (bool)1, (ggml_prec)30, (bool)0, (bool)0, (bool)0>
+fused	4	mul_mat_q<(ggml_type)14, (int)32, (bool)1, (ggml_prec)30, (bool)0, (bool)0, (bool)0>
+fused	2	mul_mat_q<(ggml_type)16, (int)8, (bool)0, (ggml_prec)30, (bool)0, (bool)0, (bool)0>
+fused	2	mul_mat_q<(ggml_type)17, (int)8, (bool)0, (ggml_prec)30, (bool)0, (bool)0, (bool)0>
+fused	2	mul_mat_q<(ggml_type)18, (int)8, (bool)0, (ggml_prec)30, (bool)0, (bool)0, (bool)0>
+fused	2	mul_mat_q<(ggml_type)21, (int)8, (bool)0, (ggml_prec)30, (bool)0, (bool)0, (bool)0>
+fused	2	mul_mat_q<(ggml_type)22, (int)8, (bool)0, (ggml_prec)30, (bool)0, (bool)0, (bool)0>
+fused	3	mul_mat_q<(ggml_type)2, (int)16, (bool)0, (ggml_prec)30, (bool)0, (bool)0, (bool)0>
+fused	18	mul_mat_q<(ggml_type)2, (int)16, (bool)1, (ggml_prec)30, (bool)0, (bool)0, (bool)0>
+fused	1	mul_mat_q<(ggml_type)2, (int)32, (bool)0, (ggml_prec)30, (bool)0, (bool)0, (bool)0>
+fused	52	mul_mat_q<(ggml_type)2, (int)8, (bool)1, (ggml_prec)30, (bool)0, (bool)0, (bool)0>
+fused	52	mul_mat_q<(ggml_type)39, (int)8, (bool)1, (ggml_prec)30, (bool)0, (bool)0, (bool)0>
+fused	52	mul_mat_q<(ggml_type)3, (int)8, (bool)1, (ggml_prec)30, (bool)0, (bool)0, (bool)0>
+fused	2	mul_mat_q<(ggml_type)40, (int)16, (bool)0, (ggml_prec)30, (bool)0, (bool)0, (bool)0>
+fused	2	mul_mat_q<(ggml_type)40, (int)16, (bool)1, (ggml_prec)30, (bool)0, (bool)0, (bool)0>
+fused	10	mul_mat_q<(ggml_type)40, (int)40, (bool)0, (ggml_prec)30, (bool)0, (bool)0, (bool)0>
+fused	78	mul_mat_q<(ggml_type)40, (int)8, (bool)1, (ggml_prec)30, (bool)0, (bool)0, (bool)0>
+fused	2	mul_mat_q<(ggml_type)42, (int)8, (bool)0, (ggml_prec)30, (bool)0, (bool)0, (bool)0>
+fused	5	mul_mat_q<(ggml_type)8, (int)16, (bool)0, (ggml_prec)30, (bool)0, (bool)0, (bool)0>
+fused	26	mul_mat_q<(ggml_type)8, (int)16, (bool)1, (ggml_prec)30, (bool)0, (bool)0, (bool)0>
+fused	4	mul_mat_q<(ggml_type)8, (int)32, (bool)1, (ggml_prec)30, (bool)0, (bool)0, (bool)0>
+fused	2	mul_mat_q<(ggml_type)8, (int)64, (bool)0, (ggml_prec)30, (bool)0, (bool)0, (bool)0>
+fused	4	mul_mat_q<(ggml_type)8, (int)8, (bool)0, (ggml_prec)30, (bool)0, (bool)0, (bool)0>
+fused	52	mul_mat_q<(ggml_type)8, (int)8, (bool)1, (ggml_prec)30, (bool)0, (bool)0, (bool)0>
+fused	1	mul_mat_vec_bf16_pascal<(int)128, (int)1, (int)1, (bool)1>
+fused	1	mul_mat_vec_bf16_pascal<(int)8, (int)4, (int)1, (bool)1>
+fused	382	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)0, (bool)0>
+fused	42	mul_mat_vec_f<float, float, (int)1, (int)128, (bool)1, (bool)0>
+fused	66	mul_mat_vec_f<float, float, (int)1, (int)256, (bool)0, (bool)0>
+fused	390	mul_mat_vec_f<float, float, (int)2, (int)128, (bool)0, (bool)0>
+fused	4	mul_mat_vec_f<float, float, (int)2, (int)256, (bool)0, (bool)0>
+fused	247	mul_mat_vec_f<float, float, (int)3, (int)128, (bool)0, (bool)0>
+fused	204	mul_mat_vec_f<float, float, (int)4, (int)128, (bool)0, (bool)0>
+fused	182	mul_mat_vec_f<ggml_fp8_e4m3_t, float, (int)1, (int)128, (bool)0, (bool)1>
+fused	84	mul_mat_vec_f<ggml_fp8_e4m3_t, float, (int)1, (int)128, (bool)1, (bool)0>
+fused	26	mul_mat_vec_f<ggml_fp8_e4m3_t, float, (int)2, (int)128, (bool)0, (bool)0>
+fused	26	mul_mat_vec_f<ggml_fp8_e4m3_t, float, (int)4, (int)128, (bool)0, (bool)0>
+fused	26	mul_mat_vec_f<ggml_fp8_e4m3_t, float, (int)8, (int)128, (bool)0, (bool)0>
+fused	42	mul_mat_vec_f<__half, float, (int)1, (int)128, (bool)1, (bool)0>
+fused	13	mul_mat_vec_f<__half, float, (int)2, (int)128, (bool)0, (bool)0>
+fused	7	mul_mat_vec_f<__half, float, (int)2, (int)256, (bool)0, (bool)0>
+fused	7	mul_mat_vec_f<__half, float, (int)3, (int)256, (bool)0, (bool)0>
+fused	13	mul_mat_vec_f<__half, float, (int)4, (int)128, (bool)0, (bool)0>
+fused	7	mul_mat_vec_f<__half, float, (int)5, (int)256, (bool)0, (bool)0>
+fused	13	mul_mat_vec_f<__half, float, (int)8, (int)128, (bool)0, (bool)0>
+fused	7	mul_mat_vec_f<__half, float, (int)8, (int)256, (bool)0, (bool)0>
+fused	2	mul_mat_vec_f<__nv_bfloat16, float, (int)1, (int)160, (bool)1, (bool)0>
+fused	2	mul_mat_vec_f<__nv_bfloat16, float, (int)1, (int)256, (bool)1, (bool)0>
+fused	2	mul_mat_vec_q<(ggml_type)10, (int)1, (bool)1, (bool)1, (bool)0, (bool)0>
+fused	4	mul_mat_vec_q<(ggml_type)10, (int)2, (bool)0, (bool)0, (bool)0, (bool)0>
+fused	4	mul_mat_vec_q<(ggml_type)10, (int)3, (bool)0, (bool)0, (bool)0, (bool)0>
+fused	4	mul_mat_vec_q<(ggml_type)10, (int)5, (bool)0, (bool)0, (bool)0, (bool)0>
+fused	4	mul_mat_vec_q<(ggml_type)10, (int)8, (bool)0, (bool)0, (bool)0, (bool)0>
+fused	3	mul_mat_vec_q<(ggml_type)11, (int)1, (bool)1, (bool)1, (bool)0, (bool)0>
+fused	10	mul_mat_vec_q<(ggml_type)11, (int)4, (bool)0, (bool)0, (bool)0, (bool)0>
+fused	10	mul_mat_vec_q<(ggml_type)11, (int)5, (bool)0, (bool)0, (bool)0, (bool)0>
+fused	10	mul_mat_vec_q<(ggml_type)11, (int)8, (bool)0, (bool)0, (bool)0, (bool)0>
+fused	10	mul_mat_vec_q<(ggml_type)12, (int)5, (bool)0, (bool)0, (bool)0, (bool)0>
+fused	10	mul_mat_vec_q<(ggml_type)12, (int)8, (bool)0, (bool)0, (bool)0, (bool)0>
+fused	11	mul_mat_vec_q<(ggml_type)13, (int)5, (bool)0, (bool)0, (bool)0, (bool)0>
+fused	10	mul_mat_vec_q<(ggml_type)13, (int)8, (bool)0, (bool)0, (bool)0, (bool)0>
+fused	6	mul_mat_vec_q<(ggml_type)14, (int)5, (bool)0, (bool)0, (bool)0, (bool)0>
+fused	2	mul_mat_vec_q<(ggml_type)14, (int)6, (bool)0, (bool)0, (bool)0, (bool)0>
+fused	2	mul_mat_vec_q<(ggml_type)14, (int)7, (bool)0, (bool)0, (bool)0, (bool)0>
+fused	6	mul_mat_vec_q<(ggml_type)14, (int)8, (bool)0, (bool)0, (bool)0, (bool)0>
+fused	42	mul_mat_vec_q<(ggml_type)16, (int)1, (bool)1, (bool)1, (bool)0, (bool)0>
+fused	13	mul_mat_vec_q<(ggml_type)16, (int)2, (bool)0, (bool)0, (bool)0, (bool)0>
+fused	2	mul_mat_vec_q<(ggml_type)22, (int)1, (bool)1, (bool)1, (bool)0, (bool)0>
+fused	10	mul_mat_vec_q<(ggml_type)23, (int)5, (bool)0, (bool)0, (bool)0, (bool)0>
+fused	10	mul_mat_vec_q<(ggml_type)23, (int)8, (bool)0, (bool)0, (bool)0, (bool)0>
+fused	2	mul_mat_vec_q<(ggml_type)29, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>
+fused	6	mul_mat_vec_q<(ggml_type)29, (int)1, (bool)1, (bool)1, (bool)0, (bool)0>
+fused	42	mul_mat_vec_q<(ggml_type)39, (int)1, (bool)1, (bool)1, (bool)0, (bool)0>
+fused	13	mul_mat_vec_q<(ggml_type)39, (int)2, (bool)0, (bool)0, (bool)0, (bool)0>
+fused	13	mul_mat_vec_q<(ggml_type)39, (int)4, (bool)0, (bool)0, (bool)0, (bool)0>
+fused	13	mul_mat_vec_q<(ggml_type)39, (int)8, (bool)0, (bool)0, (bool)0, (bool)0>
+fused	13	mul_mat_vec_q<(ggml_type)3, (int)8, (bool)0, (bool)0, (bool)0, (bool)0>
+fused	84	mul_mat_vec_q<(ggml_type)40, (int)1, (bool)1, (bool)1, (bool)0, (bool)0>
+fused	26	mul_mat_vec_q<(ggml_type)40, (int)2, (bool)0, (bool)0, (bool)0, (bool)0>
+fused	26	mul_mat_vec_q<(ggml_type)40, (int)4, (bool)0, (bool)0, (bool)0, (bool)0>
+fused	26	mul_mat_vec_q<(ggml_type)40, (int)8, (bool)0, (bool)0, (bool)0, (bool)0>
+fused	42	mul_mat_vec_q<(ggml_type)41, (int)1, (bool)1, (bool)1, (bool)0, (bool)0>
+fused	13	mul_mat_vec_q<(ggml_type)41, (int)2, (bool)0, (bool)0, (bool)0, (bool)0>
+fused	13	mul_mat_vec_q<(ggml_type)41, (int)4, (bool)0, (bool)0, (bool)0, (bool)0>
+fused	13	mul_mat_vec_q<(ggml_type)41, (int)8, (bool)0, (bool)0, (bool)0, (bool)0>
+fused	10	mul_mat_vec_q<(ggml_type)42, (int)8, (bool)0, (bool)0, (bool)0, (bool)0>
+fused	1	mul_mat_vec_q<(ggml_type)503, (int)1, (bool)1, (bool)1, (bool)0, (bool)0>
+fused	2	mul_mat_vec_q<(ggml_type)8, (int)1, (bool)1, (bool)1, (bool)0, (bool)0>
+fused	2	mul_mat_vec_q2_0_pascal_mtok<(bool)0, (int)1, (int)2>
+fused	2	mul_mat_vec_q2_0_pascal_mtok<(bool)0, (int)1, (int)4>
+fused	4	mul_mat_vec_q2_0_pascal_mtok<(bool)0, (int)1, (int)8>
+fused	7	mul_mat_vec_q2_0_pascal_mtok<(bool)1, (int)0, (int)2>
+fused	15	mul_mat_vec_q2_0_pascal_mtok<(bool)1, (int)0, (int)4>
+fused	30	mul_mat_vec_q2_0_pascal_mtok<(bool)1, (int)0, (int)8>
+fused	13	mul_mat_vec_q2_0_pascal_mtok<(bool)1, (int)2, (int)2>
+fused	14	mul_mat_vec_q2_0_pascal_mtok<(bool)1, (int)2, (int)4>
+fused	28	mul_mat_vec_q2_0_pascal_mtok<(bool)1, (int)2, (int)8>
+fused	1	mul_mat_vec_q_moe<(ggml_type)12, (int)2, (bool)1, (bool)0>
+fused	88	mul_mat_vec_q_moe<(ggml_type)16, (int)2, (bool)1, (bool)0>
+fused	4	mul_mat_vec_q_moe<(ggml_type)17, (int)2, (bool)1, (bool)0>
+fused	5	mul_mat_vec_q_moe<(ggml_type)29, (int)2, (bool)1, (bool)0>
+fused	28	mul_mat_vec_q_moe<(ggml_type)39, (int)2, (bool)1, (bool)0>
+fused	56	mul_mat_vec_q_moe<(ggml_type)40, (int)2, (bool)1, (bool)0>
+fused	56	mul_mat_vec_q_moe<(ggml_type)41, (int)2, (bool)1, (bool)0>
+fused	7	mul_mat_vec_q_moe<(ggml_type)503, (int)2, (bool)1, (bool)0>
+fused	13	mul_mat_vec_q_pascal<(ggml_type)12, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>
+fused	10	mul_mat_vec_q_pascal<(ggml_type)12, (int)1, (int)1, (bool)1, (int)1, (int)16, (bool)0>
+fused	52	mul_mat_vec_q_pascal<(ggml_type)12, (int)1, (int)1, (bool)1, (int)2, (int)16, (bool)0>
+fused	10	mul_mat_vec_q_pascal<(ggml_type)13, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>
+fused	4	mul_mat_vec_q_pascal<(ggml_type)13, (int)1, (int)1, (bool)1, (int)1, (int)16, (bool)0>
+fused	12	mul_mat_vec_q_pascal<(ggml_type)13, (int)1, (int)1, (bool)1, (int)2, (int)16, (bool)0>
+fused	2	mul_mat_vec_q_pascal<(ggml_type)14, (int)1, (int)1, (bool)1, (int)0, (int)4, (bool)0>
+fused	3	mul_mat_vec_q_pascal<(ggml_type)14, (int)1, (int)1, (bool)1, (int)2, (int)16, (bool)0>
+fused	2	mul_mat_vec_q_pascal<(ggml_type)14, (int)1, (int)1, (bool)1, (int)2, (int)8, (bool)0>
+fused	1	mul_mat_vec_q_pascal<(ggml_type)16, (int)1, (int)1, (bool)1, (int)1, (int)4, (bool)0>
+fused	3	mul_mat_vec_q_pascal<(ggml_type)16, (int)1, (int)1, (bool)1, (int)2, (int)4, (bool)0>
+fused	1	mul_mat_vec_q_pascal<(ggml_type)16, (int)1, (int)1, (bool)1, (int)2, (int)8, (bool)0>
+fused	1	mul_mat_vec_q_pascal<(ggml_type)17, (int)1, (int)1, (bool)1, (int)1, (int)4, (bool)0>
+fused	3	mul_mat_vec_q_pascal<(ggml_type)17, (int)1, (int)1, (bool)1, (int)2, (int)4, (bool)0>
+fused	1	mul_mat_vec_q_pascal<(ggml_type)17, (int)1, (int)1, (bool)1, (int)2, (int)8, (bool)0>
+fused	1	mul_mat_vec_q_pascal<(ggml_type)18, (int)1, (int)1, (bool)1, (int)1, (int)4, (bool)0>
+fused	3	mul_mat_vec_q_pascal<(ggml_type)18, (int)1, (int)1, (bool)1, (int)2, (int)4, (bool)0>
+fused	3	mul_mat_vec_q_pascal<(ggml_type)18, (int)1, (int)1, (bool)1, (int)2, (int)8, (bool)0>
+fused	1	mul_mat_vec_q_pascal<(ggml_type)21, (int)1, (int)1, (bool)1, (int)1, (int)4, (bool)0>
+fused	3	mul_mat_vec_q_pascal<(ggml_type)21, (int)1, (int)1, (bool)1, (int)2, (int)4, (bool)0>
+fused	1	mul_mat_vec_q_pascal<(ggml_type)21, (int)1, (int)1, (bool)1, (int)2, (int)8, (bool)0>
+fused	1	mul_mat_vec_q_pascal<(ggml_type)22, (int)1, (int)1, (bool)1, (int)1, (int)4, (bool)0>
+fused	3	mul_mat_vec_q_pascal<(ggml_type)22, (int)1, (int)1, (bool)1, (int)2, (int)4, (bool)0>
+fused	3	mul_mat_vec_q_pascal<(ggml_type)22, (int)1, (int)1, (bool)1, (int)2, (int)8, (bool)0>
+fused	4	mul_mat_vec_q_pascal<(ggml_type)23, (int)1, (int)1, (bool)0, (int)1, (int)16, (bool)0>
+fused	10	mul_mat_vec_q_pascal<(ggml_type)23, (int)1, (int)1, (bool)0, (int)2, (int)16, (bool)0>
+fused	13	mul_mat_vec_q_pascal<(ggml_type)23, (int)1, (int)1, (bool)1, (int)0, (int)16, (bool)0>
+fused	9	mul_mat_vec_q_pascal<(ggml_type)2, (int)2, (int)2, (bool)1, (int)0, (int)16, (bool)0>
+fused	10	mul_mat_vec_q_pascal<(ggml_type)2, (int)2, (int)2, (bool)1, (int)1, (int)16, (bool)0>
+fused	46	mul_mat_vec_q_pascal<(ggml_type)2, (int)2, (int)2, (bool)1, (int)2, (int)16, (bool)0>
+fused	46	mul_mat_vec_q_pascal<(ggml_type)3, (int)2, (int)2, (bool)1, (int)2, (int)16, (bool)0>
+fused	8	mul_mat_vec_q_pascal<(ggml_type)3, (int)2, (int)4, (bool)1, (int)0, (int)16, (bool)0>
+fused	10	mul_mat_vec_q_pascal<(ggml_type)3, (int)2, (int)4, (bool)1, (int)1, (int)16, (bool)0>
+fused	36	mul_mat_vec_q_pascal<(ggml_type)42, (int)1, (int)2, (bool)0, (int)2, (int)16, (bool)0>
+fused	7	mul_mat_vec_q_pascal<(ggml_type)42, (int)1, (int)2, (bool)1, (int)0, (int)16, (bool)0>
+fused	1	mul_mat_vec_q_pascal<(ggml_type)42, (int)1, (int)2, (bool)1, (int)1, (int)16, (bool)0>
+fused	7	mul_mat_vec_q_pascal<(ggml_type)42, (int)1, (int)2, (bool)1, (int)1, (int)16, (bool)1>
+fused	4	mul_mat_vec_q_pascal<(ggml_type)42, (int)1, (int)2, (bool)1, (int)2, (int)16, (bool)0>
+fused	4	mul_mat_vec_q_pascal<(ggml_type)42, (int)2, (int)2, (bool)1, (int)2, (int)16, (bool)0>
+fused	2	mul_mat_vec_q_pascal<(ggml_type)500, (int)1, (int)1, (bool)1, (int)2, (int)4, (bool)0>
+fused	2	mul_mat_vec_q_pascal<(ggml_type)500, (int)1, (int)1, (bool)1, (int)2, (int)8, (bool)0>
+fused	4	mul_mat_vec_q_pascal<(ggml_type)501, (int)1, (int)1, (bool)1, (int)2, (int)16, (bool)0>
+fused	1	mul_mat_vec_q_pascal<(ggml_type)502, (int)1, (int)1, (bool)0, (int)2, (int)16, (bool)0>
+fused	1	mul_mat_vec_q_pascal<(ggml_type)502, (int)1, (int)1, (bool)1, (int)2, (int)16, (bool)0>
+fused	1	mul_mat_vec_q_pascal<(ggml_type)503, (int)1, (int)1, (bool)1, (int)2, (int)8, (bool)0>
+fused	10	mul_mat_vec_q_pascal<(ggml_type)6, (int)1, (int)2, (bool)1, (int)2, (int)16, (bool)0>
+fused	8	mul_mat_vec_q_pascal<(ggml_type)6, (int)2, (int)2, (bool)1, (int)0, (int)16, (bool)0>
+fused	4	mul_mat_vec_q_pascal<(ggml_type)6, (int)2, (int)2, (bool)1, (int)1, (int)16, (bool)0>
+fused	4	mul_mat_vec_q_pascal<(ggml_type)8, (int)1, (int)2, (bool)0, (int)2, (int)16, (bool)0>
+fused	55	mul_mat_vec_q_pascal<(ggml_type)8, (int)1, (int)2, (bool)1, (int)2, (int)16, (bool)0>
+fused	12	mul_mat_vec_q_pascal<(ggml_type)8, (int)2, (int)2, (bool)1, (int)0, (int)16, (bool)0>
+fused	12	mul_mat_vec_q_pascal<(ggml_type)8, (int)2, (int)2, (bool)1, (int)1, (int)16, (bool)0>
+fused	21	mul_mat_vec_q_pascal_mc<(ggml_type)12, (int)1, (int)1, (bool)1, (int)0, (bool)0, (int)16, (bool)0>
+fused	4	mul_mat_vec_q_pascal_mc<(ggml_type)12, (int)1, (int)1, (bool)1, (int)1, (bool)0, (int)16, (bool)0>
+fused	39	mul_mat_vec_q_pascal_mc<(ggml_type)12, (int)1, (int)1, (bool)1, (int)2, (bool)0, (int)16, (bool)0>
+fused	76	mul_mat_vec_q_pascal_mc<(ggml_type)13, (int)1, (int)1, (bool)1, (int)0, (bool)0, (int)16, (bool)0>
+fused	6	mul_mat_vec_q_pascal_mc<(ggml_type)13, (int)1, (int)1, (bool)1, (int)2, (bool)0, (int)16, (bool)0>
+fused	6	mul_mat_vec_q_pascal_mc<(ggml_type)14, (int)1, (int)1, (bool)1, (int)0, (bool)0, (int)4, (bool)0>
+fused	8	mul_mat_vec_q_pascal_mc<(ggml_type)14, (int)1, (int)1, (bool)1, (int)0, (bool)0, (int)8, (bool)0>
+fused	6	mul_mat_vec_q_pascal_mc<(ggml_type)14, (int)1, (int)1, (bool)1, (int)2, (bool)0, (int)16, (bool)0>
+fused	3	mul_mat_vec_q_pascal_mc<(ggml_type)14, (int)1, (int)1, (bool)1, (int)2, (bool)0, (int)4, (bool)0>
+fused	2	mul_mat_vec_q_pascal_mc<(ggml_type)16, (int)1, (int)1, (bool)1, (int)2, (bool)0, (int)8, (bool)0>
+fused	2	mul_mat_vec_q_pascal_mc<(ggml_type)17, (int)1, (int)1, (bool)1, (int)2, (bool)0, (int)8, (bool)0>
+fused	7	mul_mat_vec_q_pascal_mc<(ggml_type)18, (int)1, (int)1, (bool)1, (int)2, (bool)0, (int)8, (bool)0>
+fused	7	mul_mat_vec_q_pascal_mc<(ggml_type)21, (int)1, (int)1, (bool)1, (int)2, (bool)0, (int)8, (bool)0>
+fused	7	mul_mat_vec_q_pascal_mc<(ggml_type)22, (int)1, (int)1, (bool)1, (int)2, (bool)0, (int)8, (bool)0>
+fused	6	mul_mat_vec_q_pascal_mc<(ggml_type)23, (int)1, (int)1, (bool)0, (int)2, (bool)0, (int)16, (bool)0>
+fused	20	mul_mat_vec_q_pascal_mc<(ggml_type)23, (int)1, (int)1, (bool)1, (int)0, (bool)0, (int)16, (bool)0>
+fused	41	mul_mat_vec_q_pascal_mc<(ggml_type)2, (int)2, (int)2, (bool)1, (int)0, (bool)0, (int)16, (bool)0>
+fused	4	mul_mat_vec_q_pascal_mc<(ggml_type)2, (int)2, (int)2, (bool)1, (int)1, (bool)0, (int)16, (bool)0>
+fused	30	mul_mat_vec_q_pascal_mc<(ggml_type)2, (int)2, (int)2, (bool)1, (int)2, (bool)0, (int)16, (bool)0>
+fused	30	mul_mat_vec_q_pascal_mc<(ggml_type)3, (int)2, (int)2, (bool)1, (int)2, (bool)0, (int)16, (bool)0>
+fused	26	mul_mat_vec_q_pascal_mc<(ggml_type)3, (int)2, (int)4, (bool)1, (int)0, (bool)0, (int)16, (bool)0>
+fused	4	mul_mat_vec_q_pascal_mc<(ggml_type)3, (int)2, (int)4, (bool)1, (int)1, (bool)0, (int)16, (bool)0>
+fused	10	mul_mat_vec_q_pascal_mc<(ggml_type)42, (int)1, (int)2, (bool)0, (int)0, (bool)0, (int)16, (bool)0>
+fused	29	mul_mat_vec_q_pascal_mc<(ggml_type)42, (int)1, (int)2, (bool)1, (int)0, (bool)0, (int)16, (bool)0>
+fused	23	mul_mat_vec_q_pascal_mc<(ggml_type)42, (int)1, (int)2, (bool)1, (int)0, (bool)0, (int)16, (bool)1>
+fused	15	mul_mat_vec_q_pascal_mc<(ggml_type)6, (int)1, (int)2, (bool)1, (int)2, (bool)0, (int)16, (bool)0>
+fused	44	mul_mat_vec_q_pascal_mc<(ggml_type)8, (int)1, (int)2, (bool)1, (int)2, (bool)0, (int)16, (bool)0>
+fused	4	mul_mat_vec_q_pascal_mc<(ggml_type)8, (int)2, (int)2, (bool)1, (int)1, (bool)0, (int)16, (bool)0>
+fused	15	norm_f32<(int)1024, (bool)0, (bool)0>
+fused	1	norm_f32<(int)1024, (bool)1, (bool)1>
+fused	3	norm_f32<(int)256, (bool)1, (bool)0>
+fused	4	norm_f32<(int)256, (bool)1, (bool)1>
+fused	15	norm_f32<(int)32, (bool)0, (bool)0>
+fused	144	op_clamp_kernel<float>
+fused	163	quantize_mmq_q8_1<(mmq_q8_1_ds_layout)0, (bool)0>
+fused	110	quantize_mmq_q8_1<(mmq_q8_1_ds_layout)0, (bool)1>
+fused	153	quantize_mmq_q8_1<(mmq_q8_1_ds_layout)1, (bool)0>
+fused	94	quantize_mmq_q8_1<(mmq_q8_1_ds_layout)1, (bool)1>
+fused	12	quantize_mmq_q8_1<(mmq_q8_1_ds_layout)2, (bool)0>
+fused	2098	quantize_q8_1
+fused	204	reduce_rows_f32<(bool)0>
+fused	12	rms_norm_f32<float, (int)1024, (int)1, (bool)0, (bool)0, (bool)0, (bool)0, float>
+fused	5	rms_norm_f32<float, (int)1024, (int)1, (bool)0, (bool)0, (bool)0, (bool)1, float>
+fused	1	rms_norm_f32<float, (int)1024, (int)1, (bool)0, (bool)1, (bool)0, (bool)0, float>
+fused	20	rms_norm_f32<float, (int)1024, (int)1, (bool)0, (bool)1, (bool)1, (bool)0, float>
+fused	2	rms_norm_f32<float, (int)1024, (int)1, (bool)1, (bool)1, (bool)0, (bool)0, float>
+fused	5	rms_norm_f32<float, (int)1024, (int)1, (bool)1, (bool)1, (bool)1, (bool)0, float>
+fused	1	rms_norm_f32<float, (int)1024, (int)4, (bool)1, (bool)0, (bool)0, (bool)0, float>
+fused	16	rms_norm_f32<float, (int)1024, (int)4, (bool)1, (bool)1, (bool)0, (bool)0, float>
+fused	18	rms_norm_f32<float, (int)1024, (int)4, (bool)1, (bool)1, (bool)1, (bool)0, float>
+fused	2	rms_norm_f32<float, (int)128, (int)1, (bool)1, (bool)0, (bool)0, (bool)0, float>
+fused	4	rms_norm_f32<float, (int)128, (int)1, (bool)1, (bool)1, (bool)1, (bool)0, float>
+fused	2	rms_norm_f32<float, (int)256, (int)1, (bool)0, (bool)0, (bool)0, (bool)0, float>
+fused	5	rms_norm_f32<float, (int)256, (int)1, (bool)0, (bool)1, (bool)0, (bool)0, float>
+fused	14	rms_norm_f32<float, (int)256, (int)1, (bool)0, (bool)1, (bool)1, (bool)0, float>
+fused	24	rms_norm_f32<float, (int)256, (int)1, (bool)1, (bool)1, (bool)0, (bool)0, float>
+fused	7	rms_norm_f32<float, (int)256, (int)1, (bool)1, (bool)1, (bool)1, (bool)0, float>
+fused	12	rms_norm_f32<float, (int)32, (int)1, (bool)1, (bool)0, (bool)0, (bool)0, float>
+fused	5	rms_norm_f32<float, (int)32, (int)1, (bool)1, (bool)0, (bool)0, (bool)1, float>
+fused	32	rms_norm_f32<float, (int)32, (int)1, (bool)1, (bool)1, (bool)0, (bool)0, float>
+fused	11	rms_norm_f32<float, (int)32, (int)1, (bool)1, (bool)1, (bool)1, (bool)0, float>
+fused	2	rms_norm_f32<float, (int)512, (int)1, (bool)1, (bool)1, (bool)0, (bool)0, float>
+fused	1	rms_norm_f32<float, (int)512, (int)1, (bool)1, (bool)1, (bool)1, (bool)0, float>
+fused	1	rms_norm_f32<__nv_bfloat16, (int)1024, (int)1, (bool)0, (bool)1, (bool)0, (bool)0, float>
+fused	13	rms_norm_f32<__nv_bfloat16, (int)1024, (int)1, (bool)0, (bool)1, (bool)1, (bool)0, float>
+fused	6	rms_norm_f32<__nv_bfloat16, (int)1024, (int)1, (bool)0, (bool)1, (bool)1, (bool)0, __nv_bfloat16>
+fused	2	rms_norm_f32<__nv_bfloat16, (int)1024, (int)1, (bool)1, (bool)1, (bool)0, (bool)0, float>
+fused	6	rms_norm_f32<__nv_bfloat16, (int)1024, (int)1, (bool)1, (bool)1, (bool)1, (bool)0, float>
+fused	2	rms_norm_f32<__nv_bfloat16, (int)1024, (int)1, (bool)1, (bool)1, (bool)1, (bool)0, __nv_bfloat16>
+fused	1	rms_norm_f32<__nv_bfloat16, (int)1024, (int)4, (bool)1, (bool)1, (bool)0, (bool)0, float>
+fused	3	rms_norm_f32<__nv_bfloat16, (int)1024, (int)4, (bool)1, (bool)1, (bool)1, (bool)0, float>
+fused	1	rms_norm_f32<__nv_bfloat16, (int)1024, (int)4, (bool)1, (bool)1, (bool)1, (bool)0, __nv_bfloat16>
+fused	1	rms_norm_f32<__nv_bfloat16, (int)128, (int)1, (bool)1, (bool)1, (bool)0, (bool)0, float>
+fused	3	rms_norm_f32<__nv_bfloat16, (int)128, (int)1, (bool)1, (bool)1, (bool)1, (bool)0, float>
+fused	1	rms_norm_f32<__nv_bfloat16, (int)128, (int)1, (bool)1, (bool)1, (bool)1, (bool)0, __nv_bfloat16>
+fused	1	rms_norm_f32<__nv_bfloat16, (int)256, (int)1, (bool)0, (bool)1, (bool)0, (bool)0, float>
+fused	8	rms_norm_f32<__nv_bfloat16, (int)256, (int)1, (bool)0, (bool)1, (bool)1, (bool)0, float>
+fused	6	rms_norm_f32<__nv_bfloat16, (int)256, (int)1, (bool)0, (bool)1, (bool)1, (bool)0, __nv_bfloat16>
+fused	1	rms_norm_f32<__nv_bfloat16, (int)256, (int)1, (bool)1, (bool)1, (bool)0, (bool)0, float>
+fused	3	rms_norm_f32<__nv_bfloat16, (int)256, (int)1, (bool)1, (bool)1, (bool)1, (bool)0, float>
+fused	1	rms_norm_f32<__nv_bfloat16, (int)256, (int)1, (bool)1, (bool)1, (bool)1, (bool)0, __nv_bfloat16>
+fused	1	rms_norm_f32<__nv_bfloat16, (int)32, (int)1, (bool)1, (bool)1, (bool)0, (bool)0, float>
+fused	8	rms_norm_f32<__nv_bfloat16, (int)32, (int)1, (bool)1, (bool)1, (bool)1, (bool)0, float>
+fused	1	rms_norm_f32<__nv_bfloat16, (int)32, (int)1, (bool)1, (bool)1, (bool)1, (bool)0, __nv_bfloat16>
+fused	1	rms_norm_f32<__nv_bfloat16, (int)512, (int)1, (bool)1, (bool)1, (bool)0, (bool)0, float>
+fused	4	rms_norm_f32<__nv_bfloat16, (int)512, (int)1, (bool)1, (bool)1, (bool)1, (bool)0, float>
+fused	3	rms_norm_f32<__nv_bfloat16, (int)512, (int)1, (bool)1, (bool)1, (bool)1, (bool)0, __nv_bfloat16>
+fused	26	rms_norm_mul_rope_f32<(int)1024, (bool)0, float>
+fused	22	rms_norm_mul_rope_f32<(int)1024, (bool)0, __half>
+fused	73	rms_norm_mul_rope_f32<(int)256, (bool)0, float>
+fused	67	rms_norm_mul_rope_f32<(int)256, (bool)0, __half>
+fused	51	rope_multi<(bool)1, (bool)0, float, float>
+fused	50	rope_multi<(bool)1, (bool)0, float, __half>
+fused	8	rope_multi<(bool)1, (bool)0, __nv_bfloat16, __half>
+fused	6	rope_multi<(bool)1, (bool)0, __nv_bfloat16, __nv_bfloat16>
+fused	9	rope_neox<(bool)1, (bool)0, float, float>
+fused	9	rope_neox<(bool)1, (bool)0, float, __half>
+fused	4	rope_neox<(bool)1, (bool)0, __nv_bfloat16, __half>
+fused	3	rope_neox<(bool)1, (bool)0, __nv_bfloat16, __nv_bfloat16>
+fused	9	rope_norm<(bool)1, (bool)0, float, float>
+fused	9	rope_norm<(bool)1, (bool)0, float, __half>
+fused	4	rope_norm<(bool)1, (bool)0, __nv_bfloat16, __half>
+fused	3	rope_norm<(bool)1, (bool)0, __nv_bfloat16, __nv_bfloat16>
+fused	12	rope_vision<(bool)1, (bool)0, float>
+fused	6	rope_vision<(bool)1, (bool)0, __nv_bfloat16>
+fused	307	scale_f32<float>
+fused	5	snake_kernel<float>
+fused	5	snake_kernel<__half>
+fused	5	snake_kernel<__nv_bfloat16>
+fused	1	softcap_f32
+fused	172	soft_max_f32<(bool)1, (int)0, (int)0, float>
+fused	14	soft_max_f32<(bool)1, (int)128, (int)128, float>
+fused	18	ssm_conv_f32<(bool)1, (unsigned long)128, (unsigned long)3>
+fused	18	ssm_conv_f32<(bool)1, (unsigned long)128, (unsigned long)4>
+fused	18	ssm_conv_f32<(bool)1, (unsigned long)128, (unsigned long)7>
+fused	18	ssm_conv_f32<(bool)1, (unsigned long)128, (unsigned long)9>
+fused	12	ssm_conv_long_token_f32<(bool)1, (unsigned long)128, (unsigned long)3, (long)32>
+fused	12	ssm_conv_long_token_f32<(bool)1, (unsigned long)128, (unsigned long)4, (long)32>
+fused	12	ssm_conv_long_token_f32<(bool)1, (unsigned long)128, (unsigned long)7, (long)32>
+fused	12	ssm_conv_long_token_f32<(bool)1, (unsigned long)128, (unsigned long)9, (long)32>
+fused	1	ssm_scan_f32_group<(int)2, (int)64>
+fused	5	ssm_scan_f32_group<(int)3, (int)96>
+fused	9	ssm_scan_f32_group<(int)4, (int)128>
+fused	1	ssm_scan_f32_group<(int)8, (int)256>
+fused	1	ssm_ssd_init_state_kernel<(int)256>
+fused	2	ssm_ssd_pre_matmul_kernel<(int)256, __half>
+fused	1	ssm_ssd_prepare_dt_kernel<(int)256, (int)32>
+fused	2	ssm_ssd_scale_state_kernel<(int)256>
+fused	197	swiglu_clamp_kernel<float>
+fused	1	swiglu_oai_kernel<float>
+fused	43	topk_moe_cuda<(int)128, (bool)0>
+fused	36	topk_moe_cuda<(int)128, (bool)1>
+fused	43	topk_moe_cuda<(int)256, (bool)0>
+fused	36	topk_moe_cuda<(int)256, (bool)1>
+fused	14	topk_moe_cuda<(int)288, (bool)0>
+fused	12	topk_moe_cuda<(int)288, (bool)1>
+fused	56	topk_moe_cuda<(int)32, (bool)0>
+fused	48	topk_moe_cuda<(int)32, (bool)1>
+fused	46	topk_moe_cuda<(int)384, (bool)0>
+fused	42	topk_moe_cuda<(int)384, (bool)1>
+fused	52	topk_moe_cuda<(int)512, (bool)0>
+fused	12	topk_moe_cuda<(int)512, (bool)1>
+fused	5	topk_moe_cuda<(int)64, (bool)0>
+fused	18	topk_moe_cuda<(int)8, (bool)0>
+fused	18	topk_moe_cuda<(int)8, (bool)1>
+fused	361	top_k_radix_gather<(int)256, (int)8>
+fused	1444	top_k_radix_histogram<(int)256, (int)8>
+fused	361	top_k_radix_init
+fused	1444	top_k_radix_select<(int)256, (int)8>
+fused	239	unary_gated_op_kernel<&op_gelu, float>
+fused	10	unary_gated_op_kernel<&op_sigmoid, float>
+fused	7	unary_gated_op_kernel<&op_sigmoid, __half>
+fused	7	unary_gated_op_kernel<&op_sigmoid, __nv_bfloat16>
+fused	917	unary_gated_op_kernel<&op_silu, float>
+fused	7	unary_gated_op_kernel<&op_silu, __half>
+fused	7	unary_gated_op_kernel<&op_silu, __nv_bfloat16>
+fused	10	unary_gated_op_kernel<&op_softplus, float>
+fused	7	unary_gated_op_kernel<&op_softplus, __half>
+fused	7	unary_gated_op_kernel<&op_softplus, __nv_bfloat16>
+fused	11	unary_op_kernel<&op_gelu, float>
+fused	10	unary_op_kernel<&op_gelu, __half>
+fused	10	unary_op_kernel<&op_gelu, __nv_bfloat16>
+fused	10	unary_op_kernel<&op_relu, float>
+fused	10	unary_op_kernel<&op_relu, __half>
+fused	10	unary_op_kernel<&op_relu, __nv_bfloat16>
+fused	2	unary_op_kernel<&op_relu_sqr, float>
+fused	2	unary_op_kernel<&op_relu_sqr, __half>
+fused	51	unary_op_kernel<&op_sigmoid, float>
+fused	6	unary_op_kernel<&op_sigmoid, __half>
+fused	5	unary_op_kernel<&op_sigmoid, __nv_bfloat16>
+fused	11	unary_op_kernel<&op_silu, float>
+fused	6	unary_op_kernel<&op_silu, __half>
+fused	5	unary_op_kernel<&op_silu, __nv_bfloat16>
+fused	3	unary_op_kernel<&op_sin, float>
+fused	3	unary_op_kernel<&op_sin, __half>
+fused	3	unary_op_kernel<&op_sin, __nv_bfloat16>
+fused	51	unary_op_kernel<&op_softplus, float>
+fused	6	unary_op_kernel<&op_softplus, __half>
+fused	5	unary_op_kernel<&op_softplus, __nv_bfloat16>
+fused	9	unary_op_kernel<&op_sqr, float>
+fused	3	unary_op_kernel<&op_sqr, __half>
+fused	3	unary_op_kernel<&op_sqr, __nv_bfloat16>
+fused	40	unary_op_kernel<&op_sqrt, float>
+fused	3	unary_op_kernel_strided<&op_gelu, float>
+fused	3	unary_op_kernel_strided<&op_gelu, __half>
+fused	3	unary_op_kernel_strided<&op_gelu, __nv_bfloat16>
+fused	3	unary_op_kernel_strided<&op_relu, float>
+fused	3	unary_op_kernel_strided<&op_relu, __half>
+fused	3	unary_op_kernel_strided<&op_relu, __nv_bfloat16>
+fused	1	unary_op_kernel_strided<&op_sigmoid, float>
+fused	1	unary_op_kernel_strided<&op_sigmoid, __half>
+fused	1	unary_op_kernel_strided<&op_sigmoid, __nv_bfloat16>
+fused	1	unary_op_kernel_strided<&op_silu, float>
+fused	1	unary_op_kernel_strided<&op_silu, __half>
+fused	1	unary_op_kernel_strided<&op_silu, __nv_bfloat16>
+fused	1	unary_op_kernel_strided<&op_softplus, float>
+fused	1	unary_op_kernel_strided<&op_softplus, __half>
+fused	1	unary_op_kernel_strided<&op_softplus, __nv_bfloat16>
+fa-ornith	673	convert_unary<float, __half>
+fa-ornith	11	convert_unary<ggml_fp8_e4m3_t, __half>
+fa-ornith	609	convert_unary<__nv_bfloat16, __half>
+fa-ornith	4	convert_unary_cont_vec4<__nv_bfloat16, __half>
+fa-ornith	726	dequantize_block<(int)32, (int)1, &dequantize_q8_0, __half>
+fa-ornith	612	dequantize_block<(int)32, (int)2, &dequantize_q4_0, __half>
+fa-ornith	672	dequantize_block<(int)32, (int)2, &dequantize_q4_1, __half>
+fa-ornith	672	dequantize_block<(int)32, (int)2, &dequantize_q5_0, __half>
+fa-ornith	672	dequantize_block<(int)32, (int)2, &dequantize_q5_1, __half>
+fa-ornith	2	dequantize_block_q4_1<__half>
+fa-ornith	19	dequantize_block_q8_0_f16<(bool)0>
+fa-ornith	2	dequantize_block_q8_0_f16<(bool)1>
+fa-ornith	1013	flash_attn_combine_results<(int)128>
+fa-ornith	382	flash_attn_combine_results<(int)256>
+fa-ornith	224	flash_attn_combine_results<(int)40>
+fa-ornith	93	flash_attn_combine_results<(int)512>
+fa-ornith	1837	flash_attn_combine_results<(int)64>
+fa-ornith	336	flash_attn_combine_results<(int)72>
+fa-ornith	118	flash_attn_combine_results<(int)80>
+fa-ornith	674	flash_attn_combine_results<(int)96>
+fa-ornith	15	flash_attn_dec_pascal<(int)256>
+fa-ornith	75	flash_attn_ext_vec<(int)128, (int)1, (ggml_type)1, (ggml_type)1, (bool)0>
+fa-ornith	60	flash_attn_ext_vec<(int)128, (int)1, (ggml_type)1, (ggml_type)1, (bool)1>
+fa-ornith	1	flash_attn_ext_vec<(int)128, (int)1, (ggml_type)43, (ggml_type)43, (bool)0>
+fa-ornith	2	flash_attn_ext_vec<(int)128, (int)1, (ggml_type)8, (ggml_type)8, (bool)0>
+fa-ornith	23	flash_attn_ext_vec<(int)256, (int)1, (ggml_type)1, (ggml_type)1, (bool)0>
+fa-ornith	1	flash_attn_ext_vec<(int)256, (int)1, (ggml_type)2, (ggml_type)2, (bool)0>
+fa-ornith	1	flash_attn_ext_vec<(int)256, (int)1, (ggml_type)43, (ggml_type)43, (bool)0>
+fa-ornith	3	flash_attn_ext_vec<(int)256, (int)1, (ggml_type)8, (ggml_type)8, (bool)0>
+fa-ornith	5	flash_attn_ext_vec<(int)256, (int)2, (ggml_type)8, (ggml_type)8, (bool)0>
+fa-ornith	209	flash_attn_ext_vec<(int)64, (int)1, (ggml_type)1, (ggml_type)1, (bool)0>
+fa-ornith	44	flash_attn_ext_vec<(int)64, (int)1, (ggml_type)2, (ggml_type)2, (bool)0>
+fa-ornith	36	flash_attn_ext_vec<(int)64, (int)1, (ggml_type)30, (ggml_type)30, (bool)0>
+fa-ornith	1	flash_attn_ext_vec<(int)64, (int)1, (ggml_type)43, (ggml_type)43, (bool)0>
+fa-ornith	45	flash_attn_ext_vec<(int)64, (int)1, (ggml_type)8, (ggml_type)8, (bool)0>
+fa-ornith	133	flash_attn_mask_to_KV_max<(int)1>
+fa-ornith	23	flash_attn_mask_to_KV_max<(int)2>
+fa-ornith	294	flash_attn_mask_to_KV_max<(int)32>
+fa-ornith	157	flash_attn_mask_to_KV_max<(int)4>
+fa-ornith	5	flash_attn_mask_to_KV_max<(int)8>
+fa-ornith	1	flash_attn_tile<(int)128, (int)128, (int)1, (int)2, (bool)0>
+fa-ornith	24	flash_attn_tile<(int)128, (int)128, (int)1, (int)4, (bool)0>
+fa-ornith	12	flash_attn_tile<(int)128, (int)128, (int)1, (int)4, (bool)1>
+fa-ornith	20	flash_attn_tile<(int)128, (int)128, (int)2, (int)1, (bool)0>
+fa-ornith	18	flash_attn_tile<(int)128, (int)128, (int)2, (int)1, (bool)1>
+fa-ornith	227	flash_attn_tile<(int)128, (int)128, (int)32, (int)1, (bool)0>
+fa-ornith	168	flash_attn_tile<(int)128, (int)128, (int)32, (int)1, (bool)1>
+fa-ornith	90	flash_attn_tile<(int)128, (int)128, (int)4, (int)1, (bool)0>
+fa-ornith	79	flash_attn_tile<(int)128, (int)128, (int)4, (int)1, (bool)1>
+fa-ornith	2	flash_attn_tile<(int)128, (int)128, (int)4, (int)2, (bool)0>
+fa-ornith	24	flash_attn_tile<(int)128, (int)128, (int)4, (int)4, (bool)0>
+fa-ornith	12	flash_attn_tile<(int)128, (int)128, (int)4, (int)4, (bool)1>
+fa-ornith	1	flash_attn_tile<(int)128, (int)128, (int)4, (int)8, (bool)0>
+fa-ornith	3	flash_attn_tile<(int)128, (int)128, (int)4, (int)8, (bool)1>
+fa-ornith	33	flash_attn_tile<(int)128, (int)128, (int)8, (int)4, (bool)0>
+fa-ornith	12	flash_attn_tile<(int)128, (int)128, (int)8, (int)4, (bool)1>
+fa-ornith	4	flash_attn_tile<(int)192, (int)128, (int)1, (int)16, (bool)0>
+fa-ornith	6	flash_attn_tile<(int)192, (int)128, (int)1, (int)8, (bool)0>
+fa-ornith	12	flash_attn_tile<(int)192, (int)128, (int)2, (int)16, (bool)0>
+fa-ornith	13	flash_attn_tile<(int)192, (int)128, (int)4, (int)8, (bool)0>
+fa-ornith	5	flash_attn_tile<(int)256, (int)256, (int)16, (int)2, (bool)0>
+fa-ornith	8	flash_attn_tile<(int)256, (int)256, (int)1, (int)4, (bool)0>
+fa-ornith	8	flash_attn_tile<(int)256, (int)256, (int)2, (int)1, (bool)0>
+fa-ornith	1	flash_attn_tile<(int)256, (int)256, (int)2, (int)1, (bool)1>
+fa-ornith	5	flash_attn_tile<(int)256, (int)256, (int)2, (int)4, (bool)0>
+fa-ornith	90	flash_attn_tile<(int)256, (int)256, (int)32, (int)1, (bool)0>
+fa-ornith	1	flash_attn_tile<(int)256, (int)256, (int)32, (int)1, (bool)1>
+fa-ornith	28	flash_attn_tile<(int)256, (int)256, (int)4, (int)1, (bool)0>
+fa-ornith	18	flash_attn_tile<(int)256, (int)256, (int)4, (int)4, (bool)0>
+fa-ornith	2	flash_attn_tile<(int)256, (int)256, (int)4, (int)8, (bool)1>
+fa-ornith	55	flash_attn_tile<(int)256, (int)256, (int)8, (int)4, (bool)0>
+fa-ornith	17	flash_attn_tile<(int)320, (int)256, (int)1, (int)16, (bool)0>
+fa-ornith	8	flash_attn_tile<(int)40, (int)40, (int)1, (int)4, (bool)0>
+fa-ornith	48	flash_attn_tile<(int)40, (int)40, (int)2, (int)1, (bool)0>
+fa-ornith	112	flash_attn_tile<(int)40, (int)40, (int)32, (int)1, (bool)0>
+fa-ornith	48	flash_attn_tile<(int)40, (int)40, (int)4, (int)1, (bool)0>
+fa-ornith	8	flash_attn_tile<(int)40, (int)40, (int)4, (int)4, (bool)0>
+fa-ornith	4	flash_attn_tile<(int)512, (int)512, (int)1, (int)4, (bool)0>
+fa-ornith	2	flash_attn_tile<(int)512, (int)512, (int)1, (int)8, (bool)0>
+fa-ornith	10	flash_attn_tile<(int)512, (int)512, (int)2, (int)8, (bool)0>
+fa-ornith	1	flash_attn_tile<(int)512, (int)512, (int)4, (int)2, (bool)0>
+fa-ornith	19	flash_attn_tile<(int)512, (int)512, (int)4, (int)4, (bool)0>
+fa-ornith	4	flash_attn_tile<(int)576, (int)512, (int)1, (int)16, (bool)0>
+fa-ornith	14	flash_attn_tile<(int)576, (int)512, (int)1, (int)4, (bool)0>
+fa-ornith	39	flash_attn_tile<(int)576, (int)512, (int)4, (int)4, (bool)0>
+fa-ornith	24	flash_attn_tile<(int)64, (int)64, (int)1, (int)4, (bool)0>
+fa-ornith	102	flash_attn_tile<(int)64, (int)64, (int)2, (int)1, (bool)0>
+fa-ornith	921	flash_attn_tile<(int)64, (int)64, (int)32, (int)1, (bool)0>
+fa-ornith	388	flash_attn_tile<(int)64, (int)64, (int)4, (int)1, (bool)0>
+fa-ornith	64	flash_attn_tile<(int)64, (int)64, (int)4, (int)4, (bool)0>
+fa-ornith	3	flash_attn_tile<(int)64, (int)64, (int)4, (int)8, (bool)0>
+fa-ornith	12	flash_attn_tile<(int)72, (int)72, (int)1, (int)4, (bool)0>
+fa-ornith	72	flash_attn_tile<(int)72, (int)72, (int)2, (int)1, (bool)0>
+fa-ornith	168	flash_attn_tile<(int)72, (int)72, (int)32, (int)1, (bool)0>
+fa-ornith	72	flash_attn_tile<(int)72, (int)72, (int)4, (int)1, (bool)0>
+fa-ornith	12	flash_attn_tile<(int)72, (int)72, (int)4, (int)4, (bool)0>
+fa-ornith	4	flash_attn_tile<(int)80, (int)80, (int)1, (int)4, (bool)0>
+fa-ornith	26	flash_attn_tile<(int)80, (int)80, (int)2, (int)1, (bool)0>
+fa-ornith	58	flash_attn_tile<(int)80, (int)80, (int)32, (int)1, (bool)0>
+fa-ornith	26	flash_attn_tile<(int)80, (int)80, (int)4, (int)1, (bool)0>
+fa-ornith	4	flash_attn_tile<(int)80, (int)80, (int)4, (int)4, (bool)0>
+fa-ornith	24	flash_attn_tile<(int)96, (int)96, (int)1, (int)4, (bool)0>
+fa-ornith	145	flash_attn_tile<(int)96, (int)96, (int)2, (int)1, (bool)0>
+fa-ornith	337	flash_attn_tile<(int)96, (int)96, (int)32, (int)1, (bool)0>
+fa-ornith	144	flash_attn_tile<(int)96, (int)96, (int)4, (int)1, (bool)0>
+fa-ornith	24	flash_attn_tile<(int)96, (int)96, (int)4, (int)4, (bool)0>
+fa-ornith	70	flash_attn_tile_pascal<(int)128, (ggml_type)1, (ggml_type)1, (bool)1, (bool)0, (bool)0>
+fa-ornith	44	flash_attn_tile_pascal<(int)128, (ggml_type)8, (ggml_type)8, (bool)1, (bool)0, (bool)0>
+fa-ornith	59	flash_attn_tile_pascal<(int)256, (ggml_type)1, (ggml_type)1, (bool)0, (bool)0, (bool)0>
+fa-ornith	39	flash_attn_tile_pascal<(int)256, (ggml_type)8, (ggml_type)8, (bool)0, (bool)0, (bool)0>

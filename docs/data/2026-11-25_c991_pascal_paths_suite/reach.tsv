@@ -1,0 +1,11 @@
+path	switch	kernels	launches_fa	launches_rest	launches_fused	launches_fa-ornith	probe
+Pascal flash-attention tile kernel (prompt)	GGML_CUDA_FATTN_TILE_PASCAL	flash_attn_tile_pascal	173	0	0	212	173 of 4679 FLASH_ATTN_EXT cases fail with its fault
+Pascal decode attention kernel (pull request 9)	GGML_CUDA_FATTN_DEC_PASCAL (with FATTN_TILE_PASCAL)	flash_attn_dec_pascal	0	0	0	15	with Ornith's attention switches 227 of 4679 FLASH_ATTN_EXT cases fail with the fault (both Pascal attention kernels)
+persistent MoE kernel	GGML_CUDA_PERSISTENT_MOE	k_moe_layer	0	0	17	0	17 of 17 MOE_LAYER cases fail with its fault
+persistent MoE self-check comparison	GGML_CUDA_PERSISTENT_MOE_CHECK	-	0	0	0	0	-
+attention block: Q/K/V products	GGML_CUDA_ATTN_BLOCK	-	0	0	0	0	-
+attention block: epilogue (norms, RoPE, cache writes)	GGML_CUDA_ATTN_BLOCK	-	0	0	0	0	-
+older Pascal decode attention kernel	GGML_CUDA_FATTN_PASCAL	-	0	0	0	0	-
+matrix-vector kernels: one token and multi-token (C968)	GGML_CUDA_MMVQ_PASCAL	mul_mat_vec_q_pascal, mul_mat_vec_q_pascal_mc	0	7	948	0	-
+matrix-vector kernels: k-column (C968)	GGML_CUDA_MMVQ_PASCAL	kcol::mul_mat_kcol, kcol::quantize_records	0	8	2622	0	-
+matrix-vector kernels: F16/BF16 (C968)	GGML_CUDA_MMVF_PASCAL	mul_mat_vec_bf16_pascal	0	0	2	0	-

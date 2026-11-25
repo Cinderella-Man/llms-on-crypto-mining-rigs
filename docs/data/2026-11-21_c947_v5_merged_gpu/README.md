@@ -103,9 +103,11 @@ setting as in pull request 4's run.
 card and judged against the processor, every case but the repeated-expert-id ones (`dup=1`). It runs one card at a
 time, so it cannot reach the hop code. It checks every kernel the new build runs on these cards, which leaves out the
 fork's Pascal matrix-vector kernels (`mul_mat_vec_q_pascal` with its multi-token, k-column and expert kernels, and the
-BF16 kernels): they turn themselves on only on compute 6.1 cards, so here llama.cpp's own matrix-vector kernels
-computed those products. The fork's kernels are checked forced on, with a P106's launch shapes, in
-[2026-11-23_c968_pascal_mmvq_suite](../2026-11-23_c968_pascal_mmvq_suite/README.md). Split by operator over the three
+BF16 kernels) and three more of its paths (the attention block, the persistent MoE kernel and the Pascal
+flash-attention tile kernel): they turn themselves on only on compute 6.1 cards, so here llama.cpp's own kernels
+computed those cases. The fork's matrix-vector kernels are checked forced on, with a P106's launch shapes, in
+[2026-11-23_c968_pascal_mmvq_suite](../2026-11-23_c968_pascal_mmvq_suite/README.md), the other three paths in
+[2026-11-25_c991_pascal_paths_suite](../2026-11-25_c991_pascal_paths_suite/README.md). Split by operator over the three
 cards, 10:01–10:40 ([bops.tsv](bops.tsv)):
 
 | Share | Card | Cases | Passed | Failed |

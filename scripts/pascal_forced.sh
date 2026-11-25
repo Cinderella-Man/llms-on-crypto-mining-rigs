@@ -1,0 +1,67 @@
+# shellcheck shell=bash
+# The fork's compute-6.1-only card paths forced on for any NVIDIA card, with a P106's launch shapes. Sourced by the
+# GPU-check drivers that run the rig build on newer cards (its compute 6.1 PTX through the driver's JIT), so that a check
+# there computes with the kernels a P106 computes with:
+#   . "$REPO/scripts/pascal_forced.sh"
+#   env $PASCAL_FORCED test-backend-ops test -b CUDA0 ...
+#   env $PRESET_ENV $(pascal_force_preset "$PRESET_ENV") llama-server ...
+#
+# Each of these paths reads a switch whose 1 means "compute capability 6.1 only" and 2 "any NVIDIA card" (the
+# GGML_CUDA_CC_DP4A gates in ggml/src/ggml-cuda/). At 1 a newer card takes llama.cpp's own kernel in its place, so a
+# check there without these settings checks llama.cpp's kernel, not the fork's (C947, C968, C991). The rig build holds
+# only compute 6.1 code, so llama.cpp's own choices by architecture (no tensor-core kernels, the batch limits) are a
+# P106's on any card already.
+#
+# PASCAL_FORCED_MMV: the matrix-vector kernels for products of 1 to 8 tokens (mul_mat_vec_q_pascal, its multi-token,
+#   read-once, k-column and expert kernels, the BF16 and F16 kernels) at a P106's shapes: 5 SMs, 96 KB of shared memory
+#   per SM. The set C953's and C968's drivers spelled out until 2026-11-25.
+PASCAL_FORCED_MMV="GGML_CUDA_MMVQ_PASCAL=2 GGML_CUDA_MMVF_PASCAL=2 GGML_CUDA_MMVQ_PASCAL_NSM=5 GGML_CUDA_MMVF_PASCAL_NSM=5 \
+GGML_CUDA_MMVQ_PASCAL_KCOL_NSM=5 GGML_CUDA_MMVQ_PASCAL_KCOL_SMSM=98304"
+# PASCAL_FORCED_PATHS: the other paths a P106 takes with every switch at its default:
+#   GGML_CUDA_ATTN_BLOCK=2         one token's attention block (Q/K/V products, norms, RoPE, cache writes) in two launches
+#   GGML_CUDA_PERSISTENT_MOE=2     a MoE layer at one token as one persistent kernel (k_moe_layer)
+#   GGML_CUDA_FATTN_TILE_PASCAL=2  the Pascal flash-attention tile kernel for prompt attention (flash_attn_tile_pascal)
+PASCAL_FORCED_PATHS="GGML_CUDA_ATTN_BLOCK=2 GGML_CUDA_PERSISTENT_MOE=2 GGML_CUDA_FATTN_TILE_PASCAL=2"
+# PASCAL_FORCED_GRAPH: the graph choice llama.cpp makes when every card is compute 6.1 (the backend's COMPUTE_6_1
+#   feature): the MoE down-projection rescale dropped at one token, since the Pascal kernels sum in FP32. Without it a
+#   model's MoE layers keep the rescale on a newer card and the persistent MoE kernel leaves them to the per-op path.
+#   Read when a model's graph is built; test-backend-ops builds its own graphs and does not read it.
+PASCAL_FORCED_GRAPH="LLAMA_NO_MOE_DOWN_RESCALE=tg"
+# PASCAL_FORCED: all three, what a driver passes for "as a P106 with no preset switch"
+PASCAL_FORCED="$PASCAL_FORCED_MMV $PASCAL_FORCED_PATHS $PASCAL_FORCED_GRAPH"
+# PASCAL_GATES: every switch with such a 1/2 gate. The last four are off by default on a P106 too; a preset that sets
+# one to 1 turns it on for the P106 only, so on a newer card it needs its own 2 (pascal_raise_gates):
+#   GGML_CUDA_MMVF_F32_MT          F32 products of 4 to 8 tokens on mul_mat_vec_f (the Flash-Next preset sets 1)
+#   GGML_CUDA_MMQ_KQ_FP32SCALE     the K-quant prompt products' scales in FP32
+#   GGML_CUDA_FATTN_PASCAL         the older Pascal decode attention kernel
+#   GGML_CUDA_FATTN_SPARSE_PASCAL  sparse decode attention over a QSA layer's kept cells (the Flash-Next preset sets 1);
+#                                  its 1 means "a build without tensor-core code", which the rig build is on any card,
+#                                  and 2 keeps it on in a build that has such code
+PASCAL_GATES="GGML_CUDA_MMVQ_PASCAL GGML_CUDA_MMVF_PASCAL GGML_CUDA_ATTN_BLOCK GGML_CUDA_PERSISTENT_MOE \
+GGML_CUDA_FATTN_TILE_PASCAL GGML_CUDA_MMVF_F32_MT GGML_CUDA_MMQ_KQ_FP32SCALE GGML_CUDA_FATTN_PASCAL \
+GGML_CUDA_FATTN_SPARSE_PASCAL"
+
+# pascal_raise_gates "<NAME=value ...>": each gate the list sets to 1, at 2 ("GGML_CUDA_MMVF_F32_MT=2" for the
+# Flash-Next preset's list); nothing for a list that sets none.
+pascal_raise_gates() {
+    local kv g out=""
+    for kv in $1; do
+        for g in $PASCAL_GATES; do
+            [ "$kv" = "$g=1" ] && out+="$g=2 "
+        done
+    done
+    echo "${out% }"
+}
+
+# pascal_force_preset "<NAME=value ...>": PASCAL_FORCED without the names the list sets, then pascal_raise_gates of
+# the list, so that `env <list> $(pascal_force_preset "<list>")` runs the list as a P106 runs it (later settings win in
+# env): the list's own values stand (a gate at 0 stays 0, its launch shapes and LLAMA_NO_MOE_DOWN_RESCALE are its own),
+# except a gate at 1, which becomes 2.
+pascal_force_preset() {
+    local kv f base="" set=" "
+    for kv in $1; do set+="${kv%%=*} "; done
+    for f in $PASCAL_FORCED; do
+        [[ $set == *" ${f%%=*} "* ]] || base+="$f "
+    done
+    echo "$base$(pascal_raise_gates "$1")" | sed 's/ *$//'
+}

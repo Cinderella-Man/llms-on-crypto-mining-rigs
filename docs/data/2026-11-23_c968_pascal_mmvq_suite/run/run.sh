@@ -7,10 +7,10 @@
 # cards: GGML_CUDA_MMVQ_PASCAL and GGML_CUDA_MMVF_PASCAL at their default 1 need compute 6.1, and =2 turns them on for any
 # NVIDIA card. So a suite run on newer cards without =2 checks llama.cpp's own kernels in their place. This driver runs
 # the card suite's three shares that reach these kernels (as docs/data/2026-11-21_c947_v5_merged_gpu split it) with them
-# forced on and a P106's launch shapes (5 SMs, 96 KB of shared memory per SM), as
-# docs/data/2026-11-23_c953_ornith_kcol_gpu/run/run.sh did:
-ON="GGML_CUDA_MMVQ_PASCAL=2 GGML_CUDA_MMVF_PASCAL=2 GGML_CUDA_MMVQ_PASCAL_NSM=5 GGML_CUDA_MMVF_PASCAL_NSM=5 \
-GGML_CUDA_MMVQ_PASCAL_KCOL_NSM=5 GGML_CUDA_MMVQ_PASCAL_KCOL_SMSM=98304"
+# forced on and a P106's launch shapes (5 SMs, 96 KB of shared memory per SM), from scripts/pascal_forced.sh (sourced
+# below; $ON): FORCED=all (the default) is PASCAL_FORCED, every compute-6.1-only path of the fork (also the attention
+# block, the persistent MoE kernel and the Pascal flash-attention tile kernel, as a P106 runs them); FORCED=mmv is
+# PASCAL_FORCED_MMV, the matrix-vector kernels alone, the set C968's run used.
 # Settings (arms):
 #   unset   no switch: llama.cpp's own matrix-vector kernels on these cards (what C947's suite ran)
 #   p106    $ON: the fork's kernels as a P106 runs them with every switch at its default (the Flint, Ornith and Qwen3.6
@@ -20,9 +20,9 @@ GGML_CUDA_MMVQ_PASCAL_KCOL_NSM=5 GGML_CUDA_MMVQ_PASCAL_KCOL_SMSM=98304"
 #           P106 runs under the Flash-Next preset
 #   p106-kcol0  p106 with GGML_CUDA_MMVQ_PASCAL_KCOL=0 (no k-column kernel), so that a case whose result this changes
 #           was computed by a k-column kernel under p106
-#   fn-f32  fn with GGML_CUDA_MMVF_F32_MT=2 in place of the preset's 1: that switch has its own compute 6.1 gate (=1 acts
-#           only on compute 6.1, =2 on any NVIDIA card), so under fn its F32 products of 4 to 8 tokens stay on llama.cpp's
-#           path on newer cards; replayed in a second invocation (STEPS=replay REPLAYS=fn-f32)
+#   fn-f32  fn with GGML_CUDA_MMVF_F32_MT=2 after the preset's 1 (pascal_raise_gates): that switch has its own compute
+#           6.1 gate (=1 acts only on compute 6.1, =2 on any NVIDIA card), so under fn its F32 products of 4 to 8 tokens
+#           stay on llama.cpp's path on newer cards; replayed in a second invocation (STEPS=replay REPLAYS=fn-f32)
 # Shares (one per card): mul_mat (MUL_MAT), mul_mat_id (MUL_MAT_ID), fused (the 43 fused-case operators test mode runs
 # that the support listing does not name, run/ops-testmode-only.txt), each every case but the repeated-expert-id ones
 # (-p "^(?!.*dup=1)").
@@ -45,10 +45,18 @@ GGML_CUDA_MMVQ_PASCAL_KCOL_NSM=5 GGML_CUDA_MMVQ_PASCAL_KCOL_SMSM=98304"
 #   PREFLIGHT    a CUDA check run before the first step as "$PREFLIGHT -g <ids>" (optional)
 #   GPUS (0,1,2: the cards of mul_mat, mul_mat_id, fused), IMG (nvidia/cuda:12.9.2-devel-ubuntu24.04), STEPS,
 #   SHARES ("mul_mat mul_mat_id fused"), RMAX (64), NAME (c968: the containers' name prefix),
-#   REPLAYS (the replay step's settings, "unset unset2 p106 fn p106-kcol0"), RECORD_SETTING (unset)
+#   REPLAYS (the replay step's settings, "unset unset2 p106 fn p106-kcol0"), RECORD_SETTING (unset), FORCED (all)
 # Output: WORK/bops/<share>-<step>.log, .cmd, <share>-replay-<setting>.tsv, rc.txt, summary.txt; WORK/DONE at the end.
 set -uo pipefail
 : "${WORK:?}" "${NEW:?}" "${REPO:?}" "${REC:?}"
+# shellcheck source=../../../../scripts/pascal_forced.sh
+. "$REPO/scripts/pascal_forced.sh"
+case ${FORCED:-all} in
+    all) ON=$PASCAL_FORCED ;;
+    mmv) ON=$PASCAL_FORCED_MMV ;;
+    *) echo "FORCED must be all or mmv"; exit 1 ;;
+esac
+[ -n "$ON" ] || { echo "no forced set in $REPO/scripts/pascal_forced.sh"; exit 1; }
 IMG=${IMG:-nvidia/cuda:12.9.2-devel-ubuntu24.04}
 GPUS=${GPUS:-0,1,2}
 STEPS=${STEPS:-live record replay}
@@ -73,7 +81,7 @@ sw() {  # <setting>: its environment
         p106) echo "$ON" ;;
         fn) echo "$ON $FN_SW" ;;
         p106-kcol0) echo "$ON GGML_CUDA_MMVQ_PASCAL_KCOL=0" ;;
-        fn-f32) echo "$ON ${FN_SW//GGML_CUDA_MMVF_F32_MT=1/GGML_CUDA_MMVF_F32_MT=2}" ;;
+        fn-f32) echo "$ON $FN_SW $(pascal_raise_gates "$FN_SW")" ;;
         *) echo "BAD_SETTING=$1" ;;
     esac
 }

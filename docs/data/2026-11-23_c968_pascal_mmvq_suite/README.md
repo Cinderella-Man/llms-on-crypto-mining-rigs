@@ -115,7 +115,7 @@ folder, a folder with ~80 GB free for the records, and the three cards free:
 
 ```bash
 E="NEW=<14d679604 build>/bin REPO=<work folder>/repo REC=<records folder> MOUNTS='<folders holding the build>' \
-DOCKER_ARGS='--cpu-shares=256' PREFLIGHT=<CUDA check, run as \$PREFLIGHT -g 0,1,2>"
+DOCKER_ARGS='--cpu-shares=256' PREFLIGHT=<CUDA check, run as \$PREFLIGHT -g 0,1,2> FORCED=mmv"
 # MUL_MAT on card 0 (the default chain: live p106 and fn, the unset record at 64 MB a case, five replays; the first
 # invocation ran all three shares this way, and MUL_MAT_ID's and the fused share's chains were stopped)
 env $E WORK=<work folder> SHARES=mul_mat setsid nohup bash run/run.sh > <work folder>/driver.log 2>&1 < /dev/null &
@@ -131,5 +131,8 @@ python3 -I run/topk_tail_tie.py topk_moe_tail/cases/301f934b85719490d52f.in topk
 test-backend-ops test -b CUDA0 -o TOPK_MOE_TAIL --replay topk_moe_tail --replay-allow-missing \
     -p '^n_expert=256,n_tokens=9,n_expert_used=8,with_norm=1,gating_func=1,scale_w=2\.500000,p=0\.800000'
 ```
+
+`FORCED=mmv` forces the matrix-vector kernels alone, as this run did; the driver's default since 2026-11-25 forces every
+compute-6.1-only path of the fork ([scripts/pascal_forced.sh](../../../scripts/pascal_forced.sh), C991).
 
 The record sizes with no cap, from `--record-dry`: `MUL_MAT` 17.5 GB, `MUL_MAT_ID` 26.7 GB, fused 38.9 GB.

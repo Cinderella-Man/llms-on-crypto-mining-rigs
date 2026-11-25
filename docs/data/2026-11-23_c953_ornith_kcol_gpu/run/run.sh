@@ -7,9 +7,9 @@
 # The fork's Pascal matrix-vector kernels (mul_mat_vec_q_pascal_mc, _mt and the k-column kernels) turn themselves on
 # only on compute 6.1 cards; GGML_CUDA_MMVQ_PASCAL=2 turns them on for any NVIDIA card, and the switch under test acts
 # only inside them. So every step runs with them forced on and a P106's launch shapes (5 SMs, 96 KB of shared memory per
-# SM), as docs/data/2026-11-04_kshape/run/gpu_checks.sh's MODE=ptx did:
-ON="GGML_CUDA_MMVQ_PASCAL=2 GGML_CUDA_MMVF_PASCAL=2 GGML_CUDA_MMVQ_PASCAL_NSM=5 GGML_CUDA_MMVF_PASCAL_NSM=5 \
-GGML_CUDA_MMVQ_PASCAL_KCOL_NSM=5 GGML_CUDA_MMVQ_PASCAL_KCOL_SMSM=98304"
+# SM), from scripts/pascal_forced.sh (sourced below): FORCED=all (the default) is PASCAL_FORCED, every compute-6.1-only
+# path of the fork (also the attention block, the persistent MoE kernel and the Pascal flash-attention tile kernel, as a
+# P106 runs them); FORCED=mmv is PASCAL_FORCED_MMV, the matrix-vector kernels alone, the set C953's run used.
 # Two steps (STEPS, default "bops load"):
 #   bops   test-backend-ops on one card (BOPS_GPU), two parts:
 #            suite   the built-in plain MUL_MAT cases of Q5_0 and Q8_0 at 1 to 5 tokens (-p "$SUITE_P")
@@ -46,13 +46,21 @@ GGML_CUDA_MMVQ_PASCAL_KCOL_NSM=5 GGML_CUDA_MMVQ_PASCAL_KCOL_SMSM=98304"
 #   DOCKER_ARGS  extra `docker run` arguments (labels, --cpu-shares) the machine's policy asks for
 #   PREFLIGHT    a CUDA check run before each step as "$PREFLIGHT -g <ids>" (optional)
 #   GPUS (0,1,2), BOPS_GPU (0), TS (1,1,1), PORT (18953), IMG (nvidia/cuda:12.9.2-devel-ubuntu24.04),
-#   STEPS ("bops load"), MODELS_RUN ("ornmtp ornith"), ARMS ("new-unset new-mt2 base-unset"), ROUNDS (2),
+#   STEPS ("bops load"), MODELS_RUN ("ornmtp ornith"), ARMS ("new-unset new-mt2 base-unset"), ROUNDS (2), FORCED (all),
 #   LOAD_TIMEOUT (2400 s), NAME (c953: the containers' name prefix), WAIT_LABEL (a container label: before the load
 #   step, wait up to 2 h while containers carrying it run; C953 waited for a code review's containers on one card)
 # Output: WORK/bops/ (logs, replay logs, rc.txt), WORK/load/<model>-<arm>/ (command.txt, server.log, server.rc,
 #   load.txt, replies.tsv and the replies), WORK/DONE at the end.
 set -uo pipefail
 : "${WORK:?}" "${NEW:?}" "${REF:?}" "${REPO:?}" "${ORNITH:?}"
+# shellcheck source=../../../../scripts/pascal_forced.sh
+. "$REPO/scripts/pascal_forced.sh"
+case ${FORCED:-all} in
+    all) ON=$PASCAL_FORCED ;;
+    mmv) ON=$PASCAL_FORCED_MMV ;;
+    *) echo "FORCED must be all or mmv"; exit 1 ;;
+esac
+[ -n "$ON" ] || { echo "no forced set in $REPO/scripts/pascal_forced.sh"; exit 1; }
 IMG=${IMG:-nvidia/cuda:12.9.2-devel-ubuntu24.04}
 GPUS=${GPUS:-0,1,2}
 BOPS_GPU=${BOPS_GPU:-0}
