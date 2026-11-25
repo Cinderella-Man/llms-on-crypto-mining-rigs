@@ -1,0 +1,5 @@
+log	requests	median_ms	max_ms	sum_ms
+server-s2a.log	62	0.70	8.67	68.0
+server-s1a.log	66	0.69	2.69	59.1
+server-s2b.log	68	0.70	20.51	81.8
+server-s1b.log	67	0.69	5.01	66.1

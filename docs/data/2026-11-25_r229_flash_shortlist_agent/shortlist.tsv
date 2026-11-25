@@ -1,0 +1,5 @@
+run	full_head_rounds_after_a_miss	drafts_with_shortlist	drafts_with_full_head	target_tokens_outside	ids_in_list_at_end
+s2a	2	7406	289	145	33447
+s1a	1	8362	186	186	33496
+s2b	2	6444	302	154	33459
+s1b	1	11366	220	220	33527

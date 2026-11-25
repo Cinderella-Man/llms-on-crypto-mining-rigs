@@ -1,0 +1,7 @@
+measure	arm_runs	base_runs	arm_mean	base_mean	arm_spread	base_spread	diff	diff_pct	class
+the draft's acceptance	0.74 0.778	0.772 0.755	0.759	0.7635	0.038	0.017	-0.0045	-0.6 %	negligible
+tokens a step	3.22 3.33	3.32 3.26	3.275	3.29	0.11	0.06	-0.015	-0.5 %	negligible
+ms a decode step, all requests	107.5 108.4	107 107.4	107.9	107.2	0.96	0.41	+0.715	+0.7 %	negligible
+full-head drafting rounds a run	186 220	289 302	203	295.5	34	13	-92.5	-31.3 %	gain
+full-head drafting rounds a miss	1 1	1.993 1.961	1	1.977	0	0.03206	-0.9771	-49.4 %	gain
+target tokens outside the list a 1,000 generated	6.742 5.687	5.671 6.98	6.215	6.326	1.055	1.31	-0.1107	-1.7 %	negligible

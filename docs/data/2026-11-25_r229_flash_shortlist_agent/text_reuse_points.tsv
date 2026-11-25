@@ -1,0 +1,14 @@
+run	task	turn	differ_at	kept	prompt_before	prompt_after	cache_n	prompt_n	prompt_ms	prev_prompt_end	prev_reply_tokens	into_reply	grammar_from	where	client
+s1a	bugfix-python-pig-latin	3	3660	2358	6241	6241	6018	223	1910.34	3423	2596	237	0	in the tool call	same
+s1a	bugfix-python-pig-latin	4	3660	2835	6526	6526	6495	31	888.438	6241	254	-2581		before the previous reply	same, arguments re-serialized
+s1a	bugfix-python-pig-latin	5	3660	3272	7185	7186	6932	254	1895.453	6526	407	-2866		before the previous reply	same
+s1a	bugfix-python-pig-latin	6	3660	3752	7443	7444	7412	32	909.833	7186	227	-3526		before the previous reply	same, arguments re-serialized
+s1a	bugfix-python-pig-latin	7	3660	4115	8024	8025	7775	250	1901.81	7444	332	-3784		before the previous reply	same
+s2b	bugfix-javascript-grade-school	4	4628	17	4675	4676	4645	31	894.694	4457	189	171	0	in the tool call	same, arguments re-serialized
+s2b	bugfix-javascript-grade-school	5	4628	119	4838	4839	4747	92	1471.5	4676	72	-48		before the previous reply	same
+s1b	bugfix-javascript-variable-length-quantity	4	24429	15	24476	24477	24444	33	994.889	24223	222	206	0	in the tool call	same, arguments re-serialized
+s1b	bugfix-javascript-variable-length-quantity	5	24429	120	24914	24915	24549	366	2709.552	24477	73	-48		before the previous reply	same
+s1b	bugfix-javascript-variable-length-quantity	6	24429	621	25082	25083	25050	33	924.447	24915	136	-486		before the previous reply	same, arguments re-serialized
+s1b	bugfix-javascript-variable-length-quantity	7	24429	700	25245	25246	25129	117	1605.435	25083	47	-654		before the previous reply	same
+s1b	bugfix-javascript-variable-length-quantity	8	24429	904	25707	25708	25333	375	2779.546	25246	88	-817		before the previous reply	same
+s1b	bugfix-javascript-variable-length-quantity	9	24429	1725	26191	26192	26154	38	1060.652	25708	447	-1279		before the previous reply	same
