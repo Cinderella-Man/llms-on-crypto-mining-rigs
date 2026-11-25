@@ -1,0 +1,49 @@
+pass_type	depth	load	arm	step_ms	steps	accepted	drafted	ids_md5
+greedy, pass 1	0	c1a	c1	100.818	108	148	318	2aadc9cf
+greedy, pass 1	0	c1b	c1	101.849	108	148	318	2aadc9cf
+greedy, pass 1	0	s0a	s0	101.379	108	148	318	2aadc9cf
+greedy, pass 1	0	s0b	s0	101.431	108	148	318	2aadc9cf
+greedy, pass 1	4096	c1a	c1	113.161	79	177	231	765babe2
+greedy, pass 1	4096	c1b	c1	112.889	79	177	231	765babe2
+greedy, pass 1	4096	s0a	s0	116.706	79	177	231	765babe2
+greedy, pass 1	4096	s0b	s0	123.695	79	177	231	765babe2
+greedy, pass 1	8192	c1a	c1	119.416	83	173	245	8a589d39
+greedy, pass 1	8192	c1b	c1	119.519	83	173	245	8a589d39
+greedy, pass 1	8192	s0a	s0	117.738	86	170	254	8a589d39
+greedy, pass 1	8192	s0b	s0	117.866	86	170	254	8a589d39
+greedy, pass 1	all	c1a	c1	110.147	270	498	794	2aadc9cf,765babe2,8a589d39
+greedy, pass 1	all	c1b	c1	110.511	270	498	794	2aadc9cf,765babe2,8a589d39
+greedy, pass 1	all	s0a	s0	110.968	273	495	803	2aadc9cf,765babe2,8a589d39
+greedy, pass 1	all	s0b	s0	113.051	273	495	803	2aadc9cf,765babe2,8a589d39
+greedy, pass 2	0	c1a	c1	97.877	107	149	315	2aadc9cf
+greedy, pass 2	0	c1b	c1	98.045	107	149	315	2aadc9cf
+greedy, pass 2	0	s0a	s0	98.592	107	149	315	2aadc9cf
+greedy, pass 2	0	s0b	s0	98.119	107	149	315	2aadc9cf
+greedy, pass 2	4096	c1a	c1	108.777	79	177	231	765babe2
+greedy, pass 2	4096	c1b	c1	108.822	79	177	231	765babe2
+greedy, pass 2	4096	s0a	s0	108.698	79	177	231	765babe2
+greedy, pass 2	4096	s0b	s0	109.007	79	177	231	765babe2
+greedy, pass 2	8192	c1a	c1	113.339	78	178	230	8a589d39
+greedy, pass 2	8192	c1b	c1	113.242	78	178	230	8a589d39
+greedy, pass 2	8192	s0a	s0	113.222	78	178	230	8a589d39
+greedy, pass 2	8192	s0b	s0	113.455	78	178	230	8a589d39
+greedy, pass 2	all	c1a	c1	105.707	264	504	776	2aadc9cf,765babe2,8a589d39
+greedy, pass 2	all	c1b	c1	105.760	264	504	776	2aadc9cf,765babe2,8a589d39
+greedy, pass 2	all	s0a	s0	105.939	264	504	776	2aadc9cf,765babe2,8a589d39
+greedy, pass 2	all	s0b	s0	105.908	264	504	776	2aadc9cf,765babe2,8a589d39
+sampled	0	c1a	c1	101.825	111	145	329	b0ad2a30
+sampled	0	c1b	c1	102.419	111	145	329	b0ad2a30
+sampled	0	s0a	s0	101.764	111	145	329	b0ad2a30
+sampled	0	s0b	s0	101.728	111	145	329	b0ad2a30
+sampled	4096	c1a	c1	110.749	77	179	228	4319fd51
+sampled	4096	c1b	c1	110.285	77	179	228	4319fd51
+sampled	4096	s0a	s0	111.496	78	178	230	cc367cef
+sampled	4096	s0b	s0	111.799	78	178	230	cc367cef
+sampled	8192	c1a	c1	120.068	75	181	220	b768e5e0
+sampled	8192	c1b	c1	115.316	75	181	220	b768e5e0
+sampled	8192	s0a	s0	115.245	75	181	220	b768e5e0
+sampled	8192	s0b	s0	116.130	75	181	220	b768e5e0
+sampled	all	c1a	c1	109.640	263	505	777	4319fd51,b0ad2a30,b768e5e0
+sampled	all	c1b	c1	108.400	263	505	777	4319fd51,b0ad2a30,b768e5e0
+sampled	all	s0a	s0	108.469	264	504	779	b0ad2a30,b768e5e0,cc367cef
+sampled	all	s0b	s0	108.795	264	504	779	b0ad2a30,b768e5e0,cc367cef

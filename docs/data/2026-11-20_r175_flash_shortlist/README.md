@@ -23,6 +23,9 @@ full head: est. 1.2 s a run at about 8 ms a round (est. from the 8,192-token cel
 [Q1507](../../../quants/experiments.md) (this test), [Q1642](../../../quants/experiments.md) (its agent pair) and
 [Q1643](../../../quants/experiments.md) (no full-head round at all). The shortlist itself is Q592 and Q635; the
 estimate that put this test in the queue is in [2026-11-12_r122_host_ladder](../2026-11-12_r122_host_ladder/README.md).
+No full-head round at all (`…,0`) against one is [2026-11-25_r230_flash_shortlist0](../2026-11-25_r230_flash_shortlist0/README.md)
+(R230, this folder's run script with `VARIANT=r230`): a loss, because the draft can no longer guess the second piece of
+a rare word.
 
 ## What was run
 

@@ -1,0 +1,37 @@
+request	depth	load	arm	new_tokens	accepted	drafted	steps	step_ms	ids_md5
+greedy, pass 1	0	c1a	c1	7	148	318	108	100.818	2aadc9cf
+greedy, pass 1	0	c1b	c1	7	148	318	108	101.849	2aadc9cf
+greedy, pass 1	0	s0a	s0	7	148	318	108	101.379	2aadc9cf
+greedy, pass 1	0	s0b	s0	7	148	318	108	101.431	2aadc9cf
+greedy, pass 2	0	c1a	c1	0	149	315	107	97.877	2aadc9cf
+greedy, pass 2	0	c1b	c1	0	149	315	107	98.045	2aadc9cf
+greedy, pass 2	0	s0a	s0	0	149	315	107	98.592	2aadc9cf
+greedy, pass 2	0	s0b	s0	0	149	315	107	98.119	2aadc9cf
+sampled	0	c1a	c1	9	145	329	111	101.825	b0ad2a30
+sampled	0	c1b	c1	9	145	329	111	102.419	b0ad2a30
+sampled	0	s0a	s0	9	145	329	111	101.764	b0ad2a30
+sampled	0	s0b	s0	9	145	329	111	101.728	b0ad2a30
+greedy, pass 1	4096	c1a	c1	1	177	231	79	113.161	765babe2
+greedy, pass 1	4096	c1b	c1	1	177	231	79	112.889	765babe2
+greedy, pass 1	4096	s0a	s0	1	177	231	79	116.706	765babe2
+greedy, pass 1	4096	s0b	s0	1	177	231	79	123.695	765babe2
+greedy, pass 2	4096	c1a	c1	0	177	231	79	108.777	765babe2
+greedy, pass 2	4096	c1b	c1	0	177	231	79	108.822	765babe2
+greedy, pass 2	4096	s0a	s0	0	177	231	79	108.698	765babe2
+greedy, pass 2	4096	s0b	s0	0	177	231	79	109.007	765babe2
+sampled	4096	c1a	c1	3	179	228	77	110.749	4319fd51
+sampled	4096	c1b	c1	3	179	228	77	110.285	4319fd51
+sampled	4096	s0a	s0	3	178	230	78	111.496	cc367cef
+sampled	4096	s0b	s0	3	178	230	78	111.799	cc367cef
+greedy, pass 1	8192	c1a	c1	14	173	245	83	119.416	8a589d39
+greedy, pass 1	8192	c1b	c1	14	173	245	83	119.519	8a589d39
+greedy, pass 1	8192	s0a	s0	14	170	254	86	117.738	8a589d39
+greedy, pass 1	8192	s0b	s0	14	170	254	86	117.866	8a589d39
+greedy, pass 2	8192	c1a	c1	0	178	230	78	113.339	8a589d39
+greedy, pass 2	8192	c1b	c1	0	178	230	78	113.242	8a589d39
+greedy, pass 2	8192	s0a	s0	0	178	230	78	113.222	8a589d39
+greedy, pass 2	8192	s0b	s0	0	178	230	78	113.455	8a589d39
+sampled	8192	c1a	c1	1	181	220	75	120.068	b768e5e0
+sampled	8192	c1b	c1	1	181	220	75	115.316	b768e5e0
+sampled	8192	s0a	s0	1	181	220	75	115.245	b768e5e0
+sampled	8192	s0b	s0	1	181	220	75	116.130	b768e5e0
