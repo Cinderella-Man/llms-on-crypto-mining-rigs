@@ -262,14 +262,20 @@ The rest of the path (rig 1, `run/pcie_facts.sh` in the data folder, Q990):
   no Sunrise Point-LP (`0x9Dxx`) entry, and its last row defaults to "not supported"
   ([nvcst.h](https://github.com/NVIDIA/open-gpu-kernel-modules/blob/main/src/nvidia/arch/nvalloc/common/inc/nvcst.h),
   [chipset_pcie.c](https://github.com/NVIDIA/open-gpu-kernel-modules/blob/main/src/nvidia/src/kernel/platform/chipset/chipset_pcie.c)).
-  A pair behind one ASM1184e escapes that only if the driver's list of accepted switches includes ASMedia, and the
-  headers define no ASMedia vendor ID. Expected: CNS for every pair, possibly GNS for the SKU (est.).
+  A pair behind one switch escapes that only if the driver accepts the switch. Its list (`IS_SUPPORTED_PCIE_SWITCH`
+  in [pcie_switch_ref.h](https://github.com/NVIDIA/open-gpu-kernel-modules/blob/main/src/common/inc/swref/published/pcie_switch/pcie_switch_ref.h),
+  the same in the 580.196.11 release) holds NVIDIA's own BR03 and BR04 bridges, PLX 87xx and 97xx, PMC-Sierra 85xx
+  and 40xx, and one Mellanox bridge (`0x1976`). ASMedia isn't on it, so pairs behind one ASM1184e get CNS as well.
+  Expected: CNS for every pair, possibly GNS for the SKU (est.).
 - **The hardware path exists inside each switch.** A PCIe switch forwards a memory write from one downstream port to
   another unless ACS redirect sends it upstream; Linux sets the redirect bits only when an IOMMU asked for them
   ([p2pdma](https://docs.kernel.org/driver-api/pci/p2pdma.html), `pci_enable_acs` in `drivers/pci/pci.c`). On the rig
   nothing redirects: the ASM1184e ports have no ACS capability and the root ports' redirect bits are off (section 2).
   Across the two switches a peer write would pass the PCH's root ports, where forwarding between ports is not
-  guaranteed on client chipsets.
+  guaranteed on client chipsets. Linux's own list of host bridges that route peer traffic (`pci_p2pdma_whitelist` in
+  [p2pdma.c](https://github.com/torvalds/linux/blob/master/drivers/pci/p2pdma.c)) has Intel server parts and one
+  Haswell client bridge, but no Skylake or Kaby Lake client part. So nobody vouches for the two boundaries that cross
+  the PCH.
 
 ### 4.2 The override NVIDIA ships
 
@@ -462,6 +468,8 @@ Every value est. unless the row says measured.
 - Whether the P106-090's Gen2 register sequence works behind an ASM1184e or on a Base-U root port: no report exists for
   any card in either place.
 - The ASM1184e's forwarding latency, cut-through or store-and-forward, and multicast: no public datasheet.
+- Whether the Sunrise Point-LP PCH forwards peer writes from one root port to another: no source either way. Intel's
+  100-series PCH datasheet (332690) no longer loads from intel.com.
 - The poll latency of a GPU reading host memory on a Gen1 x1 link behind a switch (est. 1.2–2.5 µs): the streamed
   mailbox bench measures it.
 - Tensor parallelism's compute speedup on nine 5-SM cards (Q996).
