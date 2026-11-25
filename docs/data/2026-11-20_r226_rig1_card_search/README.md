@@ -1,9 +1,17 @@
 # R226: which card of the first rig spoils the served model, found by halves (2026-11-20)
 
+**Then the memory alone, in plain words (R236, 2026-11-25).** On a fresh boot every card's core ran at stock and only
+the memory offsets were set. Every card passed its own check, and Ornith gave the stock answer **217 rounds in a row,
+the whole 120 minutes** ([below](#the-memory-alone-r236-2026-11-25-1101-to-1320)), where the cores alone had differed
+within 3 minutes. So the core offsets are where the first rig's error comes from, and the first rig can run on its
+memory offsets while the cores are searched. The memory is very likely cleaner than the whole profile but not proven
+clean: at the whole profile's error rate, 217 clean rounds would still come est. 6.4 % of the time. Generation ran
+2.22 % faster than stock (17.01 against 16.64 tok/s on both prompts); prompt processing gained nothing.
+
 **Then the next runs' profiles (Q1760, 2026-11-24).** `run/mem_down.py` now lowers the core offsets too, so the
 next first-rig tests have exact profiles that the kit accepts: the memory alone (every core at stock), the cores one
 and two steps lower (every memory at stock), and memory and core each one step lower
-([below](#the-next-profiles-q1760-2026-11-24)). No rig ran them yet.
+([below](#the-next-profiles-q1760-2026-11-24)). The memory alone ran as R236 (above); the others have not run yet.
 
 **Then the cores alone, in plain words (R235, 2026-11-24).** On a fresh boot every card's memory ran at stock and only
 the core offsets were set. Every card passed its own check, but Ornith gave the stock answer only 4 rounds in a row and
@@ -602,6 +610,123 @@ At 18:59:52 the kit's `state` read every offset 0 on all nine cards (and `nvidia
 every card but card 6; no memory offset was set), 3,153 MiB of host memory available. Any further test needs a fresh
 boot: the kit's start check refuses a boot with a lowered offset.
 
+## The memory alone (R236, 2026-11-25, 11:01 to 13:20)
+
+[Q1795](../../../quants/experiments.md): every card's core offset at 0 and every memory offset as in the profile, card
+6 at stock, then Ornith's rounds for 120 minutes. If it holds, the first rig can run on its memory offsets while the
+cores are searched; if it differs, both clocks err. The same rig, freshly booted at about 10:52 with nothing run on it
+before. At 11:01:26 the files on the rig were checked ([run/MD5SUMS-memalone120](run/MD5SUMS-memalone120)),
+[run/mem_down.py](run/mem_down.py) with `--steps 0 --core-steps all` made the profile on the rig from R223's
+[use.json](../2026-11-20_r223_core_soak_rig1/use.json) (the same bytes as [mem-alone.json](mem-alone.json), md5
+`52be6a07347964e074478bdd45537fb5`), the profile passed the kit's own profile check (every core +0, the memory set on
+cards 0 to 5, 7 and 8, card 6 stock), and the kit's start check passed: every offset 0, no load process, no GPU Xid
+this boot, no offset lowered since the boot, 3,167 MiB of host memory available.
+
+| card | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| memory, MT/s | +900 | +1,000 | +1,100 | +1,200 | +1,100 | +1,300 | 0 | +1,100 | +900 |
+| core, MHz | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+
+[run/half_check.sh](run/half_check.sh) ran the boot detached (11:01:44 to 13:20:13) with `MINUTES=120` and the same
+engine, settings and stock reference as the runs above:
+
+1. **The stock reference:** R224's stock round 1 (`adf47784f9b02d4b`) copied into a fresh output folder and its hash
+   checked.
+2. **The start check, the trip test** (11:01:44 to 11:02:20: the watchdog's four trips with stand-in processes, each
+   PASS) **and the watchdog** (11:02:23).
+3. **`apply` of the profile** (11:02:27 to 11:08:16): the check servers, the stock rounds, every card's offsets set
+   11:07:12 to 11:07:17 and read back as set, then one round with the offsets: every card PASS at 11:08:03.
+4. **Ornith with the offsets**, rounds for 120 minutes after the load, each against the stored stock answer: loaded in
+   675 s (ready 11:19:35), **217 rounds from 11:20:13 to 13:19:55, every one the stock hash**.
+5. **The reset:** every card's offsets to 0 (13:20:02 to 13:20:11), then the watchdog stopped (13:20:13).
+
+### Ornith's whole-memory check ([halves.md](halves.md), row `memalone120`; every round in [memalone120/model_rounds.tsv](memalone120/model_rounds.tsv))
+
+| | R224 stock | the whole profile, 90 minutes (R228) | the cores alone (R235) | **the memory alone** | against stock |
+|---|---|---|---|---|---|
+| load, s | 673 | 671 | 675 | **675** | |
+| host memory available when loaded, MiB | 1,496 | 1,506 | 1,490 | **1,491** | |
+| rounds; the stock answer | 2 (round 1 is the reference) | 137; 136 of 137, round 137 differed (72.5 min after the load) | 5; 4 of 5, round 5 differed (2.8 min) | **217; 217 of 217** (none differed; 7,226 s) | |
+| generation tok/s in round 1 (prompts 1, 2) | 15.02, 15.76 | 15.95, 16.83 | 15.56, 16.18 | **15.39, 16.12** | +2.46 %, +2.28 % |
+| generation tok/s in round 2 (prompts 1, 2) | 16.64, 16.64 | 17.80, 17.80 | 17.23, 17.24 | **17.04, 17.04** | +2.40 %, +2.40 % |
+| generation tok/s, median of rounds 2 on (prompts 1, 2) | 16.64, 16.64 (round 2) | 17.79, 17.79 (136 rounds) | 17.23, 17.23 (4 rounds) | **17.01, 17.01** (216 rounds) | **+2.22 %, +2.22 %** |
+| prompt processing tok/s, median of rounds 2 on (prompts 1, 2) | 26.86, 29.67 (round 2) | 28.74, 31.71 | 28.545, 31.50 | **26.65, 29.45** | −0.78 %, −0.74 % |
+
+- Over rounds 2 to 217 the slowest round generated 17.00 tok/s and the fastest 17.05 on prompt 1 (17.00 and 17.04
+  on prompt 2); round 2 gave 17.04 and round 217 17.01. Prompt processing went from 26.79 and 29.61 tok/s in round 2
+  to 26.61 and 29.41 in round 217; its medians sit 0.78 % and 0.74 % under R224's single stock round.
+- The memory alone gave about a third of the whole profile's generation gain (+2.22 % against +6.91 %) and none of its
+  prompt processing gain; the cores alone gave +3.55 % generation and +6.27 % and +6.17 % prompt processing.
+- The load used the same memory as every run above: 5,603 5,635 5,549 5,635 5,243 5,351 5,513 5,601 5,009 MiB on
+  cards 0 to 8.
+
+### `apply`, card by card ([memalone120/apply.md](memalone120/apply.md); the kit's own table [memalone120/apply_steps.csv](memalone120/apply_steps.csv))
+
+| card | memory MT/s | core MHz | streaming read at stock, GB/s | with the offsets | change | peak core MHz at stock | with the offsets | greedy check | verdict |
+|---:|---:|---:|---:|---:|---:|---:|---:|---|---|
+| 0 | +900 | +0 | 179.35 | 197.16 | +9.93 % | 1,873 | 1,860 | same as stock | PASS |
+| 1 | +1,000 | +0 | 179.31 | 199.33 | +11.17 % | 1,860 | 1,847 | same as stock | PASS |
+| 2 | +1,100 | +0 | 179.17 | 202.41 | +12.97 % | 1,911 | 1,898 | same as stock | PASS |
+| 3 | +1,200 | +0 | 179.40 | 204.64 | +14.07 % | 1,911 | 1,898 | same as stock | PASS |
+| 4 | +1,100 | +0 | 179.37 | 202.19 | +12.72 % | 1,885 | 1,885 | same as stock | PASS |
+| 5 | +1,300 | +0 | 178.88 | 207.00 | +15.72 % | 1,911 | 1,911 | same as stock | PASS |
+| 6 | +0 | +0 | 179.35 | 179.32 | −0.02 % | 1,885 | 1,885 | same as stock | PASS |
+| 7 | +1,100 | +0 | 179.27 | 202.12 | +12.75 % | 1,911 | 1,911 | same as stock | PASS |
+| 8 | +900 | +0 | 179.46 | 197.66 | +10.14 % | 1,885 | 1,885 | same as stock | PASS |
+
+Every card's offsets read back as set; every card's check model gave its stock hash and passed the 31 kernel checks
+at stock and with the offsets. With the cores at stock the peak core clocks stay at stock or one driver step (12.66
+MHz) under it.
+
+### Power and clocks ([memalone120/model_cards.md](memalone120/model_cards.md), the watchdog's 14,450 samples a card over Ornith's rounds; [memalone120/watchdog.md](memalone120/watchdog.md), its 16,536 samples a card from 11:02:20 to 13:20:12)
+
+| card | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| SM clock median, MHz | 1,847 | 1,847 | 1,898 | 1,898 | 1,873 | 1,911 | 1,885 | 1,911 | 1,873 |
+| memory clock median, MHz | 4,455 | 4,498 | 4,551 | 4,608 | 4,551 | 4,657 | 4,006 | 4,551 | 4,455 |
+| highest W over the rounds | 76.00 | 78.87 | 78.24 | 80.11 | 75.05 | 77.12 | 75.51 | 76.86 | 73.27 |
+| samples above 80 W, of 14,450 | 0 | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0 |
+
+Over the whole boot power went above 80 W in one sample only (card 3, 80.11 W, of 16,536). No sample tripped, and the
+boot logged no GPU Xid.
+
+### What it allows
+
+- **The first rig runs on its memory offsets alone without the error, as far as 217 rounds can show.** The cores alone
+  differed within 5 rounds (R235); the memory alone held 217, for the whole 120 minutes. So the core offsets are where
+  the error comes from.
+- **The memory is not proven clean.** If the memory alone erred as often as the whole profile (two differences in 159
+  rounds), 217 clean rounds would still come est. 6.4 % of the time; at the rate of every run with the profile's cores
+  (four in 186 rounds) est. 0.9 %. With no difference in 217 rounds, the memory alone errs less often than once in
+  about 73 rounds (est., at the 95 % level), about 40 minutes of rounds.
+- **Speed while it held:** +2.22 % generation and no prompt processing gain on a single request (diagnostics; the
+  first rig's agentic speed with these offsets is not measured). The memory and the cores together gave more than the
+  two alone added up (+6.91 % against +2.22 % and +3.55 %).
+
+### Options after it ([Q1640](../../../quants/experiments.md))
+
+Each needs a fresh boot; the rigs stop at 22:00.
+
+- **The memory alone as the first rig's daily profile** (Q1829): on each fresh boot the kit's `apply` of
+  [mem-alone.json](mem-alone.json), then Ornith's whole-memory check with the offsets, as the second rig's soaked
+  profile is set each morning; +2.22 % generation now, while the cores are searched.
+- **The cores one step lower with the memory kept** (Q1830): the profile's memory offsets with every core one step
+  (2 × 12.66 MHz) lower (`mem_down.py --steps 0 --core-steps 1`), 120 minutes of rounds. If it holds, the first rig has
+  a profile with both clocks raised; if it differs, the cores one step lower with every memory at stock
+  ([cores-down1.json](cores-down1.json)) tells whether the cores still err at that step.
+- **The cores lower with every memory at stock** ([cores-down1.json](cores-down1.json),
+  [cores-down2.json](cores-down2.json)), 120 minutes each, until a step holds.
+- **A per-card check that loads the cores** (Q1796): the kit's `apply` and soak check each card with work that drives
+  the cores as Ornith does, so a core offset that spoils Ornith fails there, on any rig.
+
+### The end
+
+At 13:20:57 the kit's `state` read every offset 0 on all nine cards (and `nvidia-smi` 1,911 / 4,004 MHz maximum), P8,
+0 MiB, no load process, the watchdog stopped, no GPU Xid this boot, eight offsets lowered since the boot (the memory of
+every card but card 6, by the reset; no core offset was set), 3,153 MiB of host memory available. Any further test
+needs a fresh boot: the kit's start check refuses a boot with a lowered offset. After a memory offset was lowered, one
+card once streamed slower at stock until a reboot (Q1563), so speed runs on this boot may read low.
+
 ## The next profiles (Q1760, 2026-11-24)
 
 The memory alone and the cores lower need profiles that change the core offsets, which `run/mem_down.py` could not do.
@@ -647,7 +772,7 @@ that make and check each profile on the rig are at the end of [Commands](#comman
 
 | File | What it holds |
 |---|---|
-| [halves.md](halves.md) | One row per run (the halves a and b, `full90`, the whole profile for 90 minutes, `mem120`, every memory one step lower, and `cores120`, the cores alone): the load, the rounds, how many gave the stock answer, the first differing round, generation tok/s against stock |
+| [halves.md](halves.md) | One row per run (the halves a and b, `full90`, the whole profile for 90 minutes, `mem120`, every memory one step lower, `cores120`, the cores alone, and `memalone120`, the memory alone): the load, the rounds, how many gave the stock answer, the first differing round, generation tok/s against stock |
 | [half-a.json](half-a.json) | Half a's profile: cards 0 to 4 at use.json's values, cards 5 to 8 at 0 |
 | [a/apply.md](a/apply.md), [a/apply_steps.csv](a/apply_steps.csv) | Half a's `apply`, card by card: offsets, streaming reads, peaks, the greedy and kernel checks (the kit's own table) |
 | [a/model_rounds.tsv](a/model_rounds.tsv) | Half a's every round: time, hash, tokens, against stock's round 1, prompt and generation tok/s of both prompts |
@@ -661,12 +786,13 @@ that make and check each profile on the rig are at the end of [Commands](#comman
 | [mem120/](mem120/) | Every memory one step lower, 120 minutes planned (R231): the same six tables, plus `ornith_differs.csv`, round 22 against stock prompt by prompt |
 | [cores.json](cores.json) | R235's profile: use.json with every memory offset at 0, cores kept (`run/mem_down.py --steps 13`, made on the rig; md5 `c12d1573989cab8ab8b3f0ae7b85e48f`) |
 | [cores120/](cores120/) | The cores alone, 120 minutes planned (R235): the same six tables, plus `ornith_differs.csv`, round 5 against stock prompt by prompt |
+| [memalone120/](memalone120/) | The memory alone, 120 minutes (R236): the same six tables; its profile is [mem-alone.json](mem-alone.json) (made on the rig, the same md5); no round differed, so no `ornith_differs.csv` |
 | [run/half_profile.py](run/half_profile.py) | Makes a half's profile from use.json and runs the kit's own profile check on it (the one `apply` runs) |
 | [run/half_check.sh](run/half_check.sh) | One half (or the whole profile) on a fresh boot: start check, trip test, watchdog, `apply`, Ornith for `MINUTES` (30; 90 for `full90`) against the stored stock answer, then every offset to 0 |
 | [run/halves.py](run/halves.py), [run/tables.sh](run/tables.sh) | Build the tables from the folders copied off the rig |
 | [mem-alone.json](mem-alone.json), [cores-down1.json](cores-down1.json), [cores-down2.json](cores-down2.json), [mem-core-down1.json](mem-core-down1.json) | The next runs' profiles from use.json (Q1760): the memory alone, the cores one and two steps lower, memory and core each one step lower ([above](#the-next-profiles-q1760-2026-11-24)) |
 | [run/mem_down.py](run/mem_down.py) | use.json with every card's memory (`--steps`, 100 MT/s each; Q1640's option (c)) and/or core (`--core-steps`, 2 × 12.66 MHz each; Q1760) lower, never below 0, `all` for 0; check it with `half_profile.py --check` |
-| [run/MD5SUMS-a](run/MD5SUMS-a), [run/MD5SUMS-b](run/MD5SUMS-b), [run/MD5SUMS-full90](run/MD5SUMS-full90), [run/MD5SUMS-mem120](run/MD5SUMS-mem120), [run/MD5SUMS-cores120](run/MD5SUMS-cores120) | The md5 sums of the files on the rig for each run, checked there before the start |
+| [run/MD5SUMS-a](run/MD5SUMS-a), [run/MD5SUMS-b](run/MD5SUMS-b), [run/MD5SUMS-full90](run/MD5SUMS-full90), [run/MD5SUMS-mem120](run/MD5SUMS-mem120), [run/MD5SUMS-cores120](run/MD5SUMS-cores120), [run/MD5SUMS-memalone120](run/MD5SUMS-memalone120) | The md5 sums of the files on the rig for each run, checked there before the start |
 
 ## Commands
 
@@ -698,7 +824,10 @@ the rig with option (c)'s commands below and repeated them on its own fresh boot
 ([run/MD5SUMS-mem120](run/MD5SUMS-mem120)), `MINUTES=120`, `WORK=/var/tmp/q1640c` and `OUT=/var/tmp/q1640c-model`.
 The cores alone (`cores120`) made its profile on the rig the same way with `--steps 13` (below) and repeated them on
 its own fresh boot with `PROFILE=$K/q1640-cores.json` ([run/MD5SUMS-cores120](run/MD5SUMS-cores120)), `MINUTES=120`,
-`WORK=/var/tmp/r235` and `OUT=/var/tmp/r235-model`.
+`WORK=/var/tmp/r235` and `OUT=/var/tmp/r235-model`. The memory alone (`memalone120`) made its profile on the rig with
+the Q1760 call below (`--steps 0 --core-steps all`) and repeated them on its own fresh boot with
+`PROFILE=$K/q1795-mem.json` ([run/MD5SUMS-memalone120](run/MD5SUMS-memalone120)), `MINUTES=120`, `WORK=/var/tmp/q1795`
+and `OUT=/var/tmp/q1795-model`.
 The tables, on any machine, from the two folders copied off the rig:
 
 ```bash
@@ -707,6 +836,7 @@ bash run/tables.sh b <copy of /var/tmp/r226b> <copy of /var/tmp/r226b-model> .
 bash run/tables.sh full90 <copy of /var/tmp/q1640a> <copy of /var/tmp/q1640a-model> .
 bash run/tables.sh mem120 <copy of /var/tmp/q1640c> <copy of /var/tmp/q1640c-model> .
 bash run/tables.sh cores120 <copy of /var/tmp/r235> <copy of /var/tmp/r235-model> .
+bash run/tables.sh memalone120 <copy of /var/tmp/q1795> <copy of /var/tmp/q1795-model> .
 ```
 
 Option (c)'s profile, every card's memory one step lower with the core kept (`67d8cb5c5685c74d7c461696eea42820` from
@@ -739,7 +869,7 @@ cd $K && . ./env.sh && for f in q1795-mem q1760-cores1 q1760-cores2 q1640-c2; do
 
 ## Provenance and licence
 
-Measured on the first rig on 2026-11-20 (half a: 16:40 to 17:31; half b: 17:49 to 18:41; the whole profile for 90 minutes: 19:04 to 20:40) and 2026-11-24 (every memory one step lower: 13:59 to 14:30; the cores alone: 18:38 to 18:59) with the engine builds named above and the kit as published
+Measured on the first rig on 2026-11-20 (half a: 16:40 to 17:31; half b: 17:49 to 18:41; the whole profile for 90 minutes: 19:04 to 20:40) and 2026-11-24 (every memory one step lower: 13:59 to 14:30; the cores alone: 18:38 to 18:59) and 2026-11-25 (the memory alone: 11:01 to 13:21) with the engine builds named above and the kit as published
 on this branch. The next runs' four profiles (Q1760) were made and checked on a laptop with the kit as published on
 this branch, without a rig. The check model is IBM's Granite 3.1 3B-A800M Instruct (Apache 2.0) quantized to Q4_K_M; Ornith-1.5-122B
 Pascal N2P GGUF and its licence are described in [release/ornith-v3](../../../release/ornith-v3/README.md). Neither

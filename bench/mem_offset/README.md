@@ -39,6 +39,8 @@ once in 22 rounds, so that rig runs at stock; the search by halves named no card
 R224, two differences in 159 rounds, est. once in about 42 minutes of rounds. Every memory one step (100 MT/s) lower
 with the cores kept differed in round 22 (R231, same folder), and the cores alone, every memory at stock, differed in
 round 5 (R235, same folder): the core offsets bring the error back although every card passed its own check at them.
+The memory alone, every core at stock, held 217 of 217 rounds over 120 minutes (R236, same folder): the core offsets
+are where that rig's error comes from, and its memory offsets alone give +2.22 % generation on a single request.
 
 | Step | What happens | How it runs | What it gives | Time |
 |---|---|---|---|---|
