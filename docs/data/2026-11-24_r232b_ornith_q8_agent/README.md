@@ -259,7 +259,7 @@ python3 -I bench/agent_check/class_arms.py <tables folder>/agent.tsv o5q8=o5q8a,
 | [clocks.tsv](clocks.tsv), [cards.md](cards.md) | each card's busy SM clock median; its highest power, samples above 80 W and busy memory clock median, over each run's tasks |
 | [o5f16a_compare.md](o5f16a_compare.md), [o5f16a_report_table.md](o5f16a_report_table.md), [o5f16a_gonogo.md](o5f16a_gonogo.md); [o5q8a_compare.md](o5q8a_compare.md), [o5q8a_report_table.md](o5q8a_report_table.md), [o5q8a_gonogo.md](o5q8a_gonogo.md); [o5f16b_compare.md](o5f16b_compare.md), [o5f16b_report_table.md](o5f16b_report_table.md), [o5f16b_gonogo.md](o5f16b_gonogo.md); [o5q8b_compare.md](o5q8b_compare.md), [o5q8b_report_table.md](o5q8b_report_table.md), [o5q8b_gonogo.md](o5q8b_gonogo.md) | the harness's report of each run: per task, per turn and the go/no-go |
 | [agent/o5f16a/](agent/o5f16a/), [agent/o5q8a/](agent/o5q8a/), [agent/o5f16b/](agent/o5f16b/), [agent/o5q8b/](agent/o5q8b/) | per request (`turns.csv`) and per attempt (`attempts.csv`) rows of each run |
-| [run/ornith_q8.sh](run/ornith_q8.sh), [run/tables.sh](run/tables.sh) | the launcher of the four runs (`ARM=f16\|q8`, `RUN=a\|b`) and the tables |
+| [run/ornith_q8.sh](run/ornith_q8.sh), [run/tables.sh](run/tables.sh) | the launcher of the four runs (`ARM=f16\|q8`, `RUN=a\|b`; its `ARM=kdp` is C1102's, [2026-11-25_c1102_kdp_agent](../2026-11-25_c1102_kdp_agent/README.md)) and the tables |
 
 ## Provenance and licence
 

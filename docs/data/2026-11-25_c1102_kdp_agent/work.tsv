@@ -1,0 +1,5 @@
+arm	tasks	turns	prompt_read	generated	reread_turns	older_checkpoint_turns	reread_n	reread_s	prompt_s	ttft_max_s	ttft_max_task	ttft_max_turn	ttft_max_reread
+o5q8a	12	60	35671	25385	0	0	0	0.000	341.810	25.6540	bugfix-python-affine-cipher	1	0
+o5kdpa	12	68	36743	20995	0	0	0	0.000	341.690	25.7180	bugfix-python-affine-cipher	1	0
+o5q8b	12	64	36722	23411	0	0	0	0.000	354.555	26.4677	bugfix-python-affine-cipher	1	0
+o5kdpb	12	66	35062	20467	0	0	0	0.000	328.059	25.7437	bugfix-python-affine-cipher	1	0
