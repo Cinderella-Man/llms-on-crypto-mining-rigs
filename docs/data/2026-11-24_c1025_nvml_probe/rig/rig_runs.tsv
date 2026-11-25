@@ -1,0 +1,13 @@
+phase	rep	arm	place	rc	wall_s	maxrss_kib	probe	open_init_ms	close_ms	rss_init_mib	rss_close_mib	init_span_ms	tensor_read_s	health_s	vmhwm_health_kib	memavail_before_kib	memavail_min_kib	stopped	reply_same
+list	1	unset	first	0	2.9965	1293372	skipped (no device has fast BF16; GGML_CUDA_NVML_PROBE=1 runs it)					3.265							
+list	1	probe	second	0	2.5959	1293384	ran (GGML_CUDA_NVML_PROBE=1; library loaded, init ok)	19.1	62.8	+14.2	+0.1	84.998							
+list	2	probe	first	0	2.4755	1293444	ran (GGML_CUDA_NVML_PROBE=1; library loaded, init ok)	19.4	63.4	+14.2	+0.1	85.829							
+list	2	unset	second	0	2.4383	1293596	skipped (no device has fast BF16; GGML_CUDA_NVML_PROBE=1 runs it)					2.891							
+list	3	unset	first	0	2.4138	1293736	skipped (no device has fast BF16; GGML_CUDA_NVML_PROBE=1 runs it)					2.889							
+list	3	probe	second	0	2.4850	1293400	ran (GGML_CUDA_NVML_PROBE=1; library loaded, init ok)	19.0	69.2	+14.2	+0.1	91.224							
+list	4	probe	first	0	2.4843	1293952	ran (GGML_CUDA_NVML_PROBE=1; library loaded, init ok)	19.1	63.7	+14.2	+0.1	85.821							
+list	4	unset	second	0	2.4647	1293732	skipped (no device has fast BF16; GGML_CUDA_NVML_PROBE=1 runs it)					2.886							
+list	5	unset	first	0	2.4324	1293624	skipped (no device has fast BF16; GGML_CUDA_NVML_PROBE=1 runs it)					2.880							
+list	5	probe	second	0	2.5596	1293700	ran (GGML_CUDA_NVML_PROBE=1; library loaded, init ok)	19.1	63.6	+14.2	+0.1	85.688							
+load	1	unset	first	0	547.655	2705340	skipped (no device has fast BF16; GGML_CUDA_NVML_PROBE=1 runs it)					2.912	535.619	541.148	2705340	3022548	1407412		yes
+load	1	probe	second	0	553.363	2996188	ran (GGML_CUDA_NVML_PROBE=1; library loaded, init ok)	28.0	90.3	+14.0	+0.1	121.523	539.705	546.849	2996188	3273128	1415944		yes

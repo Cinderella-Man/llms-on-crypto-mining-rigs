@@ -1,0 +1,8 @@
+# probe minus unset, each pair by value
+phase	rep	order	wall_s	maxrss_kib	init_span_ms	tensor_read_s	health_s	vmhwm_health_kib	memavail_before_kib	memavail_min_kib
+list	1	unset first	-0.4006	+12	+81.733					
+list	2	probe first	+0.0372	-152	+82.938					
+list	3	unset first	+0.0712	-336	+88.335					
+list	4	probe first	+0.0196	+220	+82.935					
+list	5	unset first	+0.1272	+76	+82.808					
+load	1	unset first	+5.7080	+290848	+118.611	+4.086	+5.701	+290848	+250580	+8532

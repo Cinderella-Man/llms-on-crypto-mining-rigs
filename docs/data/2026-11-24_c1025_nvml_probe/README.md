@@ -11,8 +11,8 @@ a rig the probe runs at every start and its answer is never used.
 The fork branch `pascal-p106-v5-nvml-probe` (`88b0db403`, one commit on the candidate `pascal-p106-v5-cand-b12674` at
 `eee615cdb`) opens NVML only when a card would read it. The switch `GGML_CUDA_NVML_PROBE=1` runs the probe always, as
 upstream does, so a rig can measure both in one build. It was built and checked on a build machine's RTX 3090s
-(compute 8.6, which do have fast BF16). Correctness only: nothing here is timed. What the probe costs a nine-card P106
-load is [the rig check](#the-rig-check) below.
+(compute 8.6, which do have fast BF16). Correctness only: nothing on that machine is timed. What the probe costs a
+nine-card P106 rig, in time and host memory, is [the rig check](#the-rig-check) below (2026-11-25).
 
 ## Result in plain words
 
@@ -27,8 +27,12 @@ load is [the rig check](#the-rig-check) below.
   is host code only, and no compiler warning is new.
 - **What the probe costs on the build machine's one card:** it added 19.4 MiB of resident memory while it ran and
   0.1 MiB after it closed. On a P106 rig, where the host has 4 GB, the rig check measures it with nine cards.
-- **What it does not show:** the time and memory the probe costs a P106 rig. That is [the rig check](#the-rig-check),
-  est. 30 min.
+- **On a P106 rig, skipping the probe takes time off every CUDA start and costs nothing**
+  ([the rig check](#the-rig-check), 2026-11-25, nine P106-090 cards). In five pairs of device lists the CUDA start was
+  shorter by 81.733, 82.938, 88.335, 82.935 and 82.808 ms without the probe, and by 118.611 ms in a model load. That is
+  a gain at the start itself. Against the load's 541.148 s it is negligible, and agentic speed does not change, since a
+  server starts once. Memory: negligible. The probe's 14.2 MiB are freed 0.1 s into the start, before any model file is
+  read, and 0.1 MiB stays after it. Both loads gave the same greedy reply.
 
 ## The change
 
@@ -83,27 +87,91 @@ device lists and in both loads, and the two loads gave the same reply.
 
 ## The rig check
 
-**Planned:** one rig, this build, two arms that differ only in `GGML_CUDA_NVML_PROBE`: unset (no P106 has fast BF16,
-so the probe is skipped) and `1` (upstream's probe). [run/rig_probe.sh](run/rig_probe.sh) starts
+Run on 2026-11-25, 15:03 to 15:22, on one rig of nine P106-090 cards (driver 580.178.04, 4 GB of host memory). The
+cards ran at their daily clock offsets ([bench/mem_offset](../../../bench/mem_offset/README.md)) with the kit's
+watchdog on: every card at its offsets, 0 Xid before and after. The build is this one
+(`llama-server` md5 `3154dba02422da775b4a554ca5b28a1c`). Two arms differ only in `GGML_CUDA_NVML_PROBE`: unset (no
+P106 has fast BF16, so the probe is skipped) and `1` (upstream's probe). [run/rig_probe.sh](run/rig_probe.sh) starts
 [run/rig_probe.py](run/rig_probe.py) on the rig, detached, waits for it and collects it:
 
 1. **The device list, five pairs**, the order of each pair alternating: `llama-server -lv 4 --list-devices` with the
    preset's environment. Each run's wall time and peak resident memory, and from the probe's line its own time to open
    and initialise NVML, to shut it down, and the memory it added.
-2. **One load each way** of Flint Pascal Q8 GGUF on its v5 preset over nine cards, with `-lv 4` first: the time from
-   the start to `/health`, the log's own times of "found 9 CUDA devices", of the first card's line and of the probe
-   line, the server's peak resident memory, the host's `MemAvailable` before the load and its lowest value during it
-   (every 0.25 s; a load stops below 60 MiB), and one 16-token greedy reply in each arm, compared.
+2. **One load each way** of Ornith-1.5-122B Pascal N2P GGUF (`valid1`), the rig's daily model, on its v5 preset
+   ([release/ornith-v5/settings.env](../../../release/ornith-v5/settings.env)) over nine cards, with `-lv 4` first. It
+   records the time from the start to `/health`, the log's own times, and the server's peak resident memory. It also
+   records the host's `MemAvailable` before the load and its lowest value during it (every 0.25 s; a load stops below
+   60 MiB), and one 16-token greedy reply in each arm, compared. The probe runs at CUDA start, before any model file is
+   read, so the model does not change what it costs. The same scripts take Flint's preset
+   (`PRESET=release/flint-v5/settings.env`).
 
-Each figure is read by value, nothing averaged. The probe's own time and memory decide whether the rule, now the
-default, is a gain or negligible.
+"CUDA start" below is the log's own time from "found 9 CUDA devices" to `ggml_cuda_init`'s last line, the probe's
+line, which prints whether the probe ran or was skipped. It covers the device loop and the probe. Each figure is one
+run, nothing averaged.
+
+**The device lists** (each a whole `llama-server` process):
+
+| Pair (order) | CUDA start, skipped ms | CUDA start, probe ms | probe's open and init / shutdown and close ms | wall, skipped s | wall, probe s | peak RSS, skipped KiB | peak RSS, probe KiB |
+|---|---|---|---|---|---|---|---|
+| 1 (skipped first) | 3.265 | 84.998 | 19.1 / 62.8 | 2.9965 | 2.5959 | 1,293,372 | 1,293,384 |
+| 2 (probe first) | 2.891 | 85.829 | 19.4 / 63.4 | 2.4383 | 2.4755 | 1,293,596 | 1,293,444 |
+| 3 (skipped first) | 2.889 | 91.224 | 19.0 / 69.2 | 2.4138 | 2.4850 | 1,293,736 | 1,293,400 |
+| 4 (probe first) | 2.886 | 85.821 | 19.1 / 63.7 | 2.4647 | 2.4843 | 1,293,732 | 1,293,952 |
+| 5 (skipped first) | 2.880 | 85.688 | 19.1 / 63.6 | 2.4324 | 2.5596 | 1,293,624 | 1,293,700 |
+
+The probe held 14.2 MiB of resident memory after `nvmlInit` in all five runs and 0.1 MiB after it closed. Pair 1 is
+the first CUDA start of the session, which is why its skipped run is the slowest list.
+
+**The loads** (the skipped arm first):
+
+| | probe skipped | probe (`=1`) |
+|---|---|---|
+| CUDA start, ms | 2.912 | 121.523 |
+| probe's open and init / shutdown and close, ms | | 28.0 / 90.3 |
+| probe's resident memory after init / after close, MiB | | +14.0 / +0.1 |
+| tensor read ("loading model tensors" to "constructing llama_context"), s | 535.619 | 539.705 |
+| start to `/health`, s | 541.148 | 546.849 |
+| server's peak resident memory (at `/health`, the same at exit), KiB | 2,705,340 | 2,996,188 |
+| host `MemAvailable` before the load, KiB | 3,022,548 | 3,273,128 |
+| host `MemAvailable`, lowest during the load, KiB | 1,407,412 | 1,415,944 |
+| 16-token greedy reply | the same token ids | the same token ids |
+
+The two logs differ only in the probe's line, the switch list (one name more) and the times. Every buffer they print is
+the same size.
+
+**The verdict, by the project's classes** (gain, negligible or loss):
+
+- **Time: a gain at every CUDA start, negligible against a load.**
+  - Skipping the probe shortened the CUDA start by 81.733, 82.938, 88.335, 82.935 and 82.808 ms in the five pairs, and
+    by 118.611 ms in the load.
+  - Within each arm, the five starts without the probe differ by at most 0.385 ms, and the five with it by at most
+    6.226 ms.
+  - In the whole device list, the probe run was slower in pairs 2 to 5 (by 37.2, 71.2, 19.6 and 127.2 ms). In pair 1
+    the skipped run was slower by 400.6 ms, as the session's cold start.
+  - In a load the 118.611 ms is inside the 5.701 s between the two loads' times to `/health`. Of those 5.701 s,
+    4.086 s were the tensor read from the model's USB drive.
+  - A server starts once per session, so agentic speed does not change.
+- **Host memory: negligible.**
+  - The probe's 14.2 MiB (14.0 in the load) are held only while it runs, 0.1 s into the start, before any model file
+    is read. 0.1 MiB stays after it closes.
+  - The device lists' peaks interleave (probe minus skipped: +12, −152, −336, +220 and +76 KiB).
+  - In the loads, the lowest `MemAvailable`, which decides whether a load fits the 4 GB host, was 8,532 KiB higher with
+    the probe.
+  - The server's peak was 290,848 KiB higher with the probe. The server maps the model file (`load_mode = mmap`), so
+    its peak counts the file pages it holds, and the second load started with 250,580 KiB more memory available. One
+    load each way does not split that peak into anonymous and file pages.
+
+A bare nine-card device list held 1,293,372 KiB or more at its peak in all ten runs (each value in the table). Where
+that host memory goes is registry row Q565's question: host memory per CUDA context.
 
 ```bash
-RIG=<ssh alias> WORK=<folder on the rig> BIN=<this build's llama-server on the rig> \
-  MODEL=<Flint Pascal Q8 GGUF on the rig> PRESET=release/flint-v5/settings.env \
+# DRY=1 with STEP=start prints the two load lines and starts nothing
+RIG=<ssh alias> WORK=<folder on the rig's model drive> BIN=<this build's llama-server on the rig> \
+  MODEL=<Ornith-1.5-122B Pascal N2P GGUF on the rig> PRESET=release/ornith-v5/settings.env \
   STEP=start bash docs/data/2026-11-24_c1025_nvml_probe/run/rig_probe.sh
-RIG=<ssh alias> WORK=<folder on the rig> STEP=wait bash docs/data/2026-11-24_c1025_nvml_probe/run/rig_probe.sh
-RIG=<ssh alias> WORK=<folder on the rig> OUT=<folder here> STEP=collect bash docs/data/2026-11-24_c1025_nvml_probe/run/rig_probe.sh
+RIG=<ssh alias> WORK=<folder on the rig's model drive> STEP=wait bash docs/data/2026-11-24_c1025_nvml_probe/run/rig_probe.sh
+RIG=<ssh alias> WORK=<folder on the rig's model drive> OUT=<folder here> STEP=collect bash docs/data/2026-11-24_c1025_nvml_probe/run/rig_probe.sh
+python3 -I docs/data/2026-11-24_c1025_nvml_probe/run/rig_tables.py <folder here>/out docs/data/2026-11-24_c1025_nvml_probe/rig
 ```
 
 ## Files
@@ -116,6 +184,10 @@ RIG=<ssh alias> WORK=<folder on the rig> OUT=<folder here> STEP=collect bash doc
 | [run/run.sh](run/run.sh) | the build machine's driver: steps `src`, `rig`, `sass`, `check`, `tables` |
 | [run/c1025_tables.py](run/c1025_tables.py) | the three tables from the check step's outputs |
 | [run/rig_probe.sh](run/rig_probe.sh), [run/rig_probe.py](run/rig_probe.py) | the rig check: started from a machine that only runs ssh, run on the rig with Python's standard library |
+| [rig/summary.md](rig/summary.md), [rig/results.csv](rig/results.csv) | the rig check as `rig_probe.py` wrote it: every run by value, with each load's reply token ids |
+| [rig/rig_runs.tsv](rig/rig_runs.tsv) | every rig run with its place in the pair, the CUDA start from the log's own times and, for the loads, the tensor read |
+| [rig/rig_pairs.tsv](rig/rig_pairs.tsv) | probe minus skipped for each device-list pair and for the two loads |
+| [run/rig_tables.py](run/rig_tables.py) | the two `rig_*.tsv` tables from `rig_probe.py`'s output folder (results and logs) |
 
 ## Commands
 
@@ -138,4 +210,7 @@ for the build.
   `88b0db403`, on `pascal-p106-v5-cand-b12674` at `eee615cdb` (upstream llama.cpp b12674 merged into v5); MIT, as
   llama.cpp.
 - The check model: IBM's Granite 3.1 3B-A800M Instruct (Apache 2.0) in Q4_K_M.
+- The rig check's model: Ornith-1.5-122B Pascal N2P GGUF (`valid1`, `Ornith-1.5-122B-N2P-N3P-valid1-headQ5_0.gguf`),
+  this project's file; the tables hold times, memory figures and reply token ids, no text. Measured on the project's
+  own rig on 2026-11-25.
 - The tables are this project's own output (MIT, as the repository).

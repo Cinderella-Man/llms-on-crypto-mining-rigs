@@ -1,0 +1,13 @@
+phase,rep,arm,rc,wall_s,maxrss_kib,vmhwm_health_kib,health_s,memavail_before_kib,memavail_min_kib,stopped,probe,open_init_ms,close_ms,rss_init_mib,rss_close_mib,t_found_s,t_device0_s,t_probe_line_s,reply_tokens
+"list","1","unset","0","2.9965","1293372","","","","","","skipped (no device has fast BF16; GGML_CUDA_NVML_PROBE=1 runs it)","","","","","0.207054","0.207495","0.210319",""
+"list","1","probe","0","2.5959","1293384","","","","","","ran (GGML_CUDA_NVML_PROBE=1; library loaded, init ok)","19.1","62.8","+14.2","+0.1","0.175153","0.194717","0.260151",""
+"list","2","probe","0","2.4755","1293444","","","","","","ran (GGML_CUDA_NVML_PROBE=1; library loaded, init ok)","19.4","63.4","+14.2","+0.1","0.171651","0.191493","0.257480",""
+"list","2","unset","0","2.4383","1293596","","","","","","skipped (no device has fast BF16; GGML_CUDA_NVML_PROBE=1 runs it)","","","","","0.172023","0.172440","0.174914",""
+"list","3","unset","0","2.4138","1293736","","","","","","skipped (no device has fast BF16; GGML_CUDA_NVML_PROBE=1 runs it)","","","","","0.172614","0.173039","0.175503",""
+"list","3","probe","0","2.4850","1293400","","","","","","ran (GGML_CUDA_NVML_PROBE=1; library loaded, init ok)","19.0","69.2","+14.2","+0.1","0.186432","0.205824","0.277656",""
+"list","4","probe","0","2.4843","1293952","","","","","","ran (GGML_CUDA_NVML_PROBE=1; library loaded, init ok)","19.1","63.7","+14.2","+0.1","0.197959","0.217511","0.283780",""
+"list","4","unset","0","2.4647","1293732","","","","","","skipped (no device has fast BF16; GGML_CUDA_NVML_PROBE=1 runs it)","","","","","0.204706","0.205104","0.207592",""
+"list","5","unset","0","2.4324","1293624","","","","","","skipped (no device has fast BF16; GGML_CUDA_NVML_PROBE=1 runs it)","","","","","0.199252","0.199664","0.202132",""
+"list","5","probe","0","2.5596","1293700","","","","","","ran (GGML_CUDA_NVML_PROBE=1; library loaded, init ok)","19.1","63.6","+14.2","+0.1","0.209035","0.228506","0.294723",""
+"load","1","unset","0","547.655","2705340","2705340","541.148","3022548","1407412","","skipped (no device has fast BF16; GGML_CUDA_NVML_PROBE=1 runs it)","","","","","0.200983","0.201417","0.203895","11751 13 1061 369 264 1575 61616 2029 13 271 6820 11 1042 579 11290 279"
+"load","1","probe","0","553.363","2996188","2996188","546.849","3273128","1415944","","ran (GGML_CUDA_NVML_PROBE=1; library loaded, init ok)","28.0","90.3","+14.0","+0.1","0.217226","0.245633","0.338749","11751 13 1061 369 264 1575 61616 2029 13 271 6820 11 1042 579 11290 279"
