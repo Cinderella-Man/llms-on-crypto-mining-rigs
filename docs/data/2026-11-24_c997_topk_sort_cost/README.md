@@ -1,12 +1,12 @@
-# What `GGML_CUDA_TOP_K_SORT=1` costs on a P106 (C997, Q1730; 2026-11-24)
+# What `GGML_CUDA_TOP_K_SORT=1` costs on a P106 (C997, Q1730; 2026-11-24) and on Flint's step (C1083, Q1816; 2026-11-25)
 
-What this is: the P106 half of registry row Q1730 in [quants/experiments.md](../../../quants/experiments.md).
+What this is: registry rows Q1730 and Q1816 in [quants/experiments.md](../../../quants/experiments.md).
 [C985](../2026-11-24_c985_topk_order/README.md) added the switch `GGML_CUDA_TOP_K_SORT` (off by default, in
 `pascal-p106-v5` since `af00bb13b`). With it, one small kernel runs after the card's radix top-k and sorts each row's k
 candidates, so a sampled reply no longer changes between loads with a fixed seed. This folder times that kernel on one
-P106-090 of the second rig, every card at its soaked clock profile. The row also asked for Flint Pascal Q8 GGUF's
-decode step with the switch unset and set. That half did not run: the model's file (40.4 GB) is not on that rig and
-does not fit on its disks. It is a row of its own now (Q1816).
+P106-090 of the second rig, every card at its soaked clock profile (Q1730, 2026-11-24). Flint Pascal Q8 GGUF's decode
+step with the switch unset and set ran on the first rig, which holds that model's 40.4 GB file (Q1816, 2026-11-25:
+[Flint's decode step on the first rig](#flints-decode-step-on-the-first-rig-q1816-2026-11-25)).
 
 ## Result in plain words
 
@@ -16,7 +16,12 @@ does not fit on its disks. It is a row of its own now (Q1816).
 - **On Flint that is est. 4.24 and 5.66 µs a token,** against 18.09 ms a token (0.023 % and 0.031 %), the size of
   the spread between two repeated Flint runs (R168: 4,631.065 and 4,631.941 ms over the same 176 passes, 5.0 µs a pass
   apart).
-  So est. negligible; the step itself is not measured here.
+- **Measured, Flint's decode step is the same with the switch as without it:** on the first rig, two loads each way,
+  the step at 0 and 8,192 tokens of context stayed inside the difference between two loads of one arm, both on the
+  greedy passes and on a pass with Flint's own sampler (top-k 20), and every reply was the same. Negligible.
+- **At Flint's own sampler the switch changes no reply:** the preset samples with top-p 0.95, and its sampled replies
+  were the same on both loads without the switch too, and the same as with it. The order the switch fixes matters for
+  requests at top-p 1 (Q1718).
 - **The sort is not cheap for the sparse-attention top-k:** with k = 2,048 of 131,072 columns (the indexers of
   Flash-Next's QSA layers, which want no order) it adds 68.60 and 78.85 µs a call. The switch sorts every radix top-k on
   the card, so Flash-Next would pay that in every QSA layer of every token. New row Q1815: sort only the sampler's
@@ -89,12 +94,73 @@ two unset runs of the sampler rows differ by 1.03 µs (151,936) and 0.00 µs (24
 - **Swift Flash-Next with its QSA indexers:** 68.60 and 78.85 µs a call at 131,072 columns; times the indexer calls a
   token, that is a measurable loss. Its preset should not take the switch until Q1815 keeps the indexers unsorted.
 
+## Flint's decode step on the first rig (Q1816, 2026-11-25)
+
+- **Machine:** the first rig, nine P106-090 cards, every card at its daily profile (memory offsets only, every core at
+  stock) with the watchdog running, as found. Each card's memory clock under load was the same in all four loads. No
+  llama process before or after.
+- **Build:** `pascal-p106-v5-cand-b12674` `eee615cdb` (the v5 candidate with upstream `b12674`; it holds the switch),
+  `llama-server` md5 `2727faf28b5b34dfe42399a9d431da67`.
+- **The lane** ([run/step.sh](run/step.sh), 17:19:55–18:05:34): R176's deep lane
+  ([R176](../2026-11-17_r176_flint_step_map/README.md)) on Flint Pascal Q8 GGUF (`p065`) and its v5 preset
+  (`release/flint-v5/settings.env`) exactly, the switch the only change between the arms. Four loads, alternated:
+  `unset1`, `sort1`, `unset2`, `sort2`. At each depth (prompts of 64 and 8,192 tokens cut from recorded agent text) the
+  prompt is primed, then asked twice at temperature 0 with top-k 1 (pass 1 and pass 2, 256 tokens each), then once with
+  the preset's own sampler (top-k 20, top-p 0.95, temperature 1.0, min-p 0) and a fixed seed a depth (`SAMPLER_PASS=1`).
+- **Why the sampled pass:** a greedy request asks for top-k 1, so the card's top-k there has one candidate and the sort
+  nothing to order. Only the sampled pass runs the top-k at Flint's k = 20, as an agent's requests at the preset's
+  sampler do.
+
+[step/step.md](step/step.md), ms a token (lower is faster); the spread is the larger of the two arms' differences
+between their two loads, and an arm is a gain or a loss only beyond it:
+
+| Depth (tokens) | Pass | unset1 | unset2 | sort1 | sort2 | Spread | sort − unset (means) | Class |
+|---:|---|---:|---:|---:|---:|---:|---:|---|
+| 0 | greedy, both passes | 19.856 | 19.568 | 19.595 | 19.548 | 0.287 | −0.140 (−0.71 %) | negligible |
+| 8,192 | greedy, both passes | 20.068 | 20.958 | 20.233 | 20.612 | 0.890 | −0.090 (−0.44 %) | negligible |
+| 0 | sampled (top-k 20) | 15.930 | 16.491 | 17.501 | 16.427 | 1.075 | +0.753 (+4.65 %) | negligible |
+| 8,192 | sampled (top-k 20) | 22.853 | 22.700 | 22.685 | 22.632 | 0.153 | −0.118 (−0.52 %) | negligible |
+
+- **The greedy step:** pass 1 and pass 2 by load are in [step/step.md](step/step.md) (depth 0: 21.011 and 18.700 ms a
+  token on `unset1`, 20.985 and 18.206 on `sort1`). The lane's own table in tok/s classes it the same way
+  ([step/table.md](step/table.md): +0.36 tok/s, +0.7 %, against a spread of 0.74 at depth 0; +0.20, +0.4 %, against
+  2.12 at 8,192).
+- **The sampled pass at depth 0** is one request of 256 tokens a load. `sort1` (17.501) is the slowest of the four
+  and `sort2` (16.427) lies between the two unset loads (15.930 and 16.491), so the sort arm's mean is above, by less
+  than its own two loads differ. At 8,192 tokens the four lie within 0.221 ms of each other.
+- **What the run can resolve:** the kernel's est. 4.24 and 5.66 µs a token (0.00424 and 0.00566 ms) is far below the
+  smallest spread here (0.153 ms, the sampled pass at 8,192). The run bounds the switch's cost rather than resolving it: no cost shows beyond what two
+  loads of one arm differ by, at either depth or pass.
+- **The sampled pass writes another reply than the greedy passes**, so its ms a token is compared only across the
+  loads' sampled passes, which wrote one reply on every load.
+- **Replies:** the greedy reply was the same on every pass, load and arm at both depths. The sampled reply (md5 of its
+  token ids) was the same on all four loads at each depth (`eb1751516ccb…` at 0, `a3384f1e668d…` at 8,192), with the
+  switch and without it: at top-p 0.95 the candidates are put in order by top-p itself, so the order the switch fixes
+  changes nothing here; it matters for requests at top-p 1 (Q1718).
+- **Checks** ([step/table.md](step/table.md)): every load started on a quiet machine; the same prompt ids on every load
+  and pass (64 and 8,192); 256 tokens on every request; no graph reallocation in any load; no load stopped by the RAM
+  watchdog.
+
+The commands, from the repository's root on the operator's machine (`RIG`, `WORK`, `BIN`, `MODEL` and `TEXT_LOCAL` as
+in run/step.sh):
+
+```bash
+DRY=1 SAMPLER_PASS=1 STEP=start bash docs/data/2026-11-24_c997_topk_sort_cost/run/step.sh
+SAMPLER_PASS=1 STEP=start bash docs/data/2026-11-24_c997_topk_sort_cost/run/step.sh
+STEP=wait bash docs/data/2026-11-24_c997_topk_sort_cost/run/step.sh
+OUT=<folder> STEP=collect bash docs/data/2026-11-24_c997_topk_sort_cost/run/step.sh
+python3 -I bench/deep_lane/deep_table.py <folder> --out table.md --tsv classes.tsv
+python3 -I docs/data/2026-11-24_c997_topk_sort_cost/run/step_table.py <folder> --out step.md
+```
+
 ## Class
 
 - **The kernel: a loss of 6.14 and 8.20 µs a sampler call on a P106,** beyond the 1.03 µs between the unset repeats.
-- **Flint's step: est. negligible, not measured.** The est. 4.24 and 5.66 µs a token is about the spread between two
-  repeated Flint runs (5.0 µs a pass). The class on the step, and whether the switch goes into the presets, waits on
-  Q1816. Until then it is not in the stacked line or in the negligible group.
+- **Flint's step: negligible** (measured on the first rig, Q1816): within the spread of two loads at both depths, on
+  the greedy and the sampled passes, not measurably slower, every reply the same. It qualifies for Flint's v5 preset
+  (`release/flint-v5/settings.env`) by the rule that negligible and not measurably slower puts a change in, and joins
+  the group of negligible changes tested together on the cumulative build; the preset stays as it is until the
+  owner's word.
 - **Flash-Next with the switch as it is: est. loss** (the indexers' sort), until Q1815.
 
 ## New rows
@@ -104,9 +170,8 @@ two unset runs of the sampler rows differ by 1.03 µs (151,936) and 0.00 µs (24
   order matters: the sampling chain's top-k (`LLAMA_SAMPLING_TOP_K_ROWS`'s and the chain's own) and the staircase
   drafter's, for example as an op parameter those callers set, or below a k limit; then Flash-Next's preset can take the
   switch too.
-- **Q1816 (C1083):** the step half of this row on the first rig, which holds Flint Pascal Q8 GGUF: the v5 preset with
-  the switch unset and set, two loads each, alternated, depths 0 and 8,192 on the deep lane, the same greedy replies
-  ([run/step.sh](run/step.sh), written for it and not yet run). Est. 50 min (four Flint loads of about ten minutes).
+- **Q1816 (C1083):** the step half of this row on the first rig, which holds Flint Pascal Q8 GGUF: done 2026-11-25,
+  [its section](#flints-decode-step-on-the-first-rig-q1816-2026-11-25).
 
 ## Files
 
@@ -116,4 +181,9 @@ two unset runs of the sampler rows differ by 1.03 µs (151,936) and 0.00 µs (24
   and power at the start of each pass-1 run (`times.txt`), the profiler's files (`gp-*.csv.gz`).
 - `run/kernel.sh`, `run/kernel_prof.sh`: the two passes (env `BIN`, the build's bin folder, and `O`, the output
   folder); `run/kernel_table.py`, `run/kernel_prof_table.py`: the tables (`python3 -I run/kernel_table.py <folder>`);
-  `run/step.sh`: the step half for Q1816 (R176's deep lane, arms `unset` and `sort`).
+  `run/step.sh`: the step half for Q1816 (R176's deep lane, arms `unset` and `sort`); `run/step_table.py`: its step and
+  sampled-pass tables in ms a token (`python3 -I run/step_table.py <the lane's out folder> --out step/step.md`).
+- `step/`: the step half (Q1816): `step.md` (the greedy step and the sampled pass in ms a token, the sampled replies),
+  `table.md` (the lane's own table in tok/s with its checks, `bench/deep_lane/deep_table.py`), `classes.tsv` (its
+  classes), `loads.tsv` (each load's server line, the build's folder as `<BIN>`), `requests.csv` (one line a request:
+  tokens, times, the md5 of each prompt and reply).

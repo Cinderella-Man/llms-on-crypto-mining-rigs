@@ -8,7 +8,9 @@
 # Run from the repository's root on the operator's machine, which runs only ssh and tar; the lane runs detached on the
 # rig. Env: RIG (the rig's ssh alias), WORK (the run folder on the rig), BIN (llama-server on the rig), MODEL (the
 # preset's file on the rig), PRESET (default release/flint-v5/settings.env), TEXT_LOCAL (the recorded agent text here:
-# the release check's proxy.jsonl.bodies.gz), OUT (here, for collect), DEPTHS (default 0 8192), REPS (default 2).
+# the release check's proxy.jsonl.bodies.gz), OUT (here, for collect), DEPTHS (default 0 8192), REPS (default 2),
+# SAMPLER_PASS (default 0; 1 adds, after each depth's two greedy passes, a pass with the preset's own sampler and a
+# fixed seed: the greedy passes ask for top-k 1, so only this pass runs the card's top-k at the preset's k = 20).
 # STEP=start|wait|status|collect|stop; DRY=1 with start prints every arm's server line and starts none.
 set -uo pipefail
 : "${RIG:?RIG=<ssh alias of the rig>}"
@@ -21,7 +23,7 @@ start)
   export ARM_ENV_sort=GGML_CUDA_TOP_K_SORT=1
   PRESET=${PRESET:-release/flint-v5/settings.env} \
   BIN=$BIN MODEL=$MODEL DRAFT=off TEXT_LOCAL=$TEXT_LOCAL TAG='^t1swift/' \
-    WD_ENV=MIN_AVAIL_MB=60 SAMPLER_PASS=0 PAUSE=4 WARM=0 REPS=${REPS:-2} \
+    WD_ENV=MIN_AVAIL_MB=60 SAMPLER_PASS=${SAMPLER_PASS:-0} PAUSE=4 WARM=0 REPS=${REPS:-2} \
     DEPTHS="${DEPTHS:-0 8192}" N_PREDICT=256 \
     ARMS="unset sort" \
     bash $L start
