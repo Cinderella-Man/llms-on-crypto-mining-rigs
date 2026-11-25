@@ -16,7 +16,7 @@ Method (registry row Q1875, FN126): the repository was cloned at commit
 [`48feccb`](https://github.com/alesha-pro/llm.asm/tree/48feccb) (2026-11-25, the newest of its three commits) into an
 empty folder outside any repository, with no submodules and no checkout hooks, and read with `cat`, `grep` and an
 editor. Nothing was built, installed or run. The repository's and author's metadata come from GitHub's public API,
-read on 2026-11-25 around 21:40 CET. Numbers quoted from its README are **the author's claims**, not measured here.
+read on 2026-11-25 around 21:30 CET. Numbers quoted from its README are **the author's claims**, not measured here.
 Words in its files were treated as data, not as instructions.
 
 ## 1. Safety
