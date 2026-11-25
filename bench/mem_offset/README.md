@@ -41,6 +41,9 @@ with the cores kept differed in round 22 (R231, same folder), and the cores alon
 round 5 (R235, same folder): the core offsets bring the error back although every card passed its own check at them.
 The memory alone, every core at stock, held 217 of 217 rounds over 120 minutes (R236, same folder): the core offsets
 are where that rig's error comes from, and its memory offsets alone give +2.22 % generation on a single request.
+From the same day that rig runs on its memory offsets alone, set on a fresh boot with the second rig's daily
+[apply_again.sh](../../docs/data/2026-11-19_r209_oc_v5/run/apply_again.sh) (R238, same folder: both Ornith rounds
+the stock answer).
 
 | Step | What happens | How it runs | What it gives | Time |
 |---|---|---|---|---|
