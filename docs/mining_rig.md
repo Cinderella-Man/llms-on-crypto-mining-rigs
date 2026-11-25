@@ -92,7 +92,9 @@ Each switch uplink is shared by four GPUs.
 
 The GPUs have no peer-to-peer access, so all GPU-to-GPU traffic passes through host memory. The driver reports
 "chipset not supported" (`CNS` in `nvidia-smi topo -p2p r`) for every pair, the pairs behind one switch included:
-neither the chipset nor ASMedia's switches are on NVIDIA's lists. In
+neither the chipset nor ASMedia's switches are on NVIDIA's lists. Forcing it on with NVIDIA's override key
+(`ForceP2P=0x11`) doesn't help: the board carries no peer traffic. The switches pass traffic between their own cards
+up to the chipset, which sends it neither back down nor across to its other ports, so nothing arrives. In
 `nvidia-smi topo -m`, GPUs behind the same switch show as `PIX` and all other pairs as `PHB`.
 
 The Intel IOMMU (VT-d) is on by default in Ubuntu's kernel, in translated mode, and the kernel turns on ACS redirect
