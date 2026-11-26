@@ -109,6 +109,8 @@ with its row below.
 
 Each model has a preset per release, `release/<model>-<version>/settings.env`: the switches (`PRESET_ENV`) and the
 command line (`PRESET_ARGS`) its agent check ran with. A switch no preset names stays at its default.
+Each preset line's comment starts with a tag saying what it does to the replies; [reply_effects.md](reply_effects.md)
+explains the tags and counts them.
 
 ### v5 (in progress)
 

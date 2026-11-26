@@ -229,6 +229,8 @@ It is a Manli M-P106L9-N6G; thousands of these rigs were built for mining. Measu
   and [docs/engine_features.md](docs/engine_features.md): each v2.0 engine feature, how it was checked and measured.
 - [docs/switches.md](docs/switches.md): every switch of the engine, its default, what it does, the branch that brought
   it and its registry row, so each change can be turned off on its own.
+- [docs/reply_effects.md](docs/reply_effects.md): what each preset line does to the replies (the same, rounding, lossy and so
+  on), counted per preset, and the check of whether they add up.
 
 ## License
 
