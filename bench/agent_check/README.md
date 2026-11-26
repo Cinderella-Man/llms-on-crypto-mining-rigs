@@ -90,6 +90,7 @@ alternating (`tasks/bugfix/`, built by [build_bugfix.py](build_bugfix.py) from [
 | [first_turn_request.sh](first_turn_request.sh), [first_turn_request.py](first_turn_request.py) | The agent's first request (system message, the four tools, the first bugfix task, ~2,780 tokens) as a chat completion body, built at run time from the task files rebuilt with `build_bugfix.py` on a build machine; the draft smoke tests send it before their short requests ([data](../../docs/data/2026-11-04_ram_watchdog/README.md)) |
 | [quant_run.sh](quant_run.sh), [docker/](docker/) | Calibration and file-quality runs on a GPU machine with Docker; the sandbox image |
 | [release_check.sh](release_check.sh), [client_arm.sh](client_arm.sh), [client_report.sh](client_report.sh), [release.env.example](release.env.example) | The release check: stock against the release engine on the bugfix set, the client in Docker on a second machine, started from a third that only runs ssh and relays the requests |
+| [preset_agent.sh](preset_agent.sh) | A model's preset file on the agent check as it stands: the server line, its context (`-c`, also pi's window) and micro-batch read from `PRESET_ARGS` and `PRESET_ENV`, arms that change a switch or a flag value word for word, the release harness, then the report ([below](#a-preset-as-it-stands)) |
 | [build_bugfix.py](build_bugfix.py), [bugfix_bugs.json](bugfix_bugs.json) | Build the bugfix set from the polyglot tasks and the list of injected bugs |
 | [mock_server.py](mock_server.py), [selftest.sh](selftest.sh), [selftest_pilot.sh](selftest_pilot.sh), [selftest_race.sh](selftest_race.sh), [selftest_prefix.sh](selftest_prefix.sh) | A stand-in for llama-server and the end-to-end tests that use it (no model) |
 | [selftest_energy.sh](selftest_energy.sh) | The energy columns' test on fixed inputs (Python only) |
@@ -746,6 +747,26 @@ checkpoints:
   `STOCK_ARGS='--fail-every 4 --decode-ms 4'`, `REL_ARGS='--drop-every 5 --malformed-every 4'`, `MODEL=/dev/null`.
   The whole path runs: the relay, the server start and stop with monitors, the client's containers, the re-run of
   dropped streams, the reports and the copy back.
+
+### A preset as it stands
+
+[preset_agent.sh](preset_agent.sh) runs a model's preset file (`PRESET`, default `release/flash-next-v5/settings.env`)
+through the release harness, so a run measures the line a user would start and follows the preset when it changes:
+the context and micro-batch come from the preset's `PRESET_ARGS` (Flash-Next's v5 preset: `-c 131072 -ub 256`), and pi's
+context window is that `-c`. The script checks that `PRESET_ARGS` begin with the harness's run line word for word
+(`-ngl 99 -fa on -c N … --min-p 0`) and hands the harness the rest with `-md DRAFT` after `-lm dio`, so the started line
+is the preset's plus `--metrics --no-webui` and `-md`. `ARMS` (default `pre`, the preset unchanged) may add arms:
+`ENV_<arm>` replaces or adds `NAME=VALUE` switches, and `SET_<arm>` replaces flag values found exactly once
+(`SET_c64='-c 65536 -ub 512'`). Every arm's line goes to `OUT/<arm>/dry_line.txt` first; `DRY=1` writes them and
+stops. Its dry lines for the preset, `-c 65536 -ub 512` and `-c 65536` reproduce R244's three started lines byte for byte
+([data](../../docs/data/2026-11-26_r244_flash_ctx_ub/README.md)). The header lists the rest of the environment (the rig,
+the client, the harness's ports, `AGENT_BY`).
+
+```bash
+# the lines only, then the preset against one switch value on rig RIG
+DRY=1 OUT=out/pa NEW=<build> DRAFT=<rig models>/mtp-Qwen3.8-Flash-Next-draft.gguf ARMS='pre r42' \
+  ENV_r42=GGML_CUDA_FATTN_SPARSE_PASCAL_MIN_RATIO=0.42 bash bench/agent_check/preset_agent.sh
+```
 
 ## The full run (one command, ~20 h)
 
