@@ -48,7 +48,7 @@ do. It is the preset's `PRESET_MODEL`, not a tagged line.
   - which kernel takes the 2–8-token products: `_KCOL_SMEM`, `_KCOL_TABLE` and `_KCOL_EXACT`; with `_KCOL_EXACT` a
     verify pass gives each token the sums a one-token pass gives it;
   - the attention over the same kept cells on another kernel or split count: `GGML_CUDA_FATTN_SPARSE_PASCAL=1`,
-    `_MIN_RATIO=0.75`, `_NSM=5` and `_PROMPT=1`;
+    `_MIN_RATIO=0.5`, `_NSM=10` and `_PROMPT=1`;
   - the run line's `-fa on` and `-bs`, `-b 4096 -ub 512` and `--ctx-checkpoints-incall`;
   - `--ubatch-taper short=1400:64`: reading a prompt in micro-batches of 64 instead of 512 moves the next-token
     distributions by a mean KLD of 0.0127, with the same top token 96.9 % of the time (FN95, Q1493).
