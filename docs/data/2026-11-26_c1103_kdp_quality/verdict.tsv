@@ -1,0 +1,42 @@
+check	measure	value	rule	result
+against q8g: kdp - q8g	kld	-0.000210 ± 0.000239 (t -0.88)	t < 3 (not seen above the yardstick)	pass
+against q8u: kdp - q8u	kld	0.000160 ± 0.000238 (t 0.67)	t < 3 (not seen above the yardstick)	pass
+against q8g: q8f1 - q8g	kld	0.005080 ± 0.001023 (t 4.96)	t >= 3	pass
+reported: kdp - q8g	top_differs_pct	0.080000 ± 0.046362 (t 1.73)	t < 3 (not seen above the yardstick)	within
+reported: kdp - q8u	top_differs_pct	0.084000 ± 0.069786 (t 1.20)	t < 3 (not seen above the yardstick)	within
+kdp's per-stretch ln PPL ratio against q8, mean over the 12 stretches	ln_ppl_ratio	+0.000600 ± 0.000612	within ±0.01	pass
+window 49,152: kdp's KLD against q8g's	kld	0.011747 against 0.010911 (1.077 of it)	<= 0.021822 (max of 2 x q8g, 0.003)	pass
+window 49,152: kdp's top-token disagreement against q8g's	top_differs_pct	1.656 against 1.632	<= 3.264 (max of 2 x q8g, 0.3)	pass
+window 49,152: kdp's KLD against q8u's	kld	0.011747 against 0.010408 (1.129 of it)	<= 0.020816 (max of 2 x q8u, 0.003)	pass
+window 49,152: kdp's top-token disagreement against q8u's	top_differs_pct	1.656 against 1.583	<= 3.166 (max of 2 x q8u, 0.3)	pass
+window 49,152: kdp's ln PPL ratio against q8	ln_ppl_ratio	+0.002030 ± 0.001333	within ±0.01	pass
+size: kdp's KLD as a uniform attention output error, est. 0.05 * sqrt(mean kdp / mean q8f1)	kld	3.64 %		est.
+size: q8g's KLD as a uniform attention output error, est. 0.05 * sqrt(mean q8g / mean q8f1)	kld	3.70 %		est.
+size: q8u's KLD as a uniform attention output error, est. 0.05 * sqrt(mean q8u / mean q8f1)	kld	3.59 %		est.
+size: q8t's KLD as a uniform attention output error, est. 0.05 * sqrt(mean q8t / mean q8f1)	kld	3.99 %		est.
+against q8g: smallest uniform attention error seen, est. (q8f1 scaled by (eps/0.05)^2)	kld	4.05 %		est.
+against q8g: smallest uniform attention error seen, est. (q8f1 scaled by (eps/0.05)^1)	top_differs_pct	4.11 %		est.
+against q8g: smallest uniform attention error seen, est. (q8f1 scaled by (eps/0.05)^2)	kld, divided by the yardstick	3.97 %		est.
+against q8u: smallest uniform attention error seen, est. (q8f1 scaled by (eps/0.05)^2)	kld	3.91 %		est.
+against q8u: smallest uniform attention error seen, est. (q8f1 scaled by (eps/0.05)^1)	top_differs_pct	3.94 %		est.
+against q8u: smallest uniform attention error seen, est. (q8f1 scaled by (eps/0.05)^2)	kld, divided by the yardstick	3.80 %		est.
+context: correlation over the stretches of kdp's KLD with q8g's	kld	0.99		context
+tf32: q8t (TF32 on, cuBLAS in F16) against q8, per stretch	kld	0.007140 ± 0.001353 (t 5.28)		context
+tf32: q8g's KLD over all tokens now, against the earlier run's with TF32 on (0.006319)	kld	0.006160 (0.975 of it)		context
+tf32: q8u's KLD over all tokens now, against the earlier run's with TF32 on (0.007963)	kld	0.005794 (0.728 of it)		context
+tf32: q8f1's KLD over all tokens now, against the earlier run's with TF32 on (0.011030)	kld	0.011238 (1.019 of it)		context
+tf32: the reference's perplexity over the 12 stretches, against C994's with TF32 on	ppl	1.579161 against 1.577859		context
+validity: q8r (q8 loaded again) repeats q8 on every stretch	kld, top	largest stretch KLD 0.00000, largest top differs 0.024 %	KLD 0.00000 and same top 100.000 % on every stretch	FAIL
+validity: pass s: every arm read the same reference (PPL(base))	ppl	kdp 1.579161; q8g 1.579161; q8u 1.579161; q8f1 1.579161; q8t 1.579161; q8r 1.579161	one value	pass
+validity: pass s, q8's log	kernel	head 256, q8_0 K/V; no int8 line	head 256, q8_0 K/V; no int8 line	pass
+validity: pass s, kdp's log	kernel	head 256, q8_0 K/V; int8 line x1	head 256, q8_0 K/V; the int8 line	pass
+validity: pass s, q8g's log	kernel	no prompt kernel line; no int8 line	no prompt kernel line	pass
+validity: pass s, q8u's log	kernel	head 256, q8_0 K/V; no int8 line	head 256, q8_0 K/V; no int8 line	pass
+validity: pass s, q8f1's log	kernel	head 256, q8_0 K/V; no int8 line; fault x 1.04999995	head 256, q8_0 K/V; no int8 line; fault x 1.05	pass
+validity: pass s, q8t's log	kernel	head 256, q8_0 K/V; no int8 line	head 256, q8_0 K/V; no int8 line	pass
+validity: pass s, q8r's log	kernel	head 256, q8_0 K/V; no int8 line	head 256, q8_0 K/V; no int8 line	pass
+validity: pass w: every arm read the same reference (PPL(base))	ppl	kdp 1.431276; q8g 1.431276; q8u 1.431276	one value	pass
+validity: pass w, q8's log	kernel	head 256, q8_0 K/V; no int8 line	head 256, q8_0 K/V; no int8 line	pass
+validity: pass w, kdp's log	kernel	head 256, q8_0 K/V; int8 line x1	head 256, q8_0 K/V; the int8 line	pass
+validity: pass w, q8g's log	kernel	no prompt kernel line; no int8 line	no prompt kernel line	pass
+validity: pass w, q8u's log	kernel	head 256, q8_0 K/V; no int8 line	head 256, q8_0 K/V; no int8 line	pass

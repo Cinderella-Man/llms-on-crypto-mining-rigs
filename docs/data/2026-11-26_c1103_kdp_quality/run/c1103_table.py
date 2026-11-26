@@ -132,11 +132,12 @@ def smallest_eps(form, power):
 
 def main():
     work, dest = sys.argv[1], sys.argv[2]
-    summary, crow, per, logs, kern, kdpl, faultl = [], [], {}, {}, {}, {}, {}
+    summary, crow, per, logs, kern, kdpl, faultl, exists = [], [], {}, {}, {}, {}, {}, {}
     for p, (depth, nch, arms) in PASSES.items():
         for arm in arms:
             path = os.path.join(work, p, f"{arm}.{depth}.log")
             key = (p, arm)
+            exists[key] = os.path.exists(path)
             kern[key] = sorted(set(scan(path, KERNEL)))
             kdpl[key] = len(scan(path, KDP))
             faultl[key] = sorted(set(x[0] for x in scan(path, FAULT)))
@@ -318,6 +319,8 @@ def main():
                 got += "; fault " + (", ".join(f"x {s}" for s in faultl[key]) or "not logged")
                 ok = ok and len(faultl[key]) == 1 and abs(float(faultl[key][0]) - 1.05) < 1e-6
                 want += "; fault x 1.05"
+            if not exists[key]:
+                ok, got = False, "no log"
             verdict.append([f"validity: pass {p}, {arm}'s log", "kernel", got, want, "pass" if ok else "FAIL"])
     write(os.path.join(dest, "verdict.tsv"), ["check", "measure", "value", "rule", "result"], verdict)
 

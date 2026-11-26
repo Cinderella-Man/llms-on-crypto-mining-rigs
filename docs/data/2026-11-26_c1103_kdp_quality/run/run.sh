@@ -23,8 +23,8 @@
 # -ub 512); the context and split are this check's (-c per pass, -ts 1,1,1 over three cards). Each arm's whole variable
 # list is its own (kld_depth.sh's PRESET_ENV is left empty), so no arm carries a variable twice. Every arm logs at
 # -lv 4 (log level only): the fork's prompt kernel then logs its line when it first takes a pass, and the kdp path a
-# second one. llama-perplexity's passes are 512 tokens (128 in q8u), so the preset's decode switches
-# (GGML_CUDA_FATTN_TILE_PASCAL_MIN=1, GGML_CUDA_FATTN_DEC_PASCAL=4) are set but never reached.
+# second one. llama-perplexity's scored passes are 512 tokens (128 in q8u), so the preset's decode switches
+# (GGML_CUDA_FATTN_TILE_PASCAL_MIN=1, GGML_CUDA_FATTN_DEC_PASCAL=4) reach only the load's unscored warm-up call.
 # WORK/DONE at the end; WORK/FAILED if a pass failed. Correctness only: no time is read.
 # Env: WORK, BIN (the build's bin), MODEL, TEXT, GPUS, MOUNTS, DOCKER_ARGS, CNAME, PRESET_FILE, PREFLIGHT (a CUDA check
 #      of the cards, run before each pass; optional), IMAGE, PASSES (default "s w s2"; set and empty: none).

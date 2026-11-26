@@ -1,0 +1,54 @@
+form	arm or pair	measure	stretches	mean	se	t
+alone	kdp	kld	12	0.005950	0.001180	5.04
+alone	kdp	top_differs_pct	12	1.618000	0.182296	8.88
+alone	kdp	ln_ppl_ratio	12	0.000600	0.000612	0.98
+alone	q8g	kld	12	0.006160	0.001317	4.68
+alone	q8g	top_differs_pct	12	1.538000	0.195408	7.87
+alone	q8g	ln_ppl_ratio	12	-0.000470	0.000482	-0.98
+alone	q8u	kld	12	0.005790	0.001133	5.11
+alone	q8u	top_differs_pct	12	1.534000	0.225386	6.81
+alone	q8u	ln_ppl_ratio	12	-0.000940	0.000411	-2.29
+alone	q8f1	kld	12	0.011240	0.002228	5.04
+alone	q8f1	top_differs_pct	12	2.145000	0.250684	8.56
+alone	q8f1	ln_ppl_ratio	12	0.000770	0.001109	0.69
+alone	q8t	kld	12	0.007140	0.001353	5.28
+alone	q8t	top_differs_pct	12	1.785000	0.233360	7.65
+alone	q8t	ln_ppl_ratio	12	0.000600	0.001017	0.59
+alone	q8r	kld	12	0.000000	0.000000	0.00
+alone	q8r	top_differs_pct	12	0.002000	0.002157	0.93
+alone	q8r	ln_ppl_ratio	12	0.000040	0.000032	1.27
+against q8g	kdp - q8g	kld	12	-0.000210	0.000239	-0.88
+against q8g	kdp - q8g	top_differs_pct	12	0.080000	0.046362	1.73
+against q8g	kdp - q8g	ln_ppl_ratio	12	0.001070	0.000601	1.78
+against q8g, divided by it	(kdp - q8g) / q8g	kld	12	-0.002022	0.030886	-0.07
+against q8g, divided by it	(kdp - q8g) / q8g	top_differs_pct	12	0.088080	0.054074	1.63
+against q8u	kdp - q8u	kld	12	0.000160	0.000238	0.67
+against q8u	kdp - q8u	top_differs_pct	12	0.084000	0.069786	1.20
+against q8u	kdp - q8u	ln_ppl_ratio	12	0.001540	0.000551	2.79
+against q8u, divided by it	(kdp - q8u) / q8u	kld	12	0.008936	0.034010	0.26
+against q8u, divided by it	(kdp - q8u) / q8u	top_differs_pct	12	0.120898	0.055528	2.18
+against q8g	q8f1 - q8g	kld	12	0.005080	0.001023	4.96
+against q8g	q8f1 - q8g	top_differs_pct	12	0.607000	0.098264	6.18
+against q8g	q8f1 - q8g	ln_ppl_ratio	12	0.001240	0.001142	1.09
+against q8g, divided by it	(q8f1 - q8g) / q8g	kld	12	0.961806	0.124560	7.72
+against q8g, divided by it	(q8f1 - q8g) / q8g	top_differs_pct	12	0.448107	0.080724	5.55
+against q8u	q8f1 - q8u	kld	12	0.005450	0.001150	4.74
+against q8u	q8f1 - q8u	top_differs_pct	12	0.611000	0.053909	11.33
+against q8u	q8f1 - q8u	ln_ppl_ratio	12	0.001710	0.001095	1.56
+against q8u, divided by it	(q8f1 - q8u) / q8u	kld	12	0.954915	0.074165	12.88
+against q8u, divided by it	(q8f1 - q8u) / q8u	top_differs_pct	12	0.482663	0.066485	7.26
+against q8f1	kdp - q8f1	kld	12	-0.005290	0.001224	-4.32
+against q8f1	kdp - q8f1	top_differs_pct	12	-0.527000	0.095097	-5.54
+against q8f1	kdp - q8f1	ln_ppl_ratio	12	-0.000170	0.001412	-0.12
+against q8f1, divided by it	(kdp - q8f1) / q8f1	kld	12	-0.471986	0.033392	-14.13
+against q8f1, divided by it	(kdp - q8f1) / q8f1	top_differs_pct	12	-0.240201	0.026934	-8.92
+against q8g	q8t - q8g	kld	12	0.000980	0.000204	4.81
+against q8g	q8t - q8g	top_differs_pct	12	0.247000	0.076579	3.23
+against q8g	q8t - q8g	ln_ppl_ratio	12	0.001070	0.001140	0.94
+against q8g, divided by it	(q8t - q8g) / q8g	kld	12	0.206655	0.039230	5.27
+against q8g, divided by it	(q8t - q8g) / q8g	top_differs_pct	12	0.167746	0.055208	3.04
+against q8u	q8t - q8u	kld	12	0.001350	0.000284	4.75
+against q8u	q8t - q8u	top_differs_pct	12	0.251000	0.042850	5.86
+against q8u	q8t - q8u	ln_ppl_ratio	12	0.001540	0.000861	1.79
+against q8u, divided by it	(q8t - q8u) / q8u	kld	12	0.222270	0.045263	4.91
+against q8u, divided by it	(q8t - q8u) / q8u	top_differs_pct	12	0.191135	0.034903	5.48
