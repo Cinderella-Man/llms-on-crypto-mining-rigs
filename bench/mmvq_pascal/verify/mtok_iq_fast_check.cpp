@@ -7,8 +7,9 @@
 // experts of 640 rows of 2,560 weights, 10 used per token, at 1 to 8 tokens, as
 //   - fused: SWIGLU(gate, up) of two MUL_MAT_ID, which the CUDA backend runs as one gate/up launch;
 //   - plain: one MUL_MAT_ID;
-//   - shared: the fused pair plus a shared expert of the same type and shape added to it (the fork's routed + shared
-//     launch);
+//   - shared: the fused pair plus a shared expert of the same type and shape added to it in the same graph (the
+//     backend makes it one routed + shared launch where its batch rule allows; at these shapes on an RTX 3090 it runs
+//     the routed pair and the shared expert apart, so test-backend-ops' MUL_MAT_ID_SHARED covers that launch);
 // with five routings: distinct random experts per token; neighbours sharing 4 of their 10; every token on the same 10
 // experts in other slots (groups of up to 8 members); an expert twice within a token; 3 slots of each token skipped
 // (id -1, which the fork's kernels write as zeros).

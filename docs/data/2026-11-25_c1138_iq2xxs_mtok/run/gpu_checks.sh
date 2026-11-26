@@ -1,20 +1,28 @@
 #!/usr/bin/env bash
 # The card checks of IQ2_XXS's fast multi-token kernel (C1138) on one card of a machine with newer GPUs, with the
 # fork's Pascal kernels forced (scripts/pascal_forced.sh). Steps (STEPS, default "bops model"):
-#   bops   test-backend-ops test -b CUDA0 -o MUL_MAT_ID (llama.cpp's repeated-id cases left out, C315) with
-#          GGML_CUDA_MTOK_IQ_FAST at 0 and at each value of MODES, and at the first value of MODES with the test fault
-#          GGML_CUDA_MTOK_IQ_FAST_FAULT=1 (the fast kernel takes up and gate the wrong way round: the gate/up cases it
-#          takes must then fail, which shows which cases reach it)
+#   bops   test-backend-ops test -b CUDA0 -o OPS (default MUL_MAT_ID, which matches that op name exactly; the fused
+#          gate/up and the routed + shared expert launch are the ops MUL_MAT_ID_FUSION and MUL_MAT_ID_SHARED, so
+#          OPS='MUL_MAT_ID_FUSION|MUL_MAT_ID_SHARED' checks them; llama.cpp's repeated-id cases left out, C315) with
+#          GGML_CUDA_MTOK_IQ_FAST at 0 and at each value of MODES, and at the last value of MODES with the test fault
+#          GGML_CUDA_MTOK_IQ_FAST_FAULT=1 on the cases FAULT_FILTER selects (default the IQ2_XXS ones; the fast kernel
+#          then takes up and gate the wrong way round, so the gate/up cases it takes must fail, which shows which cases
+#          reach it). PAR=1 runs the arms side by side on the card (they spend most of their time in the processor's
+#          reference products)
 #   model  Swift Qwen3.8-Flash-Next Pascal Q2 GGUF's gmix-q2 file (MODEL, its first shard) on the card: the IQ2_XXS
 #          layers' routed gate/up experts on the card, every other layer's experts in host memory (-ot), with the MTP
 #          draft (DRAFT) so that replies are made of 2-4-token verify passes, and prompts read in micro-batches of 8
 #          tokens; the Flash-Next v5 preset's switches (release/flash-next-v5/settings.env, forced as a P106 runs them)
-#          with GGML_CUDA_MTOK_IQ_FAST at 0 and at each value of MODES; two greedy replies of NPRED tokens with the 8 most
-#          likely tokens' probabilities at every step; the replies, their token ids and those probabilities compared
-#          with the 0 arm's
+#          with GGML_CUDA_MTOK_IQ_FAST at 0 and at each value of MODES; for each of two prompts a greedy reply of NPRED
+#          tokens with the 8 most likely tokens' probabilities at every step (the server may then decode without the
+#          draft) and one without them (with the draft: 2-4-token verify passes); replies, token ids and probabilities
+#          compared with the 0 arm's
 # Env: WORK (output folder), BIN (the build's bin/), REPO (a folder with pascal_forced.sh and settings.env of
 # release/flash-next-v5), GPU (docker's device index), MODES (default "1"), MODEL, DRAFT, NPRED (default 192), MOUNTS
-# (mounted at the same paths), JITCACHE, DOCKER_ARGS, IMAGE, PORT (default 8338), LOAD_TIMEOUT (seconds, default 1800)
+# (mounted at the same paths), JITCACHE, DOCKER_ARGS, IMAGE, PORT (default 8338), LOAD_TIMEOUT (seconds, default 1800),
+# PAR (default 0), FAULT_FILTER (a test-backend-ops -p regex, default 'iq2_xxs'), OPS (default MUL_MAT_ID), PRELOAD (run/launch_count.c
+# built as a .so: each model load then lists its driver-API launches by kernel when the server exits, which shows that
+# the hand-written PTX kernels ran)
 set -uo pipefail
 : "${WORK:?}" "${BIN:?}" "${REPO:?}" "${GPU:?}"
 STEPS=${STEPS:-bops model}
@@ -34,25 +42,35 @@ say() { echo "$(date +%H:%M:%S) $*"; }
 if [[ " $STEPS " == *" bops "* ]]; then
     o=$WORK/bops; mkdir -p "$o"; : > "$o/rc.txt"
     md5sum "$BIN/test-backend-ops" > "$o/md5.txt"
-    bops() {  # <tag> <environment>
-        "${DR[@]}" --gpus "device=$GPU" "$IMAGE" bash -c "env $PASCAL_FORCED $2 timeout 10800 $BIN/test-backend-ops test -b CUDA0 \
-            -o MUL_MAT_ID -p '^(?!.*dup=1)' 2>&1 | sed 's/\x1b\[[0-9;]*m//g' > $o/$1.log; echo $1 rc=\${PIPESTATUS[0]} >> $o/rc.txt" \
+    bops() {  # <tag> <environment> [filter]
+        "${DR[@]}" --gpus "device=$GPU" ${PRELOAD:+-e LD_PRELOAD=$PRELOAD} "$IMAGE" bash -c "env $PASCAL_FORCED $2 timeout 10800 $BIN/test-backend-ops test -b CUDA0 \
+            -o '${OPS:-MUL_MAT_ID}' -p '^(?!.*dup=1)${3:-}' 2>&1 | sed 's/\x1b\[[0-9;]*m//g' > $o/$1.log; echo $1 rc=\${PIPESTATUS[0]} >> $o/rc.txt" \
             > /dev/null 2>&1
         say "bops $1: $(grep "^$1 " "$o/rc.txt"), $(grep -aoE '[0-9]+/[0-9]+ tests passed' "$o/$1.log" | tail -n 1), FAIL lines $(grep -a -c ': FAIL' "$o/$1.log")"
     }
-    bops off GGML_CUDA_MTOK_IQ_FAST=0
-    for m in $MODES; do bops "fast$m" GGML_CUDA_MTOK_IQ_FAST="$m"; done
-    set -- $MODES
-    bops fault "GGML_CUDA_MTOK_IQ_FAST=$1 GGML_CUDA_MTOK_IQ_FAST_FAULT=1"
+    last=""
+    for m in $MODES; do last=$m; done
+    if [ "${PAR:-0}" = 1 ]; then
+        bops off GGML_CUDA_MTOK_IQ_FAST=0 &
+        for m in $MODES; do bops "fast$m" GGML_CUDA_MTOK_IQ_FAST="$m" & done
+        bops fault "GGML_CUDA_MTOK_IQ_FAST=$last GGML_CUDA_MTOK_IQ_FAST_FAULT=1" ".*${FAULT_FILTER:-iq2_xxs}" &
+        wait
+    else
+        bops off GGML_CUDA_MTOK_IQ_FAST=0
+        for m in $MODES; do bops "fast$m" GGML_CUDA_MTOK_IQ_FAST="$m"; done
+        bops fault "GGML_CUDA_MTOK_IQ_FAST=$last GGML_CUDA_MTOK_IQ_FAST_FAULT=1" ".*${FAULT_FILTER:-iq2_xxs}"
+    fi
     # the cases and their verdicts, arm against arm
     for t in off $(for m in $MODES; do echo "fast$m"; done) fault; do
-        grep -aE '^ +MUL_MAT_ID' "$o/$t.log" | sed -E 's/^ +//' | grep -aE ': (OK|FAIL)' | sed -E 's/ +[0-9.]+ ?(ms|us).*//' > "$o/$t.cases"
+        grep -aoE 'MUL_MAT[A-Z_]*\(.*\): (OK|FAIL)' "$o/$t.log" > "$o/$t.cases"
+        [ -n "${PRELOAD:-}" ] && grep -a '^launch_count:' "$o/$t.log" | sed "s/^/    $t: /"
     done
-    for t in $(for m in $MODES; do echo "fast$m"; done) fault; do
+    for t in $(for m in $MODES; do echo "fast$m"; done); do
         say "bops $t against off: $(wc -l < "$o/$t.cases") cases, $(diff "$o/off.cases" "$o/$t.cases" | grep -c '^>') with another verdict"
     done
-    grep -a ': FAIL' "$o/fault.log" | grep -a MUL_MAT_ID | sed -E 's/^ +//' | cut -c1-200 > "$o/fault-fails.txt"
-    say "bops fault: failing cases $(wc -l < "$o/fault-fails.txt"), of them iq2_xxs $(grep -c 'type_a=iq2_xxs' "$o/fault-fails.txt")"
+    say "bops fault: $(wc -l < "$o/fault.cases") cases, $(grep -c ': FAIL' "$o/fault.cases") FAIL (the off arm on the same cases: $(grep -F -f <(sed 's/: .*//' "$o/fault.cases") "$o/off.cases" | grep -c ': FAIL') FAIL)"
+    grep -aoE 'MUL_MAT[A-Z_]*\(.*\): FAIL' "$o/fault.log" | cut -c1-200 > "$o/fault-fails.txt"
+    say "bops fault: failing cases $(wc -l < "$o/fault-fails.txt"), of them iq2_xxs $(grep -c 'iq2_xxs' "$o/fault-fails.txt")"
 fi
 
 if [[ " $STEPS " == *" model "* ]]; then
@@ -71,7 +89,7 @@ if [[ " $STEPS " == *" model "* ]]; then
         docker rm -f "$c" > /dev/null 2>&1
         printf 'env: %s %s\nargs: -m %s -md %s %s\n' "$M_ENV" "$2" "$MODEL" "$DRAFT" "$M_ARGS" > "$o/command.txt"
         md5sum "$BIN/llama-server" >> "$o/command.txt"
-        "${DR[@]}" -d --name "$c" --gpus "device=$GPU" -p "127.0.0.1:$PORT:$PORT" "$IMAGE" \
+        "${DR[@]}" -d --name "$c" --gpus "device=$GPU" -p "127.0.0.1:$PORT:$PORT" ${PRELOAD:+-e LD_PRELOAD=$PRELOAD} "$IMAGE" \
             bash -c "env $M_ENV $2 $BIN/llama-server -m $MODEL -md $DRAFT $M_ARGS --host 0.0.0.0 --port $PORT --no-webui \
                 > $o/server.log 2>&1; echo rc=\$? > $o/server.rc" > /dev/null
         t0=$(date +%s)
@@ -83,21 +101,29 @@ if [[ " $STEPS " == *" model "* ]]; then
         echo "up=$up after $(( $(date +%s) - t0 )) s" > "$o/load.txt"
         if [ $up = 1 ]; then
             nvidia-smi --query-gpu=memory.used --format=csv,noheader,nounits -i "$GPU" > "$o/mem.txt"
-            local i=1
+            local i=1 np
             for p in "$P1" "$P2"; do
-                python3 -I -c 'import json, sys; print(json.dumps({"prompt": sys.argv[1], "n_predict": int(sys.argv[2]), "temperature": 0, "top_k": 1, "seed": 1, "cache_prompt": False, "return_tokens": True, "n_probs": 8}))' "$p" "$NPRED" |
-                    curl -s -m 1800 -H 'Content-Type: application/json' -d @- "http://127.0.0.1:$PORT/completion" > "$o/reply$i.json" 2> "$o/reply$i.err"
-                i=$((i + 1))
+                for np in 8 0; do
+                    python3 -I -c 'import json, sys; print(json.dumps({"prompt": sys.argv[1], "n_predict": int(sys.argv[2]), "temperature": 0, "top_k": 1, "seed": 1, "cache_prompt": False, "return_tokens": True, "n_probs": int(sys.argv[3])}))' "$p" "$NPRED" "$np" |
+                        curl -s -m 1800 -H 'Content-Type: application/json' -d @- "http://127.0.0.1:$PORT/completion" > "$o/reply$i.json" 2> "$o/reply$i.err"
+                    i=$((i + 1))
+                done
             done
         fi
-        docker stop -t 60 "$c" > /dev/null 2>&1
+        # SIGINT to the server itself (the container's bash does not pass a SIGTERM on), so that it exits through exit()
+        # and a preloaded launch_count.so prints its counts
+        docker exec "$c" bash -c 'for p in /proc/[0-9]*; do [ "$(cat $p/comm 2>/dev/null)" = llama-server ] && kill -INT ${p#/proc/}; done' \
+            > /dev/null 2>&1
+        for _ in $(seq 1 60); do docker ps -q --filter "name=^$c\$" | grep -q . || break; sleep 1; done
+        docker stop -t 10 "$c" > /dev/null 2>&1
         docker rm -f "$c" > /dev/null 2>&1
-        say "model $1: $(cat "$o/load.txt"), card MiB $(cat "$o/mem.txt" 2>/dev/null), replies $(wc -c < "$o/reply1.json" 2>/dev/null) and $(wc -c < "$o/reply2.json" 2>/dev/null) B"
+        say "model $1: $(cat "$o/load.txt"), card MiB $(cat "$o/mem.txt" 2>/dev/null), replies $(for i in 1 2 3 4; do wc -c < "$o/reply$i.json" 2>/dev/null; done | paste -sd' ') B"
+        grep -a '^launch_count:' "$o/server.log" | sed 's/^/    /'
     }
     load off GGML_CUDA_MTOK_IQ_FAST=0
     for m in $MODES; do load "fast$m" GGML_CUDA_MTOK_IQ_FAST="$m"; done
     for m in $MODES; do
-        for i in 1 2; do
+        for i in 1 2 3 4; do
             python3 -I - "$WORK/model/off/reply$i.json" "$WORK/model/fast$m/reply$i.json" "fast$m reply $i" <<'PY' | tee -a "$WORK/model/compare.txt"
 import json, sys
 def load(p):
@@ -109,10 +135,12 @@ a, b = load(sys.argv[1]), load(sys.argv[2])
 ta, tb = a.get("tokens"), b.get("tokens")
 pa, pb = a.get("completion_probabilities"), b.get("completion_probabilities")
 t = a.get("timings", {})
+probs = "none asked" if not pa and not pb else ("the same to the last digit" if pa == pb else "DIFFER")
+tb_ = b.get("timings", {})
 print(f"{sys.argv[3]}: tokens {len(ta or [])} against {len(tb or [])}, {'the same token ids' if ta == tb and ta else 'TOKEN IDS DIFFER'}; "
       f"text {'the same' if a.get('content') == b.get('content') and ta else 'DIFFERS'}; "
-      f"top-8 probabilities at {len(pa or [])} steps: {'the same to the last digit' if pa == pb and pa else 'DIFFER'}; "
-      f"draft tokens {t.get('draft_n')}, accepted {t.get('draft_n_accepted')} (the 0 arm)")
+      f"top-8 probabilities at {len(pa or [])} steps: {probs}; "
+      f"draft tokens {t.get('draft_n')} and {tb_.get('draft_n')}, accepted {t.get('draft_n_accepted')} and {tb_.get('draft_n_accepted')}")
 PY
         done
     done

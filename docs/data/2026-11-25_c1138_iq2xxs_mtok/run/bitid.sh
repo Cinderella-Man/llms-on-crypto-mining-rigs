@@ -9,7 +9,9 @@
 #
 # Env: WORK (output folder), CHECK (the mtok_iq_fast_check binary), REPO (a folder with pascal_forced.sh), GPU (the
 # card, docker's device index), ARMS (default "1"), FAULT_ARM (default 1; empty: none), MOUNTS (folders to mount, at
-# the same paths), JITCACHE (a PTX JIT cache folder), DOCKER_ARGS, IMAGE (default nvidia/cuda:12.9.2-devel-ubuntu24.04)
+# the same paths), JITCACHE (a PTX JIT cache folder), DOCKER_ARGS, IMAGE (default nvidia/cuda:12.9.2-devel-ubuntu24.04),
+# PRELOAD (run/launch_count.c built as a .so: every arm then also lists the driver-API launches by kernel, which shows
+# whether the hand-written PTX kernels ran)
 set -uo pipefail
 : "${WORK:?}" "${CHECK:?}" "${REPO:?}" "${GPU:?}"
 ARMS=${ARMS:-1}
@@ -23,13 +25,14 @@ for m in ${MOUNTS:-}; do VOL+=(-v "$m:$m"); done
 run_arm() {  # <tag> <env ...>
     local tag=$1; shift
     docker run --rm --gpus "device=$GPU" ${DOCKER_ARGS:-} "${VOL[@]}" ${JITCACHE:+-e CUDA_CACHE_PATH=$JITCACHE} \
-        -e CUDA_CACHE_MAXSIZE=4294967296 "$IMAGE" bash -c \
+        ${PRELOAD:+-e LD_PRELOAD=$PRELOAD} -e CUDA_CACHE_MAXSIZE=4294967296 "$IMAGE" bash -c \
         "env $PASCAL_FORCED $* '$CHECK' '$WORK/$tag.bin' > '$WORK/$tag.txt' 2> '$WORK/$tag.err'; echo rc=\$?" | tail -n 1
 }
 echo "arm 0: $(run_arm off GGML_CUDA_MTOK_IQ_FAST=0) $(tail -n 1 "$WORK/off.txt")"
 rc=0
 for a in $ARMS; do
     echo "arm $a: $(run_arm "on$a" GGML_CUDA_MTOK_IQ_FAST="$a") $(tail -n 1 "$WORK/on$a.txt")"
+    [ -n "${PRELOAD:-}" ] && grep -a '^launch_count:' "$WORK/on$a.err" | sed 's/^/  /'
     if cmp -s "$WORK/off.bin" "$WORK/on$a.bin"; then
         echo "  arm $a: outputs byte-identical to arm 0 ($(stat -c %s "$WORK/on$a.bin") bytes); case lines differing: $(diff "$WORK/off.txt" "$WORK/on$a.txt" | grep -c '^>')"
     else

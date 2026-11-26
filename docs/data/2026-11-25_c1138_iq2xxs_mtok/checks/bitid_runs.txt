@@ -1,0 +1,26 @@
+# C build (675a62eed): run/bitid.sh ARMS=1 FAULT_ARM=1
+arm 0: rc=0 104 cases, type iq2_xxs
+arm 1: rc=0 104 cases, type iq2_xxs
+  arm 1: outputs byte-identical to arm 0 (11980800 bytes); case lines differing: 0
+fault arm (1): rc=0
+  fault arm: 56 of 56 cases that must differ do; must differ but equal: 0; differ but must not: 0
+done
+
+# final build (6aa2a8df0): run/bitid.sh ARMS='1 2' FAULT_ARM=2
+arm 0: rc=0 104 cases, type iq2_xxs
+arm 1: rc=0 104 cases, type iq2_xxs
+  arm 1: outputs byte-identical to arm 0 (11980800 bytes); case lines differing: 0
+arm 2: rc=0 104 cases, type iq2_xxs
+  arm 2: outputs byte-identical to arm 0 (11980800 bytes); case lines differing: 0
+fault arm (2): rc=0
+  fault arm: 56 of 56 cases that must differ do; must differ but equal: 0; differ but must not: 0
+done
+
+# final build: run/bitid.sh ARMS=2 FAULT_ARM= PRELOAD=launch_count.so (driver-API launches of the arm, by kernel)
+arm 0: rc=0 104 cases, type iq2_xxs
+arm 2: rc=0 104 cases, type iq2_xxs
+  launch_count: 8 mtok_iq2xxs_fast_ptx_ntm2
+  launch_count: 16 mtok_iq2xxs_fast_ptx_ntm4
+  launch_count: 32 mtok_iq2xxs_fast_ptx_ntm8
+  arm 2: outputs byte-identical to arm 0 (11980800 bytes); case lines differing: 0
+done

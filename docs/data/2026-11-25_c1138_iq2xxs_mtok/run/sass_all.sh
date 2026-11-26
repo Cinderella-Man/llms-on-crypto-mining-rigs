@@ -14,23 +14,33 @@ IMAGE=${IMAGE:-nvidia/cuda:12.9.2-devel-ubuntu24.04}
 mkdir -p "$WORK"
 docker run --rm ${DOCKER_ARGS:-} --network none -v "$WORK:$WORK" -v "$BASE:/base:ro" -v "$HEAD:/head:ro" \
     ${EXTRA_FATBIN:+-v "$EXTRA_FATBIN:/extra.fatbin:ro"} -e W="$WORK" -e NEW="$NEW" "$IMAGE" bash -euo pipefail -c '
-split() {  # <sass file> <out dir>: one file per kernel, offsets stripped
-    rm -rf "$2"; mkdir -p "$2"
-    awk -v out="$2" "/Function : /{ f = \$3; file = out \"/\" f \".sass\" } f { sub(/\\/\\*[0-9a-f]+\\*\\//, \"\"); print > file }" "$1"
+# <sass file> <out.tsv>: one line per kernel, its name and the md5 of its instructions (offsets and the fatbin section
+# headers between cubins stripped), sorted by name
+kernels() {
+    awk "/Function : /{ if (f != \"\") print f \"\t\" b; f = \$3; b = \"\"; next } /^(Fatbin|=+\$|arch =|code version|host =|compile_size|compressed|ptxasOptions|identifier|[ \t]*code for sm_)/ { next } f != \"\" { sub(/\\/\\*[0-9a-f]+\\*\\//, \"\"); gsub(/[ \t]+/, \" \"); b = b \"|\" \$0 } END { if (f != \"\") print f \"\t\" b }" "$1" |
+        while IFS="$(printf "\t")" read -r name text; do printf "%s\t%s\n" "$name" "$(printf "%s" "$text" | md5sum | cut -c1-32)"; done |
+        LC_ALL=C sort -t "$(printf "\t")" -k1,1 > "$2"
 }
 cuobjdump -sass -arch sm_61 /base/test-backend-ops > $W/base.sass
 cuobjdump -sass -arch sm_61 /head/test-backend-ops > $W/head.sass
-[ -f /extra.fatbin ] && cuobjdump -sass /extra.fatbin >> $W/head.sass
-split $W/base.sass $W/base; split $W/head.sass $W/head
+kernels $W/base.sass $W/base.tsv; kernels $W/head.sass $W/head.tsv
+if [ -f /extra.fatbin ]; then
+    cuobjdump -sass /extra.fatbin > $W/extra.sass
+    kernels $W/extra.sass $W/extra.tsv
+    LC_ALL=C sort -t "$(printf "\t")" -k1,1 $W/head.tsv $W/extra.tsv -o $W/head.tsv
+fi
 cd $W
-same=0; diff=0; newk=0; other_new=0
-: > differ.txt; : > new.txt
-for f in head/*.sass; do
-    n=${f#head/}
-    if [ ! -f base/$n ]; then newk=$((newk+1)); echo "$n" >> new.txt; echo "$n" | grep -Eq "$NEW" || other_new=$((other_new+1))
-    elif cmp -s $f base/$n; then same=$((same+1)); else diff=$((diff+1)); echo "$n" >> differ.txt; fi
+# a kernel name can have several copies (one per source file that instantiates it): compare the copies of each name as a
+# set of instruction md5s
+for t in base head; do
+    LC_ALL=C sort -t "$(printf "\t")" -k1,1 -k2,2 $t.tsv | awk -F "\t" "{ if (\$1 != n) { if (n != \"\") print n \"\t\" c \"\t\" m; n = \$1; m = \$2; c = 1 } else { m = m \",\" \$2; c++ } } END { if (n != \"\") print n \"\t\" c \"\t\" m }" > $t.names.tsv
 done
-gone=$(for f in base/*.sass; do [ -f head/${f#base/} ] || echo x; done | wc -l)
-echo "kernels in base $(ls base | wc -l), in head $(ls head | wc -l): the same bytes $same, differing $diff, only in head $newk ($other_new not matching NEW), only in base $gone"
+LC_ALL=C join -t "$(printf "\t")" base.names.tsv head.names.tsv > both.names.tsv
+same=$(awk -F "\t" "\$2 == \$4 && \$3 == \$5" both.names.tsv | wc -l)
+awk -F "\t" "\$2 != \$4 || \$3 != \$5 { print \$1 }" both.names.tsv > differ.txt
+LC_ALL=C join -t "$(printf "\t")" -v 2 base.names.tsv head.names.tsv | cut -f1 > new.txt
+LC_ALL=C join -t "$(printf "\t")" -v 1 base.names.tsv head.names.tsv | cut -f1 > gone.txt
+other_new=$(grep -Evc "$NEW" new.txt || true)
+echo "kernel names in base $(wc -l < base.names.tsv) ($(wc -l < base.tsv) copies), in head $(wc -l < head.names.tsv) ($(wc -l < head.tsv) copies): every copy the same bytes $same, differing $(wc -l < differ.txt), only in head $(wc -l < new.txt) ($other_new not matching NEW), only in base $(wc -l < gone.txt)"
 head -n 20 differ.txt
 '

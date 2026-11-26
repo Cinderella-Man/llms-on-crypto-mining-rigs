@@ -93,6 +93,21 @@ table) against the old 10.5 (4 random 8-byte loads, staging stores and loads, ac
 - **A test fault proves the path ran.** `GGML_CUDA_MTOK_IQ_FAST_FAULT=1` swaps up and gate for the fast kernels; the
   old-against-new check must then differ in exactly the fused cases of 2–8 tokens, which shows the fast kernel took
   them (byte-identical results alone could mean the switch did nothing).
+- **Which tests reach the kernel.** `test-backend-ops -o MUL_MAT_ID` matches that op name exactly: the fused gate/up
+  cases are the ops `MUL_MAT_VEC_FUSION` and `MUL_MAT_ID_FUSION`, the routed + shared launch `MUL_MAT_ID_SHARED`
+  (pass `-o 'MUL_MAT_VEC_FUSION|MUL_MAT_ID_FUSION'`, a regex once it holds a `|`). For IQ2_XXS at 2,560 inputs the
+  fused cases are the PTX kernel's; the plain op only ever runs the C version.
+- **Proof that the PTX ran.** Byte-identical results do not show it (the C fallback gives the same bytes). The PTX
+  kernels are launched with `cuLaunchKernel`, so `run/launch_count.c` (an `LD_PRELOAD` wrapper of that one symbol)
+  counts them by name at exit. A server must then exit through `exit()`: send SIGINT to `llama-server` itself, since
+  the container's `bash` does not pass `docker stop`'s SIGTERM on.
+- **Run the processor-heavy checks one or two at a time.** `test-backend-ops` spends most of its time in the
+  processor's reference products, whose threads spin while they wait: six arms side by side on a 24-thread machine
+  (load 78) ran slower in total than two at a time, and slowed a model on the same machine to under one prompt token a
+  second.
+- **Comparing every kernel of two builds.** Kernel names repeat (one copy per source file that instantiates them), and
+  a kernel that ends a cubin picks up the next cubin's header lines in `cuobjdump`'s text: compare each name's copies as
+  a set of instruction hashes with those headers dropped (`run/sass_all.sh`).
 - **Shapes.** The fast kernel needs rows of 2 lanes (256·n weights with n = 2 mod 4: Flash-Next's 2,560), matrices
   16-byte aligned and ending on a 16-byte boundary. The PTX covers only the fused gate/up launch with SWIGLU at 2,560;
   everything else falls back (plain MUL_MAT_ID and the shared expert to the C fast kernel, other shapes to the old
