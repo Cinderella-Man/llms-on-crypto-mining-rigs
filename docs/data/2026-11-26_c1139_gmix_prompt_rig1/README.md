@@ -177,9 +177,10 @@ replies of C1146's `gmix-q2` loads at `=2` (`g2`, `u2`) and of its `pmix-q2-fast
 
 - **Rig and build:** nine P106-090 cards at stock clocks (no offsets this boot), the fork's `883f21f2c`
   (`pascal-p106-v5-iq-mtok-fast`, C1146's build, `llama-server` md5 `dae09aa55e6fe7e875a0d57bbaf0b796`).
-- **Preset:** Flash-Next's v5 preset (`release/flash-next-v5/settings.env`), the MTP draft on, by the deep lane
-  ([bench/deep_lane](../../../bench/deep_lane/README.md)) with R125's settings: R125's recorded agent text (`TAG='^t1swift/'`),
-  256 tokens a request, a sampler pass, four idle seconds before each request. `gmix-q2` with
+- **Preset:** Flash-Next's v5 preset as it stood at commit `26e6575a` (`release/flash-next-v5/settings.env`, before
+  `d296f5ce` changed the sparse attention's splits and threshold; both files ran the same line), the MTP draft on,
+  by the deep lane ([bench/deep_lane](../../../bench/deep_lane/README.md)) with R125's settings: R125's recorded agent
+  text (`TAG='^t1swift/'`), 256 tokens a request, a sampler pass, four idle seconds before each request. `gmix-q2` with
   `GGML_CUDA_MTOK_IQ_FAST=2` (the PTX grid kernels of the four-token verify, as in C1173); `pmix-q2-fast` without it.
   The dry run checked that each `gmix-q2` line is its `pmix-q2-fast` line plus that switch and `-m <gmix-q2>`.
 - **Lane 1** (13:33:54–14:37:09): depths 0, 8,192, 9,216; loads `warm` (untimed), `pg` `gg` (group profile), `ph` `gh`
