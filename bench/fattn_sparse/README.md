@@ -66,3 +66,4 @@ build/fasp_check --bench --nsm 5    # timings, on the card they are for
 Results: [docs/data/2026-11-04_qsa_sparse_attn](../../docs/data/2026-11-04_qsa_sparse_attn/README.md); the prompt rule
 and `--rule`: [docs/data/2026-11-11_c705_sparse_prompt_rule](../../docs/data/2026-11-11_c705_sparse_prompt_rule/README.md);
 the union kernel: [docs/data/2026-11-11_c103_union_gather](../../docs/data/2026-11-11_c103_union_gather/README.md).
+The kernels' times on a P106 at Flash-Next's verify shapes, taken with the engine build's `test-backend-ops perf` instead of `--bench` (whose CPU checks run first): [docs/data/2026-11-26_c839_union_attn_rig2](../../docs/data/2026-11-26_c839_union_attn_rig2/README.md).
