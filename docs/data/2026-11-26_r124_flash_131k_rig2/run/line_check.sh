@@ -5,11 +5,13 @@
 #   the flags are PRESET_ARGS with -c 131072 and -ub 256, plus -md <the draft> for ARM=draft, or without the draft's
 #     flags (-md and every --spec-* flag with its value) for ARM=nodraft; each flag with its value, in any order.
 # From C1175's run/preset_check.sh (docs/data/2026-11-26_c1175_nsm10_rig2/).
+# PRESET (default release/flash-next-v5/settings.env) names the preset file to check against: the run used the preset at
+# bf7982b1 (git show bf7982b1:release/flash-next-v5/settings.env > preset_bf7982b1.env; PRESET=preset_bf7982b1.env ...).
 # Usage, from the repository root: bash docs/data/2026-11-26_r124_flash_131k_rig2/run/line_check.sh LINE_FILE draft|nodraft
 set -euo pipefail
 f=${1:?}; arm=${2:?draft or nodraft}
 # shellcheck disable=SC1091
-. release/flash-next-v5/settings.env
+. "${PRESET:-release/flash-next-v5/settings.env}"
 line=$(sed -E 's/^=== [^ ]+ [^ ]+: //; s/^[0-9:]* +//; s/^ *env //' "$f")
 line=${line% --host 127.0.0.1 --port *}
 bin=$(tr ' ' '\n' <<< "$line" | grep -m1 '/llama-server$') || { echo "FAIL: no llama-server in the line"; exit 1; }

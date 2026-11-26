@@ -48,9 +48,15 @@ are (shallow, prompts read in micro-batches of 256 instead of 512); that is the 
 
 The v5 preset ([release/flash-next-v5/settings.env](../../../release/flash-next-v5/settings.env) at `bf7982b1`:
 UkisAI's Swift-1.5 GSQ-RCO Q2_0 of Qwen3.8-Flash-Next, its n-gram table cut into a third shard, the MTP draft, 40
-switches) with `-c 131072` and `-ub 256`, nothing else changed (`--spec-draft-n-ubatch 512` kept). Both started lines
-were checked against `settings.env` with [run/line_check.sh](run/line_check.sh): the environment byte for byte, the
-flags the preset's with those two values, plus `-md` (draft) or without the draft's flags (no draft).
+switches) with `-c 131072` and `-ub 256`, nothing else changed (`--spec-draft-n-ubatch 512` kept). That is the preset
+as it stood when the run copied it at 14:10, with `GGML_CUDA_FATTN_SPARSE_PASCAL_NSM=5` and `_MIN_RATIO=0.75`; at 15:11
+the preset took C1175's `_NSM=10 _MIN_RATIO=0.5` (`d296f5ce`, [C1175](../2026-11-26_c1175_nsm10_rig2/README.md)), which
+shorten a draft step wherever the per-token sparse kernel runs (4.55 and 4.51 ms at 8,192 tokens there), so on today's
+preset the draft's steps here would be est. about 4.5 ms shorter and its case a little stronger. The started lines of
+every load (the first line of each server log) were checked against the preset at `bf7982b1` with
+[run/line_check.sh](run/line_check.sh) (`PRESET=` that file): the environment byte for byte, the flags the preset's
+with those two values, plus `-md` (draft) or without the draft's flags (no draft); the three draft loads started the
+same line, and so did the two plain loads.
 
 Engine: the `pascal-p106-v5` candidate tree `eee615cdb` (upstream b12674 merged), llama-server md5
 `2727faf28b5b34dfe42399a9d431da67` (statically linked), the build C1175 ran the same day on the same rig.
@@ -188,15 +194,16 @@ parts at the first token, as it must: with the draft the accepted tokens come fr
 
 ```bash
 # on a machine that runs only ssh and tar, from the repository's root; RIG, WORK and the paths are yours
+git show bf7982b1:release/flash-next-v5/settings.env > preset_bf7982b1.env    # the preset as this run used it
 C="-bs --jinja --reasoning-format deepseek --temp 1.0 --top-p 0.95 --top-k 20 --min-p 0 -b 4096 -ts 6,6,6,6,5,6,5,6,3 -lm dio --no-host --ctx-checkpoints-vram 4 --ctx-checkpoints-incall --ubatch-taper short=1400:64"
 DR="--spec-type draft-mtp --spec-draft-n-max 3 --spec-draft-n-ubatch 512 --spec-draft-sampling probabilistic --spec-draft-p-min 0 -md <MTP draft on the rig>"
-. release/flash-next-v5/settings.env
+. ./preset_bf7982b1.env
 RIG=rig MODEL=<first shard on the rig> BUILDS=<folder of builds on the rig> OUT=fit_probe.md KEEP=400 \
   CONFIGS="draft131k_ub512|<build>|131072|$C -ub 512 $DR|$PRESET_ENV;draft131k_ub256|<build>|131072|$C -ub 256 $DR|$PRESET_ENV;nodraft131k_ub256|<build>|131072|$C -ub 256|$PRESET_ENV;draft65k_ub512|<build>|65536|$C -ub 512 $DR|$PRESET_ENV" \
   bash scripts/fit_probe.sh
-RIG=rig WORK=/tmp/r124 BIN=<llama-server on the rig> MODEL=<first shard on the rig> MODEL_DRAFT=<MTP draft on the rig> \
+PRESET=preset_bf7982b1.env RIG=rig WORK=/tmp/r124 BIN=<llama-server on the rig> MODEL=<first shard on the rig> MODEL_DRAFT=<MTP draft on the rig> \
   TEXT_LOCAL=<proxy.jsonl.bodies.gz> STEP=dry bash docs/data/2026-11-26_r124_flash_131k_rig2/run/r124.sh
-bash docs/data/2026-11-26_r124_flash_131k_rig2/run/line_check.sh <the draft arm's line> draft    # and: <nodraft line> nodraft
+PRESET=preset_bf7982b1.env bash docs/data/2026-11-26_r124_flash_131k_rig2/run/line_check.sh <the draft arm's line> draft    # and: <nodraft line> nodraft
 # the same r124.sh call with STEP=start, then STEP=wait, then STEP=collect OUT=<folder>
 OUT=<folder> PROBE=fit_probe.md bash docs/data/2026-11-26_r124_flash_131k_rig2/run/tables.sh
 ```
