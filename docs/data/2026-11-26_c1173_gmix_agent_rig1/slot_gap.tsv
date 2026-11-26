@@ -1,0 +1,5 @@
+log	requests	median_ms	max_ms	sum_ms
+server-gmixa.log	67	0.70	1.91	60.6
+server-pmixa.log	65	0.71	1.82	55.7
+server-gmixb.log	73	0.72	1.84	63.5
+server-pmixb.log	60	0.70	1.35	47.5

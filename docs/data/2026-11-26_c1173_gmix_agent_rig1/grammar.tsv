@@ -1,0 +1,5 @@
+run	requests	tokens_sampled	while_grammar_applied	requests_without_grammar	rejected
+gmixa	67	19235	19235	0	3
+pmixa	65	21487	21487	0	2
+gmixb	73	24787	24787	0	1
+pmixb	59	18466	18466	0	1

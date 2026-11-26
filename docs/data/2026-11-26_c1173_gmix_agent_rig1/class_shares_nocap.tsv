@@ -1,0 +1,6 @@
+measure	arm_runs	base_runs	arm_mean	base_mean	arm_spread	base_spread	diff	diff_pct	class
+prompt part of a task at equal work, min	0.521 0.496	0.36 0.356	0.5085	0.358	0.025	0.004	+0.1505	+42.0 %	loss
+decode part of a task at equal work, min	0.99 1	0.932 0.916	0.995	0.924	0.01	0.016	+0.071	+7.7 %	loss
+a task at equal work, min (the three parts)	1.654 1.639	1.435 1.414	1.647	1.425	0.015	0.021	+0.222	+15.6 %	loss
+the run's own prompt minutes a task	0.472 0.522	0.354 0.339	0.497	0.3465	0.05	0.015	+0.1505	+43.4 %	loss
+the run's own decode minutes a task	0.924 1.221	0.956 0.92	1.073	0.938	0.297	0.036	+0.1345	+14.3 %	negligible

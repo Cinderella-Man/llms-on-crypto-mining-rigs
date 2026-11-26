@@ -1,0 +1,14 @@
+task	gmixa_prompt_s	gmixa_prompt_tokens	gmixa_turns	pmixa_prompt_s	pmixa_prompt_tokens	pmixa_turns	gmixb_prompt_s	gmixb_prompt_tokens	gmixb_turns	pmixb_prompt_s	pmixb_prompt_tokens	pmixb_turns
+bugfix-javascript-complex-numbers	32.67	4449	5	21.59	2732	7	35.28	4632	6	19.87	2297	8
+bugfix-javascript-grade-school	31.09	2734	8	17.07	3115	5	25.12	2728	5	19.75	3550	6
+bugfix-javascript-phone-number	20.13	1887	4	17.47	2834	5	26.43	2998	5	17.37	2826	5
+bugfix-javascript-space-age	22.98	1920	5	16.15	2161	5	24.09	2306	4	16.61	2241	5
+bugfix-javascript-triangle	23.88	2212	5	16.15	2210	5	24.07	2217	5	16.23	2232	5
+bugfix-javascript-variable-length-quantity	26.82	3235	5	18.15	3205	5	26.46	3202	5	3.65	577	1
+bugfix-python-affine-cipher	53.30	4566	7	45.01	4823	7	52.75	4703	7	43.79	4665	5
+bugfix-python-list-ops	20.34	2155	5	16.87	2625	5	35.10	3174	12	16.22	2497	5
+bugfix-python-phone-number	26.53	2477	6	16.65	2312	5	34.57	3889	6	20.89	3704	5
+bugfix-python-pig-latin	22.47	2091	5	16.01	2193	5	27.98	2591	6	16.04	2226	5
+bugfix-python-scale-generator	30.11	3108	7	23.25	3679	5	30.91	3219	7	21.19	3325	5
+bugfix-python-variable-length-quantity	27.84	3265	5	27.55	4810	6	28.37	3409	5	15.85	2912	4
+mean a task	28.18	2842	5.58	20.99	3058	5.42	30.93	3256	6.08	18.95	2754	4.92

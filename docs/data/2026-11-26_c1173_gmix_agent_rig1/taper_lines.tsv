@@ -1,0 +1,4 @@
+gmixa	micro-batch taper of prompt calls: short=1400:64 (n_ubatch 512)
+pmixa	micro-batch taper of prompt calls: short=1400:64 (n_ubatch 512)
+gmixb	micro-batch taper of prompt calls: short=1400:64 (n_ubatch 512)
+pmixb	micro-batch taper of prompt calls: short=1400:64 (n_ubatch 512)

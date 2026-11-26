@@ -1,0 +1,5 @@
+run	turns	longest_s	task	turn	prompt_n	cache_n	prompt_ms	later_turns_median_s	later_turns_p90_s
+gmixa	67	31.10	bugfix-python-affine-cipher	1	2780	0	31071	2.73	10.65
+pmixa	65	27.23	bugfix-python-affine-cipher	1	2780	0	27092	2.29	8.14
+gmixb	73	31.39	bugfix-python-affine-cipher	1	2780	0	31344	2.39	11.86
+pmixb	60	27.23	bugfix-python-affine-cipher	1	2780	0	27172	2.20	8.18

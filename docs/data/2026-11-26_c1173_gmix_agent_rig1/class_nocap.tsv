@@ -1,0 +1,7 @@
+measure	arm	base	arm_runs	base_runs	arm_mean	base_mean	arm_spread	base_spread	diff	diff_pct	class
+minutes a task at equal work	gmix	pmix	1.65 1.64	1.43 1.41	1.645	1.42	0.01	0.02	+0.225	+15.8 %	loss
+generation tok/s	gmix	pmix	28 27.73	29.75 30.27	27.87	30.01	0.27	0.52	-2.145	-7.1 %	loss
+prompt tok/s	gmix	pmix	99.1 104.1	143.3 145.1	101.6	144.2	5	1.8	-42.6	-29.5 %	loss
+first token median s	gmix	pmix	3.61 3.08	2.8 2.47	3.345	2.635	0.53	0.33	+0.71	+26.9 %	loss
+first token p90 s	gmix	pmix	10.68 11.86	8.14 8.14	11.27	8.14	1.18	0	+3.13	+38.5 %	loss
+first token on a task's first turn, median s	gmix	pmix	8.09 8.02	5.1 5.09	8.055	5.095	0.07	0.01	+2.96	+58.1 %	loss

@@ -1,0 +1,5 @@
+run	tasks	eq_other_min	eq_prompt_min	eq_decode_min	eq_min	eq_prompt_share	eq_decode_share	own_other_min	own_prompt_min	own_decode_min	own_min	own_prompt_share	own_decode_share
+gmixa	12	1.113	0.477	0.914	2.504	19.1 %	36.5 %	0.043	0.470	0.955	1.468	32.0 %	65.0 %
+pmixa	12	1.113	0.330	0.861	2.304	14.3 %	37.4 %	0.041	0.350	1.005	1.397	25.1 %	72.0 %
+gmixb	12	1.113	0.457	0.921	2.491	18.4 %	37.0 %	0.043	0.515	1.240	1.798	28.7 %	69.0 %
+pmixb	12	1.113	0.331	0.843	2.287	14.5 %	36.9 %	1.028	0.316	0.846	2.191	14.4 %	38.6 %

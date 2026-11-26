@@ -1,0 +1,2 @@
+run	task	turn	reply_tokens	cached	client	reasoning_trimmed	non_ascii_chars	n_tool_calls	lcp_into_reply	lcp_err	grammar_from	where
+pmixa	bugfix-python-variable-length-quantity	5	1380	6507	same	no	11	1	1333	3.9	0	in the tool call
