@@ -1,0 +1,55 @@
+char ::= [^"\\\x7F\x00-\x1F] | [\\] (["\\bfnrt] | "u" [0-9a-fA-F]{4})
+decimal-part ::= [0-9]{1,16}
+integral-part ::= [0] | [1-9] [0-9]{0,15}
+json-array ::= "[" space ("]" | json-value (space "," space json-value)* space "]")
+json-bool ::= "true" | "false"
+json-null ::= "null"
+json-number ::= "-"? ("0" | [1-9] [0-9]*) ("." [0-9]+)? (("e" | "E") [+-]? [0-9]+)?
+json-object ::= "{" space ("}" | json-string space ":" space json-value (space "," space json-string space ":" space json-value)* space "}")
+json-string ::= "\"" ( [^"\\] | "\\" ( ["\\/ bfnrt] | "u" [0-9a-fA-F]{4} ) )* "\""
+json-value ::= json-object | json-array | json-string | json-number | json-bool | json-null
+number ::= ("-"? integral-part) ("." decimal-part)? ([eE] [-+]? integral-part)?
+root ::= trigger
+space ::= | " " | "\n"{1,2} [ \t]{0,20}
+string ::= "\"" char* "\""
+tool-0 ::= ("<function=" "read" ">") "\n" (tool-0-arg-0 (tool-0-arg-1 | tool-0-arg-2)*) "</function>\n"
+tool-0-arg-0 ::= ("<parameter=" "path" ">\n") xml-arg-string
+tool-0-arg-1 ::= ("<parameter=" "offset" ">\n") number "\n</parameter>\n"
+tool-0-arg-2 ::= ("<parameter=" "limit" ">\n") number "\n</parameter>\n"
+tool-1 ::= ("<function=" "bash" ">") "\n" (tool-1-arg-0 (tool-1-arg-1)*) "</function>\n"
+tool-1-arg-0 ::= ("<parameter=" "command" ">\n") xml-arg-string
+tool-1-arg-1 ::= ("<parameter=" "timeout" ">\n") number "\n</parameter>\n"
+tool-2 ::= ("<function=" "edit" ">") "\n" tool-2-args-3 "</function>\n"
+tool-2-arg-0 ::= ("<parameter=" "path" ">\n") xml-arg-string
+tool-2-arg-1 ::= ("<parameter=" "edits" ">\n") tool-2-arg-1-schema "\n</parameter>\n"
+tool-2-arg-1-schema ::= "[" space (tool-2-arg-1-schema-item ("," space tool-2-arg-1-schema-item)*)? space "]"
+tool-2-arg-1-schema-item ::= "{" space tool-2-arg-1-schema-item-oldText-kv "," space tool-2-arg-1-schema-item-newText-kv space "}"
+tool-2-arg-1-schema-item-newText-kv ::= "\"newText\"" space ":" space string
+tool-2-arg-1-schema-item-oldText-kv ::= "\"oldText\"" space ":" space string
+tool-2-args-1 ::= tool-2-arg-0
+tool-2-args-2 ::= tool-2-arg-1
+tool-2-args-3 ::= tool-2-arg-0 tool-2-args-2 | tool-2-arg-1 tool-2-args-1
+tool-3 ::= ("<function=" "write" ">") "\n" tool-3-args-3 "</function>\n"
+tool-3-arg-0 ::= ("<parameter=" "path" ">\n") xml-arg-string
+tool-3-arg-1 ::= ("<parameter=" "content" ">\n") xml-arg-string
+tool-3-args-1 ::= tool-3-arg-0
+tool-3-args-2 ::= tool-3-arg-1
+tool-3-args-3 ::= tool-3-arg-0 tool-3-args-2 | tool-3-arg-1 tool-3-args-1
+tool-call ::= <[248058]> "\n" (tool-0 | tool-1 | tool-2 | tool-3) <[248059]> space
+tool-calls-rest ::= "\n" (tool-0 | tool-1 | tool-2 | tool-3) <[248059]> space tool-call*
+trigger ::= | <[248058]> tool-calls-rest | !<[248058]> trigger
+until-32 ::= [\n] until-32-01 | ([^\n] | <[248058-248059]>) until-32
+until-32-01 ::= [\n] until-32-01 | [<] until-32-02 | ([^\n<] | <[248058-248059]>) until-32
+until-32-02 ::= [\n] until-32-01 | [/] until-32-03 | ([^\n/] | <[248058-248059]>) until-32
+until-32-03 ::= [\n] until-32-01 | [p] until-32-04 | ([^\np] | <[248058-248059]>) until-32
+until-32-04 ::= [\n] until-32-01 | [a] until-32-05 | ([^\na] | <[248058-248059]>) until-32
+until-32-05 ::= [\n] until-32-01 | [r] until-32-06 | ([^\nr] | <[248058-248059]>) until-32
+until-32-06 ::= [\n] until-32-01 | [a] until-32-07 | ([^\na] | <[248058-248059]>) until-32
+until-32-07 ::= [\n] until-32-01 | [m] until-32-08 | ([^\nm] | <[248058-248059]>) until-32
+until-32-08 ::= [\n] until-32-01 | [e] until-32-09 | ([^\ne] | <[248058-248059]>) until-32
+until-32-09 ::= [\n] until-32-01 | [t] until-32-10 | ([^\nt] | <[248058-248059]>) until-32
+until-32-10 ::= [\n] until-32-01 | [e] until-32-11 | ([^\ne] | <[248058-248059]>) until-32
+until-32-11 ::= [\n] until-32-01 | [r] until-32-12 | ([^\nr] | <[248058-248059]>) until-32
+until-32-12 ::= [\n] until-32-01 | [>] until-32-13 | ([^\n>] | <[248058-248059]>) until-32
+until-32-13 ::= [\n] | ([^\n] | <[248058-248059]>) until-32
+xml-arg-string ::= until-32

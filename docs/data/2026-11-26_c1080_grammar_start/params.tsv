@@ -1,0 +1,4 @@
+build	chat_handler	grammar_lazy	triggers	generation_prompt	grammar_bytes	grammar_md5	same_grammar_all_requests	trigger_rule
+cand	Qwen3-Coder	0	none	"<|im_start|>assistant\n<think>\n"	3949	61607e67cb3735c5bf15e33e921ad51e	yes	root ::= trigger
+ref	Qwen3-Coder	1	token 248058 (<tool_call>)	"<|im_start|>assistant\n<think>\n"	3369	4eb45ac50b173d2f5feaff486c12fc91	yes	root ::= tool-call-root
+land3	Qwen3-Coder	0	none	"<|im_start|>assistant\n<think>\n"	3949	61607e67cb3735c5bf15e33e921ad51e	yes	root ::= trigger

@@ -152,9 +152,10 @@ candidate run on the second rig counts the same: 16,259 of 16,259 tokens, agains
 in its two control runs. Two upstream changes in b12674 touch when the grammar starts: #32497 (a pattern trigger on the
 opening of a bare JSON tool call) and #29307 (token-aware parsing, which reworks the Qwen3-Coder parser). On both models
 no task failed for it and no call was malformed (0 of 58 here, 0 of 59 on Ornith). One token was rejected under the grammar
-in each run (none in R227's second), and the decode step was not slower. Registry Q1813 finds out whether the grammar
-now constrains the reasoning from the first token or only the count changed, and whether that changes the replies or
-the draft's acceptance.
+in each run (none in R227's second), and the decode step was not slower. Only the count changed
+([2026-11-26_c1080_grammar_start](../2026-11-26_c1080_grammar_start/README.md), Q1813): since #29307 the Qwen3-Coder
+grammar runs from the first token but holds back no text before a call, and greedy replies and the draft's acceptance
+are the same with and without it.
 
 ## How it ran
 

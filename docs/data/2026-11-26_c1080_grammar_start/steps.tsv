@@ -1,0 +1,10 @@
+build	request	tokens	first_call_at	before_call_steps	before_whole_vocab	before_left_out	after_call_steps	after_whole_vocab	after_left_out	reply_token_rejected	chat2_same_states
+cand	t1_first	75	10	10	0	10	65	0	65	0	yes
+cand	t2_reason	1138	1011	1011	0	1011	127	0	127	0	yes
+cand	t5_final	114	85	85	0	85	29	0	29	0	yes
+ref	t1_first	83	10	10	10	0	73	1	72	0	yes
+ref	t2_reason	417	387	387	387	0	30	1	29	0	yes
+ref	t5_final	348	none	348	348	0	0	0	0	0	yes
+land3	t1_first	75	10	10	0	10	65	0	65	0	yes
+land3	t2_reason	1138	1011	1011	0	1011	127	0	127	0	yes
+land3	t5_final	114	85	85	0	85	29	0	29	0	yes
