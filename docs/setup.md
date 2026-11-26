@@ -107,6 +107,13 @@ quantized copies. Each adds about 0.07 GB; `CHECK_TOOLS=0` leaves them out
 ([what they cost](data/2026-11-24_c984_tests_build_tools/README.md),
 [the last five](data/2026-11-24_c1017_quantize_tarball/README.md)).
 
+A PC without Docker builds the same tarball natively when it has CUDA 12.x and runs Ubuntu 24.04 (or another system
+whose glibc is no newer than 2.39, the rig's): after `sudo apt-get install git cmake build-essential ccache curl`,
+`NATIVE=1 scripts/build_llamacpp_docker.sh <ref>` runs the same steps and build settings outside the container, in
+`$WORK` itself, with CUDA from `/usr/local/cuda` unless `CUDA_HOME` names another folder. A native build of Miner Llama
+on an Ubuntu 24.04.5 PC with CUDA 12.9 gave the cards the same machine code as the Docker build of the same commit,
+kernel for kernel ([the comparison](data/2026-11-26_c1190_native_tarball/README.md)).
+
 ## Running llama-server on a 4 GB host
 
 Several llama-server defaults assume a machine with plenty of RAM. On this rig they can exhaust the 4 GB and trigger

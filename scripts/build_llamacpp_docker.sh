@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Builds llama.cpp for the P106 rig on any x86-64 Linux PC with Docker, then packs the binaries into a tarball you
-# copy to the rig. Building on the rig itself works too, but its 2-core Celeron is slow at it.
+# copy to the rig. Building on the rig itself works too, but its 2-core Celeron is slow at it. A machine without Docker
+# that has CUDA 12.x and runs Ubuntu 24.04 can build the same tarball natively with NATIVE=1 (see below).
 #
 # The build targets exactly what the rig can run:
 #   - CUDA 12.9 inside the container (CUDA 13 can't build for Pascal), code for compute capability 6.1 only;
@@ -47,6 +48,18 @@
 #     HF_UI_VERSION=b<N>: the upstream release whose web page the build embeds, instead of the one the script picks
 #     (see above); a -e HF_UI_VERSION=... in DOCKER_ARGS wins over this
 #     DOCKER_ARGS: extra `docker run` arguments, e.g. a label the build machine's policy asks for
+#     NATIVE=1: build on this machine instead of in the container, for a build machine without Docker: the same steps,
+#     CMake flags, CUDA architecture and CPU flags, in $WORK itself instead of the container's /work, without the
+#     container's apt-get and chown, in a clean environment (only PATH, HOME and the settings above pass in), and with
+#     -DLLAMA_OPENSSL=OFF: the image has no OpenSSL headers, so a Docker build never links OpenSSL, while a machine
+#     that has them (libssl-dev) would give llama-server HTTPS support and two more libraries to need. The
+#     machine needs what the image brings: CUDA 12.x in CUDA_HOME (default /usr/local/cuda), git, cmake, make, gcc,
+#     g++, ccache, curl and objdump (on Ubuntu: apt-get install git cmake build-essential ccache curl), and the glibc
+#     of Ubuntu 24.04 (2.39) or an older one, so that the binaries run on the rig (the script warns on a newer one).
+#     IMAGE and DOCKER_ARGS are not used; BUILDINFO.txt names the system, CUDA, gcc and cmake in place of the image.
+#     Checked on Ubuntu 24.04.5 with CUDA 12.9.86 and gcc 13.3.0 against a Docker build of the same commit: the same
+#     machine code for the cards, kernel for kernel, every host function of the same size, the same libraries needed
+#     and no AVX (docs/data/2026-11-26_c1190_native_tarball/)
 # Output: $WORK/llama.cpp-<date>-<sha>[-graphs61][-<patch>].tar.gz with bin/ and BUILDINFO.txt (WORK defaults to
 # ~/llama-builds); BUILDINFO.txt names the web page's release.
 # On the rig: tar xzf <tarball> -C /opt && /opt/<name>/bin/llama-server --list-devices
@@ -63,14 +76,36 @@ if [ -n "${HF_UI_VERSION:-}" ] && [[ " ${DOCKER_ARGS:-} " != *HF_UI_VERSION=* ]]
     UI_ENV=(-e "HF_UI_VERSION=$HF_UI_VERSION")
 fi
 
-docker run --rm ${DOCKER_ARGS:-} ${UI_ENV[@]+"${UI_ENV[@]}"} -e REF="$REF" -e PATCH="$PATCH" -e PATCHES="${PATCHES:-}" -e TESTS="${TESTS:-0}" -e CHECK_TOOLS="${CHECK_TOOLS:-1}" -e EXTRA_TARGETS="${EXTRA_TARGETS:-}" -e SCHED_COPIES="${SCHED_COPIES:-}" -e RPC="${RPC:-0}" -e JOBS="${JOBS:-}" -e HOST_UID="$(id -u)" -e HOST_GID="$(id -g)" \
-    -v "$WORK:/work" "$IMAGE" bash -euo pipefail -c '
-    export DEBIAN_FRONTEND=noninteractive CCACHE_DIR=/work/ccache
-    apt-get update -qq && apt-get install -y -qq git cmake build-essential ccache curl > /dev/null
+# NATIVE=1: this machine's toolkit and tools in place of the image's (see the header)
+if [ "${NATIVE:-0}" = 1 ]; then
+    CUDA_HOME=${CUDA_HOME:-/usr/local/cuda}
+    [ -x "$CUDA_HOME/bin/nvcc" ] || { echo "NATIVE=1: no $CUDA_HOME/bin/nvcc; pass CUDA_HOME=<a CUDA 12.x folder>" >&2; exit 1; }
+    cuda=$("$CUDA_HOME/bin/nvcc" --version | sed -n 's/.*release [0-9.]*, V\([0-9.]*\).*/\1/p')
+    case "$cuda" in 12.*) ;; *) echo "NATIVE=1: $CUDA_HOME has CUDA ${cuda:-unknown}; Pascal needs CUDA 12.x" >&2; exit 1 ;; esac
+    for t in git cmake make gcc g++ ccache curl objdump; do
+        command -v "$t" > /dev/null || { echo "NATIVE=1: $t is missing (Ubuntu: apt-get install git cmake build-essential ccache curl)" >&2; exit 1; }
+    done
+    glibc=$(ldd --version | sed -n '1s/.* \([0-9][0-9.]*\)$/\1/p')
+    if [ "$(printf '%s\n' 2.39 "${glibc:-0}" | sort -V | tail -n 1)" != 2.39 ]; then
+        echo "WARNING: NATIVE=1: this machine's glibc ${glibc:-unknown} is newer than Ubuntu 24.04's 2.39, so the binaries" \
+            "may not start on the rig; compare BUILDINFO.txt's highest glibc symbol with the rig's glibc" >&2
+    fi
+    IMAGE="none, built natively (NATIVE=1) on $(. /etc/os-release && echo "$PRETTY_NAME"): CUDA $cuda, $(gcc --version | head -n 1), $(cmake --version | head -n 1)"
+fi
 
-    [ -d /work/src/.git ] || git clone -q https://github.com/ggml-org/llama.cpp /work/src
-    cd /work/src
-    git config --global --add safe.directory /work/src
+# the build; in the container, $WORK is mounted as /work
+BODY='
+    WORK=${WORK:-/work}
+    export DEBIAN_FRONTEND=noninteractive CCACHE_DIR=$WORK/ccache
+    if [ "${NATIVE:-0}" != 1 ]; then
+        apt-get update -qq && apt-get install -y -qq git cmake build-essential ccache curl > /dev/null
+    fi
+    ui_log=$(mktemp)
+    trap "rm -f \"\$ui_log\"" EXIT
+
+    [ -d "$WORK/src/.git" ] || git clone -q https://github.com/ggml-org/llama.cpp "$WORK/src"
+    cd "$WORK/src"
+    [ "${NATIVE:-0}" = 1 ] || git config --global --add safe.directory "$WORK/src"
     git fetch -q origin
     case "$REF" in */*) git fetch -q "${REF%%/*}" ;; esac
     git checkout -q --force "$REF" && git reset -q --hard
@@ -126,7 +161,7 @@ docker run --rm ${DOCKER_ARGS:-} ${UI_ENV[@]+"${UI_ENV[@]}"} -e REF="$REF" -e PA
     [ -n "$SCHED_COPIES" ] && name=$name-sched$SCHED_COPIES
     [ "$RPC" = 1 ] && case "$name" in *rpc*) ;; *) name=$name-rpc ;; esac
     for p in $PATCHES; do
-        git apply -v "/work/$p"
+        git apply -v "$WORK/$p"
         name=$name-$(basename "$p" .diff)
     done
 
@@ -137,6 +172,7 @@ docker run --rm ${DOCKER_ARGS:-} ${UI_ENV[@]+"${UI_ENV[@]}"} -e REF="$REF" -e PA
         -DLLAMA_CURL=OFF -DLLAMA_BUILD_TESTS=$([ "$TESTS" = 1 ] && echo ON || echo OFF) \
         $([ -n "$SCHED_COPIES" ] && echo -DGGML_SCHED_MAX_COPIES=$SCHED_COPIES) \
         $([ "$RPC" = 1 ] && echo -DGGML_RPC=ON) \
+        $([ "${NATIVE:-0}" = 1 ] && echo -DLLAMA_OPENSSL=OFF) \
         -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DCMAKE_CUDA_COMPILER_LAUNCHER=ccache > /dev/null
     # the check tools of Miner Llama (see the header): each one that is a target of this tree, as CMake lists them
     checks= checks_missing= checks_info="not built (TESTS=$TESTS, CHECK_TOOLS=$CHECK_TOOLS)"
@@ -155,10 +191,10 @@ docker run --rm ${DOCKER_ARGS:-} ${UI_ENV[@]+"${UI_ENV[@]}"} -e REF="$REF" -e PA
         llama-perplexity llama-batched-bench llama-gguf $([ "$TESTS" = 1 ] && echo test-backend-ops) $([ "$RPC" = 1 ] && echo ggml-rpc-server) \
         $([ -d examples/pipespec ] && echo llama-pipespec) $([ -d examples/screen-check ] && echo llama-screen-check) \
         $(grep -qs llama-pipe-drafter-check examples/pipespec/CMakeLists.txt && echo llama-pipe-drafter-check) $checks $EXTRA_TARGETS \
-        | { grep "^-- UI:" || true; } | tee /tmp/ui.log
+        | { grep "^-- UI:" || true; } | tee "$ui_log"
     # the release whose archive the build took ("UI: HF download succeeded, stamp updated (<bucket>|<asked>, resolved: <took>)")
-    ui_took=$(sed -n "s/.*, resolved: \(.*\))$/\1/p" /tmp/ui.log | tail -n 1)
-    if [ ! -s /tmp/ui.log ]; then
+    ui_took=$(sed -n "s/.*, resolved: \(.*\))$/\1/p" "$ui_log" | tail -n 1)
+    if [ ! -s "$ui_log" ]; then
         ui_page="none downloaded (the tree carries its own)"
     else
         ui_page="asked ${HF_UI_VERSION:-nothing} ($ui_from), took ${ui_took:-none}"
@@ -166,7 +202,7 @@ docker run --rm ${DOCKER_ARGS:-} ${UI_ENV[@]+"${UI_ENV[@]}"} -e REF="$REF" -e PA
     fi
     echo "web page: $ui_page"
 
-    out=/work/$name
+    out=$WORK/$name
     rm -rf "$out" && mkdir -p "$out/bin"
     cp build/bin/llama-* "$out/bin/"
     [ "$TESTS" = 1 ] && cp build/bin/test-backend-ops "$out/bin/"
@@ -185,7 +221,17 @@ docker run --rm ${DOCKER_ARGS:-} ${UI_ENV[@]+"${UI_ENV[@]}"} -e REF="$REF" -e PA
         echo "highest glibc symbol: $(objdump -T build/bin/llama-bench | grep -o "GLIBC_[0-9.]*" | sort -V | tail -1)"
         echo "dynamic libraries:"; ldd build/bin/llama-bench | sed "s/^/  /"
     } > "$out/BUILDINFO.txt"
-    tar czf "/work/$name.tar.gz" -C /work "$name"
-    chown -R "$HOST_UID:$HOST_GID" /work
+    tar czf "$WORK/$name.tar.gz" -C "$WORK" "$name"
+    [ "${NATIVE:-0}" = 1 ] || chown -R "$HOST_UID:$HOST_GID" "$WORK"
     cat "$out/BUILDINFO.txt"
 '
+
+if [ "${NATIVE:-0}" = 1 ]; then
+    env -i HOME="$HOME" PATH="$CUDA_HOME/bin:$PATH" CUDACXX="$CUDA_HOME/bin/nvcc" NATIVE=1 WORK="$WORK" \
+        REF="$REF" PATCH="$PATCH" PATCHES="${PATCHES:-}" TESTS="${TESTS:-0}" CHECK_TOOLS="${CHECK_TOOLS:-1}" \
+        EXTRA_TARGETS="${EXTRA_TARGETS:-}" SCHED_COPIES="${SCHED_COPIES:-}" RPC="${RPC:-0}" JOBS="${JOBS:-}" \
+        HF_UI_VERSION="${HF_UI_VERSION:-}" bash -euo pipefail -c "$BODY"
+else
+    docker run --rm ${DOCKER_ARGS:-} ${UI_ENV[@]+"${UI_ENV[@]}"} -e REF="$REF" -e PATCH="$PATCH" -e PATCHES="${PATCHES:-}" -e TESTS="${TESTS:-0}" -e CHECK_TOOLS="${CHECK_TOOLS:-1}" -e EXTRA_TARGETS="${EXTRA_TARGETS:-}" -e SCHED_COPIES="${SCHED_COPIES:-}" -e RPC="${RPC:-0}" -e JOBS="${JOBS:-}" -e HOST_UID="$(id -u)" -e HOST_GID="$(id -g)" \
+        -v "$WORK:/work" "$IMAGE" bash -euo pipefail -c "$BODY"
+fi

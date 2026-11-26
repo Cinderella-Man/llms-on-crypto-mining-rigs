@@ -1,0 +1,12 @@
+field	Docker build (2026-11-25)	native build (2026-11-26)	verdict
+name	llama.cpp-20261125-caf27fdae-pascal-p106-v5-cand-b12723	llama.cpp-20261126-caf27fdae-pascal-p106-v5-cand-b12723	differs: the build day
+ref	fork/pascal-p106-v5-cand-b12723	fork/pascal-p106-v5-cand-b12723	same
+commit	caf27fdaed35a10307420d5b823bef518a97f6b4 (2026-11-25 14:50:38 +0100)	caf27fdaed35a10307420d5b823bef518a97f6b4 (2026-11-25 14:50:38 +0100)	same
+patch	none	none	same
+web page	asked b12722 (given), took b12722	asked b12722 (given), took b12722	same
+check tools	llama-pipe-recurrent-check test-moe-ids test-hop-cast test-hop-mailbox test-kpool-dev test-kpool-stage test-pool-mask-dev test-llama-archs test-bytes-switches test-route-once test-top-k-sort test-cuda-keepalive llama-quantize	the same 13, then "(not in this tree: test-cuda-graph-src-types)"	same tools; the script now also names the one tool it knows that this tree lacks (added to its list after the Docker build)
+image	nvidia/cuda:12.9.2-devel-ubuntu24.04	none, built natively (NATIVE=1) on Ubuntu 24.04.5 LTS: CUDA 12.9.86, gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, cmake version 3.28.3	differs: by design
+built	2026-11-25T21:35:16+00:00	2026-11-26T18:30:19+01:00	differs: the build time
+avx instructions in llama-bench	0	0	same
+highest glibc symbol	GLIBC_2.38	GLIBC_2.38	same
+dynamic libraries of llama-bench	libgomp, libcudart, libcublas, libcublasLt, libcuda, libstdc++, libm, libgcc_s, libc, ld-linux, libdl, libpthread, librt (with linux-vdso)	the same, in the same order	same libraries; where the build machine's loader found them differs (the container: /usr/local/cuda/lib64, and no driver, so libcuda.so.1 "not found"; natively: /usr/local/cuda-12.9/targets/x86_64-linux/lib and the driver's libcuda.so.1) and the load addresses

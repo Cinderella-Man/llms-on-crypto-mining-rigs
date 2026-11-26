@@ -1,0 +1,3 @@
+program	symbols A	symbols B	in both	same size	size differs	only in A	only in B
+llama-server	44769	44769	44529	44529	0	240	240
+test-backend-ops	24697	24697	24457	24457	0	240	240

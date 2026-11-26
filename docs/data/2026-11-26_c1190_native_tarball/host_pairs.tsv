@@ -1,0 +1,3 @@
+program	size differs	only in A	only in B	with a path hash A	with a path hash B	pair up renamed (same names, kinds and sizes)
+llama-server	0	240	240	240	240	yes
+test-backend-ops	0	240	240	240	240	yes

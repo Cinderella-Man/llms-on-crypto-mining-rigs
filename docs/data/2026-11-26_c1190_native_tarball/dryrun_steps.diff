@@ -1,0 +1,45 @@
+2,3c2,8
+<     export DEBIAN_FRONTEND=noninteractive CCACHE_DIR=/work/ccache
+<     apt-get update -qq && apt-get install -y -qq git cmake build-essential ccache curl > /dev/null
+---
+>     WORK=${WORK:-/work}
+>     export DEBIAN_FRONTEND=noninteractive CCACHE_DIR=$WORK/ccache
+>     if [ "${NATIVE:-0}" != 1 ]; then
+>         apt-get update -qq && apt-get install -y -qq git cmake build-essential ccache curl > /dev/null
+>     fi
+>     ui_log=$(mktemp)
+>     trap "rm -f \"\$ui_log\"" EXIT
+5,7c10,12
+<     [ -d /work/src/.git ] || git clone -q https://github.com/ggml-org/llama.cpp /work/src
+<     cd /work/src
+<     git config --global --add safe.directory /work/src
+---
+>     [ -d "$WORK/src/.git" ] || git clone -q https://github.com/ggml-org/llama.cpp "$WORK/src"
+>     cd "$WORK/src"
+>     [ "${NATIVE:-0}" = 1 ] || git config --global --add safe.directory "$WORK/src"
+63c68
+<         git apply -v "/work/$p"
+---
+>         git apply -v "$WORK/$p"
+73a79
+>         $([ "${NATIVE:-0}" = 1 ] && echo -DLLAMA_OPENSSL=OFF) \
+92c98
+<         | { grep "^-- UI:" || true; } | tee /tmp/ui.log
+---
+>         | { grep "^-- UI:" || true; } | tee "$ui_log"
+94,95c100,101
+<     ui_took=$(sed -n "s/.*, resolved: \(.*\))$/\1/p" /tmp/ui.log | tail -n 1)
+<     if [ ! -s /tmp/ui.log ]; then
+---
+>     ui_took=$(sed -n "s/.*, resolved: \(.*\))$/\1/p" "$ui_log" | tail -n 1)
+>     if [ ! -s "$ui_log" ]; then
+103c109
+<     out=/work/$name
+---
+>     out=$WORK/$name
+122,123c128,129
+<     tar czf "/work/$name.tar.gz" -C /work "$name"
+<     chown -R "$HOST_UID:$HOST_GID" /work
+---
+>     tar czf "$WORK/$name.tar.gz" -C "$WORK" "$name"
+>     [ "${NATIVE:-0}" = 1 ] || chown -R "$HOST_UID:$HOST_GID" "$WORK"

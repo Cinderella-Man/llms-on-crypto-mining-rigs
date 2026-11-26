@@ -1,0 +1,9 @@
+program	build	listing	bytes	cuobjdump error lines
+llama-server	A	sass	1623898264	0
+llama-server	A	ptx	381084885	0
+llama-server	B	sass	1623898264	0
+llama-server	B	ptx	381092773	0
+test-backend-ops	A	sass	1623898264	0
+test-backend-ops	A	ptx	381084885	0
+test-backend-ops	B	sass	1623898264	0
+test-backend-ops	B	ptx	381092773	0

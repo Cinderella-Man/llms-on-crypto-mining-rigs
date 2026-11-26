@@ -15,7 +15,7 @@ deep). Results live in [benchmarks/](benchmarks/) and, for all work since 2026-1
 |---|---|---|---|
 | E0.1 | Read-only rig inventory | done | [scripts/rig_inventory.sh](../scripts/rig_inventory.sh); facts in [mining_rig.md](mining_rig.md) |
 | E0.2 | Network baseline | n/a | Copies over SSH reach 35–90 MB/s; models move on USB sticks (E0.5), and NFS and RPC are outside the focus |
-| E0.3 | Build factory (no-AVX, sm_61) | done | [scripts/build_llamacpp_docker.sh](../scripts/build_llamacpp_docker.sh), also for the fork's branches; Vulkan: [scripts/build_llamacpp_vulkan_docker.sh](../scripts/build_llamacpp_vulkan_docker.sh) |
+| E0.3 | Build factory (no-AVX, sm_61) | done | [scripts/build_llamacpp_docker.sh](../scripts/build_llamacpp_docker.sh), also for the fork's branches, and without Docker (`NATIVE=1`, [checked against Docker](data/2026-11-26_c1190_native_tarball/README.md)); Vulkan: [scripts/build_llamacpp_vulkan_docker.sh](../scripts/build_llamacpp_vulkan_docker.sh) |
 | E0.4 | Binary parity, workstation vs rig build | n/a | All comparisons after E1.2 run container builds against each other |
 | E0.5 | Model library and transfer methods | done | Library on a separate PC; USB 3 sticks moved by hand or filled over the network ([setup](setup.md#storing-models)) |
 | E0.6 | Load path: storage source × load mode | partial | Load times on 9 cards: 199 s for 25.1 GB, 438 s for 32.5 GB, 568 s for 42.3 GB ([Flint chat](benchmarks/2026-10-23-flint-chat.md)); NFS and load modes untested |
