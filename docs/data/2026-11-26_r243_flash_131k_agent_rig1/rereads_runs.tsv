@@ -1,0 +1,5 @@
+run	arm	requests	continuation_turns	reply_tokens_before	reread_turns	reread_tokens	reread_prompt_s	client_same	client_reserialized	client_differs	replies_untrimmed_reasoning	before_tool_call	in_tool_call	at_boundary	turns_after_non_ascii_reply	rereads_after_non_ascii_reply	rereads_per_1000_reply_tokens
+ca	v4r	73	61	21623	1	63	3.3	1	0	0	1	1	0	0	21	0	0.046
+l131a	v4r	64	52	21455	0	0	0.0	0	0	0	0	0	0	0	23	0	0.0
+cb	v4r	64	52	22304	0	0	0.0	0	0	0	0	0	0	0	21	0	0.0
+l131b	v4r	86	73	31209	0	0	0.0	0	0	0	0	0	0	0	32	0	0.0

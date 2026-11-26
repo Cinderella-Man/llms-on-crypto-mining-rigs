@@ -1,0 +1,5 @@
+run	requests	tokens_sampled	while_grammar_applied	requests_without_grammar	rejected
+ca	73	24511	24511	0	1
+l131a	64	24321	24321	0	0
+cb	64	25320	25320	0	0
+l131b	85	34455	34455	0	0

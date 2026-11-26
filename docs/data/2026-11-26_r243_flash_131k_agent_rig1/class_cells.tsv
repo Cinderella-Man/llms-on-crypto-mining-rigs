@@ -1,0 +1,9 @@
+measure	arm_runs	base_runs	arm_count	base_count	arm_mean	base_mean	arm_spread	base_spread	diff	diff_pct	class
+ms a decode step, middle context 0 to 4,102 cells	113.47 113.95	114.36 113.98	18 19	18 21	113.710	114.170	0.48	0.38	-0.460	-0.4 %	negligible
+ms a decode step, middle context 4,102 to 6,153 cells	112.80 113.40	112.95 112.93	30 26	33 26	113.100	112.940	0.60	0.02	+0.160	+0.1 %	negligible
+ms a decode step, middle context 6,153 to 8,204 cells	113.95 112.67	112.14 112.79	12 10	13 10	113.310	112.465	1.28	0.65	+0.845	+0.8 %	negligible
+ms a decode step, middle context 8,204 to 16,000 cells	113.66 115.27	114.95 113.98	4 18	9 7	114.465	114.465	1.61	0.97	+0.000	+0.0 %	negligible
+ms a decode step, all requests	113.30 115.04	112.91 113.44	64 85	73 64	114.170	113.175	1.74	0.53	+0.995	+0.9 %	negligible
+first token, first turns, median s	5.25 5.31	5.07 5.08	12 12	12 12	5.278	5.078	0.07	0.01	+0.201	+4.0 %	loss
+first token, later turns, median s	2.30 2.18	2.20 2.20	52 74	61 52	2.240	2.200	0.12	0.00	+0.040	+1.8 %	negligible
+first token, later turns, p90 s	8.29 8.29	8.41 9.06	52 74	61 52	8.290	8.735	0.00	0.65	-0.445	-5.1 %	negligible

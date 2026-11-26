@@ -1,0 +1,5 @@
+run	turns	longest_s	task	turn	prompt_n	cache_n	prompt_ms	later_turns_median_s	later_turns_p90_s
+ca	73	27.45	bugfix-python-affine-cipher	1	2780	0	27407	2.20	8.41
+l131a	64	19.54	bugfix-python-affine-cipher	1	2780	0	19480	2.30	8.29
+cb	64	28.18	bugfix-python-affine-cipher	1	2780	0	28128	2.20	9.06
+l131b	86	19.57	bugfix-python-affine-cipher	1	2780	0	19461	2.18	8.29

@@ -1,0 +1,6 @@
+group	requests	new_tokens	arm_runs_ms	base_runs_ms	arm_mean	base_mean	arm_spread	base_spread	diff	diff_pct	class
+empty cache (the first request after loading)	1	2780	19480.4 19460.9	27406.9 28128.4	19470.7	27767.7	19.5	721.5	-8297.0	-29.9 %	gain
+under 600 new tokens	4	1851	14002.5 14019.3	13032.9 12939.2	14010.9	12986.0	16.8	93.7	+1024.9	+7.9 %	loss
+600 to 1,400 new tokens	6	5340	34814.0 33670.9	35541.7 33935.8	34242.4	34738.8	1143.1	1605.9	-496.3	-1.4 %	negligible
+over 1,400 new tokens, on a cached prefix	1	1705	8255.0 8296.2	8324.1 8262.7	8275.6	8293.4	41.2	61.4	-17.8	-0.2 %	negligible
+every matched request but the first	11	8896	57071.5 55986.4	56898.7 55137.7	56528.9	56018.2	1085.1	1761.0	+510.8	+0.9 %	negligible

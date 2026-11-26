@@ -1,0 +1,57 @@
+run	tasks	bucket	turns	new_tokens	prompt_s	ms_a_token
+ca	all	under 600	52	10289	102.33	9.945
+ca	all	600-1,400	11	10086	67.16	6.659
+ca	all	1,401-1,999	4	6586	32.70	4.966
+ca	all	2,000+	6	14628	77.05	5.267
+ca	all	over 1,400	10	21214	109.76	5.174
+ca	all	over 1,400 on a cached prefix	9	18434	82.35	4.467
+ca	all	all turns	73	41589	279.25	6.714
+ca	without capped	under 600	49	9869	97.35	9.864
+ca	without capped	600-1,400	10	9190	60.77	6.613
+ca	without capped	1,401-1,999	4	6586	32.70	4.966
+ca	without capped	2,000+	5	11260	63.44	5.634
+ca	without capped	over 1,400	9	17846	96.15	5.388
+ca	without capped	over 1,400 on a cached prefix	8	15066	68.74	4.563
+ca	without capped	all turns	68	36905	254.27	6.890
+l131a	all	under 600	44	8931	89.45	10.016
+l131a	all	600-1,400	11	10049	65.69	6.537
+l131a	all	1,401-1,999	4	6463	32.21	4.984
+l131a	all	2,000+	5	12639	60.75	4.807
+l131a	all	over 1,400	9	19102	92.96	4.867
+l131a	all	over 1,400 on a cached prefix	8	16322	73.48	4.502
+l131a	all	all turns	64	38082	248.11	6.515
+l131a	without capped	under 600	41	8516	84.48	9.920
+l131a	without capped	600-1,400	10	9153	59.83	6.537
+l131a	without capped	1,401-1,999	4	6463	32.21	4.984
+l131a	without capped	2,000+	4	9271	47.29	5.100
+l131a	without capped	over 1,400	8	15734	79.49	5.052
+l131a	without capped	over 1,400 on a cached prefix	7	12954	60.01	4.633
+l131a	without capped	all turns	59	33403	223.80	6.700
+cb	all	under 600	44	8732	85.99	9.848
+cb	all	600-1,400	11	10259	66.64	6.496
+cb	all	1,401-1,999	3	4852	24.27	5.002
+cb	all	2,000+	6	14688	78.52	5.346
+cb	all	over 1,400	9	19540	102.79	5.260
+cb	all	over 1,400 on a cached prefix	8	16760	74.66	4.455
+cb	all	all turns	64	38531	255.42	6.629
+cb	without capped	under 600	41	8313	80.99	9.742
+cb	without capped	600-1,400	10	9363	61.14	6.530
+cb	without capped	1,401-1,999	3	4852	24.27	5.002
+cb	without capped	2,000+	5	11320	64.92	5.735
+cb	without capped	over 1,400	8	16172	89.19	5.515
+cb	without capped	over 1,400 on a cached prefix	7	13392	61.06	4.559
+cb	without capped	all turns	59	33848	231.32	6.834
+l131b	all	under 600	58	11498	123.28	10.722
+l131b	all	600-1,400	16	15427	98.92	6.412
+l131b	all	1,401-1,999	4	6288	32.79	5.215
+l131b	all	2,000+	7	16608	80.35	4.838
+l131b	all	over 1,400	11	22896	113.14	4.942
+l131b	all	over 1,400 on a cached prefix	9	17792	82.22	4.621
+l131b	all	all turns	85	49821	335.35	6.731
+l131b	without capped	under 600	37	7001	75.36	10.764
+l131b	without capped	600-1,400	9	9040	57.37	6.347
+l131b	without capped	1,401-1,999	4	6288	32.79	5.215
+l131b	without capped	2,000+	6	13861	68.17	4.918
+l131b	without capped	over 1,400	10	20149	100.96	5.011
+l131b	without capped	over 1,400 on a cached prefix	8	15045	70.03	4.655
+l131b	without capped	all turns	56	36190	233.70	6.457

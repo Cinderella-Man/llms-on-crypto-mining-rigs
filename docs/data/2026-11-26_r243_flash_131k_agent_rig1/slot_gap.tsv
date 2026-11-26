@@ -1,0 +1,5 @@
+log	requests	median_ms	max_ms	sum_ms
+server-ca.log	73	0.72	1.78	66.0
+server-l131a.log	64	0.69	1.43	50.5
+server-cb.log	64	0.70	1.75	49.7
+server-l131b.log	86	0.70	4.89	108.1

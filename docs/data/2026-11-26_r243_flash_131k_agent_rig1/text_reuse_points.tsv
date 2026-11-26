@@ -1,0 +1,35 @@
+run	task	turn	differ_at	kept	prompt_before	prompt_after	cache_n	prompt_n	prompt_ms	prev_prompt_end	prev_reply_tokens	into_reply	grammar_from	where	client
+ca	bugfix-python-affine-cipher	3	6115	1587	7986	7987	7702	285	2311.57	4189	3514	1926	0	in the tool call	same
+ca	bugfix-python-affine-cipher	4	6115	2239	8385	8386	8354	32	1084.051	7987	368	-1872		before the previous reply	same, arguments re-serialized
+ca	bugfix-python-affine-cipher	5	6115	2448	8620	8621	8563	58	1449.17	8386	178	-2271		before the previous reply	same
+ca	bugfix-python-affine-cipher	6	6115	2539	9028	9029	8617	412	3331.227	8621	63	-2506		before the previous reply	same
+ca	bugfix-python-scale-generator	3	4939	240	5498	5498	5179	319	2383.762	4311	869	628	0	in the tool call	same
+ca	bugfix-python-scale-generator	4	4939	751	5721	5721	5690	31	1009.729	5498	193	-559		before the previous reply	same, arguments re-serialized
+ca	bugfix-python-scale-generator	5	4939	958	5928	5928	5897	31	995.196	5721	177	-782		before the previous reply	same, arguments re-serialized
+ca	bugfix-python-scale-generator	6	4939	1069	6417	6417	6008	409	3297.706	5928	81	-989		before the previous reply	same
+ca	bugfix-javascript-variable-length-quantity	5	6155	707	7050	7063	6862	201	2033.706	5942	921	213	0	in the tool call	same
+ca	bugfix-javascript-variable-length-quantity	6	6155	1422	7604	7617	7577	40	1166.009	7063	514	-908		before the previous reply	same
+ca	bugfix-javascript-variable-length-quantity	7	6155	1581	7756	7769	7736	33	1062.624	7617	120	-1462		before the previous reply	same, arguments re-serialized
+ca	bugfix-javascript-variable-length-quantity	8	6155	1686	7919	7932	7841	91	1651.883	7769	73	-1614		before the previous reply	same
+ca	bugfix-javascript-variable-length-quantity	9	6155	2176	8675	8688	8331	357	2728.652	7932	400	-1777		before the previous reply	same
+ca	bugfix-javascript-variable-length-quantity	10	6155	2627	9121	9134	8782	352	2735.573	8688	94	-2533		before the previous reply	same
+ca	bugfix-javascript-variable-length-quantity	11	6155	3073	9590	9603	9228	375	3111.983	9134	95	-2979		before the previous reply	same
+l131a	bugfix-python-phone-number	2	2703	44	3239	3240	2747	493	3663.887	2679	69	24	0	in the tool call	same
+l131a	bugfix-python-phone-number	3	2703	1337	4667	4668	4040	628	4363.578	3240	800	-537		before the previous reply	same
+l131a	bugfix-python-phone-number	4	2703	2190	4922	4924	4893	31	1033.115	4668	226	-1965		before the previous reply	same, arguments re-serialized
+l131a	bugfix-python-phone-number	5	2703	2321	5074	5076	5024	52	1298.74	4924	101	-2221		before the previous reply	same
+l131b	bugfix-python-variable-length-quantity	6	9775	68	10040	10040	9843	197	2034.603	9655	189	120	0	in the tool call	same
+l131b	bugfix-javascript-complex-numbers	17	14233	278	15500	15501	14511	990	6478.535	13841	671	392	0	in the tool call	same
+l131b	bugfix-javascript-complex-numbers	18	14233	1598	16351	16352	15831	521	3994.952	15501	331	-1268		before the previous reply	same
+l131b	bugfix-javascript-complex-numbers	19	14233	2723	17695	17696	16956	740	5132.506	16352	605	-2119		before the previous reply	same
+l131b	bugfix-javascript-complex-numbers	20	14233	6811	21475	21476	21044	432	3632.846	17696	3348	-3463		before the previous reply	same
+l131b	bugfix-javascript-complex-numbers	21	14233	8507	22912	22913	22740	173	2002.078	21476	1265	-7243		before the previous reply	same
+l131b	bugfix-javascript-complex-numbers	22	14233	9014	23415	23416	23247	169	1975.698	22913	335	-8680		before the previous reply	same
+l131b	bugfix-javascript-complex-numbers	23	14233	9500	24844	24845	23733	1112	7309.657	23416	317	-9183		before the previous reply	same
+l131b	bugfix-javascript-complex-numbers	24	14233	10755	25351	25352	24988	364	3281.212	24845	143	-10612		before the previous reply	same
+l131b	bugfix-javascript-complex-numbers	25	14233	11494	25766	25767	25727	40	1244.642	25352	376	-11119		before the previous reply	same
+l131b	bugfix-javascript-complex-numbers	26	14233	11989	26536	26537	26222	315	3128.461	25767	456	-11534		before the previous reply	same
+l131b	bugfix-javascript-complex-numbers	27	14233	13070	27449	27450	27303	147	1898.768	26537	767	-12304		before the previous reply	same
+l131b	bugfix-javascript-complex-numbers	28	14233	13480	27788	27789	27713	76	1702.369	27450	264	-13217		before the previous reply	same
+l131b	bugfix-javascript-complex-numbers	29	14233	14011	28316	28317	28244	73	1704.474	27789	456	-13556		before the previous reply	same
+l131b	bugfix-javascript-complex-numbers	30	14233	14823	29209	29210				28317	740	-14084		before the previous reply	same

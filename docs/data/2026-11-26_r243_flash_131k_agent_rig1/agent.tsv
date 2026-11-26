@@ -1,0 +1,6 @@
+arm	passed	turns	prompt_tok_s	gen_tok_s	ttft_median_s	ttft_p90_s	ttft_turn1_median_s	acceptance	tokens_per_step	minutes_all	minutes_per_task_median	equal_work_min_per_task	equal_work_vs_ref
+r90v3	11/12	66	65.5	20.66	6.52	16.17	13.54	0.696	3.09	37.0	2.47	3.08	+0.0 %
+ca	12/12	73	148.9	29.07	2.43	8.41	5.07	0.758	3.27	19.2	1.28	2.31	-25.0 %
+l131a	12/12	64	153.5	29.05	2.56	8.29	5.25	0.761	3.28	18.6	1.24	2.31	-25.0 %
+cb	12/12	64	150.9	28.81	2.37	9.06	5.08	0.754	3.26	19.3	0.96	2.32	-24.7 %
+l131b	11/12	86	148.6	27.02	3.08	8.33	5.31	0.701	3.10	28.2	1.50	2.38	-22.7 %

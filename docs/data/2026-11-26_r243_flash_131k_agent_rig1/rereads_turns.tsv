@@ -1,0 +1,2 @@
+run	task	turn	reply_tokens	cached	client	reasoning_trimmed	non_ascii_chars	n_tool_calls	lcp_into_reply	lcp_err	grammar_from	where
+ca	bugfix-python-affine-cipher	6	63	8617	same	no	0	1	-2507	4.3	0	before the tool call
