@@ -1,0 +1,85 @@
+# The started commands of the six loads (from each running process's /proc command line and environment), md5:
+0df8d1d99544572f053f5aea587ae7f1  l131a/started_command.txt
+0df8d1d99544572f053f5aea587ae7f1  l131b/started_command.txt
+6f2c7e6c5d6569e2bf2533f5cc14142f  p512a/started_command.txt
+6f2c7e6c5d6569e2bf2533f5cc14142f  p512b/started_command.txt
+01143875ba43579d5a4afff74986468e  u256a/started_command.txt
+01143875ba43579d5a4afff74986468e  u256b/started_command.txt
+# dry lines, md5:
+0df8d1d99544572f053f5aea587ae7f1  l131a/dry_line.txt
+0df8d1d99544572f053f5aea587ae7f1  l131b/dry_line.txt
+6f2c7e6c5d6569e2bf2533f5cc14142f  p512a/dry_line.txt
+6f2c7e6c5d6569e2bf2533f5cc14142f  p512b/dry_line.txt
+01143875ba43579d5a4afff74986468e  u256a/dry_line.txt
+01143875ba43579d5a4afff74986468e  u256b/dry_line.txt
+
+== p512a (p512)
+env: equal to PRESET_ENV, 40 switches
+args (p512): PRESET_ARGS plus --metrics --no-webui -md <draft> (30 flags)
+  R243 check:
+  env: equal to PRESET_ENV, 40 switches
+  args (preset): PRESET_ARGS plus --metrics --no-webui -md <draft> (30 flags)
+== u256a (u256)
+env: equal to PRESET_ENV, 40 switches
+args (u256): PRESET_ARGS with -ub 256 plus --metrics --no-webui -md <draft> (30 flags)
+== l131a (l131)
+env: equal to PRESET_ENV, 40 switches
+args (l131): PRESET_ARGS with -c 131072 -ub 256 plus --metrics --no-webui -md <draft> (30 flags)
+  R243 check:
+  env: equal to PRESET_ENV, 40 switches
+  args (l131): PRESET_ARGS with -c 131072 -ub 256 plus --metrics --no-webui -md <draft> (30 flags)
+== p512b (p512)
+env: equal to PRESET_ENV, 40 switches
+args (p512): PRESET_ARGS plus --metrics --no-webui -md <draft> (30 flags)
+  R243 check:
+  env: equal to PRESET_ENV, 40 switches
+  args (preset): PRESET_ARGS plus --metrics --no-webui -md <draft> (30 flags)
+== u256b (u256)
+env: equal to PRESET_ENV, 40 switches
+args (u256): PRESET_ARGS with -ub 256 plus --metrics --no-webui -md <draft> (30 flags)
+== l131b (l131)
+env: equal to PRESET_ENV, 40 switches
+args (l131): PRESET_ARGS with -c 131072 -ub 256 plus --metrics --no-webui -md <draft> (30 flags)
+  R243 check:
+  env: equal to PRESET_ENV, 40 switches
+  args (l131): PRESET_ARGS with -c 131072 -ub 256 plus --metrics --no-webui -md <draft> (30 flags)
+
+# Before the runs, on the dry lines:
+== p512a: R244 preset_check (p512)
+env: equal to PRESET_ENV, 40 switches
+args (p512): PRESET_ARGS plus --metrics --no-webui -md <draft> (30 flags)
+== u256a: R244 preset_check (u256)
+env: equal to PRESET_ENV, 40 switches
+args (u256): PRESET_ARGS with -ub 256 plus --metrics --no-webui -md <draft> (30 flags)
+== l131a: R244 preset_check (l131)
+env: equal to PRESET_ENV, 40 switches
+args (l131): PRESET_ARGS with -c 131072 -ub 256 plus --metrics --no-webui -md <draft> (30 flags)
+== p512a: R243 preset_check (preset)
+env: equal to PRESET_ENV, 40 switches
+args (preset): PRESET_ARGS plus --metrics --no-webui -md <draft> (30 flags)
+== l131a: R243 preset_check (l131)
+env: equal to PRESET_ENV, 40 switches
+args (l131): PRESET_ARGS with -c 131072 -ub 256 plus --metrics --no-webui -md <draft> (30 flags)
+== u256a against R243's check as the preset (must FAIL on -ub)
+---
+> -ub 256
+FAIL: args differ (< wanted, > line)
+== p512a dry line against R243's started ca command, word by word
+95c95
+< short=1400:64
+---
+> short=1400:64,cuts=1
+== u256a against p512a
+71c71
+< 512
+---
+> 256
+== l131a against p512a
+47c47
+< 65536
+---
+> 131072
+71c71
+< 512
+---
+> 256
