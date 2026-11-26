@@ -1,0 +1,14 @@
+metric	depth	arm	control	loads	control_loads	spread	delta	percent	class
+generation	49152	draft	nodraft	28.63 27.60	19.20 19.17	1.03	8.92	46.5	gain
+generation	65536	draft	nodraft	30.85 30.84	18.98 18.95	0.03	11.88	62.7	gain
+generation	120000	draft	nodraft	23.98 23.99	17.88 17.84	0.04	6.12	34.3	gain
+generation_all	all	draft	nodraft	27.51 27.19	18.67 18.63	0.32	8.70	46.6	gain
+generation_pass1	49152	draft	nodraft	28.07 26.19	19.01 18.98	1.89	8.13	42.8	gain
+generation_pass1	65536	draft	nodraft	30.58 30.59	18.83 18.81	0.03	11.77	62.5	gain
+generation_pass1	120000	draft	nodraft	23.53 23.56	17.61 17.53	0.08	5.98	34.0	gain
+generation_pass2	49152	draft	nodraft	29.20 29.16	19.39 19.37	0.04	9.80	50.6	gain
+generation_pass2	65536	draft	nodraft	31.12 31.10	19.13 19.09	0.03	12.00	62.8	gain
+generation_pass2	120000	draft	nodraft	24.45 24.43	18.17 18.16	0.01	6.28	34.6	gain
+prompt	49152	draft	nodraft	187.27 187.05	232.94 233.00	0.22	-45.81	-19.7	loss
+prompt	65536	draft	nodraft	128.80 129.11	154.15 154.31	0.31	-25.27	-16.4	loss
+prompt	120000	draft	nodraft	94.46 94.29	118.09 118.03	0.17	-23.68	-20.1	loss

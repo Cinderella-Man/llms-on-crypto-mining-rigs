@@ -1,0 +1,4 @@
+depth	read	cached	tok_s	plain_tok_s	spread	delta	percent	class	ms_prompt_token	plain_ms_prompt_token	draft_adds_ms	share_of_prompt_time_pct
+49152	49028	60	187.27 187.05	232.94 233.00	0.22	-45.81	-19.7	loss	5.343	4.292	1.051	19.7
+65536	16644	48828	128.80 129.11	154.15 154.31	0.31	-25.27	-16.4	loss	7.755	6.484	1.271	16.4
+120000	54724	65212	94.46 94.29	118.09 118.03	0.17	-23.68	-20.1	loss	10.596	8.470	2.126	20.1

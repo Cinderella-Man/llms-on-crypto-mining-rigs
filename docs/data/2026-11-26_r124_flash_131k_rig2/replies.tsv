@@ -1,0 +1,61 @@
+depth	kind	pass	load	ids_md5	text_md5	first_diff_vs_control	draft
+49152	decode	1	draft1	55e7e0b1	c7edcaee	18 nodraft1 ' file' -> ' test'	178/231
+49152	decode	1	nodraft1	4b4952a5	7c325c12		0/0
+49152	decode	1	nodraft2	4b4952a5	7c325c12		0/0
+49152	decode	1	draft2	55e7e0b1	c7edcaee	18 nodraft1 ' file' -> ' test'	178/231
+# 49152 decode 1: groups 55e7e0b1: draft1 draft2; 4b4952a5: nodraft1 nodraft2
+49152	decode	2	draft1	55e7e0b1	c7edcaee	18 nodraft1 ' file' -> ' test'	178/231
+49152	decode	2	nodraft1	4b4952a5	7c325c12		0/0
+49152	decode	2	nodraft2	4b4952a5	7c325c12		0/0
+49152	decode	2	draft2	55e7e0b1	c7edcaee	18 nodraft1 ' file' -> ' test'	178/231
+# 49152 decode 2: groups 55e7e0b1: draft1 draft2; 4b4952a5: nodraft1 nodraft2
+49152	prime	0	draft1	706c1647	ab114d32		0/0
+49152	prime	0	nodraft1	706c1647	ab114d32		0/0
+49152	prime	0	nodraft2	706c1647	ab114d32		0/0
+49152	prime	0	draft2	706c1647	ab114d32		0/0
+# 49152 prime 0: groups 706c1647: draft1 nodraft1 nodraft2 draft2
+49152	sample	s	draft1	6235b799	e9c83da7	1 nodraft1 ' tail' -> ' output'	180/222
+49152	sample	s	nodraft1	5dc19fd3	5d2ce71e		0/0
+49152	sample	s	nodraft2	5dc19fd3	5d2ce71e		0/0
+49152	sample	s	draft2	6235b799	e9c83da7	1 nodraft1 ' tail' -> ' output'	180/222
+# 49152 sample s: groups 6235b799: draft1 draft2; 5dc19fd3: nodraft1 nodraft2
+65536	decode	1	draft1	c5b3a727	b2c809e9	15 nodraft1 ' with' -> '?'	185/210
+65536	decode	1	nodraft1	37590c74	f28d39f2		0/0
+65536	decode	1	nodraft2	37590c74	f28d39f2		0/0
+65536	decode	1	draft2	c5b3a727	b2c809e9	15 nodraft1 ' with' -> '?'	185/210
+# 65536 decode 1: groups c5b3a727: draft1 draft2; 37590c74: nodraft1 nodraft2
+65536	decode	2	draft1	c5b3a727	b2c809e9	15 nodraft1 ' with' -> '?'	185/210
+65536	decode	2	nodraft1	37590c74	f28d39f2		0/0
+65536	decode	2	nodraft2	37590c74	f28d39f2		0/0
+65536	decode	2	draft2	c5b3a727	b2c809e9	15 nodraft1 ' with' -> '?'	185/210
+# 65536 decode 2: groups c5b3a727: draft1 draft2; 37590c74: nodraft1 nodraft2
+65536	prime	0	draft1	370dbfa2	5cbfa74e		0/0
+65536	prime	0	nodraft1	370dbfa2	5cbfa74e		0/0
+65536	prime	0	nodraft2	370dbfa2	5cbfa74e		0/0
+65536	prime	0	draft2	370dbfa2	5cbfa74e		0/0
+# 65536 prime 0: groups 370dbfa2: draft1 nodraft1 nodraft2 draft2
+65536	sample	s	draft1	f3d79b0a	017ddb14	1 nodraft1 ' cat' -> ' file'	174/240
+65536	sample	s	nodraft1	7778e6fb	e6fa5997		0/0
+65536	sample	s	nodraft2	7778e6fb	e6fa5997		0/0
+65536	sample	s	draft2	f3d79b0a	017ddb14	1 nodraft1 ' cat' -> ' file'	174/240
+# 65536 sample s: groups f3d79b0a: draft1 draft2; 7778e6fb: nodraft1 nodraft2
+120000	decode	1	draft1	a08411fb	fe9c3424	3 nodraft1 ' is' -> ' output'	172/249
+120000	decode	1	nodraft1	619e14b1	56124f02		0/0
+120000	decode	1	nodraft2	619e14b1	56124f02		0/0
+120000	decode	1	draft2	a08411fb	fe9c3424	3 nodraft1 ' is' -> ' output'	172/249
+# 120000 decode 1: groups a08411fb: draft1 draft2; 619e14b1: nodraft1 nodraft2
+120000	decode	2	draft1	a08411fb	fe9c3424	3 nodraft1 ' is' -> ' output'	173/246
+120000	decode	2	nodraft1	619e14b1	56124f02		0/0
+120000	decode	2	nodraft2	619e14b1	56124f02		0/0
+120000	decode	2	draft2	a08411fb	fe9c3424	3 nodraft1 ' is' -> ' output'	173/246
+# 120000 decode 2: groups a08411fb: draft1 draft2; 619e14b1: nodraft1 nodraft2
+120000	prime	0	draft1	f8c90bf4	7ef52ede		0/0
+120000	prime	0	nodraft1	f8c90bf4	7ef52ede		0/0
+120000	prime	0	nodraft2	f8c90bf4	7ef52ede		0/0
+120000	prime	0	draft2	f8c90bf4	7ef52ede		0/0
+# 120000 prime 0: groups f8c90bf4: draft1 nodraft1 nodraft2 draft2
+120000	sample	s	draft1	08ae8c35	a5528a68	1 nodraft1 ' read' -> ' output'	187/203
+120000	sample	s	nodraft1	313cf33f	1005b455		0/0
+120000	sample	s	nodraft2	313cf33f	1005b455		0/0
+120000	sample	s	draft2	08ae8c35	a5528a68	1 nodraft1 ' read' -> ' output'	187/203
+# 120000 sample s: groups 08ae8c35: draft1 draft2; 313cf33f: nodraft1 nodraft2

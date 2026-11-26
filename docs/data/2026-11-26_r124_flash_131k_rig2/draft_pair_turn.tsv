@@ -1,0 +1,10 @@
+depth	draft_adds_ms_prompt_token	yield	tokens_step	saved_ms_generated_token	prompt_tokens_per_generated_token
+49152	1.051	this run's loads	3.282	15.737	14.98
+49152	1.051	this run's sampler pass (one draw a depth) (est.)	3.370	16.700	15.90
+49152	1.051	the preset's sampler off the rig (Q1172, Q1251) (est.)	2.876	10.526	10.02
+65536	1.271	this run's loads	3.606	20.443	16.09
+65536	1.271	this run's sampler pass (one draw a depth) (est.)	3.120	15.354	12.08
+65536	1.271	the preset's sampler off the rig (Q1172, Q1251) (est.)	2.930	12.904	10.15
+120000	2.126	this run's loads	3.048	14.452	6.80
+120000	2.126	this run's sampler pass (one draw a depth) (est.)	3.710	22.035	10.37
+120000	2.126	the preset's sampler off the rig (Q1172, Q1251) (est.)	2.690	8.805	4.14
