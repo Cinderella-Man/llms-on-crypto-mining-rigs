@@ -1,0 +1,106 @@
+depth	kind	pass	load	ids_md5	text_md5	first_diff_vs_control	draft
+0	decode	1	ca	2aadc9cf	b5945ac8		147/321
+0	decode	1	r375a	2aadc9cf	b5945ac8		147/321
+0	decode	1	r25a	2aadc9cf	b5945ac8		147/321
+0	decode	1	r25b	2aadc9cf	b5945ac8		147/321
+0	decode	1	r375b	2aadc9cf	b5945ac8		147/321
+0	decode	1	cb	2aadc9cf	b5945ac8		147/321
+# 0 decode 1: groups 2aadc9cf: ca r375a r25a r25b r375b cb
+0	decode	2	ca	2aadc9cf	b5945ac8		148/318
+0	decode	2	r375a	2aadc9cf	b5945ac8		148/318
+0	decode	2	r25a	2aadc9cf	b5945ac8		148/318
+0	decode	2	r25b	2aadc9cf	b5945ac8		148/318
+0	decode	2	r375b	2aadc9cf	b5945ac8		148/318
+0	decode	2	cb	2aadc9cf	b5945ac8		148/318
+# 0 decode 2: groups 2aadc9cf: ca r375a r25a r25b r375b cb
+0	sample	s	ca	1f333fb2	56f5da22		159/285
+0	sample	s	r375a	1f333fb2	56f5da22		159/285
+0	sample	s	r25a	2ca92e8c	14310c5b	20 ca ' check' -> ' in'	154/302
+0	sample	s	r25b	2ca92e8c	14310c5b	20 ca ' check' -> ' in'	154/302
+0	sample	s	r375b	1f333fb2	56f5da22		159/285
+0	sample	s	cb	1f333fb2	56f5da22		159/285
+# 0 sample s: groups 1f333fb2: ca r375a r375b cb; 2ca92e8c: r25a r25b
+2048	decode	1	ca	55d8319e	16baa79c		180/224
+2048	decode	1	r375a	55d8319e	16baa79c		180/224
+2048	decode	1	r25a	55d8319e	16baa79c		181/221
+2048	decode	1	r25b	55d8319e	16baa79c		181/221
+2048	decode	1	r375b	55d8319e	16baa79c		180/224
+2048	decode	1	cb	55d8319e	16baa79c		180/224
+# 2048 decode 1: groups 55d8319e: ca r375a r25a r25b r375b cb
+2048	decode	2	ca	55d8319e	16baa79c		181/221
+2048	decode	2	r375a	55d8319e	16baa79c		181/221
+2048	decode	2	r25a	55d8319e	16baa79c		183/215
+2048	decode	2	r25b	55d8319e	16baa79c		183/215
+2048	decode	2	r375b	55d8319e	16baa79c		181/221
+2048	decode	2	cb	55d8319e	16baa79c		181/221
+# 2048 decode 2: groups 55d8319e: ca r375a r25a r25b r375b cb
+2048	prime	0	ca	fd7d40c5	d716d763		0/0
+2048	prime	0	r375a	fd7d40c5	d716d763		0/0
+2048	prime	0	r25a	fd7d40c5	d716d763		0/0
+2048	prime	0	r25b	fd7d40c5	d716d763		0/0
+2048	prime	0	r375b	fd7d40c5	d716d763		0/0
+2048	prime	0	cb	fd7d40c5	d716d763		0/0
+# 2048 prime 0: groups fd7d40c5: ca r375a r25a r25b r375b cb
+2048	sample	s	ca	fe1b810d	f35d75f3		172/247
+2048	sample	s	r375a	fe1b810d	f35d75f3		172/247
+2048	sample	s	r25a	560c20d7	ff0490c4	5 ca ' gar' -> ' truncated'	178/231
+2048	sample	s	r25b	560c20d7	ff0490c4	5 ca ' gar' -> ' truncated'	178/231
+2048	sample	s	r375b	fe1b810d	f35d75f3		172/247
+2048	sample	s	cb	fe1b810d	f35d75f3		172/247
+# 2048 sample s: groups fe1b810d: ca r375a r375b cb; 560c20d7: r25a r25b
+3072	decode	1	ca	813747ba	e165e5ad		183/213
+3072	decode	1	r375a	6d9d79fe	7c086a43	24 ca '.' -> ' with'	183/216
+3072	decode	1	r25a	813747ba	e165e5ad		184/210
+3072	decode	1	r25b	813747ba	e165e5ad		184/210
+3072	decode	1	r375b	6d9d79fe	7c086a43	24 ca '.' -> ' with'	183/216
+3072	decode	1	cb	813747ba	e165e5ad		183/213
+# 3072 decode 1: groups 813747ba: ca r25a r25b cb; 6d9d79fe: r375a r375b
+3072	decode	2	ca	813747ba	e165e5ad		183/213
+3072	decode	2	r375a	6d9d79fe	7c086a43	24 ca '.' -> ' with'	183/216
+3072	decode	2	r25a	813747ba	e165e5ad		184/210
+3072	decode	2	r25b	813747ba	e165e5ad		184/210
+3072	decode	2	r375b	6d9d79fe	7c086a43	24 ca '.' -> ' with'	183/216
+3072	decode	2	cb	813747ba	e165e5ad		183/213
+# 3072 decode 2: groups 813747ba: ca r25a r25b cb; 6d9d79fe: r375a r375b
+3072	prime	0	ca	f5f66143	ce4c19b8		0/0
+3072	prime	0	r375a	f5f66143	ce4c19b8		0/0
+3072	prime	0	r25a	f5f66143	ce4c19b8		0/0
+3072	prime	0	r25b	f5f66143	ce4c19b8		0/0
+3072	prime	0	r375b	f5f66143	ce4c19b8		0/0
+3072	prime	0	cb	f5f66143	ce4c19b8		0/0
+# 3072 prime 0: groups f5f66143: ca r375a r25a r25b r375b cb
+3072	sample	s	ca	45252774	afb29a7e		185/209
+3072	sample	s	r375a	d8162f53	3f802503	50 ca '=read' -> '=b'	187/201
+3072	sample	s	r25a	346d71a3	d0ef0cae	231 ca 's' -> 'print'	185/207
+3072	sample	s	r25b	346d71a3	d0ef0cae	231 ca 's' -> 'print'	185/207
+3072	sample	s	r375b	d8162f53	3f802503	50 ca '=read' -> '=b'	187/201
+3072	sample	s	cb	45252774	afb29a7e		185/209
+# 3072 sample s: groups 45252774: ca cb; d8162f53: r375a r375b; 346d71a3: r25a r25b
+4096	decode	1	ca	466aa716	8e3745b3		175/237
+4096	decode	1	r375a	4c4c07a9	8893ea8a	10 ca '?' -> ' ('	180/223
+4096	decode	1	r25a	4c4c07a9	8893ea8a	10 ca '?' -> ' ('	179/226
+4096	decode	1	r25b	4c4c07a9	8893ea8a	10 ca '?' -> ' ('	179/226
+4096	decode	1	r375b	4c4c07a9	8893ea8a	10 ca '?' -> ' ('	180/223
+4096	decode	1	cb	466aa716	8e3745b3		175/237
+# 4096 decode 1: groups 466aa716: ca cb; 4c4c07a9: r375a r25a r25b r375b
+4096	decode	2	ca	466aa716	8e3745b3		175/237
+4096	decode	2	r375a	4c4c07a9	8893ea8a	10 ca '?' -> ' ('	180/223
+4096	decode	2	r25a	4c4c07a9	8893ea8a	10 ca '?' -> ' ('	180/223
+4096	decode	2	r25b	4c4c07a9	8893ea8a	10 ca '?' -> ' ('	180/223
+4096	decode	2	r375b	4c4c07a9	8893ea8a	10 ca '?' -> ' ('	180/223
+4096	decode	2	cb	466aa716	8e3745b3		175/237
+# 4096 decode 2: groups 466aa716: ca cb; 4c4c07a9: r375a r25a r25b r375b
+4096	prime	0	ca	016f8c08	68b329da		0/0
+4096	prime	0	r375a	016f8c08	68b329da		0/0
+4096	prime	0	r25a	016f8c08	68b329da		0/0
+4096	prime	0	r25b	016f8c08	68b329da		0/0
+4096	prime	0	r375b	016f8c08	68b329da		0/0
+4096	prime	0	cb	016f8c08	68b329da		0/0
+# 4096 prime 0: groups 016f8c08: ca r375a r25a r25b r375b cb
+4096	sample	s	ca	94f9fa5d	ca935127		179/226
+4096	sample	s	r375a	b5617b86	e4f0a38a	4 ca ' to' -> ' truncated'	180/223
+4096	sample	s	r25a	7f9cd96c	dc27f474	4 ca ' to' -> ' truncated'	173/243
+4096	sample	s	r25b	7f9cd96c	dc27f474	4 ca ' to' -> ' truncated'	173/243
+4096	sample	s	r375b	b5617b86	e4f0a38a	4 ca ' to' -> ' truncated'	180/223
+4096	sample	s	cb	94f9fa5d	ca935127		179/226
+# 4096 sample s: groups 94f9fa5d: ca cb; b5617b86: r375a r375b; 7f9cd96c: r25a r25b
