@@ -1,0 +1,7 @@
+model	load	prompt	prompt_tokens	tokens	md5	drafted	accepted	gen_tok_s_diag	start
+flashnext	cand	code	27	256	765e21aa9b2ce0bef1e70ee347741f18	242	174	27.42	\n\n<think>\nThe user wants me to write a Python function that 
+flashnext	cand	prose	19	256	8dbac6224928c4de85b178d687e55b08	278	162	26.09	\n\n<think>\nThe user wants two things:\n1. A one-paragraph expl
+flashnext	cand	long	321	256	94edc2905e54816f2e2c76c9b50ef74d	284	159	24.39	\n\n<think>\nThe user is asking me to analyze a concurrency bug
+flashnext	ref	code	27	256	765e21aa9b2ce0bef1e70ee347741f18	242	174	27.81	\n\n<think>\nThe user wants me to write a Python function that 
+flashnext	ref	prose	19	256	8dbac6224928c4de85b178d687e55b08	278	162	26.15	\n\n<think>\nThe user wants two things:\n1. A one-paragraph expl
+flashnext	ref	long	321	256	94edc2905e54816f2e2c76c9b50ef74d	284	159	24.41	\n\n<think>\nThe user is asking me to analyze a concurrency bug

@@ -1,0 +1,3 @@
+model	load	first_log_line_s	load_model_line_s	load_s
+flashnext	cand	0.322	0.326	314
+flashnext	ref	0.344	0.350	312

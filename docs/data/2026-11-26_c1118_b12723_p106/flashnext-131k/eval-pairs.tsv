@@ -1,0 +1,10 @@
+model	card	evals_cand	evals_ref	read_on_both	same_graph_and_groups	not_ready_cand	not_ready_ref	ref_read_for_cand_not_ready	cand_read_for_ref_not_ready
+flashnext	0	276	276	273	273	179:1 181:1 182:1	179:1 181:1 182:1		
+flashnext	1	276	276	273	273	179:1 181:1 182:1	179:1 181:1 182:1		
+flashnext	2	276	276	273	273	179:1 181:1 182:1	179:1 181:1 182:1		
+flashnext	3	276	276	273	273	179:1 181:1 182:1	179:1 181:1 182:1		
+flashnext	4	276	276	273	273	179:1 181:1 182:1	179:1 181:1 182:1		
+flashnext	5	276	276	273	273	179:1 181:1 182:1	179:1 181:1 182:1		
+flashnext	6	276	276	273	273	179:1 181:1 182:1	179:1 181:1 182:1		
+flashnext	7	276	276	273	273	179:1 181:1 182:1	179:1 181:1 182:1		
+flashnext	8	1351	1351	1348	1348	878:2 880:2 881:2	878:2 880:2 881:2		

@@ -1,0 +1,4 @@
+model	prompt	load	vs_ref	common_prefix_chars	ref_chars	chars	common_prefix_words	ref_words	words
+flashnext	code	cand	same	743	743	743	110	110	110
+flashnext	long	cand	same	1059	1059	1059	172	172	172
+flashnext	prose	cand	same	1214	1214	1214	197	197	197

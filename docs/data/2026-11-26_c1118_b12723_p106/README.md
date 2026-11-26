@@ -10,7 +10,8 @@ evaluation launches the same kernels. The fork's kernel tests give the last chec
 each error value, and the planted faults are still caught. The random test models' logits differ from the reference's
 in exactly the 8 models, and by exactly the amounts, the build machine found, all from upstream's new CPU softplus; no
 release file uses it. Two Inkling 2 test models' card results moved by a rounding-sized amount, likely from upstream's
-rebuilt Inkling 2 graph. `pascal-p106-v5` does not move on this check alone: Flash-Next's coding-agent run comes next.
+rebuilt Inkling 2 graph. Flash-Next's line as it stands after the run (131,072 tokens) gives the same on both builds
+too. `pascal-p106-v5` does not move on this check alone: Flash-Next's coding-agent run comes next.
 
 The candidate is [`pascal-p106-v5-cand-b12723`](../2026-11-25_upstream_b12723/README.md) `caf27fdae`:
 `pascal-p106-v5` (`2d839da1d`) with upstream llama.cpp b12723 merged in (49 commits past b12674) and one fork fix for
@@ -35,7 +36,7 @@ with the fault on), the 64-row tile for 64-column prompt products (`GGML_CUDA_MM
 NVML probe skipped where no card reads it. So a difference here was checked against those seven first, then named
 upstream's.
 
-One rig (nine P106-090, the 4 GB host), 18:10–20:41. Every memory and core offset 0, the 75 W power limit, 1,911 /
+One rig (nine P106-090, the 4 GB host), 18:10–20:59. Every memory and core offset 0, the 75 W power limit, 1,911 /
 4,004 MHz maximum clocks, no Xid; no clock, power or offset setting was changed. Nothing is timed. Every switch a release
 line does not set was unset.
 
@@ -83,8 +84,9 @@ an Inkling 2 model.
 
 The last check's [run/cand_load.sh](../2026-11-24_c912_p106_check/run/cand_load.sh), unchanged, all nine cards,
 18:50:53–20:41:10, after part (2), driven from a machine that only runs ssh, with every ssh call under a 30-minute
-timeout ([run/ssh](run/ssh), first on `PATH`). Each file runs on its **v5 release line** as it stands today
-([release/flash-next-v5](../../../release/flash-next-v5/settings.env),
+timeout ([run/ssh](run/ssh), first on `PATH`). Each file runs on its **v5 release line** as it stood when the check
+started, `v5` `c85b8e25` (Flash-Next's later line is [below](#flash-nexts-line-as-it-stands-after-the-run);
+[release/flash-next-v5](../../../release/flash-next-v5/settings.env),
 [flint-v5](../../../release/flint-v5/settings.env), [ornith-v5](../../../release/ornith-v5/settings.env); Flint Pascal
 Q5 GGUF on Flint's line without `-ts`). Per file, both builds in turn (the candidate first): one llama-server under the
 RAM watchdog; 20 s after it answers, each card's memory and the host's MemAvailable; three requests (`/completion`,
@@ -163,6 +165,27 @@ same requests on the same tokens give the same evaluations, so the two builds' l
   (`scripts/prof_summary.py`'s rule), so an evaluation near that line can count on one build only; the pair column
   compares every evaluation regardless of time.
 
+## Flash-Next's line as it stands after the run
+
+Parts (3) and (4) read the presets as they stood on `v5` when the check started (`c85b8e25`). During the run
+Flash-Next's line changed twice: 131,072 tokens with micro-batches of 256 (`-c 131072 -b 4096 -ub 256`, was 65,536 and
+512), and the sparse attention's switch point 0.45 (`GGML_CUDA_FATTN_SPARSE_PASCAL_MIN_RATIO`, was 0.5). Flash-Next is
+the file the project works on first, so its load was repeated on both builds on the new line (`v5` `28bb7d14`), the
+same `cand_load.sh` with `MODELS_RUN=flashnext STEPS=load`, 20:46:56–20:59:31 ([flashnext-131k/](flashnext-131k/)):
+
+| Check | Candidate | Reference |
+|---|---|---|
+| Server replies (coding; prose; long prompt) | 743, 1,214 and 1,059 characters | the same bytes |
+| Drafted and accepted (coding; prose; long) | 242 and 174; 278 and 162; 284 and 159 | the same |
+| MiB per card 20 s after it answered, cards 0–8 | 5,083 5,311 5,019 5,327 4,283 5,035 4,597 5,047 5,931 (45,633) | the same |
+| Load, s; MemAvailable 20 s after and lowest during the load, kB | 314; 847,076 and 318,856 | 312; 846,708 and 335,852 |
+| Evaluations per card (not ready) | 276 on cards 0–7, 1,351 on card 8 (3 on each card, the long prompt's) | the same |
+| (graph, launch groups), every evaluation read on both builds | the same on every card | |
+| Launch groups of one decoded token, cards 0–7 | 311 286 266 288 230 267 249 267 | the same |
+
+The long prompt's reply differs from the old line's (the micro-batch size sets the arithmetic's order); the coding and
+prose replies are the old line's bytes.
+
 ## What the watch list asked for
 
 The [merge's watch list](../2026-11-25_upstream_b12723/watch.md) named two things to see first on a P106.
@@ -205,6 +228,7 @@ against 312, 600 against 596, 437 against 432 and 689 against 687 s.
 | [launch-groups.tsv](launch-groups.tsv) | per file and card: evaluations read on each build, whether the (graph, launch groups) pairs and their counts are the same, the decoded tokens' launch groups on each build |
 | [eval-pairs.tsv](eval-pairs.tsv) | per file and card: evaluations matched by index, those read on both builds and how many of them have the same graph and launch groups, the not-ready evaluations on each build and what the other build read for them |
 | [load-start.tsv](load-start.tsv) | per file and build: the server log's time of its first line and of the model load's start, and the seconds to load |
+| [flashnext-131k/](flashnext-131k/) | the same six load tables (memory, replies, their agreement, launch groups, evaluations matched by index, load start) for Flash-Next on its line after the run |
 | [run/compare_suites.sh](run/compare_suites.sh) | `suite-vs-last.tsv`'s comparison of two suite runs' per-case tables |
 | [run/ssh](run/ssh) | the wrapper that put every ssh call of the load step under a timeout |
 
@@ -240,6 +264,8 @@ PATH=docs/data/2026-11-26_c1118_b12723_p106/run:$PATH RIG=$RIG NEW=$NEW REF=$REF
   LABEL_NEW=cand LABEL_REF=ref PROFILE=1 GREEDY_BUILDS=$NEW \
   GREEDY_EXPECT='flashnext=4384ebc02147be1ee6f38d1ce4a43f21 flintq8=c5b2d8f20654728edfe38c37458b4c5c flintq5=d72ca1b968a8c1eb2b1ebeea22458ff9 ornith=35f987c059c7d2f521404e964995cd2d' \
   timeout <seconds left before the rig's stop> bash docs/data/2026-11-24_c912_p106_check/run/cand_load.sh
+# Flash-Next on its later line: the same command from a checkout of v5 28bb7d14, with MODELS_RUN=flashnext STEPS=load,
+# another OUT, and timeout 1800; its tables made with the same three scripts into flashnext-131k/
 
 # the tables (standard library only)
 D=docs/data/2026-11-26_c1118_b12723_p106; C=docs/data/2026-11-24_c912_p106_check/run

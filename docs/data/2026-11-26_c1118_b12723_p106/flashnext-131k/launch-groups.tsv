@@ -1,0 +1,10 @@
+model	card	evals_cand	unread_cand	evals_ref	unread_ref	graph_and_groups_pairs	decode_groups_cand	decode_groups_ref	decode_values
+flashnext	0	273	3	273	3	same	311x269	311x269	same
+flashnext	1	273	3	273	3	same	286x270	286x270	same
+flashnext	2	273	3	273	3	same	266x270	266x270	same
+flashnext	3	273	3	273	3	same	288x270	288x270	same
+flashnext	4	273	3	273	3	same	230x270	230x270	same
+flashnext	5	273	3	273	3	same	267x270	267x270	same
+flashnext	6	273	3	273	3	same	249x270	249x270	same
+flashnext	7	273	3	273	3	same	267x270	267x270	same
+flashnext	8	1348	3	1348	3	same	89x696 39x273 202x265 85x106 145x3 183x2	89x696 39x273 202x265 85x106 145x3 183x2	same
