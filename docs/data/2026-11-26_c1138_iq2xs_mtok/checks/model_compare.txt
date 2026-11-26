@@ -1,0 +1,8 @@
+fast1 reply 1: tokens 192 against 192, the same token ids; text the same; top-8 probabilities at 192 steps: the same to the last digit; draft tokens 150 and 150, accepted 140 and 140
+fast1 reply 2: tokens 192 against 192, the same token ids; text the same; top-8 probabilities at 0 steps: none asked; draft tokens 150 and 150, accepted 140 and 140
+fast1 reply 3: tokens 192 against 192, the same token ids; text the same; top-8 probabilities at 192 steps: the same to the last digit; draft tokens 216 and 216, accepted 119 and 119
+fast1 reply 4: tokens 192 against 192, the same token ids; text the same; top-8 probabilities at 0 steps: none asked; draft tokens 207 and 207, accepted 121 and 121
+fast2 reply 1: tokens 192 against 192, the same token ids; text the same; top-8 probabilities at 192 steps: the same to the last digit; draft tokens 150 and 150, accepted 140 and 140
+fast2 reply 2: tokens 192 against 192, the same token ids; text the same; top-8 probabilities at 0 steps: none asked; draft tokens 150 and 150, accepted 140 and 140
+fast2 reply 3: tokens 192 against 192, the same token ids; text the same; top-8 probabilities at 192 steps: the same to the last digit; draft tokens 216 and 216, accepted 119 and 119
+fast2 reply 4: tokens 192 against 192, the same token ids; text the same; top-8 probabilities at 0 steps: none asked; draft tokens 207 and 207, accepted 121 and 121
