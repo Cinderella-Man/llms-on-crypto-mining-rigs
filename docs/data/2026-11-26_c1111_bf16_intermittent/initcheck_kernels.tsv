@@ -1,0 +1,157 @@
+build	mode	reports	kernel
+base	full25	452	mul_mat_vec_q<(ggml_type)14, (int)5, (bool)0, (bool)0, (bool)0, (bool)0>
+base	full25	256	mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0, (bool)0, (bool)0>
+base	full25	256	mul_mat_q<(ggml_type)8, (int)32, (bool)1, (ggml_prec)30, (bool)0, (bool)0, (bool)0>
+base	full25	256	mul_mat_q<(ggml_type)39, (int)32, (bool)1, (ggml_prec)30, (bool)0, (bool)0, (bool)0>
+base	full25	252	mul_mat_vec_q<(ggml_type)21, (int)5, (bool)0, (bool)0, (bool)0, (bool)0>
+base	full25	150	mul_mat_vec_q<(ggml_type)29, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>
+base	full25	148	mul_mat_vec_q<(ggml_type)23, (int)5, (bool)0, (bool)0, (bool)0, (bool)0>
+base	full25	130	mul_mat_vec_q<(ggml_type)503, (int)8, (bool)0, (bool)0, (bool)0, (bool)0>
+base	full25	110	mul_mat_vec_q<(ggml_type)23, (int)6, (bool)0, (bool)0, (bool)0, (bool)0>
+base	full25	110	mul_mat_vec_q<(ggml_type)23, (int)7, (bool)0, (bool)0, (bool)0, (bool)0>
+base	full25	110	mul_mat_vec_q<(ggml_type)23, (int)8, (bool)0, (bool)0, (bool)0, (bool)0>
+base	full25	106	mul_mat_vec_q<(ggml_type)501, (int)5, (bool)0, (bool)0, (bool)0, (bool)0>
+base	full25	106	mul_mat_vec_q<(ggml_type)501, (int)6, (bool)0, (bool)0, (bool)0, (bool)0>
+base	full25	106	mul_mat_vec_q<(ggml_type)501, (int)7, (bool)0, (bool)0, (bool)0, (bool)0>
+base	full25	106	mul_mat_vec_q<(ggml_type)501, (int)8, (bool)0, (bool)0, (bool)0, (bool)0>
+base	full25	98	mul_mat_vec_q<(ggml_type)503, (int)3, (bool)0, (bool)0, (bool)0, (bool)0>
+base	full25	84	mul_mat_vec_q<(ggml_type)12, (int)6, (bool)0, (bool)0, (bool)0, (bool)0>
+base	full25	84	mul_mat_vec_q<(ggml_type)12, (int)7, (bool)0, (bool)0, (bool)0, (bool)0>
+base	full25	74	mul_mat_vec_q<(ggml_type)500, (int)5, (bool)0, (bool)0, (bool)0, (bool)0>
+base	full25	74	mul_mat_vec_q<(ggml_type)500, (int)6, (bool)0, (bool)0, (bool)0, (bool)0>
+base	full25	74	mul_mat_vec_q<(ggml_type)500, (int)7, (bool)0, (bool)0, (bool)0, (bool)0>
+base	full25	74	mul_mat_vec_q<(ggml_type)500, (int)8, (bool)0, (bool)0, (bool)0, (bool)0>
+base	full25	65	mul_mat_vec_q<(ggml_type)503, (int)5, (bool)0, (bool)0, (bool)0, (bool)0>
+base	full25	65	mul_mat_vec_q<(ggml_type)503, (int)6, (bool)0, (bool)0, (bool)0, (bool)0>
+base	full25	65	mul_mat_vec_q<(ggml_type)503, (int)7, (bool)0, (bool)0, (bool)0, (bool)0>
+base	full25	58	mul_mat_vec_q<(ggml_type)502, (int)5, (bool)0, (bool)0, (bool)0, (bool)0>
+base	full25	58	mul_mat_vec_q<(ggml_type)502, (int)6, (bool)0, (bool)0, (bool)0, (bool)0>
+base	full25	58	mul_mat_vec_q<(ggml_type)502, (int)7, (bool)0, (bool)0, (bool)0, (bool)0>
+base	full25	58	mul_mat_vec_q<(ggml_type)502, (int)8, (bool)0, (bool)0, (bool)0, (bool)0>
+base	full25	49	mul_mat_vec_q<(ggml_type)503, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>
+base	full25	49	mul_mat_vec_q<(ggml_type)503, (int)2, (bool)0, (bool)0, (bool)0, (bool)0>
+base	full25	49	mul_mat_vec_q<(ggml_type)503, (int)4, (bool)0, (bool)0, (bool)0, (bool)0>
+base	full25	44	mul_mat_vec_q<(ggml_type)14, (int)6, (bool)0, (bool)0, (bool)0, (bool)0>
+base	full25	44	mul_mat_vec_q<(ggml_type)14, (int)7, (bool)0, (bool)0, (bool)0, (bool)0>
+base	full25	44	mul_mat_vec_q<(ggml_type)14, (int)8, (bool)0, (bool)0, (bool)0, (bool)0>
+base	full25	32	mul_mat_vec_q<(ggml_type)11, (int)6, (bool)0, (bool)0, (bool)0, (bool)0>
+base	full25	32	mul_mat_vec_q<(ggml_type)11, (int)7, (bool)0, (bool)0, (bool)0, (bool)0>
+base	full25	32	mul_mat_vec_q<(ggml_type)11, (int)8, (bool)0, (bool)0, (bool)0, (bool)0>
+base	full25	11	mul_mat_vec_q<(ggml_type)22, (int)7, (bool)0, (bool)0, (bool)0, (bool)0>
+base	full25	11	mul_mat_vec_q<(ggml_type)22, (int)8, (bool)0, (bool)0, (bool)0, (bool)0>
+base	full25	3	kcol::mul_mat_kcol<(int)2, (int)1, (int)1>
+base	full25	3	kcol::mul_mat_kcol<(int)12, (int)2, (int)1>
+base	full25	3	kcol::mul_mat_kcol<(int)12, (int)4, (int)1>
+base	full25	3	kcol::mul_mat_kcol<(int)13, (int)2, (int)1>
+base	full25	3	kcol::mul_mat_kcol<(int)13, (int)4, (int)1>
+base	full25	2	kcol::mul_mat_kcol<(int)2, (int)2, (int)1>
+base	full25	2	kcol::mul_mat_kcol<(int)2, (int)3, (int)1>
+base	full25	2	kcol::mul_mat_kcol<(int)2, (int)4, (int)1>
+base	full25	2	kcol::mul_mat_kcol<(int)2, (int)5, (int)1>
+base	full25	2	kcol::mul_mat_kcol<(int)2, (int)6, (int)1>
+base	full25	2	kcol::mul_mat_kcol<(int)2, (int)7, (int)1>
+base	full25	2	kcol::mul_mat_kcol<(int)2, (int)8, (int)1>
+base	full25	2	kcol::mul_mat_kcol<(int)10, (int)3, (int)1>
+base	full25	2	kcol::mul_mat_kcol<(int)10, (int)4, (int)1>
+base	full25	2	kcol::mul_mat_kcol<(int)11, (int)2, (int)1>
+base	full25	2	kcol::mul_mat_kcol<(int)11, (int)3, (int)1>
+base	full25	2	kcol::mul_mat_kcol<(int)11, (int)4, (int)1>
+base	full25	2	kcol::mul_mat_kcol<(int)14, (int)4, (int)1>
+base	full25	2	kcol::mul_mat_kcol<(int)10, (int)5, (int)1>
+base	full25	2	kcol::mul_mat_kcol<(int)10, (int)6, (int)1>
+base	full25	2	kcol::mul_mat_kcol<(int)10, (int)7, (int)1>
+base	full25	2	kcol::mul_mat_kcol<(int)10, (int)8, (int)1>
+base	full25	2	kcol::mul_mat_kcol<(int)11, (int)5, (int)1>
+base	full25	2	kcol::mul_mat_kcol<(int)11, (int)6, (int)1>
+base	full25	2	kcol::mul_mat_kcol<(int)11, (int)7, (int)1>
+base	full25	2	kcol::mul_mat_kcol<(int)11, (int)8, (int)1>
+base	full25	2	kcol::mul_mat_kcol<(int)14, (int)5, (int)1>
+base	full25	2	kcol::mul_mat_kcol<(int)14, (int)6, (int)1>
+base	full25	2	kcol::mul_mat_kcol<(int)14, (int)7, (int)1>
+base	full25	2	kcol::mul_mat_kcol<(int)14, (int)8, (int)1>
+base	full25	2	kcol::mul_mat_kcol<(int)12, (int)5, (int)1>
+base	full25	2	kcol::mul_mat_kcol<(int)12, (int)6, (int)1>
+base	full25	2	kcol::mul_mat_kcol<(int)13, (int)5, (int)1>
+base	full25	2	kcol::mul_mat_kcol<(int)13, (int)6, (int)1>
+base	full25	2	kcol::mul_mat_kcol<(int)13, (int)7, (int)1>
+base	full25	2	kcol::mul_mat_kcol<(int)13, (int)8, (int)1>
+base	full25	1	kcol::mul_mat_kcol<(int)12, (int)7, (int)1>
+base	full25	1	kcol::mul_mat_kcol<(int)12, (int)8, (int)1>
+head	full25	452	mul_mat_vec_q<(ggml_type)14, (int)5, (bool)0, (bool)0, (bool)0, (bool)0>
+head	full25	256	mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0, (bool)0, (bool)0>
+head	full25	256	mul_mat_q<(ggml_type)8, (int)32, (bool)1, (ggml_prec)30, (bool)0, (bool)0, (bool)0>
+head	full25	256	mul_mat_q<(ggml_type)39, (int)32, (bool)1, (ggml_prec)30, (bool)0, (bool)0, (bool)0>
+head	full25	252	mul_mat_vec_q<(ggml_type)21, (int)5, (bool)0, (bool)0, (bool)0, (bool)0>
+head	full25	150	mul_mat_vec_q<(ggml_type)29, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>
+head	full25	148	mul_mat_vec_q<(ggml_type)23, (int)5, (bool)0, (bool)0, (bool)0, (bool)0>
+head	full25	130	mul_mat_vec_q<(ggml_type)503, (int)8, (bool)0, (bool)0, (bool)0, (bool)0>
+head	full25	110	mul_mat_vec_q<(ggml_type)23, (int)6, (bool)0, (bool)0, (bool)0, (bool)0>
+head	full25	110	mul_mat_vec_q<(ggml_type)23, (int)7, (bool)0, (bool)0, (bool)0, (bool)0>
+head	full25	110	mul_mat_vec_q<(ggml_type)23, (int)8, (bool)0, (bool)0, (bool)0, (bool)0>
+head	full25	106	mul_mat_vec_q<(ggml_type)501, (int)5, (bool)0, (bool)0, (bool)0, (bool)0>
+head	full25	106	mul_mat_vec_q<(ggml_type)501, (int)6, (bool)0, (bool)0, (bool)0, (bool)0>
+head	full25	106	mul_mat_vec_q<(ggml_type)501, (int)7, (bool)0, (bool)0, (bool)0, (bool)0>
+head	full25	106	mul_mat_vec_q<(ggml_type)501, (int)8, (bool)0, (bool)0, (bool)0, (bool)0>
+head	full25	98	mul_mat_vec_q<(ggml_type)503, (int)3, (bool)0, (bool)0, (bool)0, (bool)0>
+head	full25	84	mul_mat_vec_q<(ggml_type)12, (int)6, (bool)0, (bool)0, (bool)0, (bool)0>
+head	full25	84	mul_mat_vec_q<(ggml_type)12, (int)7, (bool)0, (bool)0, (bool)0, (bool)0>
+head	full25	74	mul_mat_vec_q<(ggml_type)500, (int)5, (bool)0, (bool)0, (bool)0, (bool)0>
+head	full25	74	mul_mat_vec_q<(ggml_type)500, (int)6, (bool)0, (bool)0, (bool)0, (bool)0>
+head	full25	74	mul_mat_vec_q<(ggml_type)500, (int)7, (bool)0, (bool)0, (bool)0, (bool)0>
+head	full25	74	mul_mat_vec_q<(ggml_type)500, (int)8, (bool)0, (bool)0, (bool)0, (bool)0>
+head	full25	65	mul_mat_vec_q<(ggml_type)503, (int)5, (bool)0, (bool)0, (bool)0, (bool)0>
+head	full25	65	mul_mat_vec_q<(ggml_type)503, (int)6, (bool)0, (bool)0, (bool)0, (bool)0>
+head	full25	65	mul_mat_vec_q<(ggml_type)503, (int)7, (bool)0, (bool)0, (bool)0, (bool)0>
+head	full25	58	mul_mat_vec_q<(ggml_type)502, (int)5, (bool)0, (bool)0, (bool)0, (bool)0>
+head	full25	58	mul_mat_vec_q<(ggml_type)502, (int)6, (bool)0, (bool)0, (bool)0, (bool)0>
+head	full25	58	mul_mat_vec_q<(ggml_type)502, (int)7, (bool)0, (bool)0, (bool)0, (bool)0>
+head	full25	58	mul_mat_vec_q<(ggml_type)502, (int)8, (bool)0, (bool)0, (bool)0, (bool)0>
+head	full25	49	mul_mat_vec_q<(ggml_type)503, (int)1, (bool)0, (bool)1, (bool)0, (bool)0>
+head	full25	49	mul_mat_vec_q<(ggml_type)503, (int)2, (bool)0, (bool)0, (bool)0, (bool)0>
+head	full25	49	mul_mat_vec_q<(ggml_type)503, (int)4, (bool)0, (bool)0, (bool)0, (bool)0>
+head	full25	44	mul_mat_vec_q<(ggml_type)14, (int)6, (bool)0, (bool)0, (bool)0, (bool)0>
+head	full25	44	mul_mat_vec_q<(ggml_type)14, (int)7, (bool)0, (bool)0, (bool)0, (bool)0>
+head	full25	44	mul_mat_vec_q<(ggml_type)14, (int)8, (bool)0, (bool)0, (bool)0, (bool)0>
+head	full25	32	mul_mat_vec_q<(ggml_type)11, (int)6, (bool)0, (bool)0, (bool)0, (bool)0>
+head	full25	32	mul_mat_vec_q<(ggml_type)11, (int)7, (bool)0, (bool)0, (bool)0, (bool)0>
+head	full25	32	mul_mat_vec_q<(ggml_type)11, (int)8, (bool)0, (bool)0, (bool)0, (bool)0>
+head	full25	11	mul_mat_vec_q<(ggml_type)22, (int)7, (bool)0, (bool)0, (bool)0, (bool)0>
+head	full25	11	mul_mat_vec_q<(ggml_type)22, (int)8, (bool)0, (bool)0, (bool)0, (bool)0>
+head	full25	3	kcol::mul_mat_kcol<(int)2, (int)1, (int)1>
+head	full25	3	kcol::mul_mat_kcol<(int)12, (int)2, (int)1>
+head	full25	3	kcol::mul_mat_kcol<(int)12, (int)4, (int)1>
+head	full25	3	kcol::mul_mat_kcol<(int)13, (int)2, (int)1>
+head	full25	3	kcol::mul_mat_kcol<(int)13, (int)4, (int)1>
+head	full25	2	kcol::mul_mat_kcol<(int)2, (int)2, (int)1>
+head	full25	2	kcol::mul_mat_kcol<(int)2, (int)3, (int)1>
+head	full25	2	kcol::mul_mat_kcol<(int)2, (int)4, (int)1>
+head	full25	2	kcol::mul_mat_kcol<(int)2, (int)5, (int)1>
+head	full25	2	kcol::mul_mat_kcol<(int)2, (int)6, (int)1>
+head	full25	2	kcol::mul_mat_kcol<(int)2, (int)7, (int)1>
+head	full25	2	kcol::mul_mat_kcol<(int)2, (int)8, (int)1>
+head	full25	2	kcol::mul_mat_kcol<(int)10, (int)3, (int)1>
+head	full25	2	kcol::mul_mat_kcol<(int)10, (int)4, (int)1>
+head	full25	2	kcol::mul_mat_kcol<(int)11, (int)2, (int)1>
+head	full25	2	kcol::mul_mat_kcol<(int)11, (int)3, (int)1>
+head	full25	2	kcol::mul_mat_kcol<(int)11, (int)4, (int)1>
+head	full25	2	kcol::mul_mat_kcol<(int)14, (int)4, (int)1>
+head	full25	2	kcol::mul_mat_kcol<(int)10, (int)5, (int)1>
+head	full25	2	kcol::mul_mat_kcol<(int)10, (int)6, (int)1>
+head	full25	2	kcol::mul_mat_kcol<(int)10, (int)7, (int)1>
+head	full25	2	kcol::mul_mat_kcol<(int)10, (int)8, (int)1>
+head	full25	2	kcol::mul_mat_kcol<(int)11, (int)5, (int)1>
+head	full25	2	kcol::mul_mat_kcol<(int)11, (int)6, (int)1>
+head	full25	2	kcol::mul_mat_kcol<(int)11, (int)7, (int)1>
+head	full25	2	kcol::mul_mat_kcol<(int)11, (int)8, (int)1>
+head	full25	2	kcol::mul_mat_kcol<(int)14, (int)5, (int)1>
+head	full25	2	kcol::mul_mat_kcol<(int)14, (int)6, (int)1>
+head	full25	2	kcol::mul_mat_kcol<(int)14, (int)7, (int)1>
+head	full25	2	kcol::mul_mat_kcol<(int)14, (int)8, (int)1>
+head	full25	2	kcol::mul_mat_kcol<(int)12, (int)5, (int)1>
+head	full25	2	kcol::mul_mat_kcol<(int)12, (int)6, (int)1>
+head	full25	2	kcol::mul_mat_kcol<(int)13, (int)5, (int)1>
+head	full25	2	kcol::mul_mat_kcol<(int)13, (int)6, (int)1>
+head	full25	2	kcol::mul_mat_kcol<(int)13, (int)7, (int)1>
+head	full25	2	kcol::mul_mat_kcol<(int)13, (int)8, (int)1>
+head	full25	1	kcol::mul_mat_kcol<(int)12, (int)7, (int)1>
+head	full25	1	kcol::mul_mat_kcol<(int)12, (int)8, (int)1>

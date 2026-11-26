@@ -1,0 +1,27 @@
+build	tool	mode	rc	passed	failing	cpu_check	sanitizer	seconds
+base	memcheck	cc25	99	384/384	none	replay cpu-check: 21 cases, 21 references identical, 0 verdicts differ	ERROR SUMMARY: 24 errors	12
+head	memcheck	cc25	99	384/384	none	replay cpu-check: 21 cases, 21 references identical, 0 verdicts differ	ERROR SUMMARY: 20 errors	13
+base	memcheck	cc1	99	384/384	none	replay cpu-check: 384 cases, 384 references identical, 0 verdicts differ	ERROR SUMMARY: 230 errors were not printed. Use --print-limit option to adjust the number of printed errors	17
+head	memcheck	cc1	99	384/384	none	replay cpu-check: 384 cases, 384 references identical, 0 verdicts differ	ERROR SUMMARY: 228 errors were not printed. Use --print-limit option to adjust the number of printed errors	18
+base	racecheck	cc25	0	384/384	none	replay cpu-check: 21 cases, 21 references identical, 0 verdicts differ	RACECHECK SUMMARY: 0 hazards displayed (0 errors, 0 warnings)	72
+head	racecheck	cc25	0	384/384	none	replay cpu-check: 21 cases, 21 references identical, 0 verdicts differ	RACECHECK SUMMARY: 0 hazards displayed (0 errors, 0 warnings)	76
+base	racecheck	cc1	0	384/384	none	replay cpu-check: 384 cases, 384 references identical, 0 verdicts differ	RACECHECK SUMMARY: 0 hazards displayed (0 errors, 0 warnings)	130
+base	initcheck	cc25	0	384/384	none	replay cpu-check: 21 cases, 21 references identical, 0 verdicts differ	ERROR SUMMARY: 0 errors	11
+head	racecheck	cc1	0	384/384	none	replay cpu-check: 384 cases, 384 references identical, 0 verdicts differ	RACECHECK SUMMARY: 0 hazards displayed (0 errors, 0 warnings)	137
+head	initcheck	cc25	0	384/384	none	replay cpu-check: 21 cases, 21 references identical, 0 verdicts differ	ERROR SUMMARY: 0 errors	11
+base	initcheck	cc1	0	384/384	none	replay cpu-check: 384 cases, 384 references identical, 0 verdicts differ	ERROR SUMMARY: 0 errors	17
+base	synccheck	cc25	0	384/384	none	replay cpu-check: 21 cases, 21 references identical, 0 verdicts differ	ERROR SUMMARY: 0 errors	10
+head	initcheck	cc1	0	384/384	none	replay cpu-check: 384 cases, 384 references identical, 0 verdicts differ	ERROR SUMMARY: 0 errors	18
+head	synccheck	cc25	0	384/384	none	replay cpu-check: 21 cases, 21 references identical, 0 verdicts differ	ERROR SUMMARY: 0 errors	10
+base	synccheck	cc1	0	384/384	none	replay cpu-check: 384 cases, 384 references identical, 0 verdicts differ	ERROR SUMMARY: 0 errors	16
+head	synccheck	cc1	0	384/384	none	replay cpu-check: 384 cases, 384 references identical, 0 verdicts differ	ERROR SUMMARY: 0 errors	16
+base	memcheck-noapi	cc25	0	384/384	none	replay cpu-check: 21 cases, 21 references identical, 0 verdicts differ	ERROR SUMMARY: 0 errors	10
+head	memcheck-noapi	cc25	0	384/384	none	replay cpu-check: 21 cases, 21 references identical, 0 verdicts differ	ERROR SUMMARY: 0 errors	11
+base	memcheck-noapi	cc1	0	384/384	none	replay cpu-check: 384 cases, 384 references identical, 0 verdicts differ	ERROR SUMMARY: 0 errors	16
+head	memcheck-noapi	cc1	0	384/384	none	replay cpu-check: 384 cases, 384 references identical, 0 verdicts differ	ERROR SUMMARY: 0 errors	16
+head	memcheck-noapi	full25	0	5458/5458	none	replay cpu-check: 216 cases, 216 references identical, 0 verdicts differ	ERROR SUMMARY: 0 errors	338
+head	initcheck-noapi	full25	99	5458/5458	none	replay cpu-check: 216 cases, 216 references identical, 0 verdicts differ	ERROR SUMMARY: 20431 errors were not printed. Use --print-limit option to adjust the number of printed errors	95
+head	synccheck-noapi	full25	0	5458/5458	none	replay cpu-check: 216 cases, 216 references identical, 0 verdicts differ	ERROR SUMMARY: 0 errors	70
+head	initcheck-noapi-all	full25	99	5458/5458	none	replay cpu-check: 216 cases, 216 references identical, 0 verdicts differ	ERROR SUMMARY: 4122 errors	197
+base	initcheck-noapi-all	full25	99	5161/5161	none	replay cpu-check: 206 cases, 206 references identical, 0 verdicts differ	ERROR SUMMARY: 4122 errors	298
+head	racecheck-noapi	full25	0	5458/5458	none	replay cpu-check: 216 cases, 216 references identical, 0 verdicts differ	RACECHECK SUMMARY: 0 hazards displayed (0 errors, 0 warnings)	1042

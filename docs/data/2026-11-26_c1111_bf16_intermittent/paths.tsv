@@ -1,0 +1,7 @@
+build	run	rc	passed	failing	cpu_check	graphs
+head	graph-debug	0	384/384	none	replay cpu-check: 21 cases, 21 references identical, 0 verdicts differ	183 warm-ups complete, 0 reused
+head	nsys-bf16	0	1/1	none	-	-
+head	nsys-f16	0	1/1	none	-	-
+base	graph-debug	0	384/384	none	replay cpu-check: 21 cases, 21 references identical, 0 verdicts differ	183 warm-ups complete, 0 reused
+base	nsys-bf16	0	1/1	none	-	-
+base	nsys-f16	0	1/1	none	-	-

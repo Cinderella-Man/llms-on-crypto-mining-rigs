@@ -1,0 +1,4 @@
+bf16 bits read as f16: 0.4983
+channels 16-31 zero: 0.9567
+rows M/2.. zero: 0.9986
+channels 16-31 stale uniform: 0.9569

@@ -1,0 +1,5 @@
+build	arm	set	mode	rc	passed	failing	cpu_check
+base	graphs	sib	cc1	1	11/12	MUL_MAT(type_a=bf16,m=1057,n=1,k=128,bs=[4,1],nr=[1,1],per=[0,2,1,3],k_v=0	replay cpu-check: 12 cases, 12 references identical, 0 verdicts differ
+base	nographs	sib	cc1	0	12/12	none	replay cpu-check: 12 cases, 12 references identical, 0 verdicts differ
+head	graphs	sib	cc1	0	12/12	none	replay cpu-check: 12 cases, 12 references identical, 0 verdicts differ
+head	nographs	sib	cc1	0	12/12	none	replay cpu-check: 12 cases, 12 references identical, 0 verdicts differ

@@ -1,0 +1,13 @@
+build	set	mode	cases	rc	passed	failing	cpu_check	warmups_complete	warmups_reset
+head	pair	cc25	2	0	2/2	none	replay cpu-check: 1 cases, 1 references identical, 0 verdicts differ	9	0
+head	pair	cc1	2	0	2/2	none	replay cpu-check: 2 cases, 2 references identical, 0 verdicts differ	18	0
+head	sib	cc25	12	0	12/12	none	replay cpu-check: 2 cases, 2 references identical, 0 verdicts differ	18	9
+head	sib	cc1	12	0	12/12	none	replay cpu-check: 12 cases, 12 references identical, 0 verdicts differ	108	63
+head	sib4	cc25	48	0	48/48	none	replay cpu-check: 4 cases, 4 references identical, 0 verdicts differ	36	27
+head	sib4	cc1	48	0	48/48	none	replay cpu-check: 48 cases, 48 references identical, 0 verdicts differ	432	378
+base	pair	cc25	2	0	2/2	none	replay cpu-check: 1 cases, 1 references identical, 0 verdicts differ	9	0
+base	pair	cc1	2	0	2/2	none	replay cpu-check: 2 cases, 2 references identical, 0 verdicts differ	18	0
+base	sib	cc25	12	0	12/12	none	replay cpu-check: 2 cases, 2 references identical, 0 verdicts differ	18	9
+base	sib	cc1	12	1	11/12	MUL_MAT(type_a=bf16,m=1057,n=1,k=128,bs=[4,1],nr=[1,1],per=[0,2,1,3],k_v=0	replay cpu-check: 12 cases, 12 references identical, 0 verdicts differ	101	74
+base	sib4	cc25	48	0	48/48	none	replay cpu-check: 4 cases, 4 references identical, 0 verdicts differ	36	27
+base	sib4	cc1	48	0	48/48	none	replay cpu-check: 48 cases, 48 references identical, 0 verdicts differ	432	369
