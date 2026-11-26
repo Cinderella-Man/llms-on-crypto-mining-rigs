@@ -7,8 +7,9 @@
 # line): R227's run/flash_taper.sh arm t1400a, that is C854's launcher
 # (docs/data/2026-11-18_c854b_p106_check/run/flash_agent.sh), R156's driver (docs/data/2026-11-13_r156_agent_v4r/run/r156.sh),
 # the harness's arm v4r, then the report. R156's v4r line with LLAMA_SERVER_TEXT_REUSE=1 added to its V4R_ENV,
-# GAINS_ENV's GGML_CUDA_FATTN_SPARSE_PASCAL_MIN_RATIO=1.0 and _NSM=5 replaced by the preset's values and
-# V4C2_TAPER=short=1400:64 is the v5 preset. Both switches live in GAINS_ENV, so an arm replaces the ratio there and
+# GAINS_ENV's GGML_CUDA_FATTN_SPARSE_PASCAL_MIN_RATIO=1.0 and _NSM=5 replaced by the preset's values and V4C2_TAPER
+# set to the preset's --ubatch-taper (read from release/flash-next-v5/settings.env: short=1400:64,cuts=1 since
+# 2026-11-26 16:08, C905) is the v5 preset. Both switches live in GAINS_ENV, so an arm replaces the ratio there and
 # nothing else:
 #   ARM=ca|cb             the v5 preset (_NSM=10, _MIN_RATIO=0.5)
 #   ARM=r<digits>a|b      the same with _MIN_RATIO=0.<digits>: r375a and r375b 0.375, r25a and r25b 0.25, r49a 0.49
@@ -34,7 +35,9 @@ esac
 export V4R_ENV="$V4R_DEFAULT LLAMA_SERVER_TEXT_REUSE=1"
 GAINS=${GAINS_DEFAULT/"$RATIO=1.0"/"$RATIO=$ratio"}
 export GAINS_ENV="${GAINS/"$NSM=5"/"$NSM=10"}"
-export V4C2_TAPER=short=1400:64
+TAPER=$(. release/flash-next-v5/settings.env && sed -n 's/.*--ubatch-taper \([^ ]*\).*/\1/p' <<< "$PRESET_ARGS")
+[ -n "$TAPER" ] || { echo "no --ubatch-taper in release/flash-next-v5/settings.env"; exit 1; }
+export V4C2_TAPER=$TAPER
 echo "$(date +%H:%M:%S) arm $ARM: GAINS_ENV=$GAINS_ENV"
 echo "$(date +%H:%M:%S) arm $ARM: V4R_ENV=$V4R_ENV"
 echo "$(date +%H:%M:%S) arm $ARM: V4C2_TAPER=$V4C2_TAPER"

@@ -129,9 +129,11 @@ every load, and both class rules.
   [2026-11-19_r209_oc_v5](../2026-11-19_r209_oc_v5/README.md), "The profile again on the boot of 2026-11-26"), the
   boot C1175 ran on. The offsets read the same before and after, with no watchdog trip and no GPU Xid.
 - **Model and preset:** Qwen3.8-Flash-Next as [release/flash-next-v5/settings.env](../../../release/flash-next-v5/settings.env)
-  runs it at `d296f5ce` (`_NSM=10 _MIN_RATIO=0.5`, `--ubatch-taper short=1400:64`): UkisAI's Swift-1.5 GSQ-RCO Q2_0
-  (`Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-0000{1,2,3}-of-00003.gguf`; the third shard is its n-gram table) and the MTP
-  draft (`mtp-Qwen3.8-Flash-Next-draft.gguf`), on, three tokens a step. Context 65,536.
+  runs it at `d296f5ce` (md5 `3616639032df7218d1a4b744abe5b60e`, copied at 15:56: `_NSM=10 _MIN_RATIO=0.5`,
+  `--ubatch-taper short=1400:64`; the taper's `cuts=1` joined the preset at 16:08, `602ba0cf`, after this run had
+  started): UkisAI's Swift-1.5 GSQ-RCO Q2_0 (`Swift-Qwen3.8-Flash-Next-GSQ-RCO-Q2_0-0000{1,2,3}-of-00003.gguf`; the
+  third shard is its n-gram table) and the MTP draft (`mtp-Qwen3.8-Flash-Next-draft.gguf`), on, three tokens a step.
+  Context 65,536.
 - **Build:** one for every arm, fork `pascal-p106-v5-cand-b12674` at `eee615cdb` (upstream b12674 merged), the build
   C839 and C1175 ran; `llama-server` md5 `2727faf28b5b34dfe42399a9d431da67`.
 - **The arms:** [run/r240.sh](run/r240.sh) drops the preset's `_NSM` and `_MIN_RATIO` and each arm sets both, so the
@@ -149,10 +151,10 @@ every load, and both class rules.
 Not run. The row runs it only on an arm that gains on the lane beyond the spread and is slower on no figure; both
 arms are slower where they act. [run/flash_ratio.sh](run/flash_ratio.sh) is ready for a later arm: C1175's
 `run/flash_nsm.sh` for the preset since `d296f5ce`, with the control `ca|cb` and any `r<digits>a|b` arm
-(`_MIN_RATIO=0.<digits>`). Its dry line for `ca` ([run/dry_line.sh](run/dry_line.sh)) is 1,717 bytes, md5
-`b65c090f6b98f8446cf19f2ece272fba`, C1175's `r05` command byte for byte, and passes
-[run/preset_check.sh](run/preset_check.sh) against `settings.env` (40 switches, 30 flags); so do its `r375a` and `r25a`
-lines with their ratios.
+(`_MIN_RATIO=0.<digits>`), and the taper read from `settings.env`. With the preset at `602ba0cf` its dry line for `ca`
+([run/dry_line.sh](run/dry_line.sh)) is 1,724 bytes, md5 `6f2c7e6c5d6569e2bf2533f5cc14142f`: C1175's `r05` command
+with `,cuts=1` added to the taper and nothing else. It passes [run/preset_check.sh](run/preset_check.sh) against
+`settings.env` (40 switches, 30 flags); so do its `r375a` and `r25a` lines with their ratios.
 
 ## Files
 
@@ -169,7 +171,8 @@ lines with their ratios.
 ## Commands
 
 ```bash
-# on a machine that runs only ssh and tar, from the repository's root; RIG, WORK and the paths are yours
+# on a machine that runs only ssh and tar, from the repository's root; RIG, WORK and the paths are yours;
+# PRESET=<settings.env as at d296f5ce> runs the preset as this run did (the default is the preset as it stands)
 RIG=rig WORK=/tmp/r240 BIN=<llama-server on the rig> MODEL=<first shard on the rig> MODEL_DRAFT=<MTP draft on the rig> \
   TEXT_LOCAL=<proxy.jsonl.bodies.gz> STEP=dry bash docs/data/2026-11-26_r240_flash_ratio_rig2/run/r240.sh
 # the same with STEP=start, then STEP=wait, then STEP=collect OUT=<folder>

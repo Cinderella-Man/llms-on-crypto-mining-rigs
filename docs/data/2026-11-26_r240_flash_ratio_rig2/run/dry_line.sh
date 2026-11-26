@@ -12,7 +12,7 @@ HARNESS=docs/data/2026-11-03_flash_next_mtp/run/release_check_s12.sh
 D=$WORK/repo
 rm -rf "$D" "$WORK/out"
 mkdir -p "$D"
-tar -cf - release/flash-next-v3/settings.env docs/data/2026-11-13_r156_agent_v4r/run/r156.sh \
+tar -cf - release/flash-next-v3/settings.env release/flash-next-v5/settings.env docs/data/2026-11-13_r156_agent_v4r/run/r156.sh \
   docs/data/2026-11-18_c854b_p106_check/run/flash_agent.sh docs/data/2026-11-26_r240_flash_ratio_rig2/run/flash_ratio.sh \
   | tar -C "$D" -xf -
 mkdir -p "$D/$(dirname $HARNESS)"
