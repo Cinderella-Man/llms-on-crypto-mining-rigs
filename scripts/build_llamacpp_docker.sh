@@ -31,9 +31,10 @@
 #     TESTS=1: also build test-backend-ops (per-operation correctness and speed tests, e.g. `-o MUL_MAT perf`) and
 #     Miner Llama's own check tools, run by hand on a model or on the cards: llama-pipe-recurrent-check, test-moe-ids,
 #     test-hop-cast, test-hop-mailbox, test-kpool-dev, test-kpool-stage, test-pool-mask-dev, test-llama-archs,
-#     test-bytes-switches, test-route-once, test-top-k-sort and test-cuda-keepalive, and llama-quantize, which makes
-#     the quantized copies of test-llama-archs' random models (bench/pipespec/gpu_pipe_check.sh); each only when the
-#     tree defines it as a target (older trees lack some; BUILDINFO.txt lists which were built)
+#     test-bytes-switches, test-route-once, test-top-k-sort, test-cuda-keepalive and test-cuda-graph-src-types (the
+#     CUDA graph cache when only a source's type changes, C1157), and llama-quantize, which makes the quantized copies
+#     of test-llama-archs' random models (bench/pipespec/gpu_pipe_check.sh); each only when the tree defines it as a
+#     target (older trees lack some; BUILDINFO.txt lists which were built)
 #     CHECK_TOOLS=0: with TESTS=1, leave those check tools out: each is a static binary with every CUDA kernel and
 #     adds ~0.07 GB to the tarball (1.59 GB with all thirteen for Miner Llama v5 on 2026-11-24, 0.71 GB without them)
 #     EXTRA_TARGETS="t1 t2": also build these targets (tests need TESTS=1) and copy them into bin/, e.g. a test the
@@ -143,7 +144,7 @@ docker run --rm ${DOCKER_ARGS:-} ${UI_ENV[@]+"${UI_ENV[@]}"} -e REF="$REF" -e PA
         targets=" $( { cmake --build build --target help || true; } | sed -n "s/^\.\.\. \([^ ]*\).*/\1/p" | tr "\n" " ") "
         for t in llama-pipe-recurrent-check test-moe-ids test-hop-cast test-hop-mailbox test-kpool-dev \
                 test-kpool-stage test-pool-mask-dev test-llama-archs test-bytes-switches test-route-once \
-                test-top-k-sort test-cuda-keepalive llama-quantize; do
+                test-top-k-sort test-cuda-keepalive test-cuda-graph-src-types llama-quantize; do
             case "$targets" in *" $t "*) checks="$checks $t" ;; *) checks_missing="$checks_missing $t" ;; esac
         done
         checks_info="${checks:- none}"

@@ -1,0 +1,22 @@
+driver	run	rc	tests passed	OK	FAIL	NOREC	not supported	illegal access	cpu-check	note
+mm	mul_mat-replay-base	mul_mat-replay-base rc=0	5458/5458 tests passed	5459	0	0	521	0		
+mm	mul_mat-replay-branch-cpucheck	mul_mat-replay-branch-cpucheck rc=0	5458/5458 tests passed	5459	0	0	521	0	replay cpu-check: 216 cases, 216 references identical, 0 verdicts differ	
+mm	mul_mat-replay-branch	mul_mat-replay-branch rc=0	5458/5458 tests passed	5459	0	0	521	0		
+mm	mul_mat_id-replay-base			245	0	0	0	0		cut short (no exit code): run again in a rerun folder
+mm	mul_mat_id-replay-branch-cpucheck	mul_mat_id-replay-branch-cpucheck rc=0	2389/2389 tests passed	2390	0	0	8	0	replay cpu-check: 84 cases, 84 references identical, 0 verdicts differ	
+mm	mul_mat_id-replay-branch	mul_mat_id-replay-branch rc=0	2389/2389 tests passed	2390	0	0	8	0		
+fa	flash_attn_ext-replay-base-all	flash_attn_ext-replay-base-all rc=0	4679/4679 tests passed	4680	0	0	1429	0		
+fa	flash_attn_ext-replay-base-plain	flash_attn_ext-replay-base-plain rc=0	4679/4679 tests passed	4680	0	0	1429	0		
+fa	flash_attn_ext-replay-base-tile	flash_attn_ext-replay-base-tile rc=0	4679/4679 tests passed	4680	0	0	1429	0		
+fa	flash_attn_ext-replay-branch-all	flash_attn_ext-replay-branch-all rc=0	4679/4679 tests passed	4680	0	0	1429	0		
+fa	flash_attn_ext-replay-branch-cpucheck	flash_attn_ext-replay-branch-cpucheck rc=0	4679/4679 tests passed	4680	0	0	1429	0	replay cpu-check: 186 cases, 186 references identical, 0 verdicts differ	
+fa	flash_attn_ext-replay-branch-plain			1929	0	0	204	0		cut short (no exit code): run again in a rerun folder
+fa	flash_attn_ext-replay-branch-tile	flash_attn_ext-replay-branch-tile rc=0	4679/4679 tests passed	4680	0	0	1429	0		
+fa	fused-replay-base-forced	fused-replay-base-forced rc=0	5424/5424 tests passed	5425	0	0	231	0		
+fa	fused-replay-base-mmv			446	0	0	0	0		cut short (no exit code): run again in a rerun folder
+fa	fused-replay-branch-cpucheck	fused-replay-branch-cpucheck rc=0	5424/5424 tests passed	5425	0	0	231	0	replay cpu-check: 200 cases, 200 references identical, 0 verdicts differ	
+fa	fused-replay-branch-forced	fused-replay-branch-forced rc=0	5424/5424 tests passed	5425	0	0	231	0		
+fa	fused-replay-branch-mmv	fused-replay-branch-mmv rc=0	5424/5424 tests passed	5425	0	0	231	0		
+mm-rerun	mul_mat_id-replay-base	mul_mat_id-replay-base rc=0	2389/2389 tests passed	2390	0	0	8	0		
+fa-rerun	fused-replay-base-mmv	fused-replay-base-mmv rc=0	5424/5424 tests passed	5425	0	0	231	0		
+fa-rerun2	flash_attn_ext-replay-branch-plain	flash_attn_ext-replay-branch-plain rc=0	4679/4679 tests passed	4680	0	0	1429	0		

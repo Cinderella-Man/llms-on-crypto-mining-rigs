@@ -1,0 +1,5 @@
+request	branch tokens	base tokens	token ids	text	branch drafted and accepted	base drafted and accepted
+code	256	256	the same token ids	the same text	236 and 176	236 and 176
+prose	256	256	the same token ids	the same text	273 and 163	273 and 163
+MiB per card after the load	20181 22371	20181 22371				
+MiB per card after the requests	20287 22485	20287 22485				

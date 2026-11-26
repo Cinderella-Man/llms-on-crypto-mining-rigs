@@ -1,0 +1,26 @@
+diff --git a/ggml/src/ggml-cuda/ggml-cuda.cu b/ggml/src/ggml-cuda/ggml-cuda.cu
+index c014bbe5b..7fd291124 100644
+--- a/ggml/src/ggml-cuda/ggml-cuda.cu
++++ b/ggml/src/ggml-cuda/ggml-cuda.cu
+@@ -3387,6 +3387,7 @@ static bool ggml_cuda_graph_update_required(ggml_backend_cuda_context * cuda_ctx
+                 prop.node_src_data_ptrs[j] = cgraph->nodes[i]->src[j]->data;
+                 memcpy(prop.node_src_ne[j], cgraph->nodes[i]->src[j]->ne, sizeof(prop.node_src_ne[j]));
+                 memcpy(prop.node_src_nb[j], cgraph->nodes[i]->src[j]->nb, sizeof(prop.node_src_nb[j]));
++                prop.node_src_type[j] = cgraph->nodes[i]->src[j]->type;
+             }
+         }
+ 
+diff --git a/ggml/src/ggml-cuda/graph.cuh b/ggml/src/ggml-cuda/graph.cuh
+index 7b9c27789..15d2d800f 100644
+--- a/ggml/src/ggml-cuda/graph.cuh
++++ b/ggml/src/ggml-cuda/graph.cuh
+@@ -59,6 +59,9 @@ struct ggml_cuda_graph {
+         void *   node_src_data_ptrs[GGML_MAX_SRC];
+         int64_t  node_src_ne[GGML_MAX_SRC][GGML_MAX_DIMS];
+         size_t   node_src_nb[GGML_MAX_SRC][GGML_MAX_DIMS];
++        // a source of another type at the same address with the same shape and strides (F16 and BF16, Q4_0 and
++        // IQ4_NL) needs other kernels, so the type is a property too
++        ggml_type node_src_type[GGML_MAX_SRC];
+     };
+     std::vector<node_properties> node_props;
+ 

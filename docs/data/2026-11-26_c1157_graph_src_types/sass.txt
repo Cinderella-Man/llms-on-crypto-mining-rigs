@@ -1,0 +1,2 @@
+--- base against branch: base kernels (names): 9508; identical in new with kq_fp32 off: 9508; different: 0; missing in new: 0; names only in new (kq_fp32 off): 0; kq_fp32 on kernels: 0
+    names whose copies differ 0, missing 0, only in branch 0
