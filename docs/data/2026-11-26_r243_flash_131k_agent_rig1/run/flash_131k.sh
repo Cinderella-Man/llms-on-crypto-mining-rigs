@@ -3,6 +3,9 @@
 # the same preset with a 131,072-token context and prompt micro-batches of 256 (-c 131072 -ub 256, R124's line:
 # docs/data/2026-11-26_r124_flash_131k_rig2/), nothing else changed. Four runs on one rig, engine and boot,
 # alternated: the preset, the line, the preset, the line.
+# The preset it starts is release/flash-next-v5/settings.env as it stood at d296f5ce (md5 3616639032df7218d1a4b744abe5b60e,
+# the taper short=1400:64), the preset when the runs started on 2026-11-26; since 602ba0cf (16:08 that day) the preset's
+# taper is short=1400:64,cuts=1, which this script does not set.
 # It starts the preset as C1175's arm r05 did (docs/data/2026-11-26_c1175_nsm10_rig2/run/flash_nsm.sh; that arm is the
 # preset since 2026-11-26): C854's launcher (docs/data/2026-11-18_c854b_p106_check/run/flash_agent.sh), R156's driver
 # (docs/data/2026-11-13_r156_agent_v4r/run/r156.sh), the harness's arm v4r, then the report. R156's v4r line with

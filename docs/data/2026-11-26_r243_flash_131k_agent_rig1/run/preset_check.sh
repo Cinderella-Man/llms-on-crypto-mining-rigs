@@ -6,7 +6,9 @@
 #     ARM=l131 with -c 131072 in place of -c 65536 and -ub 256 in place of -ub 512 (R124's line).
 # C1175's run/preset_check.sh (docs/data/2026-11-26_c1175_nsm10_rig2/) for the preset as it stands since 2026-11-26
 # (_NSM=10, _MIN_RATIO=0.5), with R124's two replacements (docs/data/2026-11-26_r124_flash_131k_rig2/run/line_check.sh).
-# PRESET (default release/flash-next-v5/settings.env) names the preset file to check against.
+# PRESET (default release/flash-next-v5/settings.env) names the preset file to check against: the runs used the preset at
+# d296f5ce (git show d296f5ce:release/flash-next-v5/settings.env > preset_d296f5ce.env; PRESET=preset_d296f5ce.env ...),
+# before 602ba0cf added cuts=1 to the taper.
 # Usage, from the repository root: bash docs/data/2026-11-26_r243_flash_131k_agent_rig1/run/preset_check.sh LINE_FILE [preset|l131]
 set -euo pipefail
 f=${1:?}; arm=${2:-preset}

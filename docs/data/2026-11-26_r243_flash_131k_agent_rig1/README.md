@@ -40,7 +40,8 @@ bigger caches.
   end); the RAM watchdog never acted.
 
 By these figures the 131,072-token line can be Flash-Next's preset: per task it costs nothing measurable and it holds
-the long real tasks the 65,536-token line cannot. The preset ([release/flash-next-v5/settings.env](../../../release/flash-next-v5/settings.env))
+the long real tasks the 65,536-token line cannot. The runs used the preset as it stood at 15:59 (`d296f5ce`); since
+16:08 its taper also has `cuts=1`, not measured with the line. The preset ([release/flash-next-v5/settings.env](../../../release/flash-next-v5/settings.env))
 is unchanged until the owner's word; the two lines it would change are both `[order]` (micro-batch size sets the
 arithmetic's order; [docs/reply_effects.md](../../reply_effects.md)):
 
@@ -122,11 +123,14 @@ lines' spreads, a spread being the difference between a line's two runs; [class.
 
 ## The line
 
-The v5 preset ([release/flash-next-v5/settings.env](../../../release/flash-next-v5/settings.env) as at public `v5`
-`78c95075`: UkisAI's Swift-1.5 GSQ-RCO Q2_0 of Qwen3.8-Flash-Next with its n-gram table cut into a third shard, the MTP
+The v5 preset ([release/flash-next-v5/settings.env](../../../release/flash-next-v5/settings.env) as it stood when the runs
+started at 15:59, at `d296f5ce`, md5 `3616639032df7218d1a4b744abe5b60e`: UkisAI's Swift-1.5 GSQ-RCO Q2_0 of Qwen3.8-Flash-Next with its n-gram table cut into a third shard, the MTP
 draft three tokens a step, 40 switches, among them `GGML_CUDA_FATTN_SPARSE_PASCAL_NSM=10` and `_MIN_RATIO=0.5` since
 `d296f5ce`) against the same with `-c 131072` in place of `-c 65536` and `-ub 256` in place of `-ub 512`
-(`--spec-draft-n-ubatch 512` kept), R124's line. pi, the agent, gets a context window equal to the server's `-c` in
+(`--spec-draft-n-ubatch 512` kept), R124's line. At 16:08 the preset's taper became `short=1400:64,cuts=1` (`602ba0cf`,
+C905, C930: each stretch of a call between its in-call checkpoint cuts planned on its own, the recorded agent prompts
+2.66 s a pass faster, negligible); these runs read prompts with `short=1400:64`, so the line with `cuts=1` is not
+measured here. The two lines the line changes do not touch the taper's. pi, the agent, gets a context window equal to the server's `-c` in
 each line (131,072 on the line); no request came near 65,536 tokens (the longest prompts per run 10,807, 13,358,
 13,192 and 28,317 tokens, the last in `l131b`'s capped task).
 
@@ -143,7 +147,7 @@ driver's diff.
 - The line's two runs started a 1,718-byte command, md5 `58fe73f18c315a9c959a7c24eb33c569`, which differs from the
   preset's in `-c 131072` and `-ub 256` only.
 - Each started command is its dry line ([run/dry_line.sh](run/dry_line.sh)) byte for byte and passes
-  [run/preset_check.sh](run/preset_check.sh) against `settings.env` (the environment byte for byte, 40 switches; the
+  [run/preset_check.sh](run/preset_check.sh) against `settings.env` at `d296f5ce` (`PRESET=` that file; the environment byte for byte, 40 switches; the
   flags the preset's, with the line's two values for `l131`, plus the harness's `--metrics --no-webui` and `-md`, 30
   flags). Each server printed its context (`n_ctx_slot = 65536` or `131072`) and its taper
   (`short=1400:64 (n_ubatch 512)` or `(n_ubatch 256)`; [taper_lines.tsv](taper_lines.tsv)).
@@ -199,7 +203,8 @@ ARM=ca RIG=rig CLIENT=local MODEL=<first shard on the rig> DRAFT=<MTP draft on t
   bash docs/data/2026-11-26_r243_flash_131k_agent_rig1/run/flash_131k.sh
 ARM=l131a WORK=<scratch> NEW=<build folder on the rig> DRAFT=<MTP draft on the rig> \
   bash docs/data/2026-11-26_r243_flash_131k_agent_rig1/run/dry_line.sh > line_l131a.txt
-bash docs/data/2026-11-26_r243_flash_131k_agent_rig1/run/preset_check.sh <started command of l131a> l131   # ca, cb: preset
+git show d296f5ce:release/flash-next-v5/settings.env > preset_d296f5ce.env
+PRESET=preset_d296f5ce.env bash docs/data/2026-11-26_r243_flash_131k_agent_rig1/run/preset_check.sh <started command of l131a> l131   # ca, cb: preset
 python3 -I docs/data/2026-11-19_r208_r210_flash_switches/run/rename_arm.py <CLIENT_OUT>/res agent/l131a v4r l131a
 bash docs/data/2026-11-26_r243_flash_131k_agent_rig1/run/tables_agent.sh TABLES ca l131a cb l131b
 ```
