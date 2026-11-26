@@ -1,0 +1,14 @@
+task	pre_prompt_s	pre_prompt_tokens	pre_turns
+bugfix-javascript-complex-numbers	24.87	4810	5
+bugfix-javascript-grade-school	17.77	2916	5
+bugfix-javascript-phone-number	14.66	1893	5
+bugfix-javascript-space-age	15.70	2184	5
+bugfix-javascript-triangle	16.74	2560	5
+bugfix-javascript-variable-length-quantity	21.74	3715	6
+bugfix-python-affine-cipher	37.55	4852	7
+bugfix-python-list-ops	15.78	2295	5
+bugfix-python-phone-number	25.29	3878	6
+bugfix-python-pig-latin	17.77	2290	6
+bugfix-python-scale-generator	20.65	3324	5
+bugfix-python-variable-length-quantity	19.47	3410	5
+mean a task	20.67	3177	5.42

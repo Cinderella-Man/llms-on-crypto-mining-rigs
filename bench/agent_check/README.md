@@ -759,7 +759,7 @@ is the preset's plus `--metrics --no-webui` and `-md`. `ARMS` (default `pre`, th
 `ENV_<arm>` replaces or adds `NAME=VALUE` switches, and `SET_<arm>` replaces flag values found exactly once
 (`SET_c64='-c 65536 -ub 512'`). Every arm's line goes to `OUT/<arm>/dry_line.txt` first; `DRY=1` writes them and
 stops. Its dry lines for the preset, `-c 65536 -ub 512` and `-c 65536` reproduce R244's three started lines byte for byte
-([data](../../docs/data/2026-11-26_r244_flash_ctx_ub/README.md)). The header lists the rest of the environment (the rig,
+([data](../../docs/data/2026-11-26_r244_flash_ctx_ub/README.md)), and on its first rig run (R248, the preset, [data](../../docs/data/2026-11-26_r248_preset_smoke/README.md)) the started line equaled its dry line. The header lists the rest of the environment (the rig,
 the client, the harness's ports, `AGENT_BY`).
 
 ```bash

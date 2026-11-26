@@ -1,0 +1,8 @@
+run	tasks	bucket	turns	new_tokens	prompt_s	ms_a_token
+pre	all	under 600	43	7804	82.04	10.513
+pre	all	600-1,400	13	11340	71.48	6.304
+pre	all	1,401-1,999	4	6288	32.73	5.205
+pre	all	2,000+	5	12695	61.74	4.863
+pre	all	over 1,400	9	18983	94.46	4.976
+pre	all	over 1,400 on a cached prefix	8	16203	74.66	4.608
+pre	all	all turns	65	38127	247.99	6.504

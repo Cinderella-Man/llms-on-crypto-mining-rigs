@@ -1,0 +1,2 @@
+run	requests	tokens_sampled	while_grammar_applied	requests_without_grammar	rejected
+pre	65	17974	17974	0	0

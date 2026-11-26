@@ -121,8 +121,10 @@ if has prep; then
 elif has files; then
   : "${CLIENT_DIR:?}"
   say "files: bench files to $CLIENT:$CLIENT_DIR"
+  # CLIENT=local: this machine is the client (the harness's convention), so a local shell, not ssh
+  if [ "$CLIENT" = local ]; then to_client() { bash -c "$1"; }; else to_client() { ssh "$CLIENT" "$1"; }; fi
   tar -C bench --exclude=__pycache__ -cf - agent_check task_results.py paired_tasks.py -C ../scripts realloc_counts.py \
-    | ssh "$CLIENT" "mkdir -p $CLIENT_DIR && tar -C $CLIENT_DIR -xf -" || { say "files: copy failed"; exit 1; }
+    | to_client "mkdir -p $CLIENT_DIR && tar -C $CLIENT_DIR -xf -" || { say "files: copy failed"; exit 1; }
 fi
 
 if has agent; then
