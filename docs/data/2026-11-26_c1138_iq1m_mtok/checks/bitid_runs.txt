@@ -1,0 +1,71 @@
+# C build (f43006396): run/bitid.sh TYPE=iq1_m ARMS=1 FAULT_ARM=1
+arm 0: rc=0 104 cases, type iq1_m
+arm 1: rc=0 104 cases, type iq1_m
+  arm 1: outputs byte-identical to arm 0 (11980800 bytes); case lines differing: 0
+fault arm (1): rc=0
+  fault arm: 56 of 56 cases that must differ do; must differ but equal: 0; differ but must not: 0
+
+# C build: run/bitid.sh TYPE=iq2_xxs ARMS=1 FAULT_ARM=1 (every case hash the same as in the IQ2_XS folder)
+arm 0: rc=0 104 cases, type iq2_xxs
+arm 1: rc=0 104 cases, type iq2_xxs
+  arm 1: outputs byte-identical to arm 0 (11980800 bytes); case lines differing: 0
+fault arm (1): rc=0
+  fault arm: 56 of 56 cases that must differ do; must differ but equal: 0; differ but must not: 0
+
+# C build: run/bitid.sh TYPE=iq2_s ARMS=1 FAULT_ARM=1 (every case hash the same as in the IQ2_XS folder)
+arm 0: rc=0 104 cases, type iq2_s
+arm 1: rc=0 104 cases, type iq2_s
+  arm 1: outputs byte-identical to arm 0 (11980800 bytes); case lines differing: 0
+fault arm (1): rc=0
+  fault arm: 56 of 56 cases that must differ do; must differ but equal: 0; differ but must not: 0
+
+# C build: run/bitid.sh TYPE=iq2_xs ARMS=1 FAULT_ARM=1 (every case hash the same as in the IQ2_XS folder)
+arm 0: rc=0 104 cases, type iq2_xs
+arm 1: rc=0 104 cases, type iq2_xs
+  arm 1: outputs byte-identical to arm 0 (11980800 bytes); case lines differing: 0
+fault arm (1): rc=0
+  fault arm: 56 of 56 cases that must differ do; must differ but equal: 0; differ but must not: 0
+
+# final build (883f21f2c): run/bitid.sh TYPE=iq1_m ARMS='1 2' FAULT_ARM=2 (every case hash the same as in the C build)
+arm 0: rc=0 104 cases, type iq1_m
+arm 1: rc=0 104 cases, type iq1_m
+  arm 1: outputs byte-identical to arm 0 (11980800 bytes); case lines differing: 0
+arm 2: rc=0 104 cases, type iq1_m
+  arm 2: outputs byte-identical to arm 0 (11980800 bytes); case lines differing: 0
+fault arm (2): rc=0
+  fault arm: 56 of 56 cases that must differ do; must differ but equal: 0; differ but must not: 0
+
+# final build (883f21f2c): run/bitid.sh TYPE=iq2_xxs ARMS='1 2' FAULT_ARM=2 (every case hash the same as in the C build)
+arm 0: rc=0 104 cases, type iq2_xxs
+arm 1: rc=0 104 cases, type iq2_xxs
+  arm 1: outputs byte-identical to arm 0 (11980800 bytes); case lines differing: 0
+arm 2: rc=0 104 cases, type iq2_xxs
+  arm 2: outputs byte-identical to arm 0 (11980800 bytes); case lines differing: 0
+fault arm (2): rc=0
+  fault arm: 56 of 56 cases that must differ do; must differ but equal: 0; differ but must not: 0
+
+# final build (883f21f2c): run/bitid.sh TYPE=iq2_s ARMS='1 2' FAULT_ARM=2 (every case hash the same as in the C build)
+arm 0: rc=0 104 cases, type iq2_s
+arm 1: rc=0 104 cases, type iq2_s
+  arm 1: outputs byte-identical to arm 0 (11980800 bytes); case lines differing: 0
+arm 2: rc=0 104 cases, type iq2_s
+  arm 2: outputs byte-identical to arm 0 (11980800 bytes); case lines differing: 0
+fault arm (2): rc=0
+  fault arm: 56 of 56 cases that must differ do; must differ but equal: 0; differ but must not: 0
+
+# final build (883f21f2c): run/bitid.sh TYPE=iq2_xs ARMS='1 2' FAULT_ARM=2 (every case hash the same as in the C build)
+arm 0: rc=0 104 cases, type iq2_xs
+arm 1: rc=0 104 cases, type iq2_xs
+  arm 1: outputs byte-identical to arm 0 (11980800 bytes); case lines differing: 0
+arm 2: rc=0 104 cases, type iq2_xs
+  arm 2: outputs byte-identical to arm 0 (11980800 bytes); case lines differing: 0
+fault arm (2): rc=0
+  fault arm: 56 of 56 cases that must differ do; must differ but equal: 0; differ but must not: 0
+
+# final build: run/bitid.sh TYPE=iq1_m ARMS=2 FAULT_ARM= PRELOAD=launch_count.so (the IQ2_XXS folder's run/launch_count.c)
+arm 0: rc=0 104 cases, type iq1_m
+arm 2: rc=0 104 cases, type iq1_m
+  launch_count: 8 mtok_iq1m_fast_ptx_ntm2
+  launch_count: 16 mtok_iq1m_fast_ptx_ntm4
+  launch_count: 32 mtok_iq1m_fast_ptx_ntm8
+  arm 2: outputs byte-identical to arm 0 (11980800 bytes); case lines differing: 0

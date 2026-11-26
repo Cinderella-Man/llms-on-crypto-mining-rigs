@@ -1,0 +1,14 @@
+kernel names in base 9535 (10102 copies), in head 9544 (10111 copies): every copy the same bytes 9535, differing 0, only in head 9 (0 not matching NEW), only in base 0
+# base: IQ2_XS's final build 605eda167 (test-backend-ops and its three PTX fatbins); head: 883f21f2c (test-backend-ops and its four PTX fatbins)
+# the C commit's build f43006396 against the same base: every one of the 9,535 base kernel names the same bytes, 6 new (IQ1_M's CUDA C fast kernels), none gone
+# the 24 CUDA C fast kernels (IQ2_XXS, IQ2_S, IQ2_XS, IQ1_M) are the same bytes in the C commit's build and the final one
+# new in head:
+_ZN14mtok_iq1m_fast34mul_mat_vec_iq1_m_pascal_mtok_fastILb0ELi2EEEvN7mtok_iq4argsE31ggml_cuda_mm_fusion_args_device
+_ZN14mtok_iq1m_fast34mul_mat_vec_iq1_m_pascal_mtok_fastILb0ELi4EEEvN7mtok_iq4argsE31ggml_cuda_mm_fusion_args_device
+_ZN14mtok_iq1m_fast34mul_mat_vec_iq1_m_pascal_mtok_fastILb0ELi8EEEvN7mtok_iq4argsE31ggml_cuda_mm_fusion_args_device
+_ZN14mtok_iq1m_fast34mul_mat_vec_iq1_m_pascal_mtok_fastILb1ELi2EEEvN7mtok_iq4argsE31ggml_cuda_mm_fusion_args_device
+_ZN14mtok_iq1m_fast34mul_mat_vec_iq1_m_pascal_mtok_fastILb1ELi4EEEvN7mtok_iq4argsE31ggml_cuda_mm_fusion_args_device
+_ZN14mtok_iq1m_fast34mul_mat_vec_iq1_m_pascal_mtok_fastILb1ELi8EEEvN7mtok_iq4argsE31ggml_cuda_mm_fusion_args_device
+mtok_iq1m_fast_ptx_ntm2
+mtok_iq1m_fast_ptx_ntm4
+mtok_iq1m_fast_ptx_ntm8

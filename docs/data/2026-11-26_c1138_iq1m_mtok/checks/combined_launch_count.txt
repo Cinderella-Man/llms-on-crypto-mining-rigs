@@ -1,0 +1,18 @@
+# gmix-q2 with the routed gate/up of all four types' layers on the card (IQL=0-15 and 24-31: IQ2_XXS 1|3|6|7|9|10|11|14|27|29|30,
+# IQ2_S 12|15|24|25|26|28|31, IQ2_XS 0|2|4|5, IQ1_M 8|13; layers 16-23 are Q2_0 and stay in host memory), card memory 17,761 MiB;
+# the arm at GGML_CUDA_MTOK_IQ_FAST=2, run/launch_count.c preloaded: the driver-API launches by kernel when llama-server exited.
+# Flash-Next's preset forces CUDA graphs, whose replays launch captured kernels without the driver-API call, so the counts
+# show which kernels ran (all four types' PTX), not how often each layer ran them.
+launch_count: 6 mtok_iq1m_fast_ptx_ntm2
+launch_count: 4 mtok_iq1m_fast_ptx_ntm4
+launch_count: 28 mtok_iq1m_fast_ptx_ntm8
+launch_count: 21 mtok_iq2s_fast_ptx_ntm2
+launch_count: 14 mtok_iq2s_fast_ptx_ntm4
+launch_count: 94 mtok_iq2s_fast_ptx_ntm8
+launch_count: 12 mtok_iq2xs_fast_ptx_ntm2
+launch_count: 8 mtok_iq2xs_fast_ptx_ntm4
+launch_count: 56 mtok_iq2xs_fast_ptx_ntm8
+launch_count: 33 mtok_iq2xxs_fast_ptx_ntm2
+launch_count: 22 mtok_iq2xxs_fast_ptx_ntm4
+launch_count: 146 mtok_iq2xxs_fast_ptx_ntm8
+# the arms at 0 and 1: no launch_count lines (no driver-API launches)

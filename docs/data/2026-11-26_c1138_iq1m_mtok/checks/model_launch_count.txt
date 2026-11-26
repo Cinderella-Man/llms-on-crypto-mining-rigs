@@ -1,0 +1,6 @@
+# gmix-q2 with its IQ1_M layers' routed gate/up on the card (IQL=8|13), the arm at GGML_CUDA_MTOK_IQ_FAST=2, run/launch_count.c preloaded:
+# the driver-API launches by kernel when llama-server exited (two prompts, each answered twice; prompt micro-batches of 8, MTP verify passes of 2-4 tokens)
+launch_count: 6 mtok_iq1m_fast_ptx_ntm2
+launch_count: 4 mtok_iq1m_fast_ptx_ntm4
+launch_count: 28 mtok_iq1m_fast_ptx_ntm8
+# the arms at 0 and 1: no launch_count lines (no driver-API launches)

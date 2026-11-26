@@ -1,4 +1,5 @@
-// Old against new for a multi-token expert kernel of the fork (C1138: IQ2_XXS's fast kernel, GGML_CUDA_MTOK_IQ_FAST):
+// Old against new for a multi-token expert kernel of the fork (C1138: the fast kernels of IQ2_XXS, IQ2_S, IQ2_XS and
+// IQ1_M, GGML_CUDA_MTOK_IQ_FAST):
 // runs a fixed set of MUL_MAT_ID products on CUDA0 and writes every output value, so that two runs, one with the switch
 // off and one with it on, can be compared byte for byte (`cmp`). Each case also prints a line with an FNV-1a hash of
 // its outputs, so the two logs can be compared with `diff`.
@@ -13,11 +14,12 @@
 // with five routings: distinct random experts per token; neighbours sharing 4 of their 10; every token on the same 10
 // experts in other slots (groups of up to 8 members); an expert twice within a token; 3 slots of each token skipped
 // (id -1, which the fork's kernels write as zeros).
-// The weights: experts 0-255 random blocks (any grid index, sign pattern and scale, a random FP16 d of 2^-12..2^-4),
+// The weights: experts 0-255 random blocks (any grid index, sign pattern and scale, a random FP16 d of 2^-12..2^-4; for
+// IQ1_M, whose d is the top nibbles of its scale words, any grid index, delta sign and scale and the same random d),
 // experts 256-511 rows drawn from 256 rows quantized from normal values (ggml's quantizer, a unit importance matrix).
 // Activations are normal values (the backend quantizes them to Q8_1).
 //
-// Usage: mtok_iq_fast_check <out.bin> [type]   (type: iq2_xxs, the default)
+// Usage: mtok_iq_fast_check <out.bin> [type]   (type: iq2_xxs, the default; iq2_s, iq2_xs, iq1_m)
 // Run it with the fork's Pascal kernels forced on a newer GPU ($PASCAL_FORCED of scripts/pascal_forced.sh), once with
 // the switch off and once on; GGML_CUDA_MTOK_IQ_FAST_FAULT=1 (the fast kernel takes up and gate the wrong way round)
 // must make every fused and shared case of 2 to 8 tokens differ.
@@ -64,7 +66,15 @@ static void fill_iq_experts(ggml_tensor * t) {
             for (int64_t b = 0; b < rb / bs; ++b) {
                 const float d = std::ldexp((rng() & 1) ? 1.0f : -1.0f, ex(rng)) * (1.0f + (rng() % 1000) / 1000.0f);
                 const ggml_fp16_t h = ggml_fp32_to_fp16(d);
-                memcpy(row + b * bs, &h, 2);
+                if (t->type == GGML_TYPE_IQ1_M) {
+                    // IQ1_M keeps d in the top nibbles of its four 16-bit scale words (bytes 48-55), nibble k in word k
+                    uint8_t * sc = row + b * bs + 48;
+                    for (int k = 0; k < 4; ++k) {
+                        sc[2*k + 1] = (uint8_t) ((sc[2*k + 1] & 0x0F) | (((h >> (4*k)) & 0xF) << 4));
+                    }
+                } else {
+                    memcpy(row + b * bs, &h, 2);
+                }
             }
         } else {
             memcpy(row, pool.data() + (rng() % npool) * rb, rb);

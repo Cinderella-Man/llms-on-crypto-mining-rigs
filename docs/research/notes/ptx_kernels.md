@@ -6,7 +6,9 @@ adds what it learned. The first kernel is IQ2_XXS's routed gate/up product at 2�
 better Flash-Next file (`gmix-q2`) slow ([R125](../../data/2026-11-25_r125_gmix_step/README.md)); its data and checks
 are in [docs/data/2026-11-25_c1138_iq2xxs_mtok/](../../data/2026-11-25_c1138_iq2xxs_mtok/README.md). The second is
 IQ2_S's ([docs/data/2026-11-26_c1138_iq2s_mtok/](../../data/2026-11-26_c1138_iq2s_mtok/README.md)), the third IQ2_XS's
-([docs/data/2026-11-26_c1138_iq2xs_mtok/](../../data/2026-11-26_c1138_iq2xs_mtok/README.md)).
+([docs/data/2026-11-26_c1138_iq2xs_mtok/](../../data/2026-11-26_c1138_iq2xs_mtok/README.md)), the fourth and last
+IQ1_M's ([docs/data/2026-11-26_c1138_iq1m_mtok/](../../data/2026-11-26_c1138_iq1m_mtok/README.md)), which also holds the
+check of all four together on the real file. The [summary](#the-four-kernels-summary) at the end compares the four.
 
 The method, as the owner set it: write a fast version in any language, check it on the build machine, then rewrite the
 whole kernel in PTX (not only the inner loop) and check it again; one kernel type per session.
@@ -26,9 +28,12 @@ whole kernel in PTX (not only the inner loop) and check it again; one kernel typ
   type brings a class with what differs (`prefix`, `copies`, `tab_words`, `unit_off`, and the functions `table`,
   `consts`, `body`). `gen_mtok_iq2_s.py` imports it (`sys.path` holds its folder, since `python3 -I` leaves the
   script's folder out) and also offers the parts of two-scale types (`scale_bytes`, `scale_floats`, `sums`, `values`),
-  which `gen_mtok_iq2_xs.py` imports in turn. A new type: a new `gen_mtok_<type>.py` with its class, calling these
-  functions; check that the older types' PTX stays the same bytes (the generators' outputs against the committed
-  `.ptx` files).
+  which `gen_mtok_iq2_xs.py` imports in turn. `gen_mtok_iq1_m.py` uses the frame's options for a type unlike the IQ2
+  ones: the class attributes `stage_sel` and `stage_doc` (the activations' order within each group of 8), `lut` (the
+  value registers) and `word_pick = False` (no choice of words), `row_start(..., kappa=False)`, `segments(...,
+  direct=True)` (each lane's super-block loaded straight into `w<m>_k`) and `row_end(..., dscale=f)` (the type's own
+  `d`). A new type: a new `gen_mtok_<type>.py` with its class, calling these functions; check that the older types'
+  PTX stays the same bytes (the generators' outputs against the committed `.ptx` files).
 - **Build.** `ggml/src/ggml-cuda/CMakeLists.txt` runs `nvcc -fatbin -arch=compute_61 -code=sm_61,compute_61` on each
   `.ptx`: ptxas makes the compute 6.1 SASS at build time, and the PTX goes into the same fatbin so that a newer card's
   driver compiles it when it loads (the build machine's RTX 3090s run it that way). `ptx/embed.cmake` turns the fatbin
@@ -125,7 +130,7 @@ table) against the old 10.5 (4 random 8-byte loads, staging stores and loads, ac
   a set of instruction hashes with those headers and the blank lines between cubins dropped (IQ2_S's `run/sass_all.sh`;
   IQ2_XXS's version kept the blank lines, so two unchanged kernels read as changed once IQ2_S's new source files moved
   which kernel ends a cubin). Its `BASE_EXTRA` and `HEAD_EXTRA` add the PTX fatbins of both builds.
-- **Shapes.** The fast kernels (IQ2_XXS and IQ2_S alike) need rows of 2 lanes (256·n weights with n = 2 mod 4:
+- **Shapes.** The fast kernels (all four types) need rows of 2 lanes (256·n weights with n = 2 mod 4:
   Flash-Next's 2,560), matrices 16-byte aligned and ending on a 16-byte boundary. The PTX covers only the fused gate/up launch with SWIGLU at 2,560;
   everything else falls back (plain MUL_MAT_ID and the shared expert to the C fast kernel, other shapes to the old
   kernel).
@@ -226,53 +231,102 @@ BFI, or two for a high-half entry: 2 fewer).
 - nvcc's C for the same algorithm built each table address with `BFE` of the 9 bits, `BFI` of them beside the lane's
   copy (a word index) and `SHL` by 2, where the PTX inserts the bits straight into the byte offset.
 
-## For the next kernel (IQ1_M)
 
-- **IQ1_M** (56-byte super-blocks: 8 low index bits per group in `qs` (bytes 0–31, word `ib` for block `ib`), a nibble
-  per group in `qh` (bytes 32–47) with 3 high index bits and the delta's sign, two 3-bit scales per 32 weights in
-  16-bit scale words (bytes 48–55), `d` in those words' top nibbles; no `d` at the start).
-  - **Loads: no `kappa` and no word PRMTs at all.** Rows are 560 bytes (0 mod 16) and an iteration 112 bytes, so with a
-    16-byte-aligned matrix every lane 0's super-block starts on a 16-byte boundary and lane 1's (56 bytes later) on an
-    8-byte one: 7 aligned `LDG.64` a lane and matrix from `segment + 56 sl`, and the loaded words are the super-block's
-    words (IQ2_XS spends 18 PRMTs and a branch per super-block and matrix choosing them: 2.25 per 32 weights). The
-    frame's `segments` assumes a `d` at the start and picks words; IQ1_M needs its own loads (or `segments` a mode
-    without the PRMTs).
-  - **The table is the grid itself.** `iq1s_grid_gpu` holds grid + 1 (0, 1, 2) as nibbles, weights 0–3 in the low
-    nibbles of bytes 0–3 and 4–7 in the high ones, so a group's nibbles already read (0, 4, 1, 5, 2, 6, 3, 7): that is
-    the value PRMTs' order, and the old kernel stages the activations in it already (`act_perm_iq1`). 2,048 words: 2
-    copies interleaved by word (16 KB), copy `lane & 1`.
-  - **Index:** the group's `qs` byte beside its `qh` byte in one PRMT (as IQ2_S's: odd groups take a copy of the `qh`
-    word shifted right by 4, so that their nibble is the low one of its byte), then `bfi(px, coff, 3, 11)` into the
-    byte address (`coff` = 4 · (lane & 1)): 2 a group.
-  - **Delta sign:** bit 11 of that PRMT's result; `bfe.s32 m, px, 11, 1` gives 0 or −1, and
-    `lop3(grid word, m, 0x44444444)` = `g | (m & 0x44444444)` sets bit 2 of every nibble, so that `prmt(t_pos, t_neg,
-    selector)` (the old kernel's value tables, 8 · (grid + delta)) picks the negative-delta table: 2 a group. With the
-    lookup and the value PRMTs (`prmt`, `shr`, `prmt`), about 7 instructions and one shared load per 8 weights
-    (IQ2_XS: 12.5).
-  - **Two scales:** IQ2_S's two-chain sums and exact FFMAs (`sums`; values within ±9, so the sums stay far below
-    2^22); the scale floats from 3-bit fields (`bfe` of 3 bits, then `2 s + 1` before or after the conversion), not
-    from IQ2_S's bytes, and `d` from the four top nibbles once per super-block as the old kernel's `sblock_scale`.
-  - **The real file:** `gmix-q2`'s IQ1_M layers are 8 and 13 (`IQL='8|13'` for `run/gpu_checks.sh`'s model step).
-- In every case: start from the C fast kernel's structure (`mmvq-pascal-mtok-iq2_xs-fast.cu` or
-  `mmvq-pascal-mtok-iq2_s-fast.cu` for two-scale types), check old against new with
-  `bench/mmvq_pascal/verify/mtok_iq_fast_check.cpp` (its type argument; `run/bitid.sh` of IQ2_XS's folder takes it as
-  `TYPE`), write a `gen_mtok_<type>.py` with the type's class and the shared functions, add the type to the loader's
-  table and the build's `foreach`, and count with `run/sass_loops.py` (split the dump with IQ2_S's
-  `run/split_sass.py`). Assemble the generated PTX alone first (`ptxas -arch=sm_61 -v`, then `cuobjdump -sass` of the
-  cubin, in the CUDA container): registers, spills and counts in a minute, before the build; the build's fatbin gave
-  the same SASS.
-- **Not measured yet:** whether the P106 is limited by instruction issue or by the shared-memory pipe in these
-  kernels. IQ2_XXS's and IQ2_XS's sign path costs 6 integer instructions a group; a 128-entry sign table in shared
-  memory (4 KB with 8 copies) would cost 2 and one more random shared load ([Q1879](../../../quants/experiments.md));
-  for IQ2_XS est. 73.0 → 57.0 per 32 weights. IQ2_S's computed signs cost 2.75 a group, so a table would save less
-  there. IQ2_S's table has 8 lanes per copy where IQ2_XXS's and IQ2_XS's have 4, so its lookups conflict more. IQ2_XS
-  also issues twice the global load instructions of the others (8-byte units). Rig 1's timing of the three kernels
-  (QUEUES) is the first number to decide it.
-- **Two ideas from IQ2_XS, parked until that timing:** the high-half entries without their shift (the low halves of
-  the loaded words are the entries a lane pair would read in each other's order; with the odd super-blocks'
-  activations staged with each word's two groups swapped, one PRMT a word replaces the word PRMT and the shift, but
-  only with the decode duplicated per `kappa` case, est. 73.0 → 71.0, [Q1894](../../../quants/experiments.md)); and
-  16-byte loads by giving the lanes super-blocks 5 apart (74 · 5 = 370 = 23 · 16 + 2, IQ2_S's offset), which breaks the
-  old kernel's order of each lane's sum unless partial sums move between the lanes
-  ([Q1895](../../../quants/experiments.md)). One lane per row ([Q1889](../../../quants/experiments.md)) removes the
-  offset too.
+## IQ1_M (C1138, code row 28r4): what changed from IQ2_S
+
+Today's kernel spent 76.69 SASS instructions per 32 weights of one matrix at one member (the IQ2 types' 131–143),
+19.3 more per further member. IQ1_M has no signs, so its XMAD are only the per-member scale products (6 a member);
+the rest is 17.5 logic and 17.8 shift instructions for the 11-bit index, the delta's sign and the 3-bit scales, 8 PRMT,
+4 random grid lookups in a 2,048-entry table, the 560-byte rows staged through shared memory, activations read twice.
+The fast version keeps the other three's frame and changes what IQ1_M's format needs:
+
+1. **The delta's sign in the table.** The grid `iq1s_grid_gpu` holds grid + 1 (0, 1, 2) as nibbles, so bit 2 of every
+   nibble is free. The code table has 4,096 words: the 2,048 entries, then the same with bit 2 of every nibble set
+   (16 KB, one copy). A group's `qs` byte and its `qh` nibble side by side (one PRMT; odd groups take a copy of the
+   `qh` word shifted right by 4, one shift per two blocks) make a 12-bit index, the 11-bit grid index with the delta's
+   sign at bit 11, and one `bfi(px, 0, 2, 12)` puts it into the table's byte address (ptxas folds the table's base, at
+   shared address 0, into the load). The word read is already the value PRMTs' selector with the sign in it:
+   `prmt(t_pos, t_neg, c)`, `shr`, `prmt` over the register pair {−7, 1, 9, 0, −9, −1, 7, 0}, 8 (grid ± 1/8) by code.
+   5 integer instructions and one shared load per 8 weights (IQ2_S 7.75, IQ2_XS 12.5). The plan written here before
+   (2 copies of the 2,048 entries, the sign added by `bfe.s32` and `lop3`) would have spent 7; the second copy buys
+   little, since 32 random words in 32 banks and 16 in 16 have about the same worst bank.
+2. **The weight order is the grid's own.** A group's nibbles read weights (0, 4, 1, 5, 2, 6, 3, 7), the order the old
+   kernel already stages the activations in (`act_perm_iq1`); the shared staging code takes the order as a parameter.
+3. **Two 3-bit scales per 32 weights.** IQ2_S's two DP4A chains and exact FFMAs (values within ±9, so the sums stay far
+   below 2^22). The scales of four blocks (a word of two 16-bit scale words, ls0 and ls1 at bits 0–2, 3–5 and 6–8,
+   9–11 of each) become the bytes 2 s + 1 of two words with 7 instructions: `((w << 1) & 0x000E000E) | ((w << 3) &
+   0x0E000E00) | 0x01010101` for ls0, `((w >> 2) & 0x000E000E) | (w & 0x0E000E00) | 0x01010101` for ls1 (3 shifts, 4
+   `lop3`); then IQ2_S's `scale_floats`, one I2F each.
+4. **d in four instructions a super-block and matrix.** d's nibbles are the high nibbles of bytes 1 and 3 of both scale
+   words: `prmt(w12, w13, 0x7531)` gathers those four bytes, a `lop3` with a copy shifted left by 4 (high nibbles from
+   the bytes, low nibbles from the copy) makes bytes 1 and 3 d's two bytes, and a `prmt` moves them to the low half;
+   then `cvt.f32.f16` and the multiply by 0.125 of the old kernel's `sblock_scale`.
+5. **Rows straight into registers, no choice of words.** 560-byte rows (0 mod 16) and 56-byte super-blocks with
+   nothing in front: lane 0's super-block starts on a 16-byte boundary, lane 1's on an 8-byte one, and each lane loads
+   its 7 aligned 8-byte units from `segment + 56 sl`, whose words are the super-block's words. No `kappa`, no branch,
+   no word PRMTs (IQ2_XS spends 2.25 instructions per 32 weights choosing words).
+
+Result (static, per 32 weights of one matrix, one pass): 52.50 instructions in CUDA C, 45.69 in PTX at one member
+(old 76.69, Q2_0 42.88); 94.06 and 87.00 at four members (old 134.62, Q2_0 79.62). Each further member costs 13.8
+(old 19.3). The PTX saves 6.8 over nvcc's C: 4.0 from the table address (nvcc: a shift and an AND with 0x3FFC per
+group), 2.0 from the I2F scales (C: a PRMT and an FADD each), 0.8 from d and the loop's frame.
+
+## What ptxas did with IQ1_M's PTX
+
+- `bfi.b32 ea, px, ZERO, 2, 12` and the add of the table's base became `BFI R, R, 0xc02, RZ` and `LDS.U.32 R, [R]`;
+  `bfe` + `cvt.rn.f32.u32` became `I2F.F32.U8` with a byte select, `cvt.f32.f16` of a half `F2F.F32.F16`; the rest one
+  to one.
+- The iteration's multiplies by 112 (a lane pair's bytes of a row) and 272 (a super-block's staged activations) became
+  two XMAD each, 0.25 per 32 weights; pointers stepped by the loop would remove them
+  ([Q1899](../../../quants/experiments.md)).
+- Registers: 124, 155 and 185 for groups of up to 2, 4 and 8 members, no spills (nvcc's C: 135, 158, 204); the
+  8-member entry point's one-member loop is 45.56. The build's fatbin gave exactly the SASS of `ptxas -v` on the
+  generated file alone.
+
+## The four kernels: summary
+
+Static SASS per 32 weights of one matrix, one pass of the inner loop, at one member (four members in parentheses),
+the entry points for groups of up to 4 members; `gmix-q2`'s routed gate/up layers per type and R125's time a layer at
+four tokens on a P106 with the old kernel:
+
+| Type (layers in `gmix-q2`, R125 ms a layer) | old | CUDA C | PTX | PTX against C | what the PTX bought over nvcc |
+|---|---:|---:|---:|---:|---|
+| IQ2_XXS (11, 0.937) | 131.44 (183.19) | 76.94 (112.88) | 72.50 (108.06) | −4.44 | the table address (`bfe` + `ISCADD`, nvcc `BFE` + `BFI` + shift); all ten row loads issued first |
+| IQ2_S (7, 0.978) | 136.31 (194.12) | 70.25 (111.56) | 62.94 (104.38) | −7.31 | the table address as one `bfi` into the copy offset (4.1), I2F scales (2.1), index and frame (1.3) |
+| IQ2_XS (4, 1.042) | 142.69 (200.56) | 81.62 (123.56) | 73.00 (114.62) | −8.62 | the table address (6.0), I2F scales (2.0), frame (0.6) |
+| IQ1_M (2, 0.547) | 76.69 (134.62) | 52.50 (94.06) | 45.69 (87.00) | −6.81 | the table address (4.0), I2F scales (2.0), d and frame (0.8) |
+| Q2_0, for comparison (0.271) | 42.88 (79.62) | | | | |
+
+- **What every rewrite removed:** the 32-bit multiplies (sign masks and scale products, 43–46 XMAD per 32 weights in
+  the IQ2 types; Pascal builds each from three XMAD), the staging of the rows through shared memory, the second read of
+  every member's activations (gate and up in one pass), and the integer-to-float conversions (the DP4A chains start at
+  the float 1.5·2^23, so their results are floats). What is left per 8 weights is a few PRMTs and bit-field
+  instructions around one random 4-byte shared lookup.
+- **What the PTX bought, every time, is the same two things.** nvcc never inserts an index straight into a byte address
+  with one `BFI` (it builds a word index and shifts, or masks a shifted value: 1–1.5 instructions a group more), and it
+  keeps a PRMT and an FADD for a scale's float where `bfe` + `cvt` folds into one `I2F` with a byte select. The decode's
+  PRMTs, the DP4A chains and the exact FFMAs it emitted one to one. Registers: IQ1_M's C took 135, 158 and 204 against
+  the PTX's 124, 155 and 185; IQ2_S's C 247 at 8 members against 244, with a slower one-member loop there.
+- **The order the counts give:** IQ1_M's PTX (45.7) is within 3 instructions of Q2_0's kernel; IQ2_S (62.9) next;
+  IQ2_XXS (72.5) and IQ2_XS (73.0) spend 24 of theirs on the computed sign bits (6 a group), which a sign table would
+  cut to 8 ([Q1879](../../../quants/experiments.md)).
+- **What rig 1's timing should look at first** (QUEUES rig 1 row 6b, one tarball for all four types):
+  1. **Whether a kernel's time follows its instruction count or its shared loads.** All four make 4 random 4-byte
+     lookups per 32 weights, and Q2_0 makes none. IQ1_M is the test: its count is near Q2_0's, so if its ms a layer
+     comes near Q2_0's 0.271 the P106 is issue-bound there, and fewer instructions pay (Q1879's sign tables for IQ2_XXS
+     and IQ2_XS, [Q1898](../../../quants/experiments.md)'s selectors without the shift); if IQ1_M stays well above Q2_0,
+     the lookups' bank conflicts are the limit (IQ1_M's 32 lanes share one table copy, IQ2_S's 8 lanes a copy, IQ2_XXS's
+     and IQ2_XS's 4), and more table copies or fewer lookups matter more than instructions.
+  2. **`=1` against `=2` per type:** the PTX's 4.4–8.6 fewer instructions (6–11 %) show only if issue is the limit.
+  3. **Then the step:** est. up to 15.91 ms of `gmix-q2`'s 18.15 ms verify-pass gap if all four reach Q2_0's rate
+     (R125's 15.36 for the IQ2 types, IQ1_M's 0.55).
+- **Not measured yet:** the kernels' time. IQ2_S's table has 8 lanes per copy and IQ1_M's 32, so their lookups conflict more
+  than IQ2_XXS's and IQ2_XS's 4; IQ2_XS and IQ1_M issue 1.25 and 0.88 global load instructions per 32 weights (8-byte
+  units) where IQ2_XXS and IQ2_S issue 0.62 and 0.75.
+- **Ideas parked until that timing:** the signs from a table (Q1879, est. −16 per 32 weights for IQ2_XXS and IQ2_XS);
+  IQ2_XS's high-half entries without their shift ([Q1894](../../../quants/experiments.md), est. −2.0) and its rows in
+  16-byte loads ([Q1895](../../../quants/experiments.md)); one lane per row for all types
+  ([Q1889](../../../quants/experiments.md)); IQ1_M's second selector without the shift, from 8-byte table entries (32 KB:
+  groups of up to 4 members only, 2 blocks per SM) or from a 2-byte load of the entry's upper half (one more shared load
+  a group), est. 45.69 → 41.69 ([Q1898](../../../quants/experiments.md)); IQ2_XXS's first-group address by one `bfi`
+  ([Q1888](../../../quants/experiments.md), est. −1.0).
