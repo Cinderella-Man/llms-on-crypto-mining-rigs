@@ -1,0 +1,5 @@
+model	build	md5	bytes	v4_md5_r153	vs_v4	eval
+flashnext	llama.cpp-20261125-caf27fdae-pascal-p106-v5-cand-b12723	4384ebc02147be1ee6f38d1ce4a43f21	745	4384ebc02147be1ee6f38d1ce4a43f21	same	18589.18 ms /   255 runs   (   72.90 ms per token,    13.72 tokens per second)
+flintq5	llama.cpp-20261125-caf27fdae-pascal-p106-v5-cand-b12723	d72ca1b968a8c1eb2b1ebeea22458ff9	1113	d72ca1b968a8c1eb2b1ebeea22458ff9	same	8119.03 ms /   255 runs   (   31.84 ms per token,    31.41 tokens per second)
+flintq8	llama.cpp-20261125-caf27fdae-pascal-p106-v5-cand-b12723	c5b2d8f20654728edfe38c37458b4c5c	972	c5b2d8f20654728edfe38c37458b4c5c	same	8850.68 ms /   255 runs   (   34.71 ms per token,    28.81 tokens per second)
+ornith	llama.cpp-20261125-caf27fdae-pascal-p106-v5-cand-b12723	35f987c059c7d2f521404e964995cd2d	974	35f987c059c7d2f521404e964995cd2d	same	19168.46 ms /   255 runs   (   75.17 ms per token,    13.30 tokens per second)

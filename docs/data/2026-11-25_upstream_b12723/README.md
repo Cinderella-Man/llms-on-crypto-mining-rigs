@@ -12,6 +12,12 @@ and Flash-Next's same replies, and with upstream's three switches Flash-Next now
 `pascal-p106-v5` moves to the candidate, a P106 rig checks the final build, and one coding-agent run each on Ornith and
 Flash-Next shows no loss.
 
+**The P106 check passed on 2026-11-26** ([2026-11-26_c1118_b12723_p106](../2026-11-26_c1118_b12723_p106/README.md)):
+on the v5 presets every release file gives the same replies, the same MiB per card and the same launch groups on the
+final build as on `eee615cdb` (`2d839da1d` without its seven fork merges, which change none of these), the kernel record
+sets give the last check's results case by case, and the random models differ in exactly the 8 files below, by the
+same amounts. The agent runs remain: Flash-Next's, and Ornith's as a compatibility check.
+
 ## What was merged
 
 Miner Llama's cumulative engine branch `pascal-p106-v5` stood at `2d839da1d`: upstream llama.cpp b12674 plus every fork

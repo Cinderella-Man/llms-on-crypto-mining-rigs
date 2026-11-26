@@ -1,0 +1,9 @@
+model	load	first_log_line_s	load_model_line_s	load_s
+flashnext	cand	0.312	0.317	317
+flashnext	ref	0.320	0.327	312
+flintq5	cand	0.291	0.296	437
+flintq5	ref	0.339	0.345	432
+flintq8	cand	0.317	0.320	600
+flintq8	ref	0.358	0.419	596
+ornith	cand	0.274	0.279	689
+ornith	ref	0.383	0.389	687

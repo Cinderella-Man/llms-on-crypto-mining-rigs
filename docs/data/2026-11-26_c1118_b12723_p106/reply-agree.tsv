@@ -1,0 +1,13 @@
+model	prompt	load	vs_ref	common_prefix_chars	ref_chars	chars	common_prefix_words	ref_words	words
+flashnext	code	cand	same	743	743	743	110	110	110
+flashnext	long	cand	same	1072	1072	1072	162	162	162
+flashnext	prose	cand	same	1214	1214	1214	197	197	197
+flintq5	code	cand	same	1288	1288	1288	191	191	191
+flintq5	long	cand	same	1268	1268	1268	212	212	212
+flintq5	prose	cand	same	1335	1335	1335	203	203	203
+flintq8	code	cand	same	813	813	813	105	105	105
+flintq8	long	cand	same	1219	1219	1219	205	205	205
+flintq8	prose	cand	same	1187	1187	1187	188	188	188
+ornith	code	cand	same	740	740	740	107	107	107
+ornith	long	cand	same	977	977	977	173	173	173
+ornith	prose	cand	same	1305	1305	1305	207	207	207
