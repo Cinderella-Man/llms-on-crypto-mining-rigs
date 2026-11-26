@@ -6,6 +6,8 @@
 #   floor    base again in a fresh load: against base (the load-to-load floor)
 #   one_rs3  one token a call with n_rs_seq 3: against base (the snapshot setting alone)
 #   four_rs0 four tokens a call with n_rs_seq 0: against base (the call size alone)
+#   four_exact  four as it is plus GGML_CUDA_MMVF_PASCAL_EXACT=1 (the BF16 products of 3-4 tokens given the one-token
+#            sums, Q1325), which the preset leaves off: against base
 # The environment is release/flash-next-v5/settings.env's PRESET_ENV with the fork's compute-6.1 card paths forced the
 # way a P106 takes them (scripts/pascal_forced.sh, pascal_force_preset); of the preset's arguments, those that act on
 # a load or on the arithmetic (checked present in PRESET_ARGS), the layer split set to the cards.
@@ -73,13 +75,13 @@ run_c() {  # <container name> <timeout> <command>: one container on the cards wi
 run_c c1128-sysinfo 300 "env $ENVS $SYSINFO" > "$WORK/sysinfo.txt" 2>&1
 say "sysinfo rc=$?: $(grep -o 'MMVQ_PASCAL = [0-9]*\|MMVF_PASCAL = [0-9]*' "$WORK/sysinfo.txt" | tr '\n' ' ')"
 
-arm() {  # <name> <mode> <step> <rs>
-    local o=$WORK/$1 rc
+arm() {  # <name> <mode> <step> <rs> [extra environment]
+    local o=$WORK/$1 rc envs="$ENVS${5:+ $5}"
     rm -rf "$o"; mkdir -p "$o"
     printf 'env: %s\nKLD_MODE=%s KLD_STEP=%s KLD_RS=%s KLD_PARTS=%s KLD_REQS=%s\nargs: %s %s\n' \
-        "$ENVS" "$2" "$3" "$4" "$PARTS" "$REQS" "$TOOL" "$ARGS" > "$o/command.txt"
-    say "$1: start ($2, $3 a call, n_rs_seq $4); cards $(smi)"
-    run_c "c1128-$1" "$TIMEOUT" "env $ENVS $TOOL $ARGS" \
+        "$envs" "$2" "$3" "$4" "$PARTS" "$REQS" "$TOOL" "$ARGS" > "$o/command.txt"
+    say "$1: start ($2, $3 a call, n_rs_seq $4${5:+, $5}); cards $(smi)"
+    run_c "c1128-$1" "$TIMEOUT" "env $envs $TOOL $ARGS" \
         -e KLD_MODE="$2" -e KLD_STEP="$3" -e KLD_RS="$4" -e KLD_PARTS="$PARTS" -e KLD_REQS="$REQS" \
         -e KLD_BASE="$BASE" -e KLD_OUT="$o/drift" > "$o/run.log" 2>&1
     rc=$?
@@ -94,6 +96,7 @@ for a in $ARMS; do
     floor)    arm floor test 1 0 || finish 1 ;;
     one_rs3)  arm one_rs3 test 1 3 || finish 1 ;;
     four_rs0) arm four_rs0 test 4 0 || finish 1 ;;
+    four_exact) arm four_exact test 4 3 GGML_CUDA_MMVF_PASCAL_EXACT=1 || finish 1 ;;
     *) say "unknown arm $a"; finish 1 ;;
     esac
 done

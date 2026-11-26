@@ -1,0 +1,6 @@
+selection	positions	same_top	prob_move_median	prob_move_p90	prob_move_p99	logit_move_median	logit_move_p99	c964_code_prob_rank	c964_prose_prob_rank	c964_deep_prob_rank	c964_code_logit_rank	c964_prose_logit_rank	c964_deep_logit_rank
+all reply rows 1-256	768	760	0.00128183	0.0351413	0.101936	0.0839109	0.639141	83.2	98.2	81.5	30.5	88.2	54.6
+reference top below 0.6	106	98	0.0267571	0.0682389	0.115565	0.0672083	0.321104	43.4	93.4	39.6	34.0	94.3	62.3
+reference top below 0.5	62	55	0.0236829	0.0640556	0.102185	0.0746765	0.32874	43.5	95.2	43.5	33.9	91.9	61.3
+reference gap below 0.03	15	9	0.0221913	0.0446271	0.10822	0.0553913	0.324314	46.7	93.3	46.7	40.0	93.3	73.3
+reference gap below 0.0849	30	22	0.0239413	0.052797	0.117	0.0641231	0.33387	40.0	93.3	36.7	30.0	90.0	63.3

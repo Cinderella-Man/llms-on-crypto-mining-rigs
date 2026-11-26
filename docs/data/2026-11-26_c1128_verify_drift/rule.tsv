@@ -1,0 +1,13 @@
+quantity	value
+four: positions	768
+four: same bits share	0
+four: median |logit move|	0.0839109
+four: 99th percentile |logit move|	0.639141
+floor: 99th percentile |logit move|	0
+smallest C964 flip |logit move|	0.0467
+third of it	0.0155667
+tenth of it	0.00467
+C964 code flip: percentile rank among four's moves	30.4688
+C964 prose flip: percentile rank among four's moves	88.151
+C964 deep flip: percentile rank among four's moves	54.5573
+verdict	rounding everywhere: the median position moves by at least a third of the smallest flip's move
