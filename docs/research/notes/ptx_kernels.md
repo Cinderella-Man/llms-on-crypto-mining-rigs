@@ -310,7 +310,7 @@ four tokens on a P106 with the old kernel:
 - **The order the counts give:** IQ1_M's PTX (45.7) is within 3 instructions of Q2_0's kernel; IQ2_S (62.9) next;
   IQ2_XXS (72.5) and IQ2_XS (73.0) spend 24 of theirs on the computed sign bits (6 a group), which a sign table would
   cut to 8 ([Q1879](../../../quants/experiments.md)).
-- **What rig 1's timing should look at first** (QUEUES rig 1 row 6b, one tarball for all four types):
+- **What rig 1's timing was to look at first** (QUEUES rig 1 row 6b, one tarball for all four types; answered below):
   1. **Whether a kernel's time follows its instruction count or its shared loads.** All four make 4 random 4-byte
      lookups per 32 weights, and Q2_0 makes none. IQ1_M is the test: its count is near Q2_0's, so if its ms a layer
      comes near Q2_0's 0.271 the P106 is issue-bound there, and fewer instructions pay (Q1879's sign tables for IQ2_XXS
@@ -320,13 +320,27 @@ four tokens on a P106 with the old kernel:
   2. **`=1` against `=2` per type:** the PTX's 4.4–8.6 fewer instructions (6–11 %) show only if issue is the limit.
   3. **Then the step:** est. up to 15.91 ms of `gmix-q2`'s 18.15 ms verify-pass gap if all four reach Q2_0's rate
      (R125's 15.36 for the IQ2 types, IQ1_M's 0.55).
-- **Not measured yet:** the kernels' time. IQ2_S's table has 8 lanes per copy and IQ1_M's 32, so their lookups conflict more
-  than IQ2_XXS's and IQ2_XS's 4; IQ2_XS and IQ1_M issue 1.25 and 0.88 global load instructions per 32 weights (8-byte
-  units) where IQ2_XXS and IQ2_S issue 0.62 and 0.75.
-- **Ideas parked until that timing:** the signs from a table (Q1879, est. −16 per 32 weights for IQ2_XXS and IQ2_XS);
-  IQ2_XS's high-half entries without their shift ([Q1894](../../../quants/experiments.md), est. −2.0) and its rows in
-  16-byte loads ([Q1895](../../../quants/experiments.md)); one lane per row for all types
-  ([Q1889](../../../quants/experiments.md)); IQ1_M's second selector without the shift, from 8-byte table entries (32 KB:
-  groups of up to 4 members only, 2 blocks per SM) or from a 2-byte load of the entry's upper half (one more shared load
-  a group), est. 45.69 → 41.69 ([Q1898](../../../quants/experiments.md)); IQ2_XXS's first-group address by one `bfi`
-  ([Q1888](../../../quants/experiments.md), est. −1.0).
+- **Measured on a P106** (C1146, rig 1 row 6b, [data](../../data/2026-11-26_c1146_iq_kernels_rig1/README.md)):
+  `gmix-q2` on nine P106-090 cards at stock, R125's group profile once at each setting. A four-token routed gate/up
+  layer at depth 0, old → C → PTX: IQ2_XXS 0.938 → 0.557 → 0.464 ms, IQ2_S 0.984 → 0.535 → 0.434, IQ2_XS
+  1.038 → 0.598 → 0.496, IQ1_M 0.549 → 0.331 → 0.268, against Q2_0's 0.262. The PTX kernels save 11.80 ms of the
+  verify pass and the step gains 11.66 and 11.78 ms at depths 0 and 8,192.
+  1. **The time follows the instruction count, not the shared loads.** IQ1_M's PTX, with 32 lanes on one table copy,
+     takes 0.96 × Q2_0's time per instruction; the other PTX kernels 1.05 (IQ2_XXS, 4 lanes a copy), 1.11 (IQ2_XS, 4)
+     and 1.13 (IQ2_S, 8). No type's time orders by its lanes per copy, and the PTX kernels read at est. 41–60 % of the
+     card's measured bandwidth. On a P106 these kernels are issue-bound: fewer instructions pay.
+  2. **The PTX bought more than its count:** from C to PTX the time fell 16.6–19.0 % for 5.8–13.0 % fewer instructions
+     (time per instruction 1.03–1.25 × Q2_0's in C, 0.96–1.13 in PTX). The static count of the inner loop misses what
+     else the PTX changed, most likely the row loads all issued first.
+  3. **Left over Q2_0's time:** IQ2_XXS +0.202 ms a layer, IQ2_S +0.172, IQ2_XS +0.234, IQ1_M +0.007; est. 4.38 ms a
+     pass over `gmix-q2`'s 24 grid layers.
+- **The count-cutting ideas, reopened by that timing:** the signs from a table (Q1879, est. −16 per 32 weights for
+  IQ2_XXS and IQ2_XS, est. 1.56 ms a pass at the measured rate, if 8 lookups per 32 weights still do not limit);
+  IQ2_XS's high-half entries without their shift ([Q1894](../../../quants/experiments.md), est. −2.0); IQ1_M's second
+  selector without the shift, from 8-byte table entries (32 KB: groups of up to 4 members only, 2 blocks per SM) or
+  from a 2-byte load of the entry's upper half (one more shared load a group), est. 45.69 → 41.69
+  ([Q1898](../../../quants/experiments.md)); with the planned one lane per row for all types
+  ([Q1889](../../../quants/experiments.md)) and IQ2_XXS's first-group address by one `bfi`
+  ([Q1888](../../../quants/experiments.md), est. −1.0). IQ2_XS's rows in 16-byte loads
+  ([Q1895](../../../quants/experiments.md)) stay parked: the timing does not show its loads limiting. The same method
+  for Q2_0's own multi-token kernel, which serves the release file: [Q1907](../../../quants/experiments.md).

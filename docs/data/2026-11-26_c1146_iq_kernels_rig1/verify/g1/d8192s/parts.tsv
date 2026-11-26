@@ -1,0 +1,40 @@
+trace	cards	passes	part	ms_per_pass
+verify-r1	cards 0 to 7	81	routed experts	25.797
+verify-r1	cards 0 to 7	81	shared expert	4.035
+verify-r1	cards 0 to 7	81	hyper-connections (BF16)	12.283
+verify-r1	cards 0 to 7	81	router	1.222
+verify-r1	cards 0 to 7	81	attention and recurrent projections	19.563
+verify-r1	cards 0 to 7	81	Gated DeltaNet state and conv	8.695
+verify-r1	cards 0 to 7	81	attention (FLASH_ATTN_EXT)	11.572
+verify-r1	cards 0 to 7	81	output layer	0.000
+verify-r1	cards 0 to 7	81	token embeddings	0.000
+verify-r1	cards 0 to 7	81	other ops without weights	7.382
+verify-r1	cards 0 to 7	81	other weights	0.779
+verify-r1	cards 0 to 7	81	sum of the parts	91.329
+verify-r1	card 8	81	routed experts	0.864
+verify-r1	card 8	81	shared expert	0.169
+verify-r1	card 8	81	hyper-connections (BF16)	0.544
+verify-r1	card 8	81	router	0.054
+verify-r1	card 8	81	attention and recurrent projections	0.804
+verify-r1	card 8	81	Gated DeltaNet state and conv	0.263
+verify-r1	card 8	81	attention (FLASH_ATTN_EXT)	1.050
+verify-r1	card 8	81	output layer	3.155
+verify-r1	card 8	81	token embeddings	0.000
+verify-r1	card 8	81	other ops without weights	1.520
+verify-r1	card 8	81	other weights	0.149
+verify-r1	card 8	81	sum of the parts	8.572
+verify-r1	all cards	81	routed experts	26.661
+verify-r1	all cards	81	shared expert	4.204
+verify-r1	all cards	81	hyper-connections (BF16)	12.827
+verify-r1	all cards	81	router	1.275
+verify-r1	all cards	81	attention and recurrent projections	20.367
+verify-r1	all cards	81	Gated DeltaNet state and conv	8.959
+verify-r1	all cards	81	attention (FLASH_ATTN_EXT)	12.622
+verify-r1	all cards	81	output layer	3.155
+verify-r1	all cards	81	token embeddings	0.000
+verify-r1	all cards	81	other ops without weights	8.902
+verify-r1	all cards	81	other weights	0.928
+verify-r1	all cards	81	sum of the parts	99.901
+verify-r1	card 8	81	by position: before the head's product	4.411
+verify-r1	card 8	81	by position: the head's product	3.155
+verify-r1	card 8	81	by position: after the head's product	1.006

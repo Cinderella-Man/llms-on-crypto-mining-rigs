@@ -1,0 +1,40 @@
+trace	cards	passes	part	ms_per_pass
+verify-r1	cards 0 to 7	100	routed experts	25.531
+verify-r1	cards 0 to 7	100	shared expert	4.012
+verify-r1	cards 0 to 7	100	hyper-connections (BF16)	12.277
+verify-r1	cards 0 to 7	100	router	1.234
+verify-r1	cards 0 to 7	100	attention and recurrent projections	19.407
+verify-r1	cards 0 to 7	100	Gated DeltaNet state and conv	8.679
+verify-r1	cards 0 to 7	100	attention (FLASH_ATTN_EXT)	0.952
+verify-r1	cards 0 to 7	100	output layer	0.000
+verify-r1	cards 0 to 7	100	token embeddings	0.000
+verify-r1	cards 0 to 7	100	other ops without weights	6.101
+verify-r1	cards 0 to 7	100	other weights	0.767
+verify-r1	cards 0 to 7	100	sum of the parts	78.959
+verify-r1	card 8	100	routed experts	0.834
+verify-r1	card 8	100	shared expert	0.170
+verify-r1	card 8	100	hyper-connections (BF16)	0.553
+verify-r1	card 8	100	router	0.053
+verify-r1	card 8	100	attention and recurrent projections	0.806
+verify-r1	card 8	100	Gated DeltaNet state and conv	0.252
+verify-r1	card 8	100	attention (FLASH_ATTN_EXT)	0.088
+verify-r1	card 8	100	output layer	3.154
+verify-r1	card 8	100	token embeddings	0.000
+verify-r1	card 8	100	other ops without weights	1.331
+verify-r1	card 8	100	other weights	0.150
+verify-r1	card 8	100	sum of the parts	7.390
+verify-r1	all cards	100	routed experts	26.364
+verify-r1	all cards	100	shared expert	4.182
+verify-r1	all cards	100	hyper-connections (BF16)	12.830
+verify-r1	all cards	100	router	1.287
+verify-r1	all cards	100	attention and recurrent projections	20.212
+verify-r1	all cards	100	Gated DeltaNet state and conv	8.930
+verify-r1	all cards	100	attention (FLASH_ATTN_EXT)	1.040
+verify-r1	all cards	100	output layer	3.154
+verify-r1	all cards	100	token embeddings	0.000
+verify-r1	all cards	100	other ops without weights	7.432
+verify-r1	all cards	100	other weights	0.917
+verify-r1	all cards	100	sum of the parts	86.349
+verify-r1	card 8	100	by position: before the head's product	3.317
+verify-r1	card 8	100	by position: the head's product	3.154
+verify-r1	card 8	100	by position: after the head's product	0.919

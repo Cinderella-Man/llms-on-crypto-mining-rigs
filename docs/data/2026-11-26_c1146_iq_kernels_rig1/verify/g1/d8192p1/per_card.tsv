@@ -1,0 +1,10 @@
+trace	card	passes	ms_per_pass	median_raw_ms
+verify-r1	0	92	13.131	15.531
+verify-r1	1	92	13.988	16.207
+verify-r1	2	92	11.426	13.467
+verify-r1	3	92	11.992	14.214
+verify-r1	4	92	9.728	11.483
+verify-r1	5	92	10.855	12.855
+verify-r1	6	92	9.839	11.737
+verify-r1	7	92	10.219	12.282
+verify-r1	8	92	8.492	10.178

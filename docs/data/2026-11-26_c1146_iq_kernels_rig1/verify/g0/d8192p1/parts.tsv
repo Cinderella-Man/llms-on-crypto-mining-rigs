@@ -1,0 +1,40 @@
+trace	cards	passes	part	ms_per_pass
+verify-r1	cards 0 to 7	92	routed experts	35.226
+verify-r1	cards 0 to 7	92	shared expert	4.034
+verify-r1	cards 0 to 7	92	hyper-connections (BF16)	12.259
+verify-r1	cards 0 to 7	92	router	1.238
+verify-r1	cards 0 to 7	92	attention and recurrent projections	19.565
+verify-r1	cards 0 to 7	92	Gated DeltaNet state and conv	8.736
+verify-r1	cards 0 to 7	92	attention (FLASH_ATTN_EXT)	11.567
+verify-r1	cards 0 to 7	92	output layer	0.000
+verify-r1	cards 0 to 7	92	token embeddings	0.000
+verify-r1	cards 0 to 7	92	other ops without weights	7.336
+verify-r1	cards 0 to 7	92	other weights	0.768
+verify-r1	cards 0 to 7	92	sum of the parts	100.730
+verify-r1	card 8	92	routed experts	0.868
+verify-r1	card 8	92	shared expert	0.168
+verify-r1	card 8	92	hyper-connections (BF16)	0.556
+verify-r1	card 8	92	router	0.054
+verify-r1	card 8	92	attention and recurrent projections	0.829
+verify-r1	card 8	92	Gated DeltaNet state and conv	0.262
+verify-r1	card 8	92	attention (FLASH_ATTN_EXT)	1.045
+verify-r1	card 8	92	output layer	3.155
+verify-r1	card 8	92	token embeddings	0.000
+verify-r1	card 8	92	other ops without weights	1.390
+verify-r1	card 8	92	other weights	0.149
+verify-r1	card 8	92	sum of the parts	8.476
+verify-r1	all cards	92	routed experts	36.094
+verify-r1	all cards	92	shared expert	4.202
+verify-r1	all cards	92	hyper-connections (BF16)	12.816
+verify-r1	all cards	92	router	1.292
+verify-r1	all cards	92	attention and recurrent projections	20.395
+verify-r1	all cards	92	Gated DeltaNet state and conv	8.998
+verify-r1	all cards	92	attention (FLASH_ATTN_EXT)	12.612
+verify-r1	all cards	92	output layer	3.155
+verify-r1	all cards	92	token embeddings	0.000
+verify-r1	all cards	92	other ops without weights	8.726
+verify-r1	all cards	92	other weights	0.918
+verify-r1	all cards	92	sum of the parts	109.206
+verify-r1	card 8	92	by position: before the head's product	4.411
+verify-r1	card 8	92	by position: the head's product	3.155
+verify-r1	card 8	92	by position: after the head's product	0.910

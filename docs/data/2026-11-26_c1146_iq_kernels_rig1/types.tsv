@@ -1,0 +1,225 @@
+table	request	key	arm	groups_per_pass	ms
+per_layer	d0p2	iq2_xxs	r125	11.00	10.3098
+per_layer	d0p2	iq2_xxs	unset	11.00	10.3174
+per_layer	d0p2	iq2_xxs	c	11.00	6.1235
+per_layer	d0p2	iq2_xxs	ptx	11.00	5.1050
+per_layer	d0p2	iq2_s	r125	7.00	6.8475
+per_layer	d0p2	iq2_s	unset	7.00	6.8892
+per_layer	d0p2	iq2_s	c	7.00	3.7438
+per_layer	d0p2	iq2_s	ptx	7.00	3.0358
+per_layer	d0p2	iq2_xs	r125	4.00	4.1669
+per_layer	d0p2	iq2_xs	unset	4.00	4.1513
+per_layer	d0p2	iq2_xs	c	4.00	2.3907
+per_layer	d0p2	iq2_xs	ptx	4.00	1.9824
+per_layer	d0p2	iq1_m	r125	2.00	1.0938
+per_layer	d0p2	iq1_m	unset	2.00	1.0984
+per_layer	d0p2	iq1_m	c	2.00	0.6625
+per_layer	d0p2	iq1_m	ptx	2.00	0.5366
+per_layer	d0p2	q2_0	r125	24.00	6.5058
+per_layer	d0p2	q2_0	unset	24.00	6.2826
+per_layer	d0p2	q2_0	c	24.00	6.2826
+per_layer	d0p2	q2_0	ptx	24.00	6.2765
+parts	d0p2	routed experts	c		26.364
+parts	d0p2	routed experts	ptx		24.094
+parts	d0p2	routed experts	unset		35.902
+parts	d0p2	shared expert	c		4.182
+parts	d0p2	shared expert	ptx		4.189
+parts	d0p2	shared expert	unset		4.192
+parts	d0p2	hyper-connections (BF16)	c		12.830
+parts	d0p2	hyper-connections (BF16)	ptx		12.810
+parts	d0p2	hyper-connections (BF16)	unset		12.825
+parts	d0p2	router	c		1.287
+parts	d0p2	router	ptx		1.297
+parts	d0p2	router	unset		1.299
+parts	d0p2	attention and recurrent projections	c		20.212
+parts	d0p2	attention and recurrent projections	ptx		20.209
+parts	d0p2	attention and recurrent projections	unset		20.274
+parts	d0p2	Gated DeltaNet state and conv	c		8.930
+parts	d0p2	Gated DeltaNet state and conv	ptx		8.906
+parts	d0p2	Gated DeltaNet state and conv	unset		8.942
+parts	d0p2	attention (FLASH_ATTN_EXT)	c		1.040
+parts	d0p2	attention (FLASH_ATTN_EXT)	ptx		1.040
+parts	d0p2	attention (FLASH_ATTN_EXT)	unset		1.040
+parts	d0p2	output layer	c		3.154
+parts	d0p2	output layer	ptx		3.151
+parts	d0p2	output layer	unset		3.154
+parts	d0p2	token embeddings	c		0.000
+parts	d0p2	token embeddings	ptx		0.000
+parts	d0p2	token embeddings	unset		0.000
+parts	d0p2	other ops without weights	c		7.432
+parts	d0p2	other ops without weights	ptx		7.441
+parts	d0p2	other ops without weights	unset		7.397
+parts	d0p2	other weights	c		0.917
+parts	d0p2	other weights	ptx		0.921
+parts	d0p2	other weights	unset		0.913
+parts	d0p2	sum of the parts	c		86.349
+parts	d0p2	sum of the parts	ptx		84.059
+parts	d0p2	sum of the parts	unset		95.938
+per_layer	d8192p2	iq2_xxs	r125	11.00	10.2999
+per_layer	d8192p2	iq2_xxs	unset	11.00	10.2968
+per_layer	d8192p2	iq2_xxs	c	11.00	6.1391
+per_layer	d8192p2	iq2_xxs	ptx	11.00	5.0928
+per_layer	d8192p2	iq2_s	r125	7.00	6.7731
+per_layer	d8192p2	iq2_s	unset	7.00	6.7690
+per_layer	d8192p2	iq2_s	c	7.00	3.6851
+per_layer	d8192p2	iq2_s	ptx	7.00	2.9971
+per_layer	d8192p2	iq2_xs	r125	4.00	4.2021
+per_layer	d8192p2	iq2_xs	unset	4.00	4.2001
+per_layer	d8192p2	iq2_xs	c	4.00	2.4117
+per_layer	d8192p2	iq2_xs	ptx	4.00	2.0004
+per_layer	d8192p2	iq1_m	r125	2.00	1.1016
+per_layer	d8192p2	iq1_m	unset	2.00	1.1036
+per_layer	d8192p2	iq1_m	c	2.00	0.6617
+per_layer	d8192p2	iq1_m	ptx	2.00	0.5428
+per_layer	d8192p2	q2_0	r125	24.00	6.6508
+per_layer	d8192p2	q2_0	unset	24.00	6.4136
+per_layer	d8192p2	q2_0	c	24.00	6.4060
+per_layer	d8192p2	q2_0	ptx	24.00	6.4082
+parts	d8192p2	routed experts	c		26.604
+parts	d8192p2	routed experts	ptx		24.349
+parts	d8192p2	routed experts	unset		36.085
+parts	d8192p2	shared expert	c		4.221
+parts	d8192p2	shared expert	ptx		4.227
+parts	d8192p2	shared expert	unset		4.201
+parts	d8192p2	hyper-connections (BF16)	c		12.823
+parts	d8192p2	hyper-connections (BF16)	ptx		12.805
+parts	d8192p2	hyper-connections (BF16)	unset		12.810
+parts	d8192p2	router	c		1.272
+parts	d8192p2	router	ptx		1.301
+parts	d8192p2	router	unset		1.296
+parts	d8192p2	attention and recurrent projections	c		20.368
+parts	d8192p2	attention and recurrent projections	ptx		20.278
+parts	d8192p2	attention and recurrent projections	unset		20.398
+parts	d8192p2	Gated DeltaNet state and conv	c		8.977
+parts	d8192p2	Gated DeltaNet state and conv	ptx		9.022
+parts	d8192p2	Gated DeltaNet state and conv	unset		9.002
+parts	d8192p2	attention (FLASH_ATTN_EXT)	c		12.614
+parts	d8192p2	attention (FLASH_ATTN_EXT)	ptx		12.618
+parts	d8192p2	attention (FLASH_ATTN_EXT)	unset		12.619
+parts	d8192p2	output layer	c		3.156
+parts	d8192p2	output layer	ptx		3.173
+parts	d8192p2	output layer	unset		3.155
+parts	d8192p2	token embeddings	c		0.000
+parts	d8192p2	token embeddings	ptx		0.000
+parts	d8192p2	token embeddings	unset		0.000
+parts	d8192p2	other ops without weights	c		8.744
+parts	d8192p2	other ops without weights	ptx		8.729
+parts	d8192p2	other ops without weights	unset		8.722
+parts	d8192p2	other weights	c		0.971
+parts	d8192p2	other weights	ptx		0.946
+parts	d8192p2	other weights	unset		0.909
+parts	d8192p2	sum of the parts	c		99.750
+parts	d8192p2	sum of the parts	ptx		97.449
+parts	d8192p2	sum of the parts	unset		109.196
+per_layer	d0p1	iq2_xxs	r125	11.00	10.2989
+per_layer	d0p1	iq2_xxs	unset	11.00	10.2953
+per_layer	d0p1	iq2_xxs	c	11.00	6.1061
+per_layer	d0p1	iq2_xxs	ptx	11.00	5.0896
+per_layer	d0p1	iq2_s	r125	7.00	6.8392
+per_layer	d0p1	iq2_s	unset	7.00	6.8778
+per_layer	d0p1	iq2_s	c	7.00	3.7316
+per_layer	d0p1	iq2_s	ptx	7.00	3.0215
+per_layer	d0p1	iq2_xs	r125	4.00	4.1563
+per_layer	d0p1	iq2_xs	unset	4.00	4.1313
+per_layer	d0p1	iq2_xs	c	4.00	2.3847
+per_layer	d0p1	iq2_xs	ptx	4.00	1.9750
+per_layer	d0p1	iq1_m	r125	2.00	1.0933
+per_layer	d0p1	iq1_m	unset	2.00	1.0925
+per_layer	d0p1	iq1_m	c	2.00	0.6600
+per_layer	d0p1	iq1_m	ptx	2.00	0.5342
+per_layer	d0p1	q2_0	r125	24.00	6.4887
+per_layer	d0p1	q2_0	unset	24.00	6.2681
+per_layer	d0p1	q2_0	c	24.00	6.2652
+per_layer	d0p1	q2_0	ptx	24.00	6.2613
+parts	d0p1	routed experts	c		26.283
+parts	d0p1	routed experts	ptx		24.016
+parts	d0p1	routed experts	unset		35.808
+parts	d0p1	shared expert	c		4.183
+parts	d0p1	shared expert	ptx		4.188
+parts	d0p1	shared expert	unset		4.199
+parts	d0p1	hyper-connections (BF16)	c		12.825
+parts	d0p1	hyper-connections (BF16)	ptx		12.800
+parts	d0p1	hyper-connections (BF16)	unset		12.842
+parts	d0p1	router	c		1.280
+parts	d0p1	router	ptx		1.298
+parts	d0p1	router	unset		1.289
+parts	d0p1	attention and recurrent projections	c		20.213
+parts	d0p1	attention and recurrent projections	ptx		20.170
+parts	d0p1	attention and recurrent projections	unset		20.241
+parts	d0p1	Gated DeltaNet state and conv	c		8.904
+parts	d0p1	Gated DeltaNet state and conv	ptx		8.901
+parts	d0p1	Gated DeltaNet state and conv	unset		8.925
+parts	d0p1	attention (FLASH_ATTN_EXT)	c		1.037
+parts	d0p1	attention (FLASH_ATTN_EXT)	ptx		1.036
+parts	d0p1	attention (FLASH_ATTN_EXT)	unset		1.037
+parts	d0p1	output layer	c		3.148
+parts	d0p1	output layer	ptx		3.151
+parts	d0p1	output layer	unset		3.148
+parts	d0p1	token embeddings	c		0.000
+parts	d0p1	token embeddings	ptx		0.000
+parts	d0p1	token embeddings	unset		0.000
+parts	d0p1	other ops without weights	c		7.395
+parts	d0p1	other ops without weights	ptx		7.414
+parts	d0p1	other ops without weights	unset		7.418
+parts	d0p1	other weights	c		0.933
+parts	d0p1	other weights	ptx		0.919
+parts	d0p1	other weights	unset		0.930
+parts	d0p1	sum of the parts	c		86.202
+parts	d0p1	sum of the parts	ptx		83.892
+parts	d0p1	sum of the parts	unset		95.837
+per_layer	d8192p1	iq2_xxs	r125	11.00	10.3024
+per_layer	d8192p1	iq2_xxs	unset	11.00	10.3197
+per_layer	d8192p1	iq2_xxs	c	11.00	6.1345
+per_layer	d8192p1	iq2_xxs	ptx	11.00	5.0832
+per_layer	d8192p1	iq2_s	r125	7.00	6.7640
+per_layer	d8192p1	iq2_s	unset	7.00	6.7652
+per_layer	d8192p1	iq2_s	c	7.00	3.6728
+per_layer	d8192p1	iq2_s	ptx	7.00	2.9916
+per_layer	d8192p1	iq2_xs	r125	4.00	4.2050
+per_layer	d8192p1	iq2_xs	unset	4.00	4.2037
+per_layer	d8192p1	iq2_xs	c	4.00	2.4051
+per_layer	d8192p1	iq2_xs	ptx	4.00	1.9968
+per_layer	d8192p1	iq1_m	r125	2.00	1.0991
+per_layer	d8192p1	iq1_m	unset	2.00	1.1026
+per_layer	d8192p1	iq1_m	c	2.00	0.6655
+per_layer	d8192p1	iq1_m	ptx	2.00	0.5422
+per_layer	d8192p1	q2_0	r125	24.00	6.6466
+per_layer	d8192p1	q2_0	unset	24.00	6.4080
+per_layer	d8192p1	q2_0	c	24.00	6.3974
+per_layer	d8192p1	q2_0	ptx	24.00	6.3972
+parts	d8192p1	routed experts	c		26.567
+parts	d8192p1	routed experts	ptx		24.302
+parts	d8192p1	routed experts	unset		36.094
+parts	d8192p1	shared expert	c		4.216
+parts	d8192p1	shared expert	ptx		4.213
+parts	d8192p1	shared expert	unset		4.202
+parts	d8192p1	hyper-connections (BF16)	c		12.826
+parts	d8192p1	hyper-connections (BF16)	ptx		12.810
+parts	d8192p1	hyper-connections (BF16)	unset		12.816
+parts	d8192p1	router	c		1.278
+parts	d8192p1	router	ptx		1.304
+parts	d8192p1	router	unset		1.292
+parts	d8192p1	attention and recurrent projections	c		20.342
+parts	d8192p1	attention and recurrent projections	ptx		20.278
+parts	d8192p1	attention and recurrent projections	unset		20.395
+parts	d8192p1	Gated DeltaNet state and conv	c		8.977
+parts	d8192p1	Gated DeltaNet state and conv	ptx		9.002
+parts	d8192p1	Gated DeltaNet state and conv	unset		8.998
+parts	d8192p1	attention (FLASH_ATTN_EXT)	c		12.610
+parts	d8192p1	attention (FLASH_ATTN_EXT)	ptx		12.607
+parts	d8192p1	attention (FLASH_ATTN_EXT)	unset		12.612
+parts	d8192p1	output layer	c		3.154
+parts	d8192p1	output layer	ptx		3.174
+parts	d8192p1	output layer	unset		3.155
+parts	d8192p1	token embeddings	c		0.000
+parts	d8192p1	token embeddings	ptx		0.000
+parts	d8192p1	token embeddings	unset		0.000
+parts	d8192p1	other ops without weights	c		8.732
+parts	d8192p1	other ops without weights	ptx		8.685
+parts	d8192p1	other ops without weights	unset		8.726
+parts	d8192p1	other weights	c		0.968
+parts	d8192p1	other weights	ptx		0.940
+parts	d8192p1	other weights	unset		0.918
+parts	d8192p1	sum of the parts	c		99.669
+parts	d8192p1	sum of the parts	ptx		97.315
+parts	d8192p1	sum of the parts	unset		109.206

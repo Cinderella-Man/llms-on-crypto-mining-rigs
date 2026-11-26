@@ -1,0 +1,10 @@
+metric	depth	arm	control	loads	control_loads	spread	delta	percent	class
+generation	0	p0	u2	29.34	24.09	—	5.24	21.8	no class (one load)
+generation	8192	p0	u2	26.93	21.82	—	5.11	23.4	no class (one load)
+generation_all	all	p0	u2	28.08	22.90	—	5.18	22.6	no class (one load)
+step_pass1	0	p0	u2	102.16	103.59	—	-1.44	-1.4	no class (one load)
+step_pass1	8192	p0	u2	113.32	127.69	—	-14.37	-11.3	no class (one load)
+step_pass2	0	p0	u2	95.00	99.75	—	-4.75	-4.8	no class (one load)
+step_pass2	8192	p0	u2	109.01	114.25	—	-5.24	-4.6	no class (one load)
+prompt	0	p0	u2	55.5	48.3	—	7.2	14.9	no class (one load)
+prompt	8192	p0	u2	224.4	147.5	—	76.9	52.1	no class (one load)

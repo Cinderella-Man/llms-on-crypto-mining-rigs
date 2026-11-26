@@ -1,0 +1,703 @@
+table	request	key	file	groups_per_pass	ms
+parts	d0p2	routed experts	c		26.364
+parts	d0p2	routed experts	ptx		24.094
+parts	d0p2	shared expert	c		4.182
+parts	d0p2	shared expert	ptx		4.189
+parts	d0p2	hyper-connections (BF16)	c		12.830
+parts	d0p2	hyper-connections (BF16)	ptx		12.810
+parts	d0p2	router	c		1.287
+parts	d0p2	router	ptx		1.297
+parts	d0p2	attention and recurrent projections	c		20.212
+parts	d0p2	attention and recurrent projections	ptx		20.209
+parts	d0p2	Gated DeltaNet state and conv	c		8.930
+parts	d0p2	Gated DeltaNet state and conv	ptx		8.906
+parts	d0p2	attention (FLASH_ATTN_EXT)	c		1.040
+parts	d0p2	attention (FLASH_ATTN_EXT)	ptx		1.040
+parts	d0p2	output layer	c		3.154
+parts	d0p2	output layer	ptx		3.151
+parts	d0p2	token embeddings	c		0.000
+parts	d0p2	token embeddings	ptx		0.000
+parts	d0p2	other ops without weights	c		7.432
+parts	d0p2	other ops without weights	ptx		7.441
+parts	d0p2	other weights	c		0.917
+parts	d0p2	other weights	ptx		0.921
+parts	d0p2	sum of the parts	c		86.349
+parts	d0p2	sum of the parts	ptx		84.059
+products	d0p2	MUL_MAT_ID+MUL_MAT_ID+SWIGLU ffn_gate_exps ffn_up_exps	c	48.00	19.2031
+products	d0p2	MUL_MAT_ID+MUL_MAT_ID+SWIGLU ffn_gate_exps ffn_up_exps	ptx	48.00	16.9363
+products	d0p2	SOFTPLUS a_softplus	c	36.00	0.1647
+products	d0p2	SOFTPLUS a_softplus	ptx	36.00	0.2128
+products	d0p2	GDN_CONV+CPY gdn_conv	c	36.00	0.7641
+products	d0p2	GDN_CONV+CPY gdn_conv	ptx	36.00	0.8064
+products	d0p2	SIGMOID beta_sigmoid	c	36.00	0.2149
+products	d0p2	SIGMOID beta_sigmoid	ptx	36.00	0.1777
+products	d0p2	GATED_DELTA_NET+CPY node	c	36.00	8.9303
+products	d0p2	GATED_DELTA_NET+CPY node	ptx	36.00	8.9063
+products	d0p2	MUL_MAT ssm_beta	c	36.00	0.3253
+products	d0p2	MUL_MAT ssm_beta	ptx	36.00	0.3476
+products	d0p2	SCALE+SIGMOID+SCALE+DSV4_HC_POST hc_inject	c	96.00	1.2785
+products	d0p2	SCALE+SIGMOID+SCALE+DSV4_HC_POST hc_inject	ptx	96.00	1.2600
+products	d0p2	MUL+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD ffn_moe_weighted	c	48.00	0.3114
+products	d0p2	MUL+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD ffn_moe_weighted	ptx	48.00	0.2953
+products	d0p2	RMS_NORM+MUL node	c	100.00	0.5575
+products	d0p2	RMS_NORM+MUL node	ptx	100.00	0.5415
+products	d0p2	MUL_MAT ssm_out	c	36.00	5.2742
+products	d0p2	MUL_MAT ssm_out	ptx	36.00	5.2592
+products	d0p2	RMS_NORM+MUL+SIGMOID+MUL norm	c	36.00	0.2604
+products	d0p2	RMS_NORM+MUL+SIGMOID+MUL norm	ptx	36.00	0.2475
+products	d0p2	MUL_MAT hc_attn_down	c	48.00	2.6501
+products	d0p2	MUL_MAT hc_attn_down	ptx	48.00	2.6628
+products	d0p2	MUL_MAT+MUL_MAT+SWIGLU ffn_gate_shexp ffn_up_shexp	c	43.00	2.0366
+products	d0p2	MUL_MAT+MUL_MAT+SWIGLU ffn_gate_shexp ffn_up_shexp	ptx	43.00	2.0493
+products	d0p2	MUL_MAT indexer.k_proj	c	12.00	0.1970
+products	d0p2	MUL_MAT indexer.k_proj	ptx	12.00	0.2096
+products	d0p2	MUL_MAT hc_attn_inject	c	48.00	0.3833
+products	d0p2	MUL_MAT hc_attn_inject	ptx	48.00	0.3714
+products	d0p2	FILL node	c	40.00	0.1486
+products	d0p2	FILL node	ptx	40.00	0.1585
+products	d0p2	MUL_MAT ffn_gate_inp	c	48.00	1.2872
+products	d0p2	MUL_MAT ffn_gate_inp	ptx	48.00	1.2970
+products	d0p2	RMS_NORM+MUL norm	c	48.00	0.1296
+products	d0p2	RMS_NORM+MUL norm	ptx	48.00	0.1202
+products	d0p2	SCALE top_p_cdf_scaled	c	4.00	0.0200
+products	d0p2	SCALE top_p_cdf_scaled	ptx	4.00	0.0111
+products	d0p2	CPY s_slot_rev	c	1.00	0.0159
+products	d0p2	CPY s_slot_rev	ptx	1.00	0.0074
+products	d0p2	MUL gate	c	36.00	0.4431
+products	d0p2	MUL gate	ptx	36.00	0.4515
+products	d0p2	SCALE node	c	111.00	0.2138
+products	d0p2	SCALE node	ptx	111.00	0.2063
+products	d0p2	GET_ROWS node	c	22.00	0.1007
+products	d0p2	GET_ROWS node	ptx	22.00	0.1079
+products	d0p2	CUMSUM top_p_cdf	c	4.00	0.0194
+products	d0p2	CUMSUM top_p_cdf	ptx	4.00	0.0124
+products	d0p2	SET_ROWS cache_idx_k_l15_(view)	c	1.00	0.0111
+products	d0p2	SET_ROWS cache_idx_k_l15_(view)	ptx	1.00	0.0045
+products	d0p2	SWIGLU ffn_swiglu	c	5.00	0.0073
+products	d0p2	SWIGLU ffn_swiglu	ptx	5.00	0.0135
+products	d0p2	ADD ffn_out	c	48.00	0.1145
+products	d0p2	ADD ffn_out	ptx	48.00	0.1205
+products	d0p2	MUL_MAT ple_value	c	1.00	0.1056
+products	d0p2	MUL_MAT ple_value	ptx	1.00	0.1000
+products	d0p2	CONT ple_conv1d	c	4.00	0.2220
+products	d0p2	CONT ple_conv1d	ptx	4.00	0.2168
+products	d0p2	MUL_MAT ffn_down_shexp	c	48.00	1.3824
+products	d0p2	MUL_MAT ffn_down_shexp	ptx	48.00	1.3772
+products	d0p2	CONT node_(view)_(transposed)_(cont)	c	4.00	0.0857
+products	d0p2	CONT node_(view)_(transposed)_(cont)	ptx	4.00	0.0907
+products	d0p2	CPY _(copy)	c	4.00	0.0117
+products	d0p2	CPY _(copy)	ptx	4.00	0.0167
+products	d0p2	ARGSORT top_p_sorted_idx	c	4.00	0.0035
+products	d0p2	ARGSORT top_p_sorted_idx	ptx	4.00	0.0082
+products	d0p2	TOP_K top_k	c	4.00	0.3101
+products	d0p2	TOP_K top_k	ptx	4.00	0.3054
+products	d0p2	MUL_MAT indexer.q_proj	c	12.00	0.3419
+products	d0p2	MUL_MAT indexer.q_proj	ptx	12.00	0.3374
+products	d0p2	MUL_MAT attn_qkv	c	36.00	5.8954
+products	d0p2	MUL_MAT attn_qkv	ptx	36.00	5.8910
+products	d0p2	MUL_MAT hc_ffn_up	c	48.00	2.5760
+products	d0p2	MUL_MAT hc_ffn_up	ptx	48.00	2.5803
+products	d0p2	SET_ROWS kpool_dev_cells	c	9.00	0.0314
+products	d0p2	SET_ROWS kpool_dev_cells	ptx	9.00	0.0271
+products	d0p2	MUL_MAT attn_gate	c	36.00	3.5084
+products	d0p2	MUL_MAT attn_gate	ptx	36.00	3.5042
+products	d0p2	MUL ffn_shexp_gated	c	48.00	0.1032
+products	d0p2	MUL ffn_shexp_gated	ptx	48.00	0.1072
+products	d0p2	GET_ROWS top_p_sorted_logits	c	4.00	0.0119
+products	d0p2	GET_ROWS top_p_sorted_logits	ptx	4.00	0.0079
+products	d0p2	CPY kpool_new_pool_idxs	c	9.00	0.0219
+products	d0p2	CPY kpool_new_pool_idxs	ptx	9.00	0.0258
+products	d0p2	SILU node	c	98.00	0.1803
+products	d0p2	SILU node	ptx	98.00	0.1764
+products	d0p2	ADD top_p_logits	c	4.00	0.0074
+products	d0p2	ADD top_p_logits	ptx	4.00	0.0111
+products	d0p2	MUL_MAT hc_ffn_inject	c	48.00	0.3589
+products	d0p2	MUL_MAT hc_ffn_inject	ptx	48.00	0.3552
+products	d0p2	SCALE top_p_ones	c	4.00	0.0115
+products	d0p2	SCALE top_p_ones	ptx	4.00	0.0151
+products	d0p2	SET_ROWS cache_idx_k_l35_(view)	c	1.00	0.0072
+products	d0p2	SET_ROWS cache_idx_k_l35_(view)	ptx	1.00	0.0036
+products	d0p2	CONT kpool_stage	c	9.00	0.0248
+products	d0p2	CONT kpool_stage	ptx	9.00	0.0282
+products	d0p2	MUL_MAT hc_ffn_down	c	48.00	2.4698
+products	d0p2	MUL_MAT hc_ffn_down	ptx	48.00	2.4666
+products	d0p2	LOG top_p_bias	c	4.00	0.0066
+products	d0p2	LOG top_p_bias	ptx	4.00	0.0098
+products	d0p2	STEP top_p_mask	c	4.00	0.0196
+products	d0p2	STEP top_p_mask	ptx	4.00	0.0164
+products	d0p2	MUL_MAT_ID ffn_down_exps	c	48.00	7.1613
+products	d0p2	MUL_MAT_ID ffn_down_exps	ptx	48.00	7.1581
+products	d0p2	MUL_MAT output	c	1.00	3.1540
+products	d0p2	MUL_MAT output	ptx	1.00	3.1510
+products	d0p2	MUL_MAT ssm_alpha	c	36.00	0.2707
+products	d0p2	MUL_MAT ssm_alpha	ptx	36.00	0.2677
+products	d0p2	SET_ROWS _(reshaped)_(view)	c	4.00	0.0057
+products	d0p2	SET_ROWS _(reshaped)_(view)	ptx	4.00	0.0085
+products	d0p2	MUL_MAT ffn_gate_inp_shexp	c	48.00	0.2480
+products	d0p2	MUL_MAT ffn_gate_inp_shexp	ptx	48.00	0.2508
+products	d0p2	SUM top_p_index_f32	c	4.00	0.0141
+products	d0p2	SUM top_p_index_f32	ptx	4.00	0.0166
+products	d0p2	CONCAT node	c	13.00	0.1852
+products	d0p2	CONCAT node	ptx	13.00	0.1875
+products	d0p2	SIGMOID shared_expert_gate_sigmoid	c	48.00	0.0693
+products	d0p2	SIGMOID shared_expert_gate_sigmoid	ptx	48.00	0.0716
+products	d0p2	TOP_K_MASK indexer_sel	c	12.00	0.0917
+products	d0p2	TOP_K_MASK indexer_sel	ptx	12.00	0.0895
+products	d0p2	SGN node	c	1.00	0.0020
+products	d0p2	SGN node	ptx	1.00	0.0042
+products	d0p2	SOFT_MAX+ARGSORT+GET_ROWS+SUM_ROWS+CLAMP+DIV ffn_moe_probs	c	48.00	0.5391
+products	d0p2	SOFT_MAX+ARGSORT+GET_ROWS+SUM_ROWS+CLAMP+DIV ffn_moe_probs	ptx	48.00	0.5413
+products	d0p2	CPY ple_conv1d	c	4.00	0.0090
+products	d0p2	CPY ple_conv1d	ptx	4.00	0.0069
+products	d0p2	MUL_MAT ffn_gate_shexp	c	5.00	0.2892
+products	d0p2	MUL_MAT ffn_gate_shexp	ptx	5.00	0.2871
+products	d0p2	MUL_MAT ple_key	c	1.00	0.1676
+products	d0p2	MUL_MAT ple_key	ptx	1.00	0.1697
+products	d0p2	CPY kpool_k_idxs	c	9.00	0.0449
+products	d0p2	CPY kpool_k_idxs	ptx	9.00	0.0468
+products	d0p2	ROPE+SET_ROWS Kcur	c	12.00	0.0260
+products	d0p2	ROPE+SET_ROWS Kcur	ptx	12.00	0.0241
+products	d0p2	MUL ple_gated_value	c	1.00	0.0072
+products	d0p2	MUL ple_gated_value	ptx	1.00	0.0054
+products	d0p2	GET_ROWS top_p_candidates	c	4.00	0.0168
+products	d0p2	GET_ROWS top_p_candidates	ptx	4.00	0.0186
+products	d0p2	CONT _(reshaped)_(view)_(cont)	c	13.00	0.0380
+products	d0p2	CONT _(reshaped)_(view)_(cont)	ptx	13.00	0.0397
+products	d0p2	DSV4_HC_PRE hc_mixed	c	96.00	0.5189
+products	d0p2	DSV4_HC_PRE hc_mixed	ptx	96.00	0.5206
+products	d0p2	MUL_MAT hc_attn_up	c	48.00	2.5833
+products	d0p2	MUL_MAT hc_attn_up	ptx	48.00	2.5818
+products	d0p2	CPY kpool_new_pool_rep	c	9.00	0.0212
+products	d0p2	CPY kpool_new_pool_rep	ptx	9.00	0.0227
+products	d0p2	TOP_K indexer_top_k	c	12.00	0.1388
+products	d0p2	TOP_K indexer_top_k	ptx	12.00	0.1373
+products	d0p2	MUL node	c	6.00	0.0302
+products	d0p2	MUL node	ptx	6.00	0.0287
+products	d0p2	SOFT_MAX top_p_softmax	c	4.00	0.0184
+products	d0p2	SOFT_MAX top_p_softmax	ptx	4.00	0.0169
+products	d0p2	ARGMAX greedy_argmax	c	4.00	0.0057
+products	d0p2	ARGMAX greedy_argmax	ptx	4.00	0.0072
+products	d0p2	MUL_MAT ffn_up_shexp	c	5.00	0.2258
+products	d0p2	MUL_MAT ffn_up_shexp	ptx	5.00	0.2244
+products	d0p2	REPEAT node	c	1.00	0.0102
+products	d0p2	REPEAT node	ptx	1.00	0.0116
+products	d0p2	CPY hop_wide	c	8.00	0.1790
+products	d0p2	CPY hop_wide	ptx	8.00	0.1778
+products	d0p2	MUL_MAT attn_output	c	12.00	2.3646
+products	d0p2	MUL_MAT attn_output	ptx	12.00	2.3657
+products	d0p2	CPY kpool_stage	c	9.00	0.0278
+products	d0p2	CPY kpool_stage	ptx	9.00	0.0289
+products	d0p2	ROPE indexer_q	c	12.00	0.0244
+products	d0p2	ROPE indexer_q	ptx	12.00	0.0233
+products	d0p2	SIGMOID ple_gate	c	1.00	0.0029
+products	d0p2	SIGMOID ple_gate	ptx	1.00	0.0018
+products	d0p2	SET_ROWS cache_v_l31_(view)	c	1.00	0.0007
+products	d0p2	SET_ROWS cache_v_l31_(view)	ptx	1.00	0.0018
+products	d0p2	SIGMOID+MUL node	c	1.00	0.0049
+products	d0p2	SIGMOID+MUL node	ptx	1.00	0.0038
+products	d0p2	SET_ROWS cache_ple_r_l1_(view)_(view)	c	1.00	0.0783
+products	d0p2	SET_ROWS cache_ple_r_l1_(view)_(view)	ptx	1.00	0.0772
+products	d0p2	LIGHTNING_INDEXER indexer_score	c	12.00	0.1207
+products	d0p2	LIGHTNING_INDEXER indexer_score	ptx	12.00	0.1197
+products	d0p2	CLAMP node	c	5.00	0.0161
+products	d0p2	CLAMP node	ptx	5.00	0.0171
+products	d0p2	MUL_MAT attn_v	c	12.00	0.3359
+products	d0p2	MUL_MAT attn_v	ptx	12.00	0.3368
+products	d0p2	ADD node	c	84.00	0.3385
+products	d0p2	ADD node	ptx	84.00	0.3376
+products	d0p2	SET_ROWS cache_idx_k_l27_(view)	c	1.00	0.0008
+products	d0p2	SET_ROWS cache_idx_k_l27_(view)	ptx	1.00	0.0017
+products	d0p2	ROPE Qcur	c	12.00	0.0436
+products	d0p2	ROPE Qcur	ptx	12.00	0.0427
+products	d0p2	MUL_MAT output_hc_up	c	1.00	0.0532
+products	d0p2	MUL_MAT output_hc_up	ptx	1.00	0.0523
+products	d0p2	MUL_MAT attn_q	c	12.00	1.9457
+products	d0p2	MUL_MAT attn_q	ptx	12.00	1.9448
+products	d0p2	RANGE_MASK kpool_mask	c	9.00	0.0151
+products	d0p2	RANGE_MASK kpool_mask	ptx	9.00	0.0143
+products	d0p2	SET_ROWS cache_idx_k_l43_(view)	c	1.00	0.0067
+products	d0p2	SET_ROWS cache_idx_k_l43_(view)	ptx	1.00	0.0059
+products	d0p2	CONT _(cont)	c	1.00	0.0020
+products	d0p2	CONT _(cont)	ptx	1.00	0.0012
+products	d0p2	REPEAT hc_init	c	1.00	0.0107
+products	d0p2	REPEAT hc_init	ptx	1.00	0.0114
+products	d0p2	ABS node	c	1.00	0.0016
+products	d0p2	ABS node	ptx	1.00	0.0023
+products	d0p2	CONT gate_reshaped	c	12.00	0.1559
+products	d0p2	CONT gate_reshaped	ptx	12.00	0.1553
+products	d0p2	CPY kpool_new_pool_pos	c	9.00	0.0232
+products	d0p2	CPY kpool_new_pool_pos	ptx	9.00	0.0238
+products	d0p2	CPY kpool_tail_idxs	c	9.00	0.0145
+products	d0p2	CPY kpool_tail_idxs	ptx	9.00	0.0150
+products	d0p2	SET_ROWS cache_idx_k_l43_(view)_(view)	c	1.00	0.0058
+products	d0p2	SET_ROWS cache_idx_k_l43_(view)_(view)	ptx	1.00	0.0053
+products	d0p2	SET_ROWS top_p_mask_(reshaped)_(view)	c	4.00	0.0122
+products	d0p2	SET_ROWS top_p_mask_(reshaped)_(view)	ptx	4.00	0.0127
+products	d0p2	SET_ROWS kpool_dev_idxs	c	9.00	0.0298
+products	d0p2	SET_ROWS kpool_dev_idxs	ptx	9.00	0.0303
+products	d0p2	MUL_MAT attn_k	c	12.00	0.2921
+products	d0p2	MUL_MAT attn_k	ptx	12.00	0.2916
+products	d0p2	PAD node	c	1.00	0.2154
+products	d0p2	PAD node	ptx	1.00	0.2150
+products	d0p2	SET_ROWS cache_v_l35_(view)	c	1.00	0.0022
+products	d0p2	SET_ROWS cache_v_l35_(view)	ptx	1.00	0.0018
+products	d0p2	SIGMOID+MUL gate_sigmoid	c	12.00	0.0304
+products	d0p2	SIGMOID+MUL gate_sigmoid	ptx	12.00	0.0301
+products	d0p2	SUM_ROWS node	c	1.00	0.0022
+products	d0p2	SUM_ROWS node	ptx	1.00	0.0019
+products	d0p2	SET_ROWS cache_idx_k_l31_(view)	c	1.00	0.0009
+products	d0p2	SET_ROWS cache_idx_k_l31_(view)	ptx	1.00	0.0006
+products	d0p2	SET_ROWS cache_v_l11_(view)	c	1.00	0.0001
+products	d0p2	SET_ROWS cache_v_l11_(view)	ptx	1.00	0.0004
+products	d0p2	SET_ROWS cache_v_l39_(view)	c	1.00	0.0006
+products	d0p2	SET_ROWS cache_v_l39_(view)	ptx	1.00	0.0003
+products	d0p2	ARANGE node	c	1.00	0.0031
+products	d0p2	ARANGE node	ptx	1.00	0.0034
+products	d0p2	SET_ROWS cache_idx_k_l7_(view)	c	1.00	0.0030
+products	d0p2	SET_ROWS cache_idx_k_l7_(view)	ptx	1.00	0.0027
+products	d0p2	SET_ROWS cache_v_l7_(view)	c	1.00	0.0029
+products	d0p2	SET_ROWS cache_v_l7_(view)	ptx	1.00	0.0026
+products	d0p2	SET_ROWS cache_idx_k_l35_(view)_(view)	c	1.00	0.0025
+products	d0p2	SET_ROWS cache_idx_k_l35_(view)_(view)	ptx	1.00	0.0022
+products	d0p2	SET_ROWS cache_v_l19_(view)	c	1.00	0.0023
+products	d0p2	SET_ROWS cache_v_l19_(view)	ptx	1.00	0.0020
+products	d0p2	SET_ROWS cache_v_l43_(view)	c	1.00	0.0031
+products	d0p2	SET_ROWS cache_v_l43_(view)	ptx	1.00	0.0029
+products	d0p2	SET_ROWS cache_v_l15_(view)	c	1.00	0.0030
+products	d0p2	SET_ROWS cache_v_l15_(view)	ptx	1.00	0.0028
+products	d0p2	SCALE result_norm	c	1.00	0.0004
+products	d0p2	SCALE result_norm	ptx	1.00	0.0002
+products	d0p2	ARGMAX temp_max_idx	c	4.00	0.0067
+products	d0p2	ARGMAX temp_max_idx	ptx	4.00	0.0069
+products	d0p2	MUL_MAT output_hc_down	c	1.00	0.0519
+products	d0p2	MUL_MAT output_hc_down	ptx	1.00	0.0517
+products	d0p2	FLASH_ATTN_EXT node	c	12.00	1.0400
+products	d0p2	FLASH_ATTN_EXT node	ptx	12.00	1.0398
+products	d0p2	CPY hop_narrow	c	8.00	0.1222
+products	d0p2	CPY hop_narrow	ptx	8.00	0.1223
+products	d0p2	SET_ROWS cache_idx_k_l15_(view)_(view)	c	1.00	0.0026
+products	d0p2	SET_ROWS cache_idx_k_l15_(view)_(view)	ptx	1.00	0.0027
+products	d0p2	SET_ROWS cache_idx_k_l19_(view)_(view)	c	1.00	0.0026
+products	d0p2	SET_ROWS cache_idx_k_l19_(view)_(view)	ptx	1.00	0.0027
+products	d0p2	SET_ROWS cache_v_l47_(view)	c	1.00	0.0024
+products	d0p2	SET_ROWS cache_v_l47_(view)	ptx	1.00	0.0025
+products	d0p2	SET_ROWS cache_v_l27_(view)	c	1.00	0.0011
+products	d0p2	SET_ROWS cache_v_l27_(view)	ptx	1.00	0.0010
+products	d0p2	SET_ROWS cache_v_l23_(view)	c	1.00	0.0010
+products	d0p2	SET_ROWS cache_v_l23_(view)	ptx	1.00	0.0011
+products	d0p2	SET_ROWS cache_idx_k_l11_(view)_(view)	c	1.00	0.0001
+products	d0p2	SET_ROWS cache_idx_k_l11_(view)_(view)	ptx	1.00	0.0002
+products	d0p2	SET_ROWS cache_idx_k_l27_(view)_(view)	c	1.00	0.0000
+products	d0p2	SET_ROWS cache_idx_k_l27_(view)_(view)	ptx	1.00	-0.0001
+products	d0p2	SET_ROWS cache_idx_k_l39_(view)_(view)	c	1.00	0.0000
+products	d0p2	SET_ROWS cache_idx_k_l39_(view)_(view)	ptx	1.00	-0.0001
+products	d0p2	SET_ROWS cache_idx_k_l23_(view)_(view)	c	1.00	-0.0001
+products	d0p2	SET_ROWS cache_idx_k_l23_(view)_(view)	ptx	1.00	0.0000
+products	d0p2	SET_ROWS cache_idx_k_l7_(view)_(view)	c	1.00	0.0028
+products	d0p2	SET_ROWS cache_idx_k_l7_(view)_(view)	ptx	1.00	0.0029
+products	d0p2	SET_ROWS cache_idx_k_l19_(view)	c	1.00	0.0027
+products	d0p2	SET_ROWS cache_idx_k_l19_(view)	ptx	1.00	0.0028
+products	d0p2	SET_ROWS cache_idx_k_l39_(view)	c	1.00	0.0024
+products	d0p2	SET_ROWS cache_idx_k_l39_(view)	ptx	1.00	0.0023
+products	d0p2	SET_ROWS cache_idx_k_l3_(view)_(view)	c	1.00	0.0023
+products	d0p2	SET_ROWS cache_idx_k_l3_(view)_(view)	ptx	1.00	0.0024
+products	d0p2	GET_ROWS top_k_rows	c	4.00	0.0161
+products	d0p2	GET_ROWS top_k_rows	ptx	4.00	0.0160
+products	d0p2	GET_ROWS greedy_sampled_token	c	4.00	0.0065
+products	d0p2	GET_ROWS greedy_sampled_token	ptx	4.00	0.0064
+products	d0p2	ROPE node	c	12.00	0.0289
+products	d0p2	ROPE node	ptx	12.00	0.0289
+products	d0p2	SET_ROWS cache_v_l3_(view)	c	1.00	0.0028
+products	d0p2	SET_ROWS cache_v_l3_(view)	ptx	1.00	0.0028
+products	d0p2	SET_ROWS cache_idx_k_l3_(view)	c	1.00	0.0026
+products	d0p2	SET_ROWS cache_idx_k_l3_(view)	ptx	1.00	0.0026
+products	d0p2	SET_ROWS cache_idx_k_l11_(view)	c	1.00	0.0025
+products	d0p2	SET_ROWS cache_idx_k_l11_(view)	ptx	1.00	0.0025
+products	d0p2	SET_ROWS cache_idx_k_l23_(view)	c	1.00	0.0024
+products	d0p2	SET_ROWS cache_idx_k_l23_(view)	ptx	1.00	0.0024
+products	d0p2	SQRT node	c	1.00	0.0021
+products	d0p2	SQRT node	ptx	1.00	0.0021
+products	d0p2	SET_ROWS cache_idx_k_l31_(view)_(view)	c	1.00	0.0003
+products	d0p2	SET_ROWS cache_idx_k_l31_(view)_(view)	ptx	1.00	0.0003
+products	d0p2	SET_ROWS h_nextn_dev_(view)	c	1.00	0.0077
+products	d0p2	SET_ROWS h_nextn_dev_(view)	ptx	1.00	0.0077
+products	d0p2	SET_ROWS cache_idx_k_l47_(view)	c	1.00	0.0027
+products	d0p2	SET_ROWS cache_idx_k_l47_(view)	ptx	1.00	0.0027
+products	d0p2	SET_ROWS cache_idx_k_l47_(view)_(view)	c	1.00	0.0025
+products	d0p2	SET_ROWS cache_idx_k_l47_(view)_(view)	ptx	1.00	0.0025
+labels	d0p2	MUL_MAT_ID+MUL_MAT_ID+SWIGLU ffn_gate_exps:iq1_m:2560x640 ffn_up_exps:iq1_m:2560x640	c	2.00	0.6625
+labels	d0p2	MUL_MAT_ID+MUL_MAT_ID+SWIGLU ffn_gate_exps:iq1_m:2560x640 ffn_up_exps:iq1_m:2560x640	ptx	2.00	0.5366
+labels	d0p2	MUL_MAT_ID+MUL_MAT_ID+SWIGLU ffn_gate_exps:iq2_s:2560x640 ffn_up_exps:iq2_s:2560x640	c	7.00	3.7438
+labels	d0p2	MUL_MAT_ID+MUL_MAT_ID+SWIGLU ffn_gate_exps:iq2_s:2560x640 ffn_up_exps:iq2_s:2560x640	ptx	7.00	3.0358
+labels	d0p2	MUL_MAT_ID+MUL_MAT_ID+SWIGLU ffn_gate_exps:iq2_xs:2560x640 ffn_up_exps:iq2_xs:2560x640	c	4.00	2.3907
+labels	d0p2	MUL_MAT_ID+MUL_MAT_ID+SWIGLU ffn_gate_exps:iq2_xs:2560x640 ffn_up_exps:iq2_xs:2560x640	ptx	4.00	1.9824
+labels	d0p2	MUL_MAT_ID+MUL_MAT_ID+SWIGLU ffn_gate_exps:iq2_xxs:2560x640 ffn_up_exps:iq2_xxs:2560x640	c	11.00	6.1235
+labels	d0p2	MUL_MAT_ID+MUL_MAT_ID+SWIGLU ffn_gate_exps:iq2_xxs:2560x640 ffn_up_exps:iq2_xxs:2560x640	ptx	11.00	5.1050
+labels	d0p2	MUL_MAT_ID+MUL_MAT_ID+SWIGLU ffn_gate_exps:q2_0:2560x640 ffn_up_exps:q2_0:2560x640	c	24.00	6.2826
+labels	d0p2	MUL_MAT_ID+MUL_MAT_ID+SWIGLU ffn_gate_exps:q2_0:2560x640 ffn_up_exps:q2_0:2560x640	ptx	24.00	6.2765
+labels	d0p2	SOFTPLUS a_softplus	c	36.00	0.1647
+labels	d0p2	SOFTPLUS a_softplus	ptx	36.00	0.2128
+labels	d0p2	GDN_CONV+CPY gdn_conv	c	36.00	0.7641
+labels	d0p2	GDN_CONV+CPY gdn_conv	ptx	36.00	0.8064
+labels	d0p2	SIGMOID beta_sigmoid	c	36.00	0.2149
+labels	d0p2	SIGMOID beta_sigmoid	ptx	36.00	0.1777
+labels	d0p2	GATED_DELTA_NET+CPY node	c	36.00	8.9303
+labels	d0p2	GATED_DELTA_NET+CPY node	ptx	36.00	8.9063
+labels	d0p2	MUL_MAT ssm_beta:bf16:2560x48	c	36.00	0.3253
+labels	d0p2	MUL_MAT ssm_beta:bf16:2560x48	ptx	36.00	0.3476
+parts	d8192p2	routed experts	c		26.604
+parts	d8192p2	routed experts	ptx		24.349
+parts	d8192p2	shared expert	c		4.221
+parts	d8192p2	shared expert	ptx		4.227
+parts	d8192p2	hyper-connections (BF16)	c		12.823
+parts	d8192p2	hyper-connections (BF16)	ptx		12.805
+parts	d8192p2	router	c		1.272
+parts	d8192p2	router	ptx		1.301
+parts	d8192p2	attention and recurrent projections	c		20.368
+parts	d8192p2	attention and recurrent projections	ptx		20.278
+parts	d8192p2	Gated DeltaNet state and conv	c		8.977
+parts	d8192p2	Gated DeltaNet state and conv	ptx		9.022
+parts	d8192p2	attention (FLASH_ATTN_EXT)	c		12.614
+parts	d8192p2	attention (FLASH_ATTN_EXT)	ptx		12.618
+parts	d8192p2	output layer	c		3.156
+parts	d8192p2	output layer	ptx		3.173
+parts	d8192p2	token embeddings	c		0.000
+parts	d8192p2	token embeddings	ptx		0.000
+parts	d8192p2	other ops without weights	c		8.744
+parts	d8192p2	other ops without weights	ptx		8.729
+parts	d8192p2	other weights	c		0.971
+parts	d8192p2	other weights	ptx		0.946
+parts	d8192p2	sum of the parts	c		99.750
+parts	d8192p2	sum of the parts	ptx		97.449
+products	d8192p2	MUL_MAT_ID+MUL_MAT_ID+SWIGLU ffn_gate_exps ffn_up_exps	c	48.00	19.3036
+products	d8192p2	MUL_MAT_ID+MUL_MAT_ID+SWIGLU ffn_gate_exps ffn_up_exps	ptx	48.00	17.0413
+products	d8192p2	MUL gate	c	36.00	0.3520
+products	d8192p2	MUL gate	ptx	36.00	0.2604
+products	d8192p2	MUL_MAT ssm_beta	c	36.00	0.4235
+products	d8192p2	MUL_MAT ssm_beta	ptx	36.00	0.3579
+products	d8192p2	SIGMOID beta_sigmoid	c	36.00	0.2146
+products	d8192p2	SIGMOID beta_sigmoid	ptx	36.00	0.2757
+products	d8192p2	GDN_CONV+CPY gdn_conv	c	36.00	0.7351
+products	d8192p2	GDN_CONV+CPY gdn_conv	ptx	36.00	0.7874
+products	d8192p2	GATED_DELTA_NET+CPY node	c	36.00	8.9770
+products	d8192p2	GATED_DELTA_NET+CPY node	ptx	36.00	9.0217
+products	d8192p2	MUL_MAT hc_attn_up	c	48.00	2.6216
+products	d8192p2	MUL_MAT hc_attn_up	ptx	48.00	2.5925
+products	d8192p2	MUL_MAT ffn_gate_inp	c	48.00	1.2723
+products	d8192p2	MUL_MAT ffn_gate_inp	ptx	48.00	1.3006
+products	d8192p2	REPEAT node	c	1.00	0.0362
+products	d8192p2	REPEAT node	ptx	1.00	0.0082
+products	d8192p2	SOFTPLUS a_softplus	c	36.00	0.0862
+products	d8192p2	SOFTPLUS a_softplus	ptx	36.00	0.1135
+products	d8192p2	MUL_MAT ssm_alpha	c	36.00	0.2948
+products	d8192p2	MUL_MAT ssm_alpha	ptx	36.00	0.2724
+products	d8192p2	CPY kpool_k_idxs	c	9.00	0.0438
+products	d8192p2	CPY kpool_k_idxs	ptx	9.00	0.0263
+products	d8192p2	MUL_MAT output	c	1.00	3.1559
+products	d8192p2	MUL_MAT output	ptx	1.00	3.1728
+products	d8192p2	RMS_NORM+MUL node	c	100.00	0.5611
+products	d8192p2	RMS_NORM+MUL node	ptx	100.00	0.5762
+products	d8192p2	CONCAT node	c	13.00	0.1688
+products	d8192p2	CONCAT node	ptx	13.00	0.1551
+products	d8192p2	MUL_MAT ple_value	c	1.00	0.1122
+products	d8192p2	MUL_MAT ple_value	ptx	1.00	0.0994
+products	d8192p2	GET_ROWS node	c	22.00	0.1074
+products	d8192p2	GET_ROWS node	ptx	22.00	0.1202
+products	d8192p2	MUL_MAT hc_attn_down	c	48.00	2.6514
+products	d8192p2	MUL_MAT hc_attn_down	ptx	48.00	2.6386
+products	d8192p2	ADD node	c	84.00	0.3369
+products	d8192p2	ADD node	ptx	84.00	0.3489
+products	d8192p2	MUL+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD ffn_moe_weighted	c	48.00	0.2916
+products	d8192p2	MUL+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD+ADD ffn_moe_weighted	ptx	48.00	0.3035
+products	d8192p2	SWIGLU ffn_swiglu	c	5.00	0.0246
+products	d8192p2	SWIGLU ffn_swiglu	ptx	5.00	0.0130
+products	d8192p2	MUL_MAT hc_ffn_down	c	48.00	2.4660
+products	d8192p2	MUL_MAT hc_ffn_down	ptx	48.00	2.4772
+products	d8192p2	ADD ffn_out	c	48.00	0.1220
+products	d8192p2	ADD ffn_out	ptx	48.00	0.1110
+products	d8192p2	MUL ffn_shexp_gated	c	48.00	0.0986
+products	d8192p2	MUL ffn_shexp_gated	ptx	48.00	0.0879
+products	d8192p2	MUL_MAT ssm_out	c	36.00	5.2854
+products	d8192p2	MUL_MAT ssm_out	ptx	36.00	5.2760
+products	d8192p2	CUMSUM top_p_cdf	c	4.00	0.0097
+products	d8192p2	CUMSUM top_p_cdf	ptx	4.00	0.0184
+products	d8192p2	SCALE top_p_ones	c	4.00	0.0209
+products	d8192p2	SCALE top_p_ones	ptx	4.00	0.0122
+products	d8192p2	MUL_MAT+MUL_MAT+SWIGLU ffn_gate_shexp ffn_up_shexp	c	43.00	2.0501
+products	d8192p2	MUL_MAT+MUL_MAT+SWIGLU ffn_gate_shexp ffn_up_shexp	ptx	43.00	2.0582
+products	d8192p2	MUL_MAT_ID ffn_down_exps	c	48.00	7.3000
+products	d8192p2	MUL_MAT_ID ffn_down_exps	ptx	48.00	7.3081
+products	d8192p2	FILL node	c	40.00	0.1393
+products	d8192p2	FILL node	ptx	40.00	0.1314
+products	d8192p2	RMS_NORM+MUL+SIGMOID+MUL norm	c	36.00	0.2571
+products	d8192p2	RMS_NORM+MUL+SIGMOID+MUL norm	ptx	36.00	0.2492
+products	d8192p2	SET_ROWS kpool_dev_idxs	c	9.00	0.0410
+products	d8192p2	SET_ROWS kpool_dev_idxs	ptx	9.00	0.0487
+products	d8192p2	ROPE node	c	12.00	0.0458
+products	d8192p2	ROPE node	ptx	12.00	0.0382
+products	d8192p2	SET_ROWS kpool_dev_cells	c	9.00	0.0231
+products	d8192p2	SET_ROWS kpool_dev_cells	ptx	9.00	0.0300
+products	d8192p2	CONT kpool_stage	c	9.00	0.0278
+products	d8192p2	CONT kpool_stage	ptx	9.00	0.0210
+products	d8192p2	SOFT_MAX+ARGSORT+GET_ROWS+SUM_ROWS+CLAMP+DIV ffn_moe_probs	c	48.00	0.5327
+products	d8192p2	SOFT_MAX+ARGSORT+GET_ROWS+SUM_ROWS+CLAMP+DIV ffn_moe_probs	ptx	48.00	0.5393
+products	d8192p2	SIGMOID shared_expert_gate_sigmoid	c	48.00	0.0760
+products	d8192p2	SIGMOID shared_expert_gate_sigmoid	ptx	48.00	0.0695
+products	d8192p2	RMS_NORM+MUL norm	c	48.00	0.1350
+products	d8192p2	RMS_NORM+MUL norm	ptx	48.00	0.1412
+products	d8192p2	SET_ROWS top_p_mask_(reshaped)_(view)	c	4.00	0.0164
+products	d8192p2	SET_ROWS top_p_mask_(reshaped)_(view)	ptx	4.00	0.0109
+products	d8192p2	MUL_MAT hc_ffn_up	c	48.00	2.5693
+products	d8192p2	MUL_MAT hc_ffn_up	ptx	48.00	2.5746
+products	d8192p2	ADD top_p_logits	c	4.00	0.0077
+products	d8192p2	ADD top_p_logits	ptx	4.00	0.0129
+products	d8192p2	CPY kpool_stage	c	9.00	0.0274
+products	d8192p2	CPY kpool_stage	ptx	9.00	0.0223
+products	d8192p2	ARANGE node	c	1.00	0.0029
+products	d8192p2	ARANGE node	ptx	1.00	0.0080
+products	d8192p2	MUL_MAT ple_key	c	1.00	0.1751
+products	d8192p2	MUL_MAT ple_key	ptx	1.00	0.1700
+products	d8192p2	MUL_MAT indexer.q_proj	c	12.00	0.3433
+products	d8192p2	MUL_MAT indexer.q_proj	ptx	12.00	0.3383
+products	d8192p2	SET_ROWS cache_idx_k_l15_(view)	c	1.00	0.0150
+products	d8192p2	SET_ROWS cache_idx_k_l15_(view)	ptx	1.00	0.0104
+products	d8192p2	SCALE node	c	111.00	0.2226
+products	d8192p2	SCALE node	ptx	111.00	0.2180
+products	d8192p2	MUL node	c	6.00	0.0339
+products	d8192p2	MUL node	ptx	6.00	0.0294
+products	d8192p2	CLAMP node	c	5.00	0.0227
+products	d8192p2	CLAMP node	ptx	5.00	0.0182
+products	d8192p2	GET_ROWS top_p_candidates	c	4.00	0.0140
+products	d8192p2	GET_ROWS top_p_candidates	ptx	4.00	0.0182
+products	d8192p2	LOG top_p_bias	c	4.00	0.0100
+products	d8192p2	LOG top_p_bias	ptx	4.00	0.0061
+products	d8192p2	FLASH_ATTN_EXT node	c	12.00	12.6143
+products	d8192p2	FLASH_ATTN_EXT node	ptx	12.00	12.6182
+products	d8192p2	SILU node	c	98.00	0.1746
+products	d8192p2	SILU node	ptx	98.00	0.1712
+products	d8192p2	MUL_MAT attn_gate	c	36.00	3.5120
+products	d8192p2	MUL_MAT attn_gate	ptx	36.00	3.5154
+products	d8192p2	MUL_MAT attn_qkv	c	36.00	5.8962
+products	d8192p2	MUL_MAT attn_qkv	ptx	36.00	5.8994
+products	d8192p2	CONT _(reshaped)_(view)_(cont)	c	13.00	0.0371
+products	d8192p2	CONT _(reshaped)_(view)_(cont)	ptx	13.00	0.0403
+products	d8192p2	STEP top_p_mask	c	4.00	0.0158
+products	d8192p2	STEP top_p_mask	ptx	4.00	0.0126
+products	d8192p2	ARGMAX temp_max_idx	c	4.00	0.0093
+products	d8192p2	ARGMAX temp_max_idx	ptx	4.00	0.0125
+products	d8192p2	CONT ple_conv1d	c	4.00	0.2218
+products	d8192p2	CONT ple_conv1d	ptx	4.00	0.2188
+products	d8192p2	MUL_MAT attn_output	c	12.00	2.3703
+products	d8192p2	MUL_MAT attn_output	ptx	12.00	2.3733
+products	d8192p2	SCALE top_p_cdf_scaled	c	4.00	0.0115
+products	d8192p2	SCALE top_p_cdf_scaled	ptx	4.00	0.0086
+products	d8192p2	CPY _(copy)	c	4.00	0.0154
+products	d8192p2	CPY _(copy)	ptx	4.00	0.0182
+products	d8192p2	MUL_MAT attn_v	c	12.00	0.3338
+products	d8192p2	MUL_MAT attn_v	ptx	12.00	0.3311
+products	d8192p2	MUL_MAT ffn_down_shexp	c	48.00	1.3925
+products	d8192p2	MUL_MAT ffn_down_shexp	ptx	48.00	1.3899
+products	d8192p2	SOFT_MAX top_p_softmax	c	4.00	0.0136
+products	d8192p2	SOFT_MAX top_p_softmax	ptx	4.00	0.0162
+products	d8192p2	ARGMAX greedy_argmax	c	4.00	0.0053
+products	d8192p2	ARGMAX greedy_argmax	ptx	4.00	0.0077
+products	d8192p2	MUL_MAT hc_attn_inject	c	48.00	0.3609
+products	d8192p2	MUL_MAT hc_attn_inject	ptx	48.00	0.3633
+products	d8192p2	CPY kpool_new_pool_idxs	c	9.00	0.0318
+products	d8192p2	CPY kpool_new_pool_idxs	ptx	9.00	0.0341
+products	d8192p2	CPY hop_wide	c	8.00	0.1788
+products	d8192p2	CPY hop_wide	ptx	8.00	0.1766
+products	d8192p2	TOP_K top_k	c	4.00	0.3029
+products	d8192p2	TOP_K top_k	ptx	4.00	0.3051
+products	d8192p2	CPY ple_conv1d	c	4.00	0.0124
+products	d8192p2	CPY ple_conv1d	ptx	4.00	0.0103
+products	d8192p2	MUL_MAT hc_ffn_inject	c	48.00	0.3665
+products	d8192p2	MUL_MAT hc_ffn_inject	ptx	48.00	0.3686
+products	d8192p2	DSV4_HC_PRE hc_mixed	c	96.00	0.5091
+products	d8192p2	DSV4_HC_PRE hc_mixed	ptx	96.00	0.5111
+products	d8192p2	CONT gate_reshaped	c	12.00	0.1566
+products	d8192p2	CONT gate_reshaped	ptx	12.00	0.1586
+products	d8192p2	PAD node	c	1.00	0.2151
+products	d8192p2	PAD node	ptx	1.00	0.2171
+products	d8192p2	GET_ROWS greedy_sampled_token	c	4.00	0.0067
+products	d8192p2	GET_ROWS greedy_sampled_token	ptx	4.00	0.0085
+products	d8192p2	SET_ROWS cache_idx_k_l43_(view)_(view)	c	1.00	0.0083
+products	d8192p2	SET_ROWS cache_idx_k_l43_(view)_(view)	ptx	1.00	0.0100
+products	d8192p2	SUM top_p_index_f32	c	4.00	0.0156
+products	d8192p2	SUM top_p_index_f32	ptx	4.00	0.0140
+products	d8192p2	MUL_MAT indexer.k_proj	c	12.00	0.2360
+products	d8192p2	MUL_MAT indexer.k_proj	ptx	12.00	0.2344
+products	d8192p2	MUL_MAT ffn_up_shexp	c	5.00	0.2279
+products	d8192p2	MUL_MAT ffn_up_shexp	ptx	5.00	0.2295
+products	d8192p2	SET_ROWS cache_ple_r_l1_(view)_(view)	c	1.00	0.0680
+products	d8192p2	SET_ROWS cache_ple_r_l1_(view)_(view)	ptx	1.00	0.0696
+products	d8192p2	MUL_MAT ffn_gate_inp_shexp	c	48.00	0.2570
+products	d8192p2	MUL_MAT ffn_gate_inp_shexp	ptx	48.00	0.2555
+products	d8192p2	SET_ROWS cache_idx_k_l7_(view)	c	1.00	0.0039
+products	d8192p2	SET_ROWS cache_idx_k_l7_(view)	ptx	1.00	0.0024
+products	d8192p2	SET_ROWS cache_v_l35_(view)	c	1.00	0.0031
+products	d8192p2	SET_ROWS cache_v_l35_(view)	ptx	1.00	0.0016
+products	d8192p2	RANGE_MASK kpool_mask	c	9.00	0.0163
+products	d8192p2	RANGE_MASK kpool_mask	ptx	9.00	0.0150
+products	d8192p2	GET_ROWS top_p_sorted_logits	c	4.00	0.0070
+products	d8192p2	GET_ROWS top_p_sorted_logits	ptx	4.00	0.0083
+products	d8192p2	ROPE+SET_ROWS Kcur	c	12.00	0.0266
+products	d8192p2	ROPE+SET_ROWS Kcur	ptx	12.00	0.0253
+products	d8192p2	REPEAT hc_init	c	1.00	0.0102
+products	d8192p2	REPEAT hc_init	ptx	1.00	0.0115
+products	d8192p2	MUL_MAT ffn_gate_shexp	c	5.00	0.2933
+products	d8192p2	MUL_MAT ffn_gate_shexp	ptx	5.00	0.2946
+products	d8192p2	CPY kpool_tail_idxs	c	9.00	0.0161
+products	d8192p2	CPY kpool_tail_idxs	ptx	9.00	0.0149
+products	d8192p2	GET_ROWS top_k_rows	c	4.00	0.0126
+products	d8192p2	GET_ROWS top_k_rows	ptx	4.00	0.0138
+products	d8192p2	CONT node_(view)_(transposed)_(cont)	c	4.00	0.0874
+products	d8192p2	CONT node_(view)_(transposed)_(cont)	ptx	4.00	0.0885
+products	d8192p2	SET_ROWS cache_idx_k_l31_(view)	c	1.00	0.0022
+products	d8192p2	SET_ROWS cache_idx_k_l31_(view)	ptx	1.00	0.0012
+products	d8192p2	ABS node	c	1.00	0.0025
+products	d8192p2	ABS node	ptx	1.00	0.0034
+products	d8192p2	TOP_K_MASK indexer_sel	c	12.00	0.1020
+products	d8192p2	TOP_K_MASK indexer_sel	ptx	12.00	0.1029
+products	d8192p2	SET_ROWS cache_idx_k_l35_(view)	c	1.00	0.0030
+products	d8192p2	SET_ROWS cache_idx_k_l35_(view)	ptx	1.00	0.0022
+products	d8192p2	ROPE indexer_q	c	12.00	0.0240
+products	d8192p2	ROPE indexer_q	ptx	12.00	0.0232
+products	d8192p2	ROPE Qcur	c	12.00	0.0433
+products	d8192p2	ROPE Qcur	ptx	12.00	0.0440
+products	d8192p2	CONT _(cont)	c	1.00	0.0024
+products	d8192p2	CONT _(cont)	ptx	1.00	0.0017
+products	d8192p2	CPY kpool_new_pool_pos	c	9.00	0.0280
+products	d8192p2	CPY kpool_new_pool_pos	ptx	9.00	0.0287
+products	d8192p2	TOP_K indexer_top_k	c	12.00	0.5584
+products	d8192p2	TOP_K indexer_top_k	ptx	12.00	0.5578
+products	d8192p2	SQRT node	c	1.00	0.0031
+products	d8192p2	SQRT node	ptx	1.00	0.0037
+products	d8192p2	SCALE result_norm	c	1.00	0.0006
+products	d8192p2	SCALE result_norm	ptx	1.00	0.0000
+products	d8192p2	SET_ROWS cache_idx_k_l43_(view)	c	1.00	0.0022
+products	d8192p2	SET_ROWS cache_idx_k_l43_(view)	ptx	1.00	0.0028
+products	d8192p2	CPY kpool_new_pool_rep	c	9.00	0.0273
+products	d8192p2	CPY kpool_new_pool_rep	ptx	9.00	0.0267
+products	d8192p2	SCALE+SIGMOID+SCALE+DSV4_HC_POST hc_inject	c	96.00	1.2685
+products	d8192p2	SCALE+SIGMOID+SCALE+DSV4_HC_POST hc_inject	ptx	96.00	1.2679
+products	d8192p2	MUL_MAT attn_k	c	12.00	0.2923
+products	d8192p2	MUL_MAT attn_k	ptx	12.00	0.2928
+products	d8192p2	SET_ROWS _(reshaped)_(view)	c	4.00	0.0059
+products	d8192p2	SET_ROWS _(reshaped)_(view)	ptx	4.00	0.0064
+products	d8192p2	SIGMOID ple_gate	c	1.00	0.0027
+products	d8192p2	SIGMOID ple_gate	ptx	1.00	0.0023
+products	d8192p2	SIGMOID+MUL gate_sigmoid	c	12.00	0.0391
+products	d8192p2	SIGMOID+MUL gate_sigmoid	ptx	12.00	0.0395
+products	d8192p2	SET_ROWS cache_v_l3_(view)	c	1.00	0.0027
+products	d8192p2	SET_ROWS cache_v_l3_(view)	ptx	1.00	0.0024
+products	d8192p2	SUM_ROWS node	c	1.00	0.0028
+products	d8192p2	SUM_ROWS node	ptx	1.00	0.0025
+products	d8192p2	SET_ROWS cache_idx_k_l35_(view)_(view)	c	1.00	0.0026
+products	d8192p2	SET_ROWS cache_idx_k_l35_(view)_(view)	ptx	1.00	0.0023
+products	d8192p2	SIGMOID+MUL node	c	1.00	0.0043
+products	d8192p2	SIGMOID+MUL node	ptx	1.00	0.0040
+products	d8192p2	SET_ROWS cache_idx_k_l11_(view)	c	1.00	0.0026
+products	d8192p2	SET_ROWS cache_idx_k_l11_(view)	ptx	1.00	0.0024
+products	d8192p2	SET_ROWS cache_idx_k_l19_(view)	c	1.00	0.0026
+products	d8192p2	SET_ROWS cache_idx_k_l19_(view)	ptx	1.00	0.0028
+products	d8192p2	CPY s_slot_rev	c	1.00	0.0025
+products	d8192p2	CPY s_slot_rev	ptx	1.00	0.0023
+products	d8192p2	SGN node	c	1.00	0.0025
+products	d8192p2	SGN node	ptx	1.00	0.0023
+products	d8192p2	SET_ROWS cache_idx_k_l27_(view)_(view)	c	1.00	0.0004
+products	d8192p2	SET_ROWS cache_idx_k_l27_(view)_(view)	ptx	1.00	0.0002
+products	d8192p2	SET_ROWS cache_v_l31_(view)	c	1.00	0.0004
+products	d8192p2	SET_ROWS cache_v_l31_(view)	ptx	1.00	0.0002
+products	d8192p2	MUL ple_gated_value	c	1.00	0.0062
+products	d8192p2	MUL ple_gated_value	ptx	1.00	0.0060
+products	d8192p2	ARGSORT top_p_sorted_idx	c	4.00	0.0046
+products	d8192p2	ARGSORT top_p_sorted_idx	ptx	4.00	0.0044
+products	d8192p2	LIGHTNING_INDEXER indexer_score	c	12.00	1.1531
+products	d8192p2	LIGHTNING_INDEXER indexer_score	ptx	12.00	1.1533
+products	d8192p2	CPY hop_narrow	c	8.00	0.1219
+products	d8192p2	CPY hop_narrow	ptx	8.00	0.1220
+products	d8192p2	SET_ROWS cache_idx_k_l3_(view)	c	1.00	0.0030
+products	d8192p2	SET_ROWS cache_idx_k_l3_(view)	ptx	1.00	0.0029
+products	d8192p2	SET_ROWS cache_idx_k_l15_(view)_(view)	c	1.00	0.0030
+products	d8192p2	SET_ROWS cache_idx_k_l15_(view)_(view)	ptx	1.00	0.0029
+products	d8192p2	SET_ROWS cache_v_l43_(view)	c	1.00	0.0027
+products	d8192p2	SET_ROWS cache_v_l43_(view)	ptx	1.00	0.0026
+products	d8192p2	SET_ROWS cache_idx_k_l11_(view)_(view)	c	1.00	0.0026
+products	d8192p2	SET_ROWS cache_idx_k_l11_(view)_(view)	ptx	1.00	0.0027
+products	d8192p2	SET_ROWS cache_v_l7_(view)	c	1.00	0.0024
+products	d8192p2	SET_ROWS cache_v_l7_(view)	ptx	1.00	0.0025
+products	d8192p2	SET_ROWS h_nextn_dev_(view)	c	1.00	0.0072
+products	d8192p2	SET_ROWS h_nextn_dev_(view)	ptx	1.00	0.0073
+products	d8192p2	SET_ROWS cache_v_l47_(view)	c	1.00	0.0029
+products	d8192p2	SET_ROWS cache_v_l47_(view)	ptx	1.00	0.0030
+products	d8192p2	SET_ROWS cache_idx_k_l47_(view)	c	1.00	0.0024
+products	d8192p2	SET_ROWS cache_idx_k_l47_(view)	ptx	1.00	0.0025
+products	d8192p2	SET_ROWS cache_idx_k_l27_(view)	c	1.00	0.0007
+products	d8192p2	SET_ROWS cache_idx_k_l27_(view)	ptx	1.00	0.0006
+products	d8192p2	SET_ROWS cache_idx_k_l31_(view)_(view)	c	1.00	0.0003
+products	d8192p2	SET_ROWS cache_idx_k_l31_(view)_(view)	ptx	1.00	0.0004
+products	d8192p2	SET_ROWS cache_v_l11_(view)	c	1.00	0.0001
+products	d8192p2	SET_ROWS cache_v_l11_(view)	ptx	1.00	0.0002
+products	d8192p2	SET_ROWS cache_v_l39_(view)	c	1.00	0.0000
+products	d8192p2	SET_ROWS cache_v_l39_(view)	ptx	1.00	-0.0001
+products	d8192p2	SET_ROWS cache_v_l27_(view)	c	1.00	0.0006
+products	d8192p2	SET_ROWS cache_v_l27_(view)	ptx	1.00	0.0005
+products	d8192p2	SET_ROWS cache_idx_k_l7_(view)_(view)	c	1.00	0.0030
+products	d8192p2	SET_ROWS cache_idx_k_l7_(view)_(view)	ptx	1.00	0.0031
+products	d8192p2	SET_ROWS cache_v_l15_(view)	c	1.00	0.0029
+products	d8192p2	SET_ROWS cache_v_l15_(view)	ptx	1.00	0.0028
+products	d8192p2	SET_ROWS cache_idx_k_l19_(view)_(view)	c	1.00	0.0028
+products	d8192p2	SET_ROWS cache_idx_k_l19_(view)_(view)	ptx	1.00	0.0027
+products	d8192p2	SET_ROWS cache_idx_k_l23_(view)_(view)	c	1.00	0.0028
+products	d8192p2	SET_ROWS cache_idx_k_l23_(view)_(view)	ptx	1.00	0.0027
+products	d8192p2	SET_ROWS cache_idx_k_l39_(view)_(view)	c	1.00	0.0025
+products	d8192p2	SET_ROWS cache_idx_k_l39_(view)_(view)	ptx	1.00	0.0026
+products	d8192p2	SET_ROWS cache_idx_k_l23_(view)	c	1.00	0.0023
+products	d8192p2	SET_ROWS cache_idx_k_l23_(view)	ptx	1.00	0.0024
+products	d8192p2	SET_ROWS cache_v_l19_(view)	c	1.00	0.0023
+products	d8192p2	SET_ROWS cache_v_l19_(view)	ptx	1.00	0.0024
+products	d8192p2	SET_ROWS cache_idx_k_l39_(view)	c	1.00	0.0022
+products	d8192p2	SET_ROWS cache_idx_k_l39_(view)	ptx	1.00	0.0023
+products	d8192p2	MUL_MAT output_hc_up	c	1.00	0.0525
+products	d8192p2	MUL_MAT output_hc_up	ptx	1.00	0.0524
+products	d8192p2	MUL_MAT output_hc_down	c	1.00	0.0517
+products	d8192p2	MUL_MAT output_hc_down	ptx	1.00	0.0518
+products	d8192p2	MUL_MAT attn_q	c	12.00	1.9595
+products	d8192p2	MUL_MAT attn_q	ptx	12.00	1.9596
+products	d8192p2	SET_ROWS cache_idx_k_l3_(view)_(view)	c	1.00	0.0027
+products	d8192p2	SET_ROWS cache_idx_k_l3_(view)_(view)	ptx	1.00	0.0027
+products	d8192p2	SET_ROWS cache_v_l23_(view)	c	1.00	0.0002
+products	d8192p2	SET_ROWS cache_v_l23_(view)	ptx	1.00	0.0002
+products	d8192p2	SET_ROWS cache_idx_k_l47_(view)_(view)	c	1.00	0.0028
+products	d8192p2	SET_ROWS cache_idx_k_l47_(view)_(view)	ptx	1.00	0.0028
+labels	d8192p2	MUL_MAT_ID+MUL_MAT_ID+SWIGLU ffn_gate_exps:iq1_m:2560x640 ffn_up_exps:iq1_m:2560x640	c	2.00	0.6617
+labels	d8192p2	MUL_MAT_ID+MUL_MAT_ID+SWIGLU ffn_gate_exps:iq1_m:2560x640 ffn_up_exps:iq1_m:2560x640	ptx	2.00	0.5428
+labels	d8192p2	MUL_MAT_ID+MUL_MAT_ID+SWIGLU ffn_gate_exps:iq2_s:2560x640 ffn_up_exps:iq2_s:2560x640	c	7.00	3.6851
+labels	d8192p2	MUL_MAT_ID+MUL_MAT_ID+SWIGLU ffn_gate_exps:iq2_s:2560x640 ffn_up_exps:iq2_s:2560x640	ptx	7.00	2.9971
+labels	d8192p2	MUL_MAT_ID+MUL_MAT_ID+SWIGLU ffn_gate_exps:iq2_xs:2560x640 ffn_up_exps:iq2_xs:2560x640	c	4.00	2.4117
+labels	d8192p2	MUL_MAT_ID+MUL_MAT_ID+SWIGLU ffn_gate_exps:iq2_xs:2560x640 ffn_up_exps:iq2_xs:2560x640	ptx	4.00	2.0004
+labels	d8192p2	MUL_MAT_ID+MUL_MAT_ID+SWIGLU ffn_gate_exps:iq2_xxs:2560x640 ffn_up_exps:iq2_xxs:2560x640	c	11.00	6.1391
+labels	d8192p2	MUL_MAT_ID+MUL_MAT_ID+SWIGLU ffn_gate_exps:iq2_xxs:2560x640 ffn_up_exps:iq2_xxs:2560x640	ptx	11.00	5.0928
+labels	d8192p2	MUL_MAT_ID+MUL_MAT_ID+SWIGLU ffn_gate_exps:q2_0:2560x640 ffn_up_exps:q2_0:2560x640	c	24.00	6.4060
+labels	d8192p2	MUL_MAT_ID+MUL_MAT_ID+SWIGLU ffn_gate_exps:q2_0:2560x640 ffn_up_exps:q2_0:2560x640	ptx	24.00	6.4082
+labels	d8192p2	MUL gate	c	36.00	0.3520
+labels	d8192p2	MUL gate	ptx	36.00	0.2604
+labels	d8192p2	MUL_MAT ssm_beta:bf16:2560x48	c	36.00	0.4235
+labels	d8192p2	MUL_MAT ssm_beta:bf16:2560x48	ptx	36.00	0.3579
+labels	d8192p2	SIGMOID beta_sigmoid	c	36.00	0.2146
+labels	d8192p2	SIGMOID beta_sigmoid	ptx	36.00	0.2757
+labels	d8192p2	GDN_CONV+CPY gdn_conv	c	36.00	0.7351
+labels	d8192p2	GDN_CONV+CPY gdn_conv	ptx	36.00	0.7874
+labels	d8192p2	GATED_DELTA_NET+CPY node	c	36.00	8.9770
+labels	d8192p2	GATED_DELTA_NET+CPY node	ptx	36.00	9.0217
+labels	d8192p2	MUL_MAT hc_attn_up:bf16:320x10240	c	48.00	2.6216
+labels	d8192p2	MUL_MAT hc_attn_up:bf16:320x10240	ptx	48.00	2.5925
+labels	d8192p2	MUL_MAT ffn_gate_inp:bf16:2560x512	c	48.00	1.2723
+labels	d8192p2	MUL_MAT ffn_gate_inp:bf16:2560x512	ptx	48.00	1.3006
+labels	d8192p2	REPEAT node	c	1.00	0.0362
+labels	d8192p2	REPEAT node	ptx	1.00	0.0082
+labels	d8192p2	SOFTPLUS a_softplus	c	36.00	0.0862
+labels	d8192p2	SOFTPLUS a_softplus	ptx	36.00	0.1135
+labels	d8192p2	MUL_MAT ssm_alpha:bf16:2560x48	c	36.00	0.2948
+labels	d8192p2	MUL_MAT ssm_alpha:bf16:2560x48	ptx	36.00	0.2724
