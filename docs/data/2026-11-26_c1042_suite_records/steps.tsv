@@ -1,0 +1,15 @@
+share	step	arm	exit	summary	OK	FAIL	NOREC	not supported	illegal access	record or replay line	wall s
+flash_attn_ext	record	all	0	4679/4679 tests passed	4680	0	0	1429	0	record: $REC/flash_attn_ext: 4679 cases, 19.457 GB of files, 0 left out by the caps, 0 kept from an earlier run	294
+flash_attn_ext	replay-2d839da1d-all	all	0	4679/4679 tests passed	4680	0	0	1429	0	replay: $REC/flash_attn_ext: 4679 cases replayed, 0 selected by the filter have no record	98
+flash_attn_ext	replay-2d839da1d-tile	tile	0	4679/4679 tests passed	4680	0	0	1429	0	replay: $REC/flash_attn_ext: 4679 cases replayed, 0 selected by the filter have no record	50
+flash_attn_ext	replay-2d839da1d-plain	plain	0	4679/4679 tests passed	4680	0	0	1429	0	replay: $REC/flash_attn_ext: 4679 cases replayed, 0 selected by the filter have no record	59
+flash_attn_ext	replay-2d839da1d-cpucheck	all	0	4679/4679 tests passed	4680	0	0	1429	0	replay: $REC/flash_attn_ext: 4679 cases replayed, 0 selected by the filter have no record; replay cpu-check: 186 cases, 186 references identical, 0 verdicts differ	198
+flash_attn_ext	replay-eee615cdb-all	all	0	4679/4679 tests passed	4680	0	0	1429	0	replay: $REC/flash_attn_ext: 4679 cases replayed, 0 selected by the filter have no record	50
+flash_attn_ext	replay-eee615cdb-tile	tile	0	4679/4679 tests passed	4680	0	0	1429	0	replay: $REC/flash_attn_ext: 4679 cases replayed, 0 selected by the filter have no record	69
+flash_attn_ext	replay-eee615cdb-plain	plain	0	4679/4679 tests passed	4680	0	0	1429	0	replay: $REC/flash_attn_ext: 4679 cases replayed, 0 selected by the filter have no record	56
+fused	record	forced	0	5424/5424 tests passed	5425	0	0	231	0	record: $REC/fused: 5424 cases, 44.603 GB of files, 0 left out by the caps, 0 kept from an earlier run	1473
+fused	replay-2d839da1d-forced	forced	0	5424/5424 tests passed	5425	0	0	231	0	replay: $REC/fused: 5424 cases replayed, 0 selected by the filter have no record	186
+fused	replay-2d839da1d-mmv	mmv	0	5424/5424 tests passed	5425	0	0	231	0	replay: $REC/fused: 5424 cases replayed, 0 selected by the filter have no record	115
+fused	replay-2d839da1d-cpucheck	forced	0	5424/5424 tests passed	5425	0	0	231	0	replay: $REC/fused: 5424 cases replayed, 0 selected by the filter have no record; replay cpu-check: 200 cases, 200 references identical, 0 verdicts differ	120
+fused	replay-eee615cdb-forced	forced	0	5424/5424 tests passed	5425	0	0	231	0	replay: $REC/fused: 5424 cases replayed, 0 selected by the filter have no record	112
+fused	replay-eee615cdb-mmv	mmv	0	5424/5424 tests passed	5425	0	0	231	0	replay: $REC/fused: 5424 cases replayed, 0 selected by the filter have no record	112

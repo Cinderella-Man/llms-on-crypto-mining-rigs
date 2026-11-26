@@ -1,0 +1,11 @@
+share	comparison	cases with the same largest error	cases whose largest error differs
+flash_attn_ext	all on every build (2d839da1d, eee615cdb)	4679	0
+flash_attn_ext	tile on every build (2d839da1d, eee615cdb)	4679	0
+flash_attn_ext	plain on every build (2d839da1d, eee615cdb)	4679	0
+flash_attn_ext	all against plain on 2d839da1d	4452	227
+flash_attn_ext	tile against plain on 2d839da1d	4506	173
+flash_attn_ext	all with --cpu-check against without, on 2d839da1d	4679	0
+fused	forced on every build (2d839da1d, eee615cdb)	5424	0
+fused	mmv on every build (2d839da1d, eee615cdb)	5424	0
+fused	forced against mmv on 2d839da1d	5424	0
+fused	forced with --cpu-check against without, on 2d839da1d	5424	0

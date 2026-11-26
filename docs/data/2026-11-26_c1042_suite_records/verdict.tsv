@@ -1,0 +1,13 @@
+share	replay	arm	live OK while recording	replay OK	replay FAIL	NOREC	live OK cases not OK in the replay	verdict	failing cases
+flash_attn_ext	2d839da1d-all	all	4679	4679	0	0	0	passed	-
+flash_attn_ext	2d839da1d-tile	tile	4679	4679	0	0	0	passed	-
+flash_attn_ext	2d839da1d-plain	plain	4679	4679	0	0	0	passed	-
+flash_attn_ext	2d839da1d-cpucheck	all	4679	4679	0	0	0	passed	-
+flash_attn_ext	eee615cdb-all	all	4679	4679	0	0	0	passed	-
+flash_attn_ext	eee615cdb-tile	tile	4679	4679	0	0	0	passed	-
+flash_attn_ext	eee615cdb-plain	plain	4679	4679	0	0	0	passed	-
+fused	2d839da1d-forced	forced	5424	5424	0	0	0	passed	-
+fused	2d839da1d-mmv	mmv	5424	5424	0	0	0	passed	-
+fused	2d839da1d-cpucheck	forced	5424	5424	0	0	0	passed	-
+fused	eee615cdb-forced	forced	5424	5424	0	0	0	passed	-
+fused	eee615cdb-mmv	mmv	5424	5424	0	0	0	passed	-
