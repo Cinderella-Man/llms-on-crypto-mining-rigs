@@ -1,0 +1,13 @@
+ops (-o)	cases (-p)	arm	result	failing cases (the "Backend CUDA0: FAIL" summary line not counted)	PTX launches (launch_count.c)
+MUL_MAT_ID	IQ2_XXS and IQ2_S	unset (old kernels)	245/245 tests passed	0 FAIL	none
+MUL_MAT_ID	IQ2_XXS and IQ2_S	GGML_CUDA_MTOK_IQ_FAST=1	245/245 tests passed	0 FAIL	none
+MUL_MAT_ID	IQ2_XXS and IQ2_S	GGML_CUDA_MTOK_IQ_FAST=2	245/245 tests passed	0 FAIL	none
+MUL_MAT_ID	IQ2_S	fault (switch 2)	99/99 tests passed	0 FAIL	none
+MUL_MAT_ID_FUSION|MUL_MAT_ID_SHARED	IQ2_XXS and IQ2_S	unset (old kernels)	17/17 tests passed	0 FAIL	none
+MUL_MAT_ID_FUSION|MUL_MAT_ID_SHARED	IQ2_XXS and IQ2_S	GGML_CUDA_MTOK_IQ_FAST=1	17/17 tests passed	0 FAIL	none
+MUL_MAT_ID_FUSION|MUL_MAT_ID_SHARED	IQ2_XXS and IQ2_S	GGML_CUDA_MTOK_IQ_FAST=2	17/17 tests passed	0 FAIL	none
+MUL_MAT_ID_FUSION|MUL_MAT_ID_SHARED	IQ2_S	fault (switch 2)	0/10 tests passed	10 FAIL	none
+MUL_MAT_VEC_FUSION|MUL_MAT_ID_FUSION	IQ2_XXS and IQ2_S	unset (old kernels)	239/239 tests passed	0 FAIL	none
+MUL_MAT_VEC_FUSION|MUL_MAT_ID_FUSION	IQ2_XXS and IQ2_S	GGML_CUDA_MTOK_IQ_FAST=1	239/239 tests passed	0 FAIL	none
+MUL_MAT_VEC_FUSION|MUL_MAT_ID_FUSION	IQ2_XXS and IQ2_S	GGML_CUDA_MTOK_IQ_FAST=2	239/239 tests passed	0 FAIL	4 mtok_iq2xxs_fast_ptx_ntm2;8 mtok_iq2xxs_fast_ptx_ntm4;4 mtok_iq2s_fast_ptx_ntm2;8 mtok_iq2s_fast_ptx_ntm4;20 mtok_iq2xxs_fast_ptx_ntm8;20 mtok_iq2s_fast_ptx_ntm8
+MUL_MAT_VEC_FUSION|MUL_MAT_ID_FUSION	IQ2_S	fault (switch 2)	32/68 tests passed	36 FAIL	4 mtok_iq2s_fast_ptx_ntm2;8 mtok_iq2s_fast_ptx_ntm4;20 mtok_iq2s_fast_ptx_ntm8

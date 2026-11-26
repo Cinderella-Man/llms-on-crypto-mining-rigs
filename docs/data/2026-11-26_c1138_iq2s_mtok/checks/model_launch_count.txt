@@ -1,0 +1,5 @@
+# driver-API launches of the arm at 2 (GGML_CUDA_MTOK_IQ_FAST=2), by kernel, at the server's exit
+launch_count: 21 mtok_iq2s_fast_ptx_ntm2
+launch_count: 94 mtok_iq2s_fast_ptx_ntm8
+launch_count: 28 mtok_iq2s_fast_ptx_ntm4
+# the arms at 0 and 1: no cuLaunchKernel call (the counter registers its report at the first call, so nothing printed)
