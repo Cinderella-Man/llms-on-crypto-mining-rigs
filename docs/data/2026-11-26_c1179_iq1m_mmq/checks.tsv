@@ -1,0 +1,10 @@
+run	build	GGML_CUDA_MMQ_IQ1_M	ops	cases	MUL_MAT OK	MUL_MAT_ID OK	MUL_MAT_VEC_FUSION OK	not supported	FAIL	seconds	note
+a_all	A (sm_70 machine code)	unset	MUL_MAT, MUL_MAT_ID, MUL_MAT_VEC_FUSION	every type	5211	934	410	785	0	3065	stopped in the MUL_MAT_ID cases of other types (1,038 of 2,690 reached); every printed case OK
+a_mm_rest	A	unset	MUL_MAT	the 135 MUL_MAT cases a_all had not reached, by full name	133			2	0	14	
+a_off	A	unset	MUL_MAT_ID, MUL_MAT_VEC_FUSION	IQ1_M		126	70	0	0	275	IQ1_M's MUL_MAT cases unset: 113 in a_all, 48 in a_mm_rest
+a_on	A	2	MUL_MAT, MUL_MAT_ID, MUL_MAT_VEC_FUSION	IQ1_M	161	126	70	0	0	283	
+b_all_mm	B (compute-6.1 PTX, JIT; MMQ forced)	unset	MUL_MAT	every type	5344			683	0	409	
+b_all_iq1m	B	unset	MUL_MAT_ID, MUL_MAT_VEC_FUSION	IQ1_M		126	70	0	0	276	
+b_on	B	2	MUL_MAT, MUL_MAT_ID, MUL_MAT_VEC_FUSION	IQ1_M	161	126	70	0	0	286	
+b_all_mm (CUDA_FORCE_PTX_JIT=1)	B	unset	MUL_MAT	every type	0			0	0	1	aborted at cuBLAS's start (cublasCreate: resource allocation failed); the variable forces cuBLAS's own kernels through the JIT too
+b_all_iq1m (CUDA_FORCE_PTX_JIT=1)	B	unset	MUL_MAT_ID, MUL_MAT_VEC_FUSION	IQ1_M		58 (both ops)		0	0	65	aborted at the first product that reached cuBLAS, as above

@@ -1,0 +1,9 @@
+object	kind	in_both	same	const_only	code	only_base	only_branch
+iq2_xs	sass	96	96	0	0	0	0
+iq2_xs	ptx	96	96	0	0	0	0
+q4_0	sass	96	94	0	2	0	0
+q4_0	ptx	96	86	0	10	0	0
+q4_1	sass	96	88	0	8	0	0
+q4_1	ptx	96	82	0	14	0	0
+q8_0	sass	128	128	0	0	0	0
+q8_0	ptx	128	128	0	0	0	0
