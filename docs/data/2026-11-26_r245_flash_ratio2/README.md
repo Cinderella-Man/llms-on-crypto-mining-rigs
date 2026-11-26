@@ -109,7 +109,7 @@ every load, and both class rules (against the larger spread, and against the con
     19 equal tokens, although at that depth 0.49 runs the preset's kernels and both loads wrote the same replies
     before it. `r49a`'s sampled reply at 3,584 then differs too (after 139 tokens), the draft's shortlist carrying the
     difference. Every greedy reply and every prime repeated. The cause is not known: code row C1196
-    ([Q1936](../../../quants/experiments.md)) looks for it.
+    ([Q1937](../../../quants/experiments.md)) looks for it.
 - **Prompt reading** ([table.md](table.md)): negligible except two figures on calls that no arm changes (prompt calls
   hold 64 tokens or more and follow `_PROMPT_MIN_RATIO`): 0.42 at depth 0 (above) and 0.45's prime at 3,840 tokens,
   181.0 and 181.4 tok/s against 184.1 and 182.7 (−1.2 %), the primes' known scatter between loads (R69, R175, C1175,
