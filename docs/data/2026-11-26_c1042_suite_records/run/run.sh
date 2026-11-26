@@ -102,11 +102,12 @@ IFS=, read -ra G <<< "$GPUS"
 say() { echo "$(date +%H:%M:%S) $*"; }
 has() { [[ " $STEPS " == *" $1 "* ]]; }
 strip() { sed 's/\x1b\[[0-9;]*m//g' "$1"; }
-arm_env() {  # <arm>: its environment
+arm_env() {  # <arm>: its environment; every arm with cuBLAS as on a P106 (PASCAL_CUBLAS, C1108, 2026-11-26: the
+             # forced sets carry it; the attention arms reach no cuBLAS product, so their verdicts are C1042's)
     case $1 in
-        plain) echo "" ;;
-        tile) echo "GGML_CUDA_FATTN_TILE_PASCAL=2" ;;
-        all) echo "$FA_ALL" ;;
+        plain) echo "${PASCAL_CUBLAS:-}" ;;
+        tile) echo "${PASCAL_CUBLAS:-} GGML_CUDA_FATTN_TILE_PASCAL=2" ;;
+        all) echo "${PASCAL_CUBLAS:-} $FA_ALL" ;;
         mmv) echo "$PASCAL_FORCED_MMV" ;;
         forced) echo "$PASCAL_FORCED" ;;
         union) echo "$PASCAL_FORCED $FA_ALL" ;;

@@ -1,0 +1,11 @@
+run	setting	repeat	rc	summary	card_ok	card_fail	card_skip	cpu_logits_written	cpu_logits_compared	cpu_logits_differing
+stock-1	stock	1	0	Summary: all 159 test(s) passed	157	0	28	152	0	0
+notf32-1	notf32	1	0	Summary: all 159 test(s) passed	157	0	28	0	152	0
+before-1	before	1	0	Summary: all 159 test(s) passed	157	0	28	152	0	0
+after-1	after	1	0	Summary: all 159 test(s) passed	157	0	28	0	152	0
+f32-1	f32	1	0	Summary: all 159 test(s) passed	157	0	28	0	152	0
+stock-2	stock	2	0	Summary: all 159 test(s) passed	157	0	28	0	152	0
+notf32-2	notf32	2	0	Summary: all 159 test(s) passed	157	0	28	0	152	0
+before-2	before	2	0	Summary: all 159 test(s) passed	157	0	28	0	152	0
+after-2	after	2	0	Summary: all 159 test(s) passed	157	0	28	0	152	0
+f32-2	f32	2	0	Summary: all 159 test(s) passed	157	0	28	0	152	0

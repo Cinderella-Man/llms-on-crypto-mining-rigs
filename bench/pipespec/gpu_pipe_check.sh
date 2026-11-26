@@ -79,6 +79,9 @@
 #                   still matches the preset
 #          p106all  p106 plus the fork's other compute-6.1-only card paths (P106ALL_ENV: the attention-block fusion, the
 #                   persistent MoE kernel, the Pascal flash-attention tile kernel, the F32 multi-token kernel)
+#          every setting, stock too, also gets CARD_ENV (default NVIDIA_TF32_OVERRIDE=0 GGML_CUDA_CUBLAS_COMPUTE_TYPE=f32,
+#                   C1108): cuBLAS's products in F32 without TF32, as on a P106 (scripts/pascal_forced.sh's
+#                   PASCAL_CUBLAS); CARD_ENV= leaves cuBLAS as the newer card runs it
 #        -c<N> (optional, e.g. q4_k-fn-c4): every pipespec run (host, fed, profile) decodes its prompt in calls of N
 #                   tokens (llama-pipespec --pipe-chunk N), plain's too. Without it the prompt goes in one call (the
 #                   large-batch kernels) and every token after it alone (pipelined runs too: each guess is its own
@@ -109,7 +112,8 @@
 #   [RACE_AT=N/4] [JOBS=0] [THREADS=2] [TIMEOUT=900] [VIRT=3] [IMG=nvidia/cuda:12.9.2-devel-ubuntu24.04]
 #   [MOUNTS='<folders mounted read-only>']
 #   [DOCKER_ARGS='<labels, --cpu-shares>'] [PREFLIGHT=<cuda_preflight.sh>] [NAME=gpupipe] [QUANT_ARGS=...]
-#   [MIX_ARGS=...] [P106_ENV=...] [FN_SW=...] [P106ALL_ENV=...] [JITCACHE=<dir>] [QUANT=<llama-quantize>]
+#   [MIX_ARGS=...] [P106_ENV=...] [FN_SW=...] [P106ALL_ENV=...] [CARD_ENV='NVIDIA_TF32_OVERRIDE=0 ...'] [JITCACHE=<dir>]
+#   [QUANT=<llama-quantize>]
 #   [NSYS=<nsys, for CHECKS with profile>] bash gpu_pipe_check.sh
 # A bin dir is a rig tarball's bin/: scripts/build_llamacpp_docker.sh with TESTS=1 packs llama-pipe-recurrent-check and
 # test-llama-archs (since 2026-11-24, C984) and llama-quantize (C1017) beside llama-pipespec and llama-completion, so
@@ -256,7 +260,7 @@ if [ "${GPU_PIPE_INNER:-}" = 1 ]; then
     {
         echo "kind=$KIND args=$LARGS pipespec args=${PARGS:-}"
         echo "checks=$CHECKS N=$N sampling=$SAMPLING sample seed=$SAMPLE_SEED floor=${FLOOR:-none} race=$RACE race at=$RACE_AT"
-        env | grep -E '^(GGML_|LLAMA_|CUDA_VISIBLE|NVIDIA_VISIBLE)' | sort
+        env | grep -E '^(GGML_|LLAMA_|CUDA_VISIBLE|NVIDIA_VISIBLE|NVIDIA_TF32)' | sort
     } > "$OUTD/env.txt"
     : > "$OUTD/times.tsv"
     for a in $ARCHS; do
@@ -393,6 +397,9 @@ P106_ENV=${P106_ENV:-GGML_CUDA_MMVQ_PASCAL=2 GGML_CUDA_MMVF_PASCAL=2 GGML_CUDA_M
 # every GGML_CUDA_MMV* switch of release/flash-next-v5/settings.env, GGML_CUDA_MMVF_F32_MT at 2 for the preset's 1 (C968)
 FN_SW=${FN_SW:-GGML_CUDA_MMVQ_PASCAL_KCOL_SMEM=32768 GGML_CUDA_MMVQ_PASCAL_KCOL_TABLE=0 GGML_CUDA_MMVQ_PASCAL_DMT=1 GGML_CUDA_MMVQ_PASCAL_Q5K_MT=1 GGML_CUDA_MMVQ_PASCAL_Q3K_MT=1 GGML_CUDA_MMVQ_PASCAL_GLU_MT=1 GGML_CUDA_MMVQ_PASCAL_Q6K_MT=1 GGML_CUDA_MMVF_F32_MT=2 GGML_CUDA_MMVQ_PASCAL_KCOL_EXACT=1 GGML_CUDA_MMVQ_PASCAL_KCOL_SKIP=q4_0,q5_0}
 P106ALL_ENV=${P106ALL_ENV:-$P106_ENV GGML_CUDA_ATTN_BLOCK=2 GGML_CUDA_PERSISTENT_MOE=2 GGML_CUDA_FATTN_TILE_PASCAL=2 GGML_CUDA_MMVF_F32_MT=2}
+# added to every setting's switches, stock too: cuBLAS in F32 without TF32, as on a P106 (C1108); set but empty, cuBLAS
+# runs as the newer card runs it
+CARD_ENV=${CARD_ENV-NVIDIA_TF32_OVERRIDE=0 GGML_CUDA_CUBLAS_COMPUTE_TYPE=f32}
 BASE_ARGS="-ngl 99 -fa on -c 2048 -fit off -t $THREADS"
 # the quantized copies the arms name (every kind but f32)
 KINDS=$(for a in $ARMS; do echo "${a%%-*}"; done | grep -vx f32 | sort -u | paste -sd' ')
@@ -420,7 +427,7 @@ rm -f "$WORK/DONE"
 # <tree> <job> <cards> <rc> <start, date +%s>: a line of jobs.tsv
 jobline() { printf '%s\t%s\t%s\t%s\t%s\n' "$1" "$2" "$3" "$4" "$(($(date +%s) - $5))" >> "$WORK/jobs.tsv"; }
 md5sum "$SELF" "$HERE/check_identity.sh" "$HERE/prompts/rewrite.txt" > "$WORK/scripts.md5"
-say "gpu pipe check: builds '$BUILDS', cards $GPUS, layouts '$LAYOUTS', arms '$ARMS', archs '$ARCHS', checks '$CHECKS', jobs $JOBS, threads $THREADS, model seed $MODEL_SEED ($SEEDNOTE), N=$N, sampling '$SAMPLING' seed $SAMPLE_SEED, floor ${FLOOR:-none}, race of $RACE from token $RACE_AT"
+say "gpu pipe check: builds '$BUILDS', cards $GPUS, layouts '$LAYOUTS', arms '$ARMS', archs '$ARCHS', checks '$CHECKS', card env '${CARD_ENV:-none}', jobs $JOBS, threads $THREADS, model seed $MODEL_SEED ($SEEDNOTE), N=$N, sampling '$SAMPLING' seed $SAMPLE_SEED, floor ${FLOOR:-none}, race of $RACE from token $RACE_AT"
 echo "$MODEL_SEED" > "$WORK/model_seed.txt"
 # whether fn still matches the Flash-Next preset, when this folder sits in the repo
 fnused=0
@@ -466,6 +473,7 @@ job() {
     p106all) senv=$P106ALL_ENV ;;
     *) mkdir -p "$o"; printf 'all\tarm\tFAIL\tunknown setting %s\t-\t-\n' "$setting" > "$o/verdicts.tsv"; return ;;
     esac
+    senv="${CARD_ENV:+$CARD_ENV }$senv"
     case $layout in
     one) ;;
     split) largs="$largs -ts $(ones "$NG")" ;;

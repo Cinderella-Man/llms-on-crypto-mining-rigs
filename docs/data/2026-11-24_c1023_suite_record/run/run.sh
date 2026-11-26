@@ -14,8 +14,10 @@
 # The fork's kernels for small batches turn themselves on only on compute 6.1 cards unless forced: the record and every
 # replay force them with a P106's launch shapes (5 SMs, 96 KB of shared memory per SM), as
 # docs/data/2026-11-23_c968_pascal_mmvq_suite/run/run.sh did (C968):
-ON=${ON:-"GGML_CUDA_MMVQ_PASCAL=2 GGML_CUDA_MMVF_PASCAL=2 GGML_CUDA_MMVQ_PASCAL_NSM=5 GGML_CUDA_MMVF_PASCAL_NSM=5 \
-GGML_CUDA_MMVQ_PASCAL_KCOL_NSM=5 GGML_CUDA_MMVQ_PASCAL_KCOL_SMSM=98304"}
+# and, since 2026-11-26 (C1108), cuBLAS as on a P106: in F32, without TF32 (scripts/pascal_forced.sh's PASCAL_CUBLAS).
+# C1023's own record and replays ran without it; C1108 replayed MUL_MAT both ways with the same verdicts.
+ON=${ON:-"NVIDIA_TF32_OVERRIDE=0 GGML_CUDA_CUBLAS_COMPUTE_TYPE=f32 GGML_CUDA_MMVQ_PASCAL=2 GGML_CUDA_MMVF_PASCAL=2 \
+GGML_CUDA_MMVQ_PASCAL_NSM=5 GGML_CUDA_MMVF_PASCAL_NSM=5 GGML_CUDA_MMVQ_PASCAL_KCOL_NSM=5 GGML_CUDA_MMVQ_PASCAL_KCOL_SMSM=98304"}
 # Recording with the kernels forced matters: 278 large-activation cases need the backend feature MMVQ_PASCAL, so
 # without it they are "not supported" and left out of the record.
 #

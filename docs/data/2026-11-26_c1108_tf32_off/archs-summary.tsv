@@ -1,0 +1,6 @@
+setting	models	largest_nmse	largest_model	median_nmse	models_at_or_below_1e-12	models_with_p106	ratio_to_p106_geomean	ratio_to_p106_largest	ratio_largest_model	models_within_10x_p106	repeat_gives_first_number
+stock	157	7.31e-07	gemma4	9.04e-08	2	148	1.19e+05	3.98e+06	granite	15	157 of 157
+notf32	157	1.87e-07	kimi-k3	3.12e-14	125	148	0.464	8.99e+03	kimi-k3	135	157 of 157
+before	157	7.31e-07	gemma4	9.04e-08	2	148	1.19e+05	3.98e+06	granite	15	157 of 157
+after	157	1.87e-07	kimi-k3	3.12e-14	125	148	0.464	8.99e+03	kimi-k3	135	157 of 157
+f32	157	1.43e-07	gemma4	3.08e-14	136	148	0.192	3.22	exaone-moe	148	157 of 157

@@ -1,0 +1,4 @@
+tag	rc	passed_line	cases	ok	fail	norec	not_supported_lines	seconds
+before	0	5458/5458 tests passed	5458	5458	0	0	521	196
+tf32	0	5458/5458 tests passed	5458	5458	0	0	521	71
+after	0	5458/5458 tests passed	5458	5458	0	0	521	47
