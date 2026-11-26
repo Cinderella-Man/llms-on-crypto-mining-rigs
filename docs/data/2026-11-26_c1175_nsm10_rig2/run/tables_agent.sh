@@ -16,7 +16,8 @@
 # its draft-shortlist tables, plus the decode step in the buckets where the two switches act (steps_cells.md, by
 # run/steps_cells.py), and with all four runs named the class of the arm (runs 2 and 4) against the preset (runs 1
 # and 3) by bench/agent_check/class_arms.py (class.tsv; class_nocap.tsv without the tasks that ran to a cap in any
-# run). Writes this folder's tables.
+# run) and, by the same rule, of the decode step per cell bucket and the first-token wait of first and later turns
+# (class_cells.tsv, run/class_cells.py). Writes this folder's tables.
 set -u
 T=${1:?}; shift
 RUNS=("$@")
@@ -185,4 +186,10 @@ if [ ${#RUNS[@]} -eq 4 ]; then
   else
     rm -f "$D/class_nocap.tsv"
   fi
+fi
+# the decode step per cell bucket and the first-token wait of first and later turns, classed by the same rule
+# (class_cells.tsv)
+if [ ${#RUNS[@]} -eq 4 ]; then
+  py $D/run/class_cells.py "$D/steps_cells.md" "$D/first_token.tsv" "$D/agent" "${RUNS[0]}" "${RUNS[1]}" "${RUNS[2]}" \
+    "${RUNS[3]}" > "$D/class_cells.tsv"
 fi

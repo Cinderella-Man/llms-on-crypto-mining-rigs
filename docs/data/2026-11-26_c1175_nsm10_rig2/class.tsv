@@ -1,0 +1,7 @@
+measure	arm	base	arm_runs	base_runs	arm_mean	base_mean	arm_spread	base_spread	diff	diff_pct	class
+minutes a task at equal work	r05	c	2.23 2.21	2.29 2.23	2.22	2.26	0.02	0.06	-0.04	-1.8 %	negligible
+generation tok/s	r05	c	31.54 32.04	29.05 31.56	31.79	30.3	0.5	2.51	+1.485	+4.9 %	negligible
+prompt tok/s	r05	c	158.9 158.6	161.6 154.5	158.8	158.1	0.3	7.1	+0.7	+0.4 %	negligible
+first token median s	r05	c	2.77 2.58	2.36 2.18	2.675	2.27	0.19	0.18	+0.405	+17.8 %	loss
+first token p90 s	r05	c	7.97 7.91	8.22 7.88	7.94	8.05	0.06	0.34	-0.11	-1.4 %	negligible
+first token on a task's first turn, median s	r05	c	4.68 4.81	4.94 4.65	4.745	4.795	0.13	0.29	-0.05	-1.0 %	negligible

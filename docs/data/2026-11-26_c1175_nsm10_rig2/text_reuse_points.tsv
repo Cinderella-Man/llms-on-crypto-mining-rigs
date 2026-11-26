@@ -1,0 +1,43 @@
+run	task	turn	differ_at	kept	prompt_before	prompt_after	cache_n	prompt_n	prompt_ms	prev_prompt_end	prev_reply_tokens	into_reply	grammar_from	where	client
+ca	bugfix-javascript-complex-numbers	15	20332	377	21145	21146	20709	437	3007.989	19228	1481	1104	0	in the tool call	same
+ca	bugfix-javascript-complex-numbers	16	20332	1550	22238	22239	21882	357	2531.006	21146	737	-814		before the previous reply	same
+ca	bugfix-javascript-complex-numbers	17	20332	2595	23167	23169	22927	242	1983.054	22239	689	-1907		before the previous reply	same
+ca	bugfix-javascript-complex-numbers	18	20332	4829	25183	25191	25161	30	891.732	23169	1992	-2837		before the previous reply	same
+ca	bugfix-javascript-complex-numbers	19	20332	5193	25561	25569	25525	44	1133.389	25191	335	-4859		before the previous reply	same
+ca	bugfix-javascript-complex-numbers	20	20332	5741	26295	26303	26073	230	2012.899	25569	505	-5237		before the previous reply	same
+ca	bugfix-javascript-complex-numbers	21	20332	6425	26971	26979	26757	222	1962.133	26303	454	-5971		before the previous reply	same
+ca	bugfix-javascript-complex-numbers	22	20332	7206	28222	28233	27538	695	4447.71	26979	560	-6647		before the previous reply	same
+ca	bugfix-javascript-complex-numbers	23	20332	8266	28744	28761	28598	163	1838.675	28233	366	-7901		before the previous reply	same
+ca	bugfix-javascript-complex-numbers	24	20332	8525	30931	30948	28857	2091	14898.363	28761	97	-8429		before the previous reply	same
+ca	bugfix-javascript-complex-numbers	25	20332	11711	32123	32141				30948	1095	-10616		before the previous reply	same
+ca	bugfix-python-pig-latin	3	3505	575	4302	4303	4080	223	1848.747	3421	660	84	0	in the tool call	same
+ca	bugfix-python-pig-latin	4	3505	1163	4695	4696	4668	28	817.216	4303	366	-798		before the previous reply	same
+ca	bugfix-python-pig-latin	5	3505	2058	5591	5592	5563	29	923.353	4696	868	-1191		before the previous reply	same, arguments re-serialized
+ca	bugfix-python-pig-latin	6	3505	2215	5983	5984	5720	264	1964.293	5592	129	-2087		before the previous reply	same
+ca	bugfix-javascript-variable-length-quantity	3	6810	9881	17248	17254	16691	563	3462.09	4577	12115	2233	0	in the tool call	same
+ca	bugfix-javascript-variable-length-quantity	4	6810	10833	17670	17676	17643	33	969.269	17254	390	-10444		before the previous reply	same, arguments re-serialized
+ca	bugfix-javascript-variable-length-quantity	5	6810	10927	17851	17857	17737	120	1536.877	17676	61	-10866		before the previous reply	same
+r05a	bugfix-python-variable-length-quantity	3	4970	1304	6568	6569	6274	295	2041.712	4480	1795	490	0	in the tool call	same
+r05a	bugfix-python-variable-length-quantity	4	4970	1799	6799	6800	6769	31	942.668	6569	200	-1599		before the previous reply	same, arguments re-serialized
+r05a	bugfix-python-variable-length-quantity	5	4970	2041	7137	7138	7011	127	1617.227	6800	212	-1830		before the previous reply	same
+r05a	bugfix-python-scale-generator	3	5782	247	6436	6437	6029	408	2919.912	4303	1727	1479	0	in the tool call	same
+r05a	bugfix-python-scale-generator	4	5782	1019	6831	6832	6801	31	905.379	6437	365	-655		before the previous reply	same, arguments re-serialized
+r05a	bugfix-python-scale-generator	5	5782	1169	7340	7341	6951	390	3063.516	6832	120	-1050		before the previous reply	same
+cb	bugfix-javascript-grade-school	4	4721	17	4768	4769	4738	31	949.22	4539	200	182	0	in the tool call	same, arguments re-serialized
+cb	bugfix-javascript-grade-school	5	4721	133	4970	4971	4854	117	1634.325	4769	86	-48		before the previous reply	same
+cb	bugfix-python-pig-latin	3	4259	611	5092	5093	4870	223	1869.248	3461	1410	798	0	in the tool call	same
+cb	bugfix-python-pig-latin	4	4259	1068	5358	5359	5327	32	910.59	5093	235	-834		before the previous reply	same, arguments re-serialized
+cb	bugfix-python-pig-latin	5	4259	1260	5755	5756	5519	237	1870.993	5359	161	-1100		before the previous reply	same
+cb	bugfix-javascript-variable-length-quantity	2	2148	46	2595	2596	2194	402	2857.315	2126	69	22	0	in the tool call	same
+cb	bugfix-javascript-variable-length-quantity	3	2148	3460	6163	6164	5608	556	3256.144	2596	3013	-448		before the previous reply	same
+cb	bugfix-javascript-variable-length-quantity	4	2148	4207	6386	6388	6355	33	932.971	6164	192	-4016		before the previous reply	same, arguments re-serialized
+cb	bugfix-javascript-variable-length-quantity	5	2148	4312	6599	6601	6460	141	1577.222	6388	73	-4240		before the previous reply	same
+r05b	bugfix-python-list-ops	3	4645	126	5004	5003	4771	232	1962.548	3631	1140	1014	0	in the tool call	same
+r05b	bugfix-python-list-ops	4	4645	480	5156	5155	5125	30	889.455	5003	123	-358		before the previous reply	same, arguments re-serialized
+r05b	bugfix-python-list-ops	5	4645	666	5352	5351	5311	40	1012.089	5155	157	-510		before the previous reply	same
+r05b	bugfix-python-pig-latin	5	5566	31	5807	5808	5597	211	1790.098	5402	196	164	0	in the tool call	same
+r05b	bugfix-javascript-variable-length-quantity	3	4981	6085	11477	11479	11066	413	3033.969	4570	6496	411	0	in the tool call	same
+r05b	bugfix-javascript-variable-length-quantity	4	4981	6777	11789	11791	11758	33	991.172	11479	280	-6498		before the previous reply	same, arguments re-serialized
+r05b	bugfix-javascript-variable-length-quantity	5	4981	6859	11958	11960	11840	120	1625.804	11791	50	-6810		before the previous reply	same
+r05b	bugfix-javascript-variable-length-quantity	6	4981	7246	12582	12584	12227	357	2537.561	11960	268	-6979		before the previous reply	same
+r05b	bugfix-javascript-variable-length-quantity	7	4981	7988	13086	13088	12969	119	1658.154	12584	386	-7603		before the previous reply	same

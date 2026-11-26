@@ -1,0 +1,4 @@
+ca	micro-batch taper of prompt calls: short=1400:64 (n_ubatch 512)
+r05a	micro-batch taper of prompt calls: short=1400:64 (n_ubatch 512)
+cb	micro-batch taper of prompt calls: short=1400:64 (n_ubatch 512)
+r05b	micro-batch taper of prompt calls: short=1400:64 (n_ubatch 512)

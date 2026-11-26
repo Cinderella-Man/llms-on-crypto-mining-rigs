@@ -1,0 +1,41 @@
+run	tasks	bucket	turns	new_tokens	prompt_s	ms_a_token
+ca	all	under 600	58	12564	107.25	8.536
+ca	all	600-1,023	8	6267	38.38	6.124
+ca	all	1,024-1,999	10	14085	74.74	5.306
+ca	all	2,000+	8	18743	99.37	5.302
+ca	all	all turns	84	51659	319.74	6.189
+ca	without capped	under 600	42	8657	74.69	8.628
+ca	without capped	600-1,023	4	3159	18.84	5.964
+ca	without capped	1,024-1,999	8	11187	57.85	5.171
+ca	without capped	2,000+	6	13585	72.22	5.316
+ca	without capped	all turns	60	36588	223.60	6.111
+r05a	all	under 600	43	8566	77.24	9.017
+r05a	all	600-1,023	7	5463	33.43	6.120
+r05a	all	1,024-1,999	8	11189	58.26	5.207
+r05a	all	2,000+	5	11260	60.62	5.384
+r05a	all	all turns	63	36478	229.55	6.293
+r05a	without capped	under 600	40	8026	71.89	8.957
+r05a	without capped	600-1,023	5	3935	23.61	5.999
+r05a	without capped	1,024-1,999	8	11189	58.26	5.207
+r05a	without capped	2,000+	5	11260	60.62	5.384
+r05a	without capped	all turns	58	34410	214.37	6.230
+cb	all	under 600	53	10382	94.05	9.059
+cb	all	600-1,023	6	4830	29.28	6.063
+cb	all	1,024-1,999	7	9445	50.68	5.366
+cb	all	2,000+	5	12323	65.27	5.297
+cb	all	all turns	71	36980	239.28	6.471
+cb	without capped	under 600	50	9967	89.46	8.976
+cb	without capped	600-1,023	5	3934	23.45	5.961
+cb	without capped	1,024-1,999	7	9445	50.68	5.366
+cb	without capped	2,000+	4	8955	52.42	5.854
+cb	without capped	all turns	66	32301	216.01	6.687
+r05b	all	under 600	50	10347	92.36	8.926
+r05b	all	600-1,023	7	5650	33.98	6.015
+r05b	all	1,024-1,999	10	13824	71.77	5.192
+r05b	all	2,000+	6	13420	74.56	5.556
+r05b	all	all turns	73	43241	272.68	6.306
+r05b	without capped	under 600	46	9208	84.05	9.128
+r05b	without capped	600-1,023	5	4042	24.25	5.999
+r05b	without capped	1,024-1,999	9	12585	65.37	5.194
+r05b	without capped	2,000+	6	13420	74.56	5.556
+r05b	without capped	all turns	66	39255	248.22	6.323

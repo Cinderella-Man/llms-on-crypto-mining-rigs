@@ -1,0 +1,14 @@
+task	ca_prompt_s	ca_prompt_tokens	ca_turns	r05a_prompt_s	r05a_prompt_tokens	r05a_turns	cb_prompt_s	cb_prompt_tokens	cb_turns	r05b_prompt_s	r05b_prompt_tokens	r05b_turns
+bugfix-javascript-complex-numbers	96.14	15071	24	15.18	2068	5	23.27	4679	5	24.45	3986	7
+bugfix-javascript-grade-school	16.65	2993	6	18.31	3269	6	15.89	2941	5	15.56	2856	5
+bugfix-javascript-phone-number	16.04	2828	5	16.47	2826	5	27.22	2980	14	27.07	4611	6
+bugfix-javascript-space-age	15.30	2182	5	15.16	2182	5	15.00	2182	5	15.20	2299	4
+bugfix-javascript-triangle	14.46	2485	5	15.02	2505	5	15.34	2559	5	14.78	2485	5
+bugfix-javascript-variable-length-quantity	18.08	3656	5	18.06	3657	5	12.00	1709	5	22.10	3982	7
+bugfix-python-affine-cipher	45.65	5179	8	42.14	4766	6	41.82	4654	6	45.62	4915	9
+bugfix-python-list-ops	14.65	2331	5	14.98	2438	5	14.59	2425	5	14.53	2300	5
+bugfix-python-phone-number	18.65	3564	5	19.50	3705	5	18.87	3561	5	22.19	3972	6
+bugfix-python-pig-latin	23.44	3915	6	16.13	2259	6	15.19	2318	5	15.21	2292	5
+bugfix-python-scale-generator	22.29	3853	5	21.24	3505	5	20.34	3324	5	19.20	3151	5
+bugfix-python-variable-length-quantity	18.40	3602	5	17.36	3298	5	19.75	3648	6	36.76	6392	9
+mean a task	26.64	4305	7.00	19.13	3040	5.25	19.94	3082	5.92	22.72	3603	6.08

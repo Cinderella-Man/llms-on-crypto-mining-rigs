@@ -1,0 +1,5 @@
+log	requests	median_ms	max_ms	sum_ms
+server-ca.log	85	0.71	6.91	116.3
+server-r05a.log	63	0.72	1.64	52.5
+server-cb.log	71	0.72	2.04	59.0
+server-r05b.log	73	0.69	4.39	67.5
