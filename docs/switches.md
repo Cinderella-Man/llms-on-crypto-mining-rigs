@@ -319,6 +319,8 @@ Flash-Next's column is its preset, measured on the release build at 20.40 tok/s,
 | `GGML_CUDA_CPY_HOP_TYPES` | `1` | *new.* `0`: CUDA does not claim the copies IQ4_NL → F32, F32 → Q6_K and Q6_K → F32, so they run on the CPU as upstream | -hopcast4, -flags | Q963, Q1025 |
 | `GGML_CUDA_HOP_STAGED` | `0` | `1`: a hop between cards without peer access goes through a pinned host ring (`_CHUNKS`, `_SLOTS`, `_SLOT_KB`, `_STREAM`); `2`: every hop | -hops | Q751 |
 | `GGML_CUDA_HOP_MAILBOX` | `0` | `1`: a hop between cards through a mailbox in mapped host memory (`_CHUNKS`, `_SLOTS`, `_SLOT_KB`, `_MAX_KB`, `_STREAM`, `_THREADS`, `_POLL_US`, `_TIMEOUT_MS`); `2`: pairs with peer access too | -mailbox | Q682 |
+| `GGML_CUDA_HOP_TIMING`, `GGML_CUDA_HOP_TIMING_FILE` | `0` | *new in v5.* `1`: each hop between two cards timed in the engine (a one-thread stamp kernel of `%globaltimer` on each side into mapped host memory, each card's clock related to the host's every 5 s; no CUDA timing events); a summary per boundary, size class and path when the first CUDA context is freed; `_FILE`: every hop as CSV | `pascal-p106-v5-hop-paths` | Q1944 |
+| `GGML_CUDA_HOP_WC` | `0` | *new in v5.* bit 0: the staged ring's slots, bit 1: the mailbox's slots and gate buffers allocated write-combined (`cudaHostAllocWriteCombined`; the host never reads them) | `pascal-p106-v5-hop-paths` | Q1946 |
 
 ## Sampling, drafts and speculation
 
