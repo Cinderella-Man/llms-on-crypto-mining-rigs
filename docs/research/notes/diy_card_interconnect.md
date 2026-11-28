@@ -149,7 +149,11 @@ leaves card i and enters card i + 1 over their own x1 links, an outside link add
 
 - **Prompts:** a 512-token micro-batch carries 5.57 MB per boundary in Q8_0: est. 38 ms at today's best staged rate,
   29.5 ms with legs overlapped, ~13–15 ms with Gen2 and overlap. With hops at est. 8–11 % of prompt time, halving them
-  is est. +4–6 % prompt speed; removing them +9–12 %.
+  is est. +4–6 % prompt speed; removing them +9–12 %. That share counts all of C200r's F32 → Q8_0 prompt gain as hop
+  bytes. The chunked staged hop with its copy stream, which takes about half of each Q8_0 prompt hop off the critical
+  path, gave +0.7–1.6 % (Q755, within the spread between loads), so the hops are nearer est. 2–4 % of prompt time:
+  halving them is est. +1–2 %. An agent session spends ~22 % of its model time reading prompts (R229's preset run:
+  234.55 s against ~823 s generating).
 - **Longer verify passes:** 8 tokens a pass would carry est. 5–7 ms of hops; doubling the bandwidth saves est. 2.5–3.4 ms
   a pass.
 - **Tensor or expert parallelism:** section 6.
@@ -235,8 +239,9 @@ Tried on 2026-11-25 and parked: the full record of both tries, with every regist
   token.
 - **Behind a switch, several at once:** the Gen2 x1 uplink (500 MB/s raw, ~400–430 usable per direction) is shared by
   four cards, so concurrent prompt hops gain less than 2×; card 4 on its own root port gets the full Gen2.
-- **Prompts:** est. +4–6 % (hop time halved on hops that run alone, less where two cards behind one switch transfer at
-  once).
+- **Prompts:** est. +1–2 %, at most +4–6 % (hop time halved on hops that run alone, less where two cards behind one
+  switch transfer at once; section 1.4 gives both shares). The link binds prompts only once their compute gets 3–5×
+  faster ([card hops](card_hops_x1.md), section 4.5).
 - **Loading a model:** the source is a USB disk at ~120 MB/s, so no gain.
 
 ### 3.3 Risks and how a trial would run
