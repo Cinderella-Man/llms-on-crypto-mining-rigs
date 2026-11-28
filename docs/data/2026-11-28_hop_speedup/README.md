@@ -37,7 +37,7 @@ and classes every setting against the control: gain, negligible or loss.
 | Lane | Rig | Settings (the first is the control) | Question |
 |---|---|---|---|
 | `bytes` | 1 | `q8` the preset; `f16` F16 hops (20,480 B a token); `f32` no cast (40,960 B); `drv` Q8_0 through the driver's own staged copy | how a hop's cost grows with its bytes in the running engine: link-bound or not, so what a faster link could give |
-| `mailbox` | 2 | `q8` the preset; `mbd` the mailbox for hops up to 64 KiB (decode, verify); `mba` the mailbox for every hop; `mbg` the mailbox with its gate for large hops (1 MiB buffers) | whether a kernel-driven hop through mapped host memory, streamed in chunks with a flag each, beats the staged ring |
+| `mailbox` | 2 | `q8` the preset; `mbd` the mailbox for hops up to 64 KiB (decode, verify); `mba` the mailbox for every hop; `mbg` the mailbox with its gate (1 MiB buffers) for hops above 64 KiB: a hop larger than a buffer goes to the staged ring, so the gate takes the 64-token prompt micro-batches (696,320 B) and the 256-token ones (2,785,280 B) stay on the ring, as in `mbd` | whether a kernel-driven hop through mapped host memory, streamed in chunks with a flag each, beats the staged ring |
 | `ring` | next free | `q8` the preset (2 chunks); `c4`, `c8` 4 and 8 chunks; `s1m` 1 MiB slots | the staged ring's own settings on the release line |
 
 The mailbox (`GGML_CUDA_HOP_MAILBOX`, Q682) puts one kernel on each card: the sender streams the bytes into a ring of

@@ -20,7 +20,10 @@
 #                mba  the mailbox for every hop: GGML_CUDA_HOP_MAILBOX=1
 #                mbg  the mailbox, hops above 64 KiB through its gate buffers ordered by events (C886, Q1606), 1 MiB
 #                     each (4 MiB pinned a boundary instead of the default 16): GGML_CUDA_HOP_MAILBOX=1
-#                     GGML_CUDA_HOP_MAILBOX_GATE_KB=64 GGML_CUDA_HOP_MAILBOX_GATE_BUF_KB=1024
+#                     GGML_CUDA_HOP_MAILBOX_GATE_KB=64 GGML_CUDA_HOP_MAILBOX_GATE_BUF_KB=1024. A hop larger than a gate
+#                     buffer leaves the mailbox for the staged ring, so the gate takes the hops of 64 KiB to 1 MiB (the
+#                     taper's 64-token micro-batches, 696,320 B) and the 256-token micro-batches (2,785,280 B) stay on
+#                     the preset's ring: at depths 8,192 and 32,768 this arm reads prompts as mbd does
 # Depths 0, 8,192 and 32,768 (the prompt read at each depth is the prompt measure; 256 tokens at temperature 0 twice per
 # depth, then once with the preset's sampler, every reply kept).
 # Run from the repository's root on a machine that runs only ssh and tar; everything timed runs detached on the rig.
