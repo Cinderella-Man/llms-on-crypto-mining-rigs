@@ -68,7 +68,30 @@ common() {
       ARM_ENV_q8="GGML_CUDA_HOP_CHUNKS=2" ARM_ENV_c4="GGML_CUDA_HOP_CHUNKS=4" ARM_ENV_c8="GGML_CUDA_HOP_CHUNKS=8" \
       ARM_ENV_s1m="GGML_CUDA_HOP_SLOT_KB=1024" \
       LOADS="warm:q8 q8a:q8 c4a:c4 c8a:c8 s1ma:s1m s1mb:s1m c8b:c8 c4b:c4 q8b:q8" ;;
-  *) echo "LANE=bytes|mailbox|ring"; exit 1 ;;
+  timing)
+    # each hop's time in the engine (GGML_CUDA_HOP_TIMING, Q1944; fork pascal-p106-v5-hop-paths, so BIN must be that
+    # build): a stamp kernel of %globaltimer on each side of every hop, each card's clock related to the host's; the
+    # summary goes to the server's log when it stops, every hop to a CSV in the run's out folder
+    #            q8    the preset, timing off (control: the stamps' own cost)
+    #            q8t   the preset, timing on
+    #            f32t  F32 hops (no cast) through the staged ring, timing on
+    #            mbdt  the mailbox for hops up to 64 KiB, timing on
+    T="GGML_CUDA_HOP_TIMING=1 GGML_CUDA_HOP_TIMING_FILE=$WORK/out/hoptiming"
+    export ENV_DROP="$CAST $STAGED" ARMS="q8 q8t f32t mbdt" \
+      ARM_ENV_q8="$CAST=q8_0 $STAGED=1" ARM_ENV_q8t="$CAST=q8_0 $STAGED=1 $T-q8t-%p.csv" \
+      ARM_ENV_f32t="$STAGED=1 $T-f32t-%p.csv" ARM_ENV_mbdt="$CAST=q8_0 $STAGED=1 $MB=1 ${MB}_MAX_KB=64 $T-mbdt-%p.csv" \
+      LOADS="warm:q8 q8a:q8 q8ta:q8t f32ta:f32t mbdta:mbdt mbdtb:mbdt f32tb:f32t q8tb:q8t q8b:q8" ;;
+  wc)
+    # write-combined hop buffers (GGML_CUDA_HOP_WC, Q1946; the same build as LANE=timing)
+    #            q8    the preset (control)
+    #            wcr   the staged ring's slots write-combined: GGML_CUDA_HOP_WC=1
+    #            mbd   the mailbox for hops up to 64 KiB
+    #            mbdw  the same with the mailbox's slots write-combined: GGML_CUDA_HOP_WC=2
+    export ENV_DROP="" ARMS="q8 wcr mbd mbdw" \
+      ARM_ENV_q8="GGML_CUDA_HOP_WC=0" ARM_ENV_wcr="GGML_CUDA_HOP_WC=1" ARM_ENV_mbd="$MB=1 ${MB}_MAX_KB=64" \
+      ARM_ENV_mbdw="$MB=1 ${MB}_MAX_KB=64 GGML_CUDA_HOP_WC=2" \
+      LOADS="warm:q8 q8a:q8 wcra:wcr mbda:mbd mbdwa:mbdw mbdwb:mbdw mbdb:mbd wcrb:wcr q8b:q8" ;;
+  *) echo "LANE=bytes|mailbox|ring|timing|wc"; exit 1 ;;
   esac
 }
 case ${STEP:-start} in
