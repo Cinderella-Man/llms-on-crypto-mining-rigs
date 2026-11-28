@@ -277,6 +277,19 @@ These are listed so nobody mistakes them for tried; Q994 is parked behind the fi
 - **The same writes from a kernel module** (`writel`, as the P104 project's `gen2kr`) instead of a user-space mmap.
 - **A hook inside the driver** between the card's start-up and its first `set_link_speed`, if such a point exists. It
   would need the driver's internals traced on a P106.
+- **The Windows P106 tool's whole-card restart** ([DaZuiZZZZ/P106-Unlock-Gen2](https://github.com/DaZuiZZZZ/P106-Unlock-Gen2),
+  read, not run; registry Q1939). It writes the same values as the push above, sets the driver's `RMPcieLinkSpeed=1`
+  (allow Gen2), restarts the whole card through Windows (the card leaves the bus and comes back), waits up to 20 s for
+  the driver to latch the declaration, and only then sets the target speed on both link ends and retrains. A resident
+  loop rewrites the registers every 20 ms and retrains whenever the link reads Gen1. On Linux this would be an unbind,
+  a reset that takes the link down and up while it is still alive, and a rebind with
+  `NVreg_RegistryDwords="RMPcieLinkSpeed=0x1"`. Its one independent run on a P106-090
+  ([issue #1](https://github.com/DaZuiZZZZ/P106-Unlock-Gen2/issues/1)) lost the card 8 s after the restart, and the
+  tool logged a latch, because its check `(LnkCap2 & 0x6) == 0x6` passes on the `0xffffffff` a lost card returns.
+  - The tool is Windows only. It compiles its C# source on the target and reaches the registers through two signed,
+    known-vulnerable kernel drivers, WinRing0 1.2.0.5 and TechPowerUp's ThrottleStop.sys. Loading them needs Windows'
+    vulnerable-driver blocklist turned off, and its scheduled task keeps them loaded.
+  - Its writes are volatile: nothing goes to the card's firmware.
 - **The UEFI pre-boot tool** that showed a P106-090 at 5 GT/s x16 on a desktop board
   ([P106-90-Unlock-X16](https://github.com/DaZuiZZZZ/P106-90-Unlock-X16)): its register writes are not published, and
   running a third party's firmware tool is the owner's decision.
