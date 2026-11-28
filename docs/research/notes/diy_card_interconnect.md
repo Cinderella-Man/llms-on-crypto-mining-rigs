@@ -434,8 +434,13 @@ layer, where the interconnect becomes the design's limit.
 - **Prompts would suffer:** each all-reduce of a 512-token micro-batch carries 5.57 MB per switch per direction in Q8_0,
   est. 13–26 ms, 96 a micro-batch: a link cap of est. ~200–400 tok/s against today's layer-split hops of ~0.45 s a
   micro-batch even fully serialized. Speculative verify passes multiply all-reduce bytes the same way.
-- **Software status:** llama.cpp's `-sm tensor` has no all-reduce kernel for compute 6.1 (Q879), its internal all-reduce
-  takes exactly two Volta-or-newer cards, and vLLM's custom all-reduce turns off above two PCIe-only GPUs.
+- **Software status:** in v5 the CUDA backend's all-reduce for `-sm tensor` tries NCCL first (in a build with
+  `-DGGML_CUDA_NCCL=ON`; the rig build leaves it out), then its internal all-reduce, which takes exactly two
+  Volta-or-newer cards, then the Meta backend's generic exchange (Q879). NCCL without peer access moves each
+  all-reduce through host memory as a ring: over nine cards est. 0.25–0.45 ms, 24–43 ms a token (Q1940), the wrong
+  shape for this board next to the star above. [DRMShare](https://github.com/Cinderella-Man/drmshare)'s NCCL fork
+  needs a board that carries peer traffic and on this one takes the same host path. vLLM's custom all-reduce turns
+  off above two PCIe-only GPUs.
 - **What a better link changes:** with Gen2 on every card the star all-reduce falls to est. ~35–45 µs (still the shared
   uplink); with a direct Gen2 lane per card to the host, est. 16–19 µs. Neither changes S, which decides the question.
 - **The decision is two numbers (Q996):** the star all-reduce's latency on nine cards (median and p99, Q8_0 and
