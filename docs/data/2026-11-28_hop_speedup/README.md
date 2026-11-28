@@ -39,6 +39,8 @@ and classes every setting against the control: gain, negligible or loss.
 | `bytes` | 1 | `q8` the preset; `f16` F16 hops (20,480 B a token); `f32` no cast (40,960 B); `drv` Q8_0 through the driver's own staged copy | how a hop's cost grows with its bytes in the running engine: link-bound or not, so what a faster link could give |
 | `mailbox` | 2 | `q8` the preset; `mbd` the mailbox for hops up to 64 KiB (decode, verify); `mba` the mailbox for every hop; `mbg` the mailbox with its gate (1 MiB buffers) for hops above 64 KiB: a hop larger than a buffer goes to the staged ring, so the gate takes the 64-token prompt micro-batches (696,320 B) and the 256-token ones (2,785,280 B) stay on the ring, as in `mbd` | whether a kernel-driven hop through mapped host memory, streamed in chunks with a flag each, beats the staged ring |
 | `ring` | next free | `q8` the preset (2 chunks); `c4`, `c8` 4 and 8 chunks; `s1m` 1 MiB slots | the staged ring's own settings on the release line |
+| `timing` | next free | on the hop-paths build: `q8` the preset, timing off; `q8t` the preset with `GGML_CUDA_HOP_TIMING=1`; `f32t` F32 hops with timing; `mbdt` the decode mailbox with timing | each hop's time in the engine per path and size class, and whether the host or the card waits (`q8` against `q8t` is the stamps' own cost) |
+| `wc` | next free | on the hop-paths build: `q8` the preset; `wcr` the staged ring's slots write-combined (`GGML_CUDA_HOP_WC=1`); `mbd` the decode mailbox; `mbdw` the same with its slots write-combined (`GGML_CUDA_HOP_WC=2`) | whether write-combined host buffers move a hop faster |
 
 The mailbox (`GGML_CUDA_HOP_MAILBOX`, Q682) puts one kernel on each card: the sender streams the bytes into a ring of
 pinned host memory mapped into both cards and sets a sequence flag after each chunk; the receiver polls the flag and
@@ -55,6 +57,20 @@ protocol, which doubles the bytes on the wire.
   run on a P106 under driver 580, and how fast does their signal cross from one card's stream to another's against an
   event?
 
+## The two new switches (fork branch `pascal-p106-v5-hop-paths`)
+
+- `GGML_CUDA_HOP_TIMING=1` times each hop between two cards inside the running engine: a one-thread kernel on the
+  sending card stamps that card's `%globaltimer` just before the hop, another on the receiving card just after the hop is
+  ordered there, and the host notes when it enqueued the hop; each card's clock is related to the host's by a short
+  calibration on first use and every 5 seconds. The summary per boundary, size class and path is logged when the server
+  stops; `GGML_CUDA_HOP_TIMING_FILE` writes every hop as CSV (`%p` in the name becomes the process id). It uses no CUDA
+  timing events, which change the token on these cards.
+- `GGML_CUDA_HOP_WC` allocates the hop buffers write-combined: bit 0 the staged ring's slots, bit 1 the mailbox's slots
+  and gate buffers. The host never reads them.
+- Both are off by default. The build (`926fea4d4`, `TESTS=1`) adds no compiler warning, and on a build machine's two
+  cards the fork's `test-hop-mailbox` passes every ring setting plain, with `GGML_CUDA_HOP_WC=3` and with timing on (the
+  cards' clocks related to the host's to within 2.3 and 3.0 µs, 160 hops timed, none without both stamps).
+
 ## Results
 
 Pending: the lanes started 2026-11-28 at 13:55. Each result is added here with every load's value.
@@ -63,7 +79,8 @@ Pending: the lanes started 2026-11-28 at 13:55. Each result is added here with e
 
 | File | What |
 |---|---|
-| [run/hops.sh](run/hops.sh) | the lanes (`LANE=bytes`, `mailbox`, `ring`) on top of `bench/deep_lane/remote.sh` |
+| [run/hops.sh](run/hops.sh) | the lanes (`LANE=bytes`, `mailbox`, `ring`, `timing`, `wc`) on top of `bench/deep_lane/remote.sh` |
+| [run/hop_paths.sh](run/hop_paths.sh) | the standalone checks (`vram_write`, `memops_check`) and C140's hop bench (`megakernel_p106 --hop`) on an idle rig, ~15 minutes |
 
 ## Commands
 
